@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ip>
+ <presets version="12.1">
+  <preset
+     name="13x32-mem-32-str 1"
+     kind="demo_axi_memory"
+     version="All"
+     description="">
+   <parameter name="AV_DATA_W" value="32" />
+   <parameter name="AXI_ADDRESS_W" value="13" />
+   <parameter name="AXI_DATA_W" value="32" />
+   <parameter name="ENABLE_STREAM_OUTPUT" value="true" />
+   <parameter name="AV_ADDRESS_W" value="2" />
+   <parameter name="AXI_ID_W" value="14" />
+  </preset>
+ </presets>
+</ip>
