@@ -188,11 +188,11 @@ set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
 set_global_assignment -name ACTIVE_SERIAL_CLOCK FREQ_100MHZ
 set_global_assignment -name SEARCH_PATH "../../hm2/pins/lpm-ip"
-set_global_assignment -name SEARCH_PATH "../../hm2/pins"
-set_global_assignment -name SEARCH_PATH "../../hm2"
+set_global_assignment -name SEARCH_PATH ../../hm2/pins
+set_global_assignment -name SEARCH_PATH ../../hm2
 set_global_assignment -name SEARCH_PATH "..\\..\\hm2\\pins\\lpm-ip"
-set_global_assignment -name SEARCH_PATH "..\\..\\hm2\\pins"
-set_global_assignment -name SEARCH_PATH "..\\..\\hm2"
+set_global_assignment -name SEARCH_PATH ..\\..\\hm2\\pins
+set_global_assignment -name SEARCH_PATH ..\\..\\hm2
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
@@ -626,7 +626,7 @@ set_instance_assignment -name GLOBAL_SIGNAL OFF -to u0|hps_0|hps_io|border|hps_s
 set_instance_assignment -name GLOBAL_SIGNAL OFF -to u0|hps_0|hps_io|border|hps_sdram_inst|p0|umemphy|uread_datapath|reset_n_fifo_wraddress[3] -tag __hps_sdram_p0
 set_instance_assignment -name ENABLE_BENEFICIAL_SKEW_OPTIMIZATION_FOR_NON_GLOBAL_CLOCKS ON -to u0|hps_0|hps_io|border|hps_sdram_inst -tag __hps_sdram_p0
 set_instance_assignment -name PLL_COMPENSATION_MODE DIRECT -to u0|hps_0|hps_io|border|hps_sdram_inst|pll0|fbout -tag __hps_sdram_p0
-set_global_assignment -name IP_SEARCH_PATHS "..\\ip;..\\ip\\hm2reg_io;.\\ip"
+set_global_assignment -name IP_SEARCH_PATHS "..\\..\\ip;..\\..\\ip\\hm2reg_io;.\\ip"
 set_global_assignment -name PROJECT_IP_REGENERATION_POLICY ALWAYS_REGENERATE_IP
 set_global_assignment -name VERILOG_FILE ../../ip/edge_detect/altera_edge_detector.v
 set_global_assignment -name VERILOG_FILE ../../ip/intr_capturer/intr_capturer.v
@@ -717,4 +717,7 @@ set_global_assignment -name VHDL_FILE ../../hm2/b32qcondmac2ws.vhd
 set_global_assignment -name VERILOG_INPUT_VERSION SYSTEMVERILOG_2005
 set_global_assignment -name VERILOG_SHOW_LMF_MAPPING_MESSAGES OFF
 
+set_global_assignment -name SAVE_DISK_SPACE OFF
+set_global_assignment -name FLOW_ENABLE_RTL_VIEWER ON
+set_global_assignment -name TIMEQUEST_MULTICORNER_ANALYSIS ON
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

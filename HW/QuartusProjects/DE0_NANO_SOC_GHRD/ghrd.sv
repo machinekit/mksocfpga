@@ -139,7 +139,7 @@ module ghrd(
   wire 		  fpga_clk_50;
 // connection of internal logics
   assign LED[7:1] = fpga_led_internal;
-  assign fpga_clk_50=FPGA_CLK1_50;
+  assign fpga_clk_50 = FPGA_CLK2_50;
   assign stm_hw_events    = {{15{1'b0}}, SW, fpga_led_internal, fpga_debounced_buttons};
 // hm2
   wire [15:0] 	hm_address;
@@ -148,25 +148,26 @@ module ghrd(
   wire       	hm_read;
   wire 			hm_write;
   wire [3:0]	hm_chipsel;
+  wire			hm_clk_med;	
   wire			hm_clk_high;	
   wire 			clklow_sig;
   wire 			clkhigh_sig;
   
   
-  wire [8:0] 	out_oe;
-  wire [8:0]	out_data;
-  wire [1:0]	ar_out_oe;
-  wire [1:0]	ar_in_sig;
+//  wire [8:0] 	out_oe;
+//  wire [8:0]	out_data;
+//  wire [1:0]	ar_out_oe;
+//  wire [1:0]	ar_in_sig;
 
 //=======================================================
 //  Structural coding
 //=======================================================
 
-  assign ARDUINO_IO[8:0] = out_oe[8:0] ? out_data[8:0] : 1'bz;
-  assign ARDUINO_IO[10:9] = ar_out_oe ? ar_in_sig : 1'bz;
+//  assign ARDUINO_IO[8:0] = out_oe[8:0] ? out_data[8:0] : 1'bz;
+//  assign ARDUINO_IO[10:9] = ar_out_oe ? ar_in_sig : 1'bz;
 
-  assign out_oe = 9'b1;
-  assign ar_out_oe = 2'b0;
+//  assign out_oe = 9'b1;
+//  assign ar_out_oe = 2'b0;
   
  soc_system u0 (
 		//Clock&Reset
@@ -264,17 +265,11 @@ module ghrd(
      .mk_io_hm2_read                    		(hm_read),                       //                          .hm2_read
      .mk_io_hm2_chipsel            				(hm_chipsel),                    //                          .hm2_chipsel
 //     .mk_io_hm2_we                 				(hm_chipsel),                    //                          .hm2_chipsel
-     .clk_100mhz_out_clk                    	(hm_clk_high),                    //            clk_100mhz_out.clk
-      .axi_str_data                      (out_data[7:0]),                      //               stream_port.data
-      .axi_str_valid                     (out_data[8]),                     //                          .valid
-      .axi_str_ready                     (ar_in_sig[1])                      //                          .ready
-//		.stream_port_waitrequest               (ARDUINO_IO[0]),               //               stream_port.waitrequest
-//		.stream_port_readdata                  (16'b1000100010000001),                  //                          .readdata
-//		.stream_port_read                      (GPIO_1[33]),                      //                          .read
-//		.stream_port_write                     (GPIO_1[32]),                     //                          .write
-//		.stream_port_address                   (GPIO_1[31:16]),                   //                          .address
-//		.stream_port_writedata                 (GPIO_1[15:0]),                 //                          .writedata
-//		.stream_port_byteenable                (<connected-to-stream_port_byteenable>)                 //                          .byteenable
+     .clk_100mhz_out_clk                    	(hm_clk_med),                    //            clk_100mhz_out.clk
+     .clk_200mhz_out_clk                    	(hm_clk_high)                    //            clk_100mhz_out.clk
+//      .axi_str_data                      (out_data[7:0]),                      //               stream_port.data
+//      .axi_str_valid                     (out_data[8]),                     //                          .valid
+//      .axi_str_ready                     (ar_in_sig[1])                      //                          .ready
  );
 
 // Debounce logic to clean out glitches within 1ms
@@ -350,6 +345,7 @@ assign LED[0]=led_level;
 
 assign clklow_sig = fpga_clk_50;
 assign clkhigh_sig = hm_clk_high;
+//assign clkmed_sig = hm_clk_med;
 
 //import work::*;
 
@@ -360,8 +356,8 @@ parameter IOPORTS = 2;
 wire [IOWIDTH-1:0] iobits_sig;
 assign GPIO_0[IOWIDTH-1:0] = iobits_sig;
 
-wire [LIOWidth-1:0] liobits_sig;
-assign GPIO_1[LIOWidth-1:0] = liobits_sig;
+//wire [LIOWidth-1:0] liobits_sig;
+//assign GPIO_1[LIOWidth-1:0] = liobits_sig;
 
 
 //HostMot2 #(.IOWidth(IOWIDTH),.IOPorts(IOPORTS)) HostMot2_inst
@@ -380,10 +376,10 @@ HostMot2 HostMot2_inst
 //	.dreq(dreq_sig) ,	// output  dreq_sig							
 //	.demandmode(demandmode_sig) ,	// output  demandmode_sig
 	.iobits(iobits_sig) ,	// inout [iowidth-1:0] 				--iobits => IOBITS,-- external I/O bits	
-	.liobits(liobits_sig) ,	// inout [liowidth-1:0] 			--liobits_sig
+//	.liobits(liobits_sig) ,	// inout [liowidth-1:0] 			--liobits_sig
 //	.rates(rates_sig) ,	// output [4:0] rates_sig
 //	.leds(leds_sig) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
-	.leds(GPIO_1[35:34]) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
+	.leds(GPIO_0[35:34]) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
 );
 /*
 defparam HostMot2_inst.ThePinDesc = PinDesc;
