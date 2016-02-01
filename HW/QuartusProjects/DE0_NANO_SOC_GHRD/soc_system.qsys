@@ -38,22 +38,6 @@
          type = "int";
       }
    }
-   element demo_axi_memory_0
-   {
-      datum _sortIndex
-      {
-         value = "12";
-         type = "int";
-      }
-   }
-   element demo_axi_memory_0.RAM
-   {
-      datum baseAddress
-      {
-         value = "327680";
-         type = "String";
-      }
-   }
    element dipsw_pio
    {
       datum _sortIndex
@@ -338,11 +322,6 @@
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface
-   name="axi_str"
-   internal="demo_axi_memory_0.streaming"
-   type="avalon_streaming"
-   dir="start" />
- <interface
    name="button_pio"
    internal="button_pio.external_connection"
    type="conduit"
@@ -351,6 +330,11 @@
  <interface
    name="clk_100mhz_out"
    internal="hps_0.h2f_user0_clock"
+   type="clock"
+   dir="start" />
+ <interface
+   name="clk_200mhz_out"
+   internal="hps_0.h2f_user2_clock"
    type="clock"
    dir="start" />
  <interface
@@ -411,18 +395,6 @@
   <parameter name="clockFrequencyKnown" value="true" />
   <parameter name="inputClockFrequency" value="0" />
   <parameter name="resetSynchronousEdges" value="NONE" />
- </module>
- <module
-   name="demo_axi_memory_0"
-   kind="demo_axi_memory"
-   version="1.0"
-   enabled="1">
-  <parameter name="AV_ADDRESS_W" value="2" />
-  <parameter name="AV_DATA_W" value="16" />
-  <parameter name="AXI_ADDRESS_W" value="15" />
-  <parameter name="AXI_DATA_W" value="32" />
-  <parameter name="AXI_ID_W" value="14" />
-  <parameter name="ENABLE_STREAM_OUTPUT" value="true" />
  </module>
  <module name="dipsw_pio" kind="altera_avalon_pio" version="15.1" enabled="1">
   <parameter name="bitClearingEdgeCapReg" value="true" />
@@ -804,8 +776,8 @@
   <parameter name="S2FCLK_USER0CLK_Enable" value="true" />
   <parameter name="S2FCLK_USER1CLK_Enable" value="false" />
   <parameter name="S2FCLK_USER1CLK_FREQ" value="100.0" />
-  <parameter name="S2FCLK_USER2CLK" value="4" />
-  <parameter name="S2FCLK_USER2CLK_Enable" value="false" />
+  <parameter name="S2FCLK_USER2CLK" value="3" />
+  <parameter name="S2FCLK_USER2CLK_Enable" value="true" />
   <parameter name="S2FCLK_USER2CLK_FREQ" value="100.0" />
   <parameter name="S2FINTERRUPT_CAN_Enable" value="false" />
   <parameter name="S2FINTERRUPT_CLOCKPERIPHERAL_Enable" value="false" />
@@ -1089,15 +1061,6 @@
    kind="avalon"
    version="15.1"
    start="hps_0.h2f_lw_axi_master"
-   end="demo_axi_memory_0.RAM">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00050000" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="15.1"
-   start="hps_0.h2f_lw_axi_master"
    end="jtag_uart.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00020000" />
@@ -1146,15 +1109,6 @@
    end="hm2reg_io_0.slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00040000" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="15.1"
-   start="hps_0.h2f_lw_axi_master"
-   end="demo_axi_memory_0.streaming_csr">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x0000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1253,11 +1207,6 @@
  <connection kind="clock" version="15.1" start="clk_0.clk" end="dipsw_pio.clk" />
  <connection kind="clock" version="15.1" start="clk_0.clk" end="button_pio.clk" />
  <connection kind="clock" version="15.1" start="clk_0.clk" end="jtag_uart.clk" />
- <connection
-   kind="clock"
-   version="15.1"
-   start="clk_0.clk"
-   end="demo_axi_memory_0.clk" />
  <connection
    kind="clock"
    version="15.1"
@@ -1370,11 +1319,6 @@
    kind="reset"
    version="15.1"
    start="clk_0.clk_reset"
-   end="demo_axi_memory_0.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="clk_0.clk_reset"
    end="onchip_memory2_0.reset1" />
  <connection
    kind="reset"
@@ -1441,16 +1385,6 @@
    version="15.1"
    start="hps_only_master.master_reset"
    end="hm2reg_io_0.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="fpga_only_master.master_reset"
-   end="demo_axi_memory_0.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
-   end="demo_axi_memory_0.reset" />
  <connection
    kind="reset"
    version="15.1"
