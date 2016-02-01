@@ -67,6 +67,22 @@
          type = "String";
       }
    }
+   element hm2reg_io_0
+   {
+      datum _sortIndex
+      {
+         value = "11";
+         type = "int";
+      }
+   }
+   element hm2reg_io_0.slave
+   {
+      datum baseAddress
+      {
+         value = "262144";
+         type = "String";
+      }
+   }
    element hps_0
    {
       datum _sortIndex
@@ -237,6 +253,16 @@
    dir="end" />
  <interface name="clk" internal="clk_0.clk_in" type="clock" dir="end" />
  <interface
+   name="clk_100mhz_out"
+   internal="hps_0.h2f_user0_clock"
+   type="clock"
+   dir="start" />
+ <interface
+   name="clk_200mhz_out"
+   internal="hps_0.h2f_user2_clock"
+   type="clock"
+   dir="start" />
+ <interface
    name="dipsw_pio_external_connection"
    internal="dipsw_pio.external_connection"
    type="conduit"
@@ -277,6 +303,7 @@
    type="conduit"
    dir="end" />
  <interface name="memory" internal="hps_0.memory" type="conduit" dir="end" />
+ <interface name="mk_io" internal="hm2reg_io_0.pins" type="conduit" dir="end" />
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
  <module name="button_pio" kind="altera_avalon_pio" version="15.1" enabled="1">
   <parameter name="bitClearingEdgeCapReg" value="true" />
@@ -311,6 +338,10 @@
   <parameter name="simDoTestBenchWiring" value="false" />
   <parameter name="simDrivenValue" value="0" />
   <parameter name="width" value="10" />
+ </module>
+ <module name="hm2reg_io_0" kind="hm2reg_io" version="1.0" enabled="1">
+  <parameter name="ADDRESS_WIDTH" value="14" />
+  <parameter name="DATA_WIDTH" value="32" />
  </module>
  <module name="hps_0" kind="altera_hps" version="15.1" enabled="1">
   <parameter name="ABSTRACT_REAL_COMPARE_TEST" value="false" />
@@ -657,11 +688,11 @@
   <parameter name="REF_CLK_FREQ_PARAM_VALID" value="false" />
   <parameter name="S2FCLK_COLDRST_Enable" value="false" />
   <parameter name="S2FCLK_PENDINGRST_Enable" value="false" />
-  <parameter name="S2FCLK_USER0CLK_Enable" value="false" />
+  <parameter name="S2FCLK_USER0CLK_Enable" value="true" />
   <parameter name="S2FCLK_USER1CLK_Enable" value="false" />
   <parameter name="S2FCLK_USER1CLK_FREQ" value="100.0" />
-  <parameter name="S2FCLK_USER2CLK" value="4" />
-  <parameter name="S2FCLK_USER2CLK_Enable" value="false" />
+  <parameter name="S2FCLK_USER2CLK" value="3" />
+  <parameter name="S2FCLK_USER2CLK_Enable" value="true" />
   <parameter name="S2FCLK_USER2CLK_FREQ" value="100.0" />
   <parameter name="S2FINTERRUPT_CAN_Enable" value="false" />
   <parameter name="S2FINTERRUPT_CLOCKPERIPHERAL_Enable" value="false" />
@@ -1003,6 +1034,15 @@
  <connection
    kind="avalon"
    version="15.1"
+   start="hps_0.h2f_lw_axi_master"
+   end="hm2reg_io_0.slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00040000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.1"
    start="master_non_sec.master"
    end="jtag_uart.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
@@ -1072,6 +1112,15 @@
   <parameter name="baseAddress" value="0x0000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
+ <connection
+   kind="avalon"
+   version="15.1"
+   start="master_non_sec.master"
+   end="hm2reg_io_0.slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00040000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
  <connection kind="clock" version="15.1" start="clk_0.clk" end="master_secure.clk" />
  <connection kind="clock" version="15.1" start="clk_0.clk" end="sysid_qsys.clk" />
  <connection kind="clock" version="15.1" start="clk_0.clk" end="led_pio.clk" />
@@ -1093,6 +1142,7 @@
    version="15.1"
    start="clk_0.clk"
    end="intr_capturer_0.clock" />
+ <connection kind="clock" version="15.1" start="clk_0.clk" end="hm2reg_io_0.clock" />
  <connection
    kind="clock"
    version="15.1"
@@ -1185,6 +1235,11 @@
    version="15.1"
    start="clk_0.clk_reset"
    end="jtag_uart.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="clk_0.clk_reset"
+   end="hm2reg_io_0.reset" />
  <connection
    kind="reset"
    version="15.1"
