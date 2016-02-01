@@ -41,7 +41,7 @@ use IEEE.std_logic_UNSIGNED.ALL;
 --           notice, this list of conditions and the following disclaimer.
 -- 
 --         * Redistributions in binary form must reproduce the above
---           copyright notice, this list of conditiBoardNameMESAons and the following
+--           copyright notice, this list of conditions and the following
 --           disclaimer in the documentation and/or other materials
 --           provided with the distribution.
 -- 
@@ -66,8 +66,9 @@ use IEEE.std_logic_UNSIGNED.ALL;
 --     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 --     POSSIBILITY OF SUCH DAMAGE.
 -- 
-use work.PIN_DRINGx2_34.all; 
-use work.IDROMConst.all;	
+library pins;
+use pins.PIN_DRINGx2_34.all;
+use work.IDROMConst.all;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 use work.log2.all;
@@ -92,15 +93,14 @@ entity HostMot2 is
 		IDROMType: integer := 3;		
 	   SepClocks: boolean := true;
 		OneWS: boolean := true;
---		UseIRQLogic: boolean := true;
 		UseIRQLogic: boolean := false;
-		PWMRefWidth  : integer := 13;
+		PWMRefWidth: integer := 13;
 		UseWatchDog: boolean := true;
 		OffsetToModules: integer := 64;
 		OffsetToPinDesc: integer := 448;
 		ClockHigh: integer := ClockHigh25;
 		ClockMed: integer := ClockMed25;
-		ClockLow: integer := ClockLow25;
+		ClockLow: integer := ClockMed20;
 		BoardNameLow : std_Logic_Vector(31 downto 0) := BoardNameMESA;
 		BoardNameHigh : std_Logic_Vector(31 downto 0) := BoardName5i25;
 		FPGASize: integer := 9;
