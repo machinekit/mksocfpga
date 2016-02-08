@@ -1,0 +1,161 @@
+diff --git a/src/Makefile b/src/Makefile
+index 824603e..4b50d42 100755
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -1266,6 +1266,12 @@ obj-$(CONFIG_PEPPER) += pepper.o
+ pepper-objs := hal/components/pepper.o $(MATHSTUB)
+ endif
+ 
++#ifdef TARGET_PLATFORM_SOCFPGA
++#ifeq ($(BUILD_SYS),user-dso)
++#obj-$(CONFIG_HAL_UIO) += ???.o
++#hm2_cvsoc-uio-objs := hal/drivers/???.o
++#endif
++
+ ifdef TARGET_PLATFORM_ZEDBOARD
+ obj-$(CONFIG_HAL_GPIO) += hal_zed_gpio.o
+ hal_zed_gpio-objs := hal/drivers/hal_zed_gpio.o
+@@ -1328,10 +1334,13 @@ endif
+ ifeq ($(BUILD_HOSTMOT2),yes)
+ obj-$(CONFIG_HOSTMOT2) += hostmot2.o hm2_7i43.o hm2_7i90.o hm2_pci.o hm2_test.o
+ ifeq ($(BUILD_SYS),user-dso)
+-obj-$(CONFIG_HOSTMOT2) += hm2_eth.o
++obj-$(CONFIG_HOSTMOT2) += hm2_eth.o hm2_cvsoc.o
+ hm2_eth-objs  :=			  \
+     hal/drivers/mesa-hostmot2/hm2_eth.o   \
+     $(MATHSTUB)
++hm2_cvsoc-objs  :=			  \
++    hal/drivers/mesa-hostmot2/hm2_cvsoc.o \
++    $(MATHSTUB)
+ endif
+ #obj-$(CONFIG_HOSTMOT2) += hostmot2.o hm2_pci.o hm2_7i43.o
+ hostmot2-objs +=			  \
+@@ -1600,6 +1609,13 @@ endif
+ $(RTLIBDIR)/hm2_test$(MODULE_EXT): $(addprefix $(OBJDIR)/,$(hm2_test-objs))
+ endif
+ 
++ifdef TARGET_PLATFORM_SOCFPGA
++ifeq ($(BUILD_SYS),user-dso)
++$(RTLIBDIR)/hostmot2$(MODULE_EXT): $(addprefix $(OBJDIR)/,$(hostmot2-objs))
++$(RTLIBDIR)/hm2_cvsoc$(MODULE_EXT): $(addprefix $(OBJDIR)/,$(hm2_cvsoc-objs))
++endif
++endif
++
+ ifdef TARGET_PLATFORM_BEAGLEBONE
+ ifeq ($(BUILD_SYS),user-dso)
+ $(RTLIBDIR)/hal_pru$(MODULE_EXT): $(addprefix $(OBJDIR)/,$(hal_pru-objs))diff --git a/src/Makefile.inc.in b/src/Makefile.inc.in
+index 2ae1069..68f4c26 100644
+--- a/src/Makefile.inc.in
++++ b/src/Makefile.inc.in
+@@ -191,6 +191,7 @@ BUILD_DRIVERS = @BUILD_DRIVERS@
+ USE_PORTABLE_PARPORT_IO = @USE_PORTABLE_PARPORT_IO@
+ TARGET_PLATFORM_PC = @TARGET_PLATFORM_PC@
+ TARGET_PLATFORM_BEAGLEBONE = @TARGET_PLATFORM_BEAGLEBONE@
++TARGET_PLATFORM_SOCFPGA = @TARGET_PLATFORM_SOCFPGA@
+ TARGET_PLATFORM_RASPBERRY = @TARGET_PLATFORM_RASPBERRY@
+ TARGET_PLATFORM_ZEDBOARD = @TARGET_PLATFORM_ZEDBOARD@
+ ARCHITECTURE=@ARCHITECTURE@diff --git a/src/configure.ac b/src/configure.ac
+index cc8f1ca..2b7e9f5 100644
+--- a/src/configure.ac
++++ b/src/configure.ac
+@@ -534,6 +534,7 @@ KSOURCE_LOCATION_HINTS=$(echo \
+ # PLATFORM
+ # TARGET_PLATFORM_PC
+ # TARGET_PLATFORM_BEAGLEBONE
++# TARGET_PLATFORM_SOCFPGA
+ # TARGET_PLATFORM_RASPBERRY
+ # TARGET_PLATFORM_ZEDBOARD
+ #
+@@ -644,6 +645,35 @@ AC_ARG_WITH(platform-beaglebone,
+ 	esac
+     ])
+ 
++AC_ARG_WITH(platform-socfpga,
++    [AS_HELP_STRING(
++        [--with-platform-socfpga],
++	[Build for Socfpga platform (default for ARM arch)])],
++    [
++        case $with_platform_socfpga in
++	    (y*)
++	    	TARGET_PLATFORM_SOCFPGA=true
++		platform_specified=true
++		platform_socfpga_reason="$cmdl_enab_msg"
++		;;
++	    (*)
++	    	TARGET_PLATFORM_SOCFPGA=false
++		platform_socfpga_reason="$cmdl_disab_msg"
++		;;
++	esac
++    ],
++    [
++        case $host_cpu in
++	    (arm*)
++	        TARGET_PLATFORM_SOCFPGA=unk
++		;;
++	    (*)
++	        TARGET_PLATFORM_SOCFPGA=false
++		platform_beaglebone_reason="$arch_disab_msg"
++		;;
++	esac
++    ])
++
+ AC_ARG_WITH(platform-raspberry,
+     [AS_HELP_STRING(
+         [--with-platform-raspberry],
+@@ -713,6 +743,10 @@ if $platform_specified; then
+ 	TARGET_PLATFORM_BEAGLEBONE=false
+ 	platform_beaglebone_reason="$cmdl_notspec_msg"
+     fi
++    if test $TARGET_PLATFORM_SOCFPGA = unk; then
++	TARGET_PLATFORM_SOCFPGA=false
++	platform_socfpga_reason="$cmdl_notspec_msg"
++    fi
+     if test $TARGET_PLATFORM_RASPBERRY = unk; then
+ 	TARGET_PLATFORM_RASPBERRY=false
+ 	platform_raspberry_reason="$cmdl_notspec_msg"
+@@ -733,6 +767,10 @@ else
+         TARGET_PLATFORM_BEAGLEBONE=true
+ 	platform_beaglebone_reason="$arch_enab_msg"
+     fi
++    if test $TARGET_PLATFORM_SOCFPGA = unk; then
++        TARGET_PLATFORM_SOCFPGA=true
++	platform_socfpga_reason="$arch_enab_msg"
++    fi
+     if test $TARGET_PLATFORM_RASPBERRY = unk; then
+         TARGET_PLATFORM_RASPBERRY=true
+ 	platform_raspberry_reason="$arch_enab_msg"
+@@ -750,6 +788,9 @@ AC_MSG_RESULT([$platform_pc_reason])
+ AC_MSG_CHECKING(platform-beaglebone)
+ AC_MSG_RESULT([$platform_beaglebone_reason])
+ 
++AC_MSG_CHECKING(platform-socfpga)
++AC_MSG_RESULT([$platform_socfpga_reason])
++
+ AC_MSG_CHECKING(platform-raspberry)
+ AC_MSG_RESULT([$platform_raspberry_reason])
+ 
+@@ -1788,7 +1829,12 @@ if $TARGET_PLATFORM_BEAGLEBONE; then
+    AC_DEFINE(TARGET_PLATFORM_BEAGLEBONE, [], [build for BeagleBone platform])
+    target_platform_beaglebone_val=yes
+ fi
+-AC_SUBST(TARGET_PLATFORM_BEAGLEBONE,$target_platform_beaglebone_val)
++
++if $TARGET_PLATFORM_SOCFPGA; then
++   AC_DEFINE(TARGET_PLATFORM_SOCFPGA, [], [build for Socfpga platform])
++   target_platform_socfpga_val=yes
++fi
++AC_SUBST(TARGET_PLATFORM_SOCFPGA,$target_platform_socfpga_val)
+ 
+ if $TARGET_PLATFORM_RASPBERRY; then
+    AC_DEFINE(TARGET_PLATFORM_RASPBERRY, [], [build for Raspberry Pi platform])diff --git a/src/machinekitcfg.py-tmp.in b/src/machinekitcfg.py-tmp.in
+index ee7e3d7..697997f 100644
+--- a/src/machinekitcfg.py-tmp.in
++++ b/src/machinekitcfg.py-tmp.in
+@@ -139,6 +139,7 @@ class Config(object):
+         self.USE_PORTABLE_PARPORT_IO = "@USE_PORTABLE_PARPORT_IO@"
+         self.TARGET_PLATFORM_PC = "@TARGET_PLATFORM_PC@"
+         self.TARGET_PLATFORM_BEAGLEBONE = "@TARGET_PLATFORM_BEAGLEBONE@"
++        self.TARGET_PLATFORM_SOCFPGA = "@TARGET_PLATFORM_SOCFPGA@"
+         self.TARGET_PLATFORM_RASPBERRY = "@TARGET_PLATFORM_RASPBERRY@"
+         self.ARCHITECTURE="@ARCHITECTURE@"
+ 
