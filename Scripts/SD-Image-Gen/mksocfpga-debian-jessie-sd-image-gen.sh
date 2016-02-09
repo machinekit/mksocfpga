@@ -23,7 +23,7 @@ CHROOT_DIR=$HOME/stretch
 #-------------------------------------------
 # u-boot, toolchain, imagegen vars
 #-------------------------------------------
-set -e      #halt on all errors
+#set -e      #halt on all errors
 
 # cross toolchain
 CC_DIR="${CURRENT_DIR}/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux"
@@ -39,10 +39,14 @@ IMG_FILE=${CURRENT_DIR}/mksoc_sdcard.img
 DRIVE=/dev/loop0
 
 # 4.15-kernel:
-KERNEL_FOLDER_NAME="linux-4.1.15"
-KERNEL_DIR=${CHROOT_DIR}/$KERNEL_FOLDER_NAME
+#KERNEL_FOLDER_NAME="linux-4.1.15"
 
-#KERNEL_DIR=${CURRENT_DIR}/arm-linux-gnueabifh-kernel/linux
+#4.4-KERNEL
+KERNEL_FOLDER_NAME="linux-4.4.1"
+
+KERNEL_BUILD_DIR=${WORK_DIR}/arm-linux-${KERNEL_FOLDER_NAME}-gnueabifh-kernel
+
+KERNEL_DIR=${KERNEL_BUILD_DIR}/linux
 
 NCORES=`nproc`
 
@@ -60,7 +64,7 @@ ROOTFS_FILE=$ROOTFS_NAME'.tar.xz'
 #-----------------------------------------------------------------------------------
 
 function build_uboot {
-$SCRIPT_ROOT_DIR/build_uboot.sh $CRRENT_DIR ##//  $CHROOT_DIR
+$SCRIPT_ROOT_DIR/build_uboot.sh $CURRENT_DIR ##//  $CHROOT_DIR
 }
 
 function build_kernel {
@@ -179,7 +183,7 @@ echo "#-------------------------------------------------------------------------
 echo "#-------------------------------------------------------------------------------#"
 
 DRIVE=`bash -c 'sudo losetup --show -f '$IMG_FILE''`
-
+sudo partprobe $DRIVE
 echo "# --------- installing boot partition files (kernel, dts, dtb) ---------"
 sudo mkdir -p $BOOT_MNT
 sudo mount -o uid=1000,gid=1000 ${DRIVE}p1 $BOOT_MNT
@@ -196,8 +200,8 @@ sudo mkdir -p $ROOTFS_MNT
 sudo mount ${DRIVE}p2 $ROOTFS_MNT
 
 # Rootfs -------#
-cd $ROOTFS_DIR
-sudo tar cf - . | (sudo tar xvf - -C $ROOTFS_MNT)
+#cd $ROOTFS_DIR
+#sudo tar cf - . | (sudo tar xvf - -C $ROOTFS_MNT)
 
 # kernel modules -------#
 cd $KERNEL_DIR
@@ -224,13 +228,12 @@ sync
 echo "#---------------------------------------------------------------------------------- "
 echo "#-----------+++     Full Image building process start       +++-------------------- "
 echo "#---------------------------------------------------------------------------------- "
-set -v -e
+set -e
 
 if [ ! -z "$WORK_DIR" ]; then
 
 #build_uboot
 #build_kernel
-#build_patched_kernel
 
 ##build_rcn_kernel
 
@@ -243,9 +246,9 @@ if [ ! -z "$WORK_DIR" ]; then
 #run_initial_sh
 
 
-create_image
-#install_files
-#install_uboot
+#create_image
+install_files
+install_uboot
 
 echo "#---------------------------------------------------------------------------------- "
 echo "#-------             Image building process complete                       -------- "
