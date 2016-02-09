@@ -1,5 +1,5 @@
 
-#-- missing config fpga on u-boot boot fix ----------------------------#
+Missing config fpga on u-boot boot fix
 
     setenv fpgaimage socfpga.rbf
     setenv fpgadata 0x2000000
@@ -10,12 +10,12 @@
 
     setenv bootcmd 'run fpgaconfig; run mmcload; run mmcboot'
 
-#-- missing lan @u-boot fix -- permanent until preloader reinstall ----#
+Missing lan @u-boot fix !! permanent until preloader reinstall 
     
     setenv ethaddr xx:xx:xx:xx:xx:xx
 
 
-#--  save variables and reboot   --->
+Save variables and reboot ->
 
     saveenv
     reset
