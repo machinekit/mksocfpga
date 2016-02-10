@@ -1,0 +1,53 @@
+systemctl --version
+sudo systemctl status  NetworkManager
+sudo systemctl status systemd-networkd
+sudo systemctl enable systemd-networkd
+sudo cat /etc/resolv.conf
+sudo rm /etc/resolv.conf
+
+sudo mkdir -p /etc/systemd/network
+
+
+sudo sh -c 'cat <<EOT > /etc/systemd/network/20-dhcp.network
+[Match]
+Name=eth0
+
+[Network]
+DHCP=yes
+EOT'
+
+
+sudo sh -c 'cat <<EOT > /etc/systemd/network/20-dhcp.network
+[Match]
+Name=eth0
+
+[Network]
+Address=192.168.10.11/24
+Gateway=192.168.10.1
+DNS=8.8.8.8
+EOT'
+
+cat /etc/systemd/network/20-dhcp.network
+
+sudo systemctl restart systemd-networkd
+
+systemctl status systemd-networkd
+systemctl status systemd-resolved
+
+sudo sh -c 'cat <<EOT > /etc/systemd/network/wired.network
+[Match]
+Name=eth0
+
+[Network]
+Address=192.168.10.11/24
+Gateway=192.168.10.1
+DNS=8.8.8.8
+EOT'
+
+sudo sh -c 'cat <<EOT > /etc/systemd/network/wired.network
+[Match]
+Name=eth0
+
+[Network]
+DHCP=ipv4
+EOT'

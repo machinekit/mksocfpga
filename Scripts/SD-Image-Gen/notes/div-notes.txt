@@ -1,0 +1,32 @@
+[    4.622859] systemd[1]: Failed to insert module 'autofs4'
+[    4.631540] systemd[1]: Set hostname to <mksoc>.
+[    5.957876] systemd[1]: Cannot add dependency job for unit dbus.socket, ignoring: Unit dbus.socket failed to load: No such file or directory.
+[    5.970701] systemd[1]: Cannot add dependency job for unit display-manager.service, ignoring: Unit display-manager.service failed to load: No such file or directory.
+
+
+
+[FAILED] Failed to start Create list of required static devic...current kernel.
+See 'systemctl status kmod-static-nodes.service' for details.
+
+
+
+apt install lokales kmod dbus dbus-x11 libpam-systemd systemd-ui systemd systemd-sysv debianutils dhcpcd-gtk dhcpcd-dbus autodns-dhcp dhcpcd5 autofs
+
+locale-gen en_US en_US.UTF-8 en_GB en_GB.UTF-8 en_DK en_DK.UTF-8
+
+echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
+That means you should add
+
+blacklist autofs4
+into a modprobe config file, e.g. into a new file /etc/modprobe.d/blacklist-autofs4.conf.
+
+sudo sh -c 'cat <<EOT > '$ROOTFS_MNT'/usr/sbin/policy-rc.d
+echo "************************************" >&2
+echo "All rc.d operations denied by policy" >&2
+echo "************************************" >&2
+exit 101
+EOT'
+
+locale-gen en_US en_US.UTF-8 en_GB en_GB.UTF-8
+#echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
