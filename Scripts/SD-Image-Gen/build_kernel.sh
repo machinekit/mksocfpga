@@ -6,48 +6,70 @@
 CURRENT_DIR=`pwd`
 WORK_DIR=$1
 
-
+#----------- Git clone ------------------------------------------------#
 #--------- RHN kernel -------------------------------------------------#
-#KERNEL_URL='https://github.com/RobertCNelson/armv7-multiplatform'
-#KERNEL_CHKOUT='origin/v4.4.x'
+RHN_KERNEL_URL='https://github.com/RobertCNelson/armv7-multiplatform'
+RHN_KERNEL_CHKOUT='origin/v4.4.x'
 
 #--------- altera socfpga kernel --------------------------------------#
-SOCFPGA_KERNEL_URL='https://github.com/altera-opensource/linux-socfpga.git'
-KERNEL_CHKOUT='linux-rt linux/socfpga-3.10-ltsi-rt'
+ALT_KERNEL_URL='https://github.com/altera-opensource/linux-socfpga.git'
+ALT_KERNEL_CHKOUT='linux-rt linux/socfpga-3.10-ltsi-rt'
+ALT_KERNEL_FOLDER_NAME="linux-3.10"
 
-#--------- patched kernel ---------------------------------------------#
+#--------- patched kernels --------------------------------------------#
+
 #4.1-KERNEL
-#KERNEL_FOLDER_NAME="linux-4.1.15"
-#PATCH_FILE="patch-4.1.15-rt17.patch.xz"
+KERNEL_4115_FOLDER_NAME="linux-4.1.15"
+PATCH_4115_FILE="patch-4.1.15-rt17.patch.xz"
 
 #4.4-KERNEL
-KERNEL_FOLDER_NAME="linux-4.4.1"
-PATCH_FILE="patch-4.4.1-rt5.patch.xz"
+KERNEL_441_FOLDER_NAME="linux-4.4.1"
+PATCH_441_FILE="patch-4.4.1-rt5.patch.xz"
 
+#-----------  Toolchains ----------------------------------------------#
+#--------- altera rt-ltsi socfpga kernel ------------------------------#
+ALT_CC_FOLDER_NAME="gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux"
+ALT_CC_URL="https://releases.linaro.org/14.09/components/toolchain/binaries/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux.tar.bz2"
+ALT_KERNEL_FOLDER_NAME="linux-3.10"
 
-KERNEL_FILE=${KERNEL_FOLDER_NAME}.tar.xz
+#----------------------------------------------------------------------#
+#--------- patched kernel ---------------------------------------------#
+MAINL_CC_FOLDER_NAME="gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf"
+MAINL_CC_URL="http://releases.linaro.org/components/toolchain/binaries/latest-5.2/arm-linux-gnueabihf/${CC_FILE}"
+
+#-------------- all kernel ----------------------------------------------------------------#
+# --- config ----------------------------------#
+#----- select mainline kernel -------#
+# KERNEL_FILE=${KERNEL_4115_FOLDER_NAME}.tar.xz
+# PATCH_FILE=$PATCH_4115_FILE
+KERNEL_FILE=${KERNEL_441_FOLDER_NAME}.tar.xz
+PATCH_FILE=$PATCH_441_FILE
+#----- select clone url -------------#
+# KERNEL_URL=$RHN_KERNEL_URL
+# KERNEL_CHKOUT=$RHN_KERNEL_CHKOUT
+KERNEL_URL=$ALT_KERNEL_URL
+KERNEL_CHKOUT=$ALT_KERNEL_CHKOUT
+#--------#
+KERNEL_FOLDER_NAME=$ALT_KERNEL_FOLDER_NAME
+
+#----- select toolchain -------------#
+# CC_FOLDER_NAME=$RHN_CC_FOLDER_NAME
+# CC_URL=$RHN_CC_URL
+CC_FOLDER_NAME=$ALT_CC_FOLDER_NAME
+CC_URL=$ALT_CC_URL
+
+# --- config end ------------------------------#
+
 KERNEL_FILE_URL='ftp://ftp.kernel.org/pub/linux/kernel/v4.x/'${KERNEL_FILE}
 PATCH_URL='https://www.kernel.org/pub/linux/kernel/projects/rt/4.4/'${PATCH_FILE}
+
+CC_DIR="${WORK_DIR}/${CC_FOLDER_NAME}"
+CC_FILE="${CC_FOLDER_NAME}.tar.xz"
+CC="${CC_DIR}/bin/arm-linux-gnueabihf-"
 
 KERNEL_CONF='socfpga_defconfig'
 distro=jessie
 
-#-----------  Toolchain -----------------------------------------------#
-#--------- altera socfpga kernel --------------------------------------#
-
-#CC_DIR="${WORK_DIR}/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux"
-#CC="${CC_DIR}/bin/arm-linux-gnueabihf-"
-#----------------------------------------------------------------------#
-#--------- patched kernel ---------------------------------------------#
-CC_FOLDER_NAME="gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf"
-CC_DIR="${WORK_DIR}/${CC_FOLDER_NAME}"
-CC_FILE="${CC_FOLDER_NAME}.tar.xz"
-
-CC_URL="http://releases.linaro.org/components/toolchain/binaries/latest-5.2/arm-linux-gnueabihf/${CC_FILE}"
-
-CC="${CC_DIR}/bin/arm-linux-gnueabihf-"
-
-#http://releases.linaro.org/components/toolchain/binaries/latest-5.2/arm-linux-gnueabihf/gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf.tar.xz
 #----------------------------------------------------------------------#
 #----------------------------------------------------------------------#
 #----------------------------------------------------------------------#
@@ -99,17 +121,18 @@ clone_kernel() {
     if [ -d ${KERNEL_BUILD_DIR} ]; then
         echo the kernel target directory $KERNEL_BUILD_DIR already exists.
         echo cleaning repo
-        cd $KERNEL_BUILD_DIR 
+        cd $KERNEL_BUILD_DIR/linux 
         git clean -d -f -x
+        git fetch linux
     else
         mkdir -p $KERNEL_BUILD_DIR
         cd $KERNEL_BUILD_DIR
         git clone $KERNEL_URL linux
         cd linux 
         git remote add linux $KERNEL_URL
+        git fetch linux
+        git checkout -b $KERNEL_CHKOUT
     fi
-    git fetch linux
-    git checkout -b $KERNEL_CHKOUT
     cd ..  
 }
 
@@ -167,10 +190,12 @@ if [ ! -z "$WORK_DIR" ]; then
 #install_dep
 echo "fetching / extracting toolchain"
 get_toolchain
-echo "Downloading / extracting kernel"
-fetch_kernel
-echo "Applying patch"
-patch_kernel
+#echo "Downloading / extracting kernel"
+#fetch_kernel
+#    echo "Applying patch"
+#    patch_kernel
+echo "cloning kernel"
+clone_kernel
 echo "building kernel"
 build_kernel
 echo "#---------------------------------------------------------------------------------- "

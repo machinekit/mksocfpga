@@ -5,12 +5,14 @@
 set -e
 CURRENT_DIR=`pwd`
 WORK_DIR=$1
-MOUNT_DIR=$2
+ROOTFS_DIR=$2
+SD_IMG=$3
 
-SD_IMG=${WORK_DIR}/mksoc_sdcard.img
+MOUNT_DIR=
+ROOTFS_MNT=/mnt/rootfs
+
 ROOTFS_IMG=${WORK_DIR}/rootfs.img
 DRIVE=/dev/loop0
-ROOTFS_DIR=${WORK_DIR}/rootfs
 
 distro=jessie
 
@@ -20,15 +22,19 @@ DEFGROUPS="sudo,kmem,adm,dialout,machinekit,video,plugdev"
 #------------------------------------------------------------------------------------------------------
 # build armhf Debian qemu-debootstrap chroot port
 #------------------------------------------------------------------------------------------------------
-function install_dep {
+install_dep() {
     sudo apt-get -y install qemu binfmt-support qemu-user-static schroot debootstrap 
 }
 
-function run_bootstrap {
-sudo qemu-debootstrap --arch=armhf --variant=buildd  --no-check-gpg --include=adduser,resolvconf,apt-utils,ssh,sudo,ntpdate,openssl,vim,nano,cryptsetup,lvm2,locales,login,build-essential,gcc,g++,gdb,make,subversion,git,curl,zip,unzip,pbzip2,pigz,dialog,systemd,openssh-server,ntpdate,less,cpufrequtils,isc-dhcp-client,ntp,console-setup,ca-certificates,xserver-xorg,xserver-xorg-video-dummy,debian-archive-keyring,debian-keyring,debian-ports-archive-keyring,netbase,iproute2,iputils-ping,iputils-arping,iputils-tracepath,wget,kmod,haveged $distro $ROOTFS_DIR http://ftp.debian.org/debian/
+#function run_bootstrap {
+#sudo qemu-debootstrap --arch=armhf --variant=buildd  --no-check-gpg --include=adduser,resolvconf,apt-utils,ssh,sudo,ntpdate,openssl,vim,nano,cryptsetup,lvm2,locales,login,build-essential,gcc,g++,gdb,make,subversion,git,curl,zip,unzip,pbzip2,pigz,dialog,systemd,openssh-server,ntpdate,less,cpufrequtils,isc-dhcp-client,ntp,console-setup,ca-certificates,xserver-xorg,xserver-xorg-video-dummy,debian-archive-keyring,debian-keyring,debian-ports-archive-keyring,netbase,iproute2,iputils-ping,iputils-arping,iputils-tracepath,wget,kmod,haveged $distro $ROOTFS_DIR http://ftp.debian.org/debian/
+#}
+
+run_bootstrap() {
+sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,kmod,dbus,dbus-x11,libpam-systemd,systemd-ui,systemd,systemd-sysv,dhcpcd-gtk,dhcpcd-dbus,autodns-dhcp,dhcpcd5,iputils-ping,iproute2,traceroute,autofs,xorg $distro $ROOTFS_DIR http://ftp.debian.org/debian/
 }
 
-function setup_configfiles {
+setup_configfiles() {
 
 echo "Setting up config files "
 
@@ -103,19 +109,33 @@ sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/hosts
 127.0.0.1       localhost
 127.0.1.1       mksoc.local      mksoc
 ::1             localhost ip6-localhost ip6-loopback
-fe00::0         ip6-localnet
-ff00::0         ip6-mcastprefix
+#fe00::0         ip6-localnet
+#ff00::0         ip6-mcastprefix
 ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
 EOT'
 
- 
-sudo sh -c 'cat <<EOT >> '$ROOTFS_DIR'/etc/network/interfaces
-auto lo eth0
-iface lo inet loopback
-allow-hotplug eth0
-    iface eth0 inet dhcp
+sudo rm /etc/resolv.conf
+sudo ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+sudo mkdir -p /etc/systemd/network
+
+sudo sh -c 'cat <<EOT > /etc/systemd/network/wired.network
+[Match]
+Name=eth0
+
+[Network]
+Address=192.168.10.11/24
+Gateway=192.168.10.1
+DNS=8.8.8.8
 EOT'
+ 
+#sudo sh -c 'cat <<EOT >> '$ROOTFS_DIR'/etc/network/interfaces
+#auto lo eth0
+#iface lo inet loopback
+#allow-hotplug eth0
+#    iface eth0 inet dhcp
+#EOT'
 
 sudo sh -c 'echo T0:2345:respawn:rootfs/sbin/getty -L ttyS0 115200 vt100 >> '$ROOTFS_DIR'/etc/inittab'
 
@@ -219,7 +239,7 @@ sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/locale.gen
 # cy_GB ISO-8859-14
 # cy_GB.UTF-8 UTF-8
 # da_DK ISO-8859-1
-# da_DK.UTF-8 UTF-8
+da_DK.UTF-8 UTF-8
 # de_AT ISO-8859-1
 # de_AT.UTF-8 UTF-8
 # de_AT@euro ISO-8859-15
@@ -251,7 +271,7 @@ sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/locale.gen
 # en_CA.UTF-8 UTF-8
 # en_DK ISO-8859-1
 # en_DK.ISO-8859-15 ISO-8859-15
-# en_DK.UTF-8 UTF-8
+en_DK.UTF-8 UTF-8
 # en_GB ISO-8859-1
 # en_GB.ISO-8859-15 ISO-8859-15
 en_GB.UTF-8 UTF-8
@@ -624,7 +644,7 @@ EOT'
 echo "Config files genetated"
 }
 
-function gen_initial_sh {
+gen_initial_sh() {
 export DEFGROUPS="sudo,kmem,adm,dialout,machinekit,video,plugdev"
 echo "------------------------------------------"
 echo "generating initial.sh chroot config script"
@@ -663,7 +683,7 @@ EOT'
 sudo chmod +x $ROOTFS_DIR/home/initial.sh
 }
 
-function run_initial_sh {
+run_initial_sh() {
 echo "------------------------------------------"
 echo "running initial.sh config script in chroot"
 echo "------------------------------------------"
@@ -680,69 +700,47 @@ sudo umount sys/
 sudo umount proc/
 }
 
-function run_chroot {
+init_chroot() {
 gen_initial_sh
 run_initial_sh
 }
 
-function run_func {
-#    install_dep  #install qemu 2.5 from sid instead
+run_func() {
+##    install_dep  #install qemu 2.5 from sid instead
 #    run_bootstrap
     setup_configfiles
-##    run_chroot
+##    init_chroot
 }
 
-function sd_card_img_install {
-if [ ! -z "$MOUNT_DIR" ]; then
-    ROOTFS_DIR=${MOUNT_DIR}/rootfs
-    sudo losetup --show -f $SD_IMG
+gen_install_in-img() {
+if [ ! -z "$SD_IMG" ]; then
+    DRIVE=`bash -c 'sudo losetup --show -f '$SD_IMG''`
     sudo partprobe $DRIVE
-    sudo mkdir -p $ROOTFS_DIR
-    sudo mount ${DRIVE}p2 $ROOTFS_DIR
-    echo "NOTE: ""chroot is mounted in:"
+    sudo mkdir -p $ROOTFS_MNT
+    sudo mount ${DRIVE}p2 $ROOTFS_MNT
+    echo "NOTE: ""chroot is mounted in: ${ROOTFS_MNT}"
+    ROOTFS_DIR=$ROOTFS_MNT
     echo "NOTE: "'rootfs_dir ='$ROOTFS_DIR
     run_func
-    sudo umount $ROOTFS_DIR
+    sudo umount $ROOTFS_MNT
     echo "NOTE: ""chroot was unounted "
     echo "NOTE: ""rootfs is now installed in imagefile:"$SD_IMG
     sudo losetup -D
     sync
 else
-    ROOTFS_DIR=${WORK_DIR}/rootfs
-    echo "NOTE: ""no Mountdir parameter given chroot will only be made in current local folder:"   
+    echo "NOTE: ""no Imagefile parameter given chroot will only be made in current local folder:"   
     echo "NOTE: "'rootfs_dir ='$ROOTFS_DIR 
     run_func
 fi
-}
-
-function rootfs_img_install {
-if [ ! -z "$MOUNT_DIR" ]; then
-    ROOTFS_DIR=${MOUNT_DIR}/rootfs
-    sudo mkdir -p ${ROOTFS_DIR}
-    sudo mount ${ROOTFS_IMG} ${ROOTFS_DIR}
-    echo "NOTE: ""rootfs "$ROOTFS_IMG" is mounted in:"
-    echo "NOTE: "'rootfs_dir ='$ROOTFS_DIR
-    run_func
-    sudo umount ${ROOTFS_DIR}
-    echo "NOTE: ""rootfs was unounted "
-    echo "NOTE: ""rootfs is now in imagefile:"$ROOTFS_IMG
-    sync
-else
-    ROOTFS_DIR=${WORK_DIR}/rootfs
-    echo "NOTE: ""no Mountdir parameter given chroot will only be made in current local folder:"   
-    echo "NOTE: "'rootfs_dir ='$ROOTFS_DIR 
-    run_func
-fi
-
 }
 
 #----------------------- Run functions ----------------------------#
 echo "#---------------------------------------------------------------------------------- "
 echo "#--------------------+++       gen-rootfs.sh Start   +++--------------------------- "
 echo "#---------------------------------------------------------------------------------- "
+set -e
 
-rootfs_img_install
-#sd_card_img_install
+gen_install_in-img
 
 echo "#---------------------------------------------------------------------------------- "
 echo "#--------------------+++       gen-rootfs.sh End     +++--------------------------- "

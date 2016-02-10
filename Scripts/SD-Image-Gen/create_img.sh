@@ -6,12 +6,13 @@
 #------------------------------------------------------------------------------------------------------
 CURRENT_DIR=`pwd`
 WORK_DIR=$1
+SD_IMG=$2
 
-SD_IMG=${WORK_DIR}/mksoc_sdcard.img
+#SD_IMG=${WORK_DIR}/mksoc_sdcard.img
 ROOTFS_IMG=${WORK_DIR}/rootfs.img
 DRIVE=/dev/loop0
 
-function create_sdcard_img {
+create_sdcard_img() {
 #--------------- Initial sd-card image - partitioned --------------
 echo "#-------------------------------------------------------------------------------#"
 echo "#-----------------------------          ----------------------------------------#"
@@ -59,7 +60,7 @@ sudo losetup -D
 sync
 }
 
-function create_rootfs_img {
+create_rootfs_img() {
 echo "#-------------------------------------------------------------------------------#"
 echo "#-----------------------------          ----------------------------------------#"
 echo "#----------------     +++ generating rootfs image  zzz  +++ ........  ----------#"
