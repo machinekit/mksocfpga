@@ -45,6 +45,8 @@ KERNEL_441_FOLDER_NAME="linux-4.4.1"
 PATCH_441_FILE="patch-4.4.1-rt5.patch.xz"
 
 #-------------- all kernel ----------------------------------------------------------------#
+# mksoc uio kernel driver module filder:
+UIO_DIR=$CURRENT_DIR/hm2reg_uio-module
 # --- config ----------------------------------#
 KERNEL_FOLDER_NAME=$ALT_KERNEL_FOLDER_NAME
 
@@ -65,8 +67,8 @@ CC="${CC_DIR}/bin/arm-linux-gnueabihf-"
 UBOOT_VERSION='v2016.01'
 UBOOT_SPLFILE=${CURRENT_DIR}/uboot/u-boot-with-spl-dtb.sfp
 
-IMG_FILE=${CURRENT_DIR}/mksoc_sdcard-test.img
-DRIVE=/dev/loop0
+#IMG_FILE=${CURRENT_DIR}/mksoc_sdcard-test.img
+IMG_FILE=${CURRENT_DIR}/mksoc_sdcard.img
 
 KERNEL_BUILD_DIR=${CURRENT_DIR}/arm-linux-${KERNEL_FOLDER_NAME}-gnueabifh-kernel
 
@@ -295,13 +297,15 @@ sudo mount ${DRIVE}p2 $ROOTFS_MNT
 #sudo tar cf - . | (sudo tar xvf - -C $ROOTFS_MNT)
 
 #RHN:
-sudo tar xfvp $ROOTFS_DIR/armhf-rootfs-*.tar -C $ROOTFS_MNT
+#sudo tar xfvp $ROOTFS_DIR/armhf-rootfs-*.tar -C $ROOTFS_MNT
 
 # kernel modules -------#
 cd $KERNEL_DIR
 export PATH=$CC_DIR/bin/:$PATH
 #export CROSS_COMPILE=$CC
 sudo make ARCH=arm INSTALL_MOD_PATH=$ROOTFS_MNT modules_install
+sudo make ARCH=arm -C $KERNEL_DIR M=$UIO_DIR INSTALL_MOD_PATH=$ROOTFS_MNT modules_install
+
 #sudo make -j$NCORES LOADADDR=0x8000 modules_install INSTALL_MOD_PATH=$ROOTFS_MNT
 #sudo chroot $ROOTFS_MNT rm /usr/sbin/policy-rc.d
 
@@ -327,16 +331,16 @@ set -e
 if [ ! -z "$WORK_DIR" ]; then
 
 #build_uboot
-build_kernel
+#build_kernel
 
 ##build_rcn_kernel
 
 ##build_rootfs_into_folder
 
-create_image
+#create_image
 #build_rootfs_into_image
 
-fetch_extract_rcn_rootfs
+#fetch_extract_rcn_rootfs
 
 #run_initial_sh
 

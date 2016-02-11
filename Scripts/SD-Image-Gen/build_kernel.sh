@@ -38,6 +38,10 @@ MAINL_CC_FOLDER_NAME="gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf"
 MAINL_CC_URL="http://releases.linaro.org/components/toolchain/binaries/latest-5.2/arm-linux-gnueabihf/${CC_FILE}"
 
 #-------------- all kernel ----------------------------------------------------------------#
+
+# mksoc uio kernel driver module filder:
+UIO_DIR=$CURRENT_DIR/hm2reg_uio-module
+
 # --- config ----------------------------------#
 #----- select mainline kernel -------#
 # KERNEL_FILE=${KERNEL_4115_FOLDER_NAME}.tar.xz
@@ -79,6 +83,7 @@ IMG_FILE=${WORK_DIR}/mksoc_sdcard.img
 DRIVE=/dev/loop0
 
 KERNEL_BUILD_DIR=${WORK_DIR}/arm-linux-${KERNEL_FOLDER_NAME}-gnueabifh-kernel
+KERNEL_DIR=${KERNEL_BUILD_DIR}/linux
 
 NCORES=`nproc`
 
@@ -158,13 +163,13 @@ fetch_kernel() {
 }
 
 patch_kernel() {
-cd $KERNEL_BUILD_DIR/linux
+cd $KERNEL_DIR
 xzcat ../$PATCH_FILE | patch -p1
 }
 
 build_kernel() {
 export CROSS_COMPILE=$CC
-cd $KERNEL_BUILD_DIR/linux
+cd $KERNEL_DIR
 #clean
 make -j$NCORES mrproper
 # configure
@@ -178,6 +183,10 @@ make -j$NCORES ARCH=arm 2>&1 | tee ../linux-make_rt-log_.txt
 # modules:
 make -j$NCORES ARCH=arm modules 2>&1 | tee ../linux-modules_rt-log.txt
 #make -j$NCORES modules 2>&1 | tee ../linux-modules_rt-log.txt
+
+# uio hm2_mksoc module:
+make -j$NCORES ARCH=arm -C $KERNEL_DIR M=$UIO_DIR  modules 2>&1 | tee ../linux-uio-module_rt-log.txt
+
 }
 
 echo "#---------------------------------------------------------------------------------- "
