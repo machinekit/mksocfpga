@@ -22,7 +22,10 @@ https://drive.google.com/file/d/0BwyLvgyVIdi8TkI5NHNBQlhnSms/view?usp=sharing
 
 
 4.b copy the folder boot_files from repo to work folder (contains valid out_put from quartus ... no need to run quartus makefile)
+
 4.c copy folder hm2reg_uio-module (from SW/MK/kernel-drivers) to work folder.
+
+4.d Note: you will neeed to copy the socfpga_defconfig into the (correct) arm/config folder overwriting the default one to enable uio-driver after the script has cloned the kernel repo on first run(with warnings). (needs patch fix...!)
 
 5. edit this script in your local mksocfpga repo folder:
  https://github.com/the-snowwhite/mksocfpga/blob/master/Scripts/SD-Image-Gen/mksocfpga-debian-jessie-sd-image-gen.sh#L333
