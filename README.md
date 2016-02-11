@@ -16,7 +16,10 @@ Quickstart test quide:
 
 3. then create and cd to a different new folder (your work folder).
 
-4.a extract the rootfs sd image into the work folder.
+4.a extract the rootfs sd image into the work folder. links:
+https://drive.google.com/file/d/0BwyLvgyVIdi8cjM3MlYyWG9xY1E/view?usp=sharing
+https://drive.google.com/file/d/0BwyLvgyVIdi8TkI5NHNBQlhnSms/view?usp=sharing
+
 
 4.b copy the folder boot_files from repo to work folder (contains valid out_put from quartus ... no need to run quartus makefile)
 4.c copy folder hm2reg_uio-module (from SW/MK/kernel-drivers) to work folder.
