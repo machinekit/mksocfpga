@@ -58,6 +58,6 @@ as so(near bottom):
 
 keep cd in your work folder and call the script like this:
 
-<your repo folder>/mksocfpga/blob/master/Scripts/SD-Image-Gen/mksocfpga-debian-jessie-sd-image-gen.sh <anything>
+<your repo folder>/mksocfpga/blob/master/Scripts/SD-Image-Gen/mksocfpga-debian-jessie-sd-image-gen.sh anything
 
 
