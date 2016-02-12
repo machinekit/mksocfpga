@@ -8,7 +8,7 @@ CURRENT_DIR=`pwd`
 WORK_DIR=$CURRENT_DIR
 
 ROOTFS_DIR=${WORK_DIR}/rootfs
-IMG_FILE=${CURRENT_DIR}/mksoc_sdcard.img
+IMG_FILE=${CURRENT_DIR}/mksoc_sdcard-beta2.img
 ROOTFS_MNT=/mnt/rootfs
 
 MK_SOURCEFILE_NAME=machinekit-src.tar.bz2

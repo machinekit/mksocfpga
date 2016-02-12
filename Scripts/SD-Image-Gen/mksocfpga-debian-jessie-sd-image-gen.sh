@@ -209,6 +209,22 @@ echo "NOTE: ""Will now add user to groups"
 usermod -a -G '$DEFGROUPS' machinekit
 sync
 
+
+cat <<EOT >> /home/machinekit/.bashrc
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US.UTF-8
+EOT
+
+cat <<EOT >> /home/machinekit/.profile
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US.UTF-8
+EOT
+
+
 systemctl enable systemd-networkd
 systemctl enable systemd-resolved
 
