@@ -60,4 +60,8 @@ keep cd in your work folder and call the script like this:
 
 "your repo folder"/mksocfpga/Scripts/SD-Image-Gen/mksocfpga-debian-jessie-sd-image-gen.sh anything
 
+NOTE:
+Remember on your first boot to have yout usbserial terminal connected and press space (or any key) within 3 sek,
+then paste 1 and 3 into the console from here:
+https://github.com/the-snowwhite/mksocfpga/blob/master/docs/set-uboot-env.md
 
