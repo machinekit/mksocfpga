@@ -1,6 +1,22 @@
 # mksocfpga
 Further development of the Machinekit SocFpga
 
+update(14-feb-2014)
+Fully bootable sd-image (MK-Rip-built)
+Remember usb serial console 115200 8n1 on first boot.
+3 - sek > press kay and:
+https://github.com/the-snowwhite/mksocfpga/blob/master/docs/set-uboot-env.md
+
+Msel (SW10):
+ 010101  
+(123456)
+
+https://drive.google.com/file/d/0BwyLvgyVIdi8QTRjVGZDbk1OZGs/view?usp=sharing
+https://drive.google.com/file/d/0BwyLvgyVIdi8amE3ZW1fLUxld2s/view?usp=sharing
+
+---
+
+
 DE0-Nano Quartus project fully functional.
 
     Initial hal hostmot2 module drivers to be tested with custom uio driver module online:
