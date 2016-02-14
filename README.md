@@ -16,6 +16,14 @@ https://drive.google.com/file/d/0BwyLvgyVIdi8amE3ZW1fLUxld2s/view?usp=sharing
 
 ---
 
+username machinekit
+Pw: machinekit
+
+To set localtimezone:
+
+    sudo dpkg-reconfigure tzdata
+
+
 
 DE0-Nano Quartus project fully functional.
 
