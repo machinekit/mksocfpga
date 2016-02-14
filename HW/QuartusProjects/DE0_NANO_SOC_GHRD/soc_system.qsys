@@ -9,6 +9,22 @@
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
+   element adc_ltc2308_0
+   {
+      datum _sortIndex
+      {
+         value = "12";
+         type = "int";
+      }
+   }
+   element adc_ltc2308_0.slave
+   {
+      datum baseAddress
+      {
+         value = "327680";
+         type = "String";
+      }
+   }
    element button_pio
    {
       datum _sortIndex
@@ -330,6 +346,11 @@
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface
+   name="adc"
+   internal="adc_ltc2308_0.conduit_end"
+   type="conduit"
+   dir="end" />
+ <interface
    name="button_pio"
    internal="button_pio.external_connection"
    type="conduit"
@@ -384,6 +405,7 @@
  <interface name="memory" internal="hps_0.memory" type="conduit" dir="end" />
  <interface name="mk_io" internal="hm2reg_io_0.pins" type="conduit" dir="end" />
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
+ <module name="adc_ltc2308_0" kind="adc_ltc2308" version="1.1" enabled="1" />
  <module name="button_pio" kind="altera_avalon_pio" version="15.1" enabled="1">
   <parameter name="bitClearingEdgeCapReg" value="true" />
   <parameter name="bitModifyingOutReg" value="false" />
@@ -782,8 +804,8 @@
   <parameter name="S2FCLK_COLDRST_Enable" value="false" />
   <parameter name="S2FCLK_PENDINGRST_Enable" value="false" />
   <parameter name="S2FCLK_USER0CLK_Enable" value="true" />
-  <parameter name="S2FCLK_USER1CLK_Enable" value="false" />
-  <parameter name="S2FCLK_USER1CLK_FREQ" value="100.0" />
+  <parameter name="S2FCLK_USER1CLK_Enable" value="true" />
+  <parameter name="S2FCLK_USER1CLK_FREQ" value="40.0" />
   <parameter name="S2FCLK_USER2CLK" value="3" />
   <parameter name="S2FCLK_USER2CLK_Enable" value="true" />
   <parameter name="S2FCLK_USER2CLK_FREQ" value="100.0" />
@@ -1122,6 +1144,15 @@
  <connection
    kind="avalon"
    version="15.1"
+   start="hps_0.h2f_lw_axi_master"
+   end="adc_ltc2308_0.slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00050000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.1"
    start="fpga_only_master.master"
    end="jtag_uart.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
@@ -1201,6 +1232,15 @@
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
+   kind="avalon"
+   version="15.1"
+   start="fpga_only_master.master"
+   end="adc_ltc2308_0.slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00050000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
    kind="clock"
    version="15.1"
    start="clk_0.clk"
@@ -1230,6 +1270,11 @@
    kind="clock"
    version="15.1"
    start="clk_0.clk"
+   end="adc_ltc2308_0.clock_sink" />
+ <connection
+   kind="clock"
+   version="15.1"
+   start="clk_0.clk"
    end="hps_0.f2h_axi_clock" />
  <connection
    kind="clock"
@@ -1242,6 +1287,11 @@
    start="clk_0.clk"
    end="hps_0.h2f_lw_axi_clock" />
  <connection
+   kind="clock"
+   version="15.1"
+   start="hps_0.h2f_user1_clock"
+   end="adc_ltc2308_0.clock_sink_adc" />
+ <connection
    kind="interrupt"
    version="15.1"
    start="hps_0.f2h_irq0"
@@ -1336,6 +1386,11 @@
  <connection
    kind="reset"
    version="15.1"
+   start="clk_0.clk_reset"
+   end="adc_ltc2308_0.reset_sink" />
+ <connection
+   kind="reset"
+   version="15.1"
    start="fpga_only_master.master_reset"
    end="fpga_only_master.clk_reset" />
  <connection
@@ -1413,6 +1468,16 @@
    version="15.1"
    start="hps_only_master.master_reset"
    end="intr_capturer_0.reset_sink" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
+   end="adc_ltc2308_0.reset_sink" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="adc_ltc2308_0.reset_sink" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />
 </system>
