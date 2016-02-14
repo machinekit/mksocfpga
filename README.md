@@ -23,7 +23,10 @@ To set localtimezone:
 
     sudo dpkg-reconfigure tzdata
 
-
+    
+---
+    
+    
 
 DE0-Nano Quartus project fully functional.
 
