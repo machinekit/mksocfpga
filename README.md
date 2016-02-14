@@ -2,6 +2,7 @@
 Further development of the Machinekit SocFpga
 
 update(14-feb-2014)
+
 Fully bootable sd-image (MK-Rip-built)
 Remember usb serial console 115200 8n1 on first boot.
 3 - sek > press kay and:
