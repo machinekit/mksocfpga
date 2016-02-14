@@ -12,7 +12,7 @@
 # 
 # request TCL package from ACDS 13.1
 # 
-package require -exact qsys 13.1
+package require -exact qsys 15.1
 
 
 # 
@@ -28,7 +28,6 @@ set_module_property AUTHOR Richard
 set_module_property DISPLAY_NAME adc_ltc2308
 set_module_property INSTANTIATE_IN_SYSTEM_MODULE true
 set_module_property EDITABLE true
-set_module_property ANALYZE_HDL AUTO
 set_module_property REPORT_TO_TALKBACK false
 set_module_property ALLOW_GREYBOX_GENERATION false
 
@@ -47,6 +46,15 @@ add_fileset_file adc_data_fifo.v VERILOG PATH adc_data_fifo.v
 # 
 # parameters
 # 
+
+# 
+# module assignments
+# 
+set_module_assignment embeddedsw.dts.group hm2-socfpga
+set_module_assignment embeddedsw.dts.name hm2adc-io
+set_module_assignment embeddedsw.dts.params.address_width 3
+set_module_assignment embeddedsw.dts.params.data_width 16
+set_module_assignment embeddedsw.dts.vendor machkt
 
 
 # 
@@ -104,10 +112,10 @@ set_interface_property conduit_end PORT_NAME_MAP ""
 set_interface_property conduit_end CMSIS_SVD_VARIABLES ""
 set_interface_property conduit_end SVD_ADDRESS_GROUP ""
 
-add_interface_port conduit_end ADC_CONVST export Output 1
-add_interface_port conduit_end ADC_SCK export Output 1
-add_interface_port conduit_end ADC_SDI export Output 1
-add_interface_port conduit_end ADC_SDO export Input 1
+add_interface_port conduit_end ADC_CONVST convst Output 1
+add_interface_port conduit_end ADC_SCK sck Output 1
+add_interface_port conduit_end ADC_SDI sdi Output 1
+add_interface_port conduit_end ADC_SDO sdo Input 1
 
 
 # 
