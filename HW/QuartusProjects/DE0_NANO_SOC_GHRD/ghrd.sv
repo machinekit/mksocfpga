@@ -267,10 +267,10 @@ module ghrd(
 //     .mk_io_hm2_we                 				(hm_chipsel),                    //                          .hm2_chipsel
      .clk_100mhz_out_clk                    	(hm_clk_med),                    //            clk_100mhz_out.clk
      .clk_200mhz_out_clk                    	(hm_clk_high),                    //            clk_100mhz_out.clk
-	  .adc_CONVST                            (ADC_CONVST),                            //                       adc.CONVST
-	  .adc_SCK                               (ADC_SCK),                               //                          .SCK
-	  .adc_SDI                               (ADC_SDI),                               //                          .SDI
-	  .adc_SDO                               (ADC_SDO)                                //                          .SDO
+	  .adc_convst                            (ADC_CONVST),                            //                       adc.CONVST
+	  .adc_sck                               (ADC_SCK),                               //                          .SCK
+	  .adc_sdi                               (ADC_SDI),                               //                          .SDI
+	  .adc_sdo                               (ADC_SDO)                                //                          .SDO
 //      .axi_str_data                      (out_data[7:0]),                      //               stream_port.data
 //      .axi_str_valid                     (out_data[8]),                     //                          .valid
 //      .axi_str_ready                     (ar_in_sig[1])                      //                          .ready
