@@ -47,6 +47,7 @@ PATCH_441_FILE="patch-4.4.1-rt5.patch.xz"
 #-------------- all kernel ----------------------------------------------------------------#
 # mksoc uio kernel driver module filder:
 UIO_DIR=$CURRENT_DIR/hm2reg_uio-module
+ADC_DIR=$CURRENT_DIR/hm2adc_uio-module
 # --- config ----------------------------------#
 KERNEL_FOLDER_NAME=$ALT_KERNEL_FOLDER_NAME
 
@@ -321,6 +322,7 @@ export PATH=$CC_DIR/bin/:$PATH
 #export CROSS_COMPILE=$CC
 sudo make ARCH=arm INSTALL_MOD_PATH=$ROOTFS_MNT modules_install
 sudo make ARCH=arm -C $KERNEL_DIR M=$UIO_DIR INSTALL_MOD_PATH=$ROOTFS_MNT modules_install
+#sudo make ARCH=arm -C $KERNEL_DIR M=$ADC_DIR INSTALL_MOD_PATH=$ROOTFS_MNT modules_install
 
 #sudo make -j$NCORES LOADADDR=0x8000 modules_install INSTALL_MOD_PATH=$ROOTFS_MNT
 #sudo chroot $ROOTFS_MNT rm /usr/sbin/policy-rc.d

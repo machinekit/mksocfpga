@@ -41,6 +41,7 @@ MAINL_CC_URL="http://releases.linaro.org/components/toolchain/binaries/latest-5.
 
 # mksoc uio kernel driver module filder:
 UIO_DIR=$CURRENT_DIR/hm2reg_uio-module
+ADC_DIR=$CURRENT_DIR/hm2adc_uio-module
 
 # --- config ----------------------------------#
 #----- select mainline kernel -------#
@@ -186,6 +187,9 @@ make -j$NCORES ARCH=arm modules 2>&1 | tee ../linux-modules_rt-log.txt
 
 # uio hm2_mksoc module:
 make -j$NCORES ARCH=arm -C $KERNEL_DIR M=$UIO_DIR  modules 2>&1 | tee ../linux-uio-module_rt-log.txt
+
+# uio hm2_mksoc module:
+make -j$NCORES ARCH=arm -C $KERNEL_DIR M=$ADC_DIR  modules 2>&1 | tee ../linux-uio-module_rt-log.txt
 
 }
 
