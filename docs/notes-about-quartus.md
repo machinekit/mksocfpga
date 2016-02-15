@@ -14,6 +14,13 @@ start quartus gui with project loaded:
     make quartus_edit
 
     
+script compile all needed output files:
+
+    make sof dts dtb
+    
+
+(make sof is needed to generate the .rbf fpga config file thata used)    
+    
 Note:
 
 Quartus config is in *.qsf files, there are differences between linux (/) and windows(\\) paths.
