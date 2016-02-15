@@ -69,8 +69,8 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity pwmpdmgenh is
 	generic (
-		buswidth : integer := 32;
-		refwidth : integer := 13
+		buswidth : integer;
+		refwidth : integer
 		);    
 	port (
 		clk: in std_logic;
