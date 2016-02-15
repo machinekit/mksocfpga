@@ -23,7 +23,9 @@ script compile all needed output files:
     
 Note:
 
-Quartus config is in *.qsf files, there are differences between linux [/} and windows [\\} paths.
+
+    Quartus config is in *.qsf files, there are differences between linux / and windows \\ paths.
+
 
 Also the qsys IP core path problem only seems fixable by including / preserving a qsys genetated file (after setting the path in qsys optione in menu)
 from the hidden .qsys folder in the project folder:
