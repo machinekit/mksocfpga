@@ -19,13 +19,13 @@ package require -exact qsys 15.1
 # module adc_ltc2308
 # 
 set_module_property DESCRIPTION "for DE2-SoC  (no level shift version)"
-set_module_property NAME adc_ltc2308
+set_module_property NAME adc_ltc2308_fifo
 set_module_property VERSION 1.1
 set_module_property INTERNAL false
 set_module_property OPAQUE_ADDRESS_MAP true
 set_module_property GROUP "Terasic Qsys Component"
 set_module_property AUTHOR Richard
-set_module_property DISPLAY_NAME adc_ltc2308
+set_module_property DISPLAY_NAME adc-ltc2308
 set_module_property INSTANTIATE_IN_SYSTEM_MODULE true
 set_module_property EDITABLE true
 set_module_property REPORT_TO_TALKBACK false
@@ -41,6 +41,7 @@ set_fileset_property QUARTUS_SYNTH ENABLE_RELATIVE_INCLUDE_PATHS false
 add_fileset_file adc_ltc2308_fifo.v VERILOG PATH adc_ltc2308_fifo.v TOP_LEVEL_FILE
 add_fileset_file adc_ltc2308.v VERILOG PATH adc_ltc2308.v
 add_fileset_file adc_data_fifo.v VERILOG PATH adc_data_fifo.v
+add_fileset_file adc_ltc2308_hw.tcl OTHER PATH adc_ltc2308_hw.tcl
 
 
 # 
@@ -50,10 +51,10 @@ add_fileset_file adc_data_fifo.v VERILOG PATH adc_data_fifo.v
 # 
 # module assignments
 # 
-set_module_assignment embeddedsw.dts.group hm2-socfpga
-set_module_assignment embeddedsw.dts.name hm2adc-io
+set_module_assignment embeddedsw.dts.group ltc2308-adc
+set_module_assignment embeddedsw.dts.name adc-ltc2308
 set_module_assignment embeddedsw.dts.params.address_width 3
-set_module_assignment embeddedsw.dts.params.data_width 16
+set_module_assignment embeddedsw.dts.params.data_width 32
 set_module_assignment embeddedsw.dts.vendor machkt
 
 

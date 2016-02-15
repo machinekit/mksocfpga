@@ -9,7 +9,15 @@
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
-   element adc_ltc2308_0
+   element adc_ltc2308_0.slave
+   {
+      datum baseAddress
+      {
+         value = "327680";
+         type = "String";
+      }
+   }
+   element adc_ltc2308_fifo_0
    {
       datum _sortIndex
       {
@@ -17,7 +25,7 @@
          type = "int";
       }
    }
-   element adc_ltc2308_0.slave
+   element adc_ltc2308_fifo_0.slave
    {
       datum baseAddress
       {
@@ -347,7 +355,7 @@
  <instanceScript></instanceScript>
  <interface
    name="adc"
-   internal="adc_ltc2308_0.conduit_end"
+   internal="adc_ltc2308_fifo_0.conduit_end"
    type="conduit"
    dir="end" />
  <interface
@@ -405,7 +413,11 @@
  <interface name="memory" internal="hps_0.memory" type="conduit" dir="end" />
  <interface name="mk_io" internal="hm2reg_io_0.pins" type="conduit" dir="end" />
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
- <module name="adc_ltc2308_0" kind="adc_ltc2308" version="1.1" enabled="1" />
+ <module
+   name="adc_ltc2308_fifo_0"
+   kind="adc_ltc2308_fifo"
+   version="1.1"
+   enabled="1" />
  <module name="button_pio" kind="altera_avalon_pio" version="15.1" enabled="1">
   <parameter name="bitClearingEdgeCapReg" value="true" />
   <parameter name="bitModifyingOutReg" value="false" />
@@ -1145,7 +1157,7 @@
    kind="avalon"
    version="15.1"
    start="hps_0.h2f_lw_axi_master"
-   end="adc_ltc2308_0.slave">
+   end="adc_ltc2308_fifo_0.slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00050000" />
   <parameter name="defaultConnection" value="false" />
@@ -1235,7 +1247,7 @@
    kind="avalon"
    version="15.1"
    start="fpga_only_master.master"
-   end="adc_ltc2308_0.slave">
+   end="adc_ltc2308_fifo_0.slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00050000" />
   <parameter name="defaultConnection" value="false" />
@@ -1270,7 +1282,7 @@
    kind="clock"
    version="15.1"
    start="clk_0.clk"
-   end="adc_ltc2308_0.clock_sink" />
+   end="adc_ltc2308_fifo_0.clock_sink" />
  <connection
    kind="clock"
    version="15.1"
@@ -1290,7 +1302,7 @@
    kind="clock"
    version="15.1"
    start="hps_0.h2f_user1_clock"
-   end="adc_ltc2308_0.clock_sink_adc" />
+   end="adc_ltc2308_fifo_0.clock_sink_adc" />
  <connection
    kind="interrupt"
    version="15.1"
@@ -1387,7 +1399,7 @@
    kind="reset"
    version="15.1"
    start="clk_0.clk_reset"
-   end="adc_ltc2308_0.reset_sink" />
+   end="adc_ltc2308_fifo_0.reset_sink" />
  <connection
    kind="reset"
    version="15.1"
@@ -1472,12 +1484,12 @@
    kind="reset"
    version="15.1"
    start="fpga_only_master.master_reset"
-   end="adc_ltc2308_0.reset_sink" />
+   end="adc_ltc2308_fifo_0.reset_sink" />
  <connection
    kind="reset"
    version="15.1"
    start="hps_only_master.master_reset"
-   end="adc_ltc2308_0.reset_sink" />
+   end="adc_ltc2308_fifo_0.reset_sink" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />
 </system>

@@ -1,0 +1,1 @@
+obj-m  := hm2adc_uio-module.o
