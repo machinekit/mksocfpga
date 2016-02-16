@@ -9,14 +9,6 @@
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
-   element adc_ltc2308_0.slave
-   {
-      datum baseAddress
-      {
-         value = "327680";
-         type = "String";
-      }
-   }
    element adc_ltc2308_fifo_0
    {
       datum _sortIndex
