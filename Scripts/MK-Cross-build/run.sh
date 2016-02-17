@@ -129,7 +129,7 @@ echo "mounting SD-Image"
 DRIVE=`bash -c 'sudo losetup --show -f '$IMG_FILE''`
 sudo partprobe $DRIVE
 sudo mkdir -p $ROOTFS_MNT
-sudo mount ${DRIVE}p2 $ROOTFS_MNT
+sudo mount ${DRIVE}p3 $ROOTFS_MNT
 
 echo "------------------------------------------"
 echo "   copying files to root mount            "

@@ -405,7 +405,7 @@ set -e
 if [ ! -z "$WORK_DIR" ]; then
 
 #build_uboot
-build_kernel
+#build_kernel
 
 ##build_rcn_kernel
 
@@ -419,10 +419,10 @@ build_kernel
 ##fetch_extract_rcn_rootfs
 
 run_initial_sh
-#compress_rootfs
+compress_rootfs
 
-install_files
-install_uboot
+#install_files
+#install_uboot
 
 echo "#---------------------------------------------------------------------------------- "
 echo "#-------             Image building process complete                       -------- "

@@ -8,8 +8,22 @@
 CURRENT_DIR=`pwd`
 WORK_DIR=$1
 
+SCRIPT_ROOT_DIR=$2
+UBOOT_VERSION=$3
+
+#UBOOT_VERSION='v2015.10'
+#UBOOT_VERSION='v2016.01'
+CHKOUT_OPTIONS=''
+#CHKOUT_OPTIONS='-b tmp'
+
+BOARD_CONFIG='socfpga_de0_nano_soc_defconfig'
+MAKE_CONFIG='u-boot-with-spl-dtb.sfp'
+
+UBOOT_SPLFILE=${UBOOT_DIR}/u-boot-with-spl-dtb.sfp
+
+PATCH_FILE="u-boot-${UBOOT_VERSION}-Setup-load-socfpga_rbf-Change-rootfs_p2-p3.patch"
+
 UBOOT_DIR=${WORK_DIR}/uboot
-distro=jessie
 
 #-------------------------------------------
 # u-boot, toolchain, imagegen vars
@@ -31,16 +45,6 @@ CC_URL="http://releases.linaro.org/components/toolchain/binaries/latest-5.2/arm-
 
 CC="${CC_DIR}/bin/arm-linux-gnueabihf-"
 
-#UBOOT_VERSION=''
-#UBOOT_VERSION='v2015.10'
-UBOOT_VERSION='v2016.01'
-CHKOUT_OPTIONS=''
-#CHKOUT_OPTIONS='-b tmp'
-
-BOARD_CONFIG='socfpga_de0_nano_soc_defconfig'
-MAKE_CONFIG='u-boot-with-spl-dtb.sfp'
-
-UBOOT_SPLFILE=${UBOOT_DIR}/u-boot-with-spl-dtb.sfp
 
 NCORES=`nproc`
 
@@ -58,7 +62,7 @@ extract_toolchain() {
 }
 
 
-function get_toolchain {
+get_toolchain() {
 # download linaro cross compiler toolchain
 
 if [ ! -d ${CC_DIR} ]; then
@@ -67,15 +71,18 @@ if [ ! -d ${CC_DIR} ]; then
     	wget -c ${CC_URL}
     fi
 # extract linaro cross compiler toolchain
-# uses multicore extract (lbzip2) if available
+# uses multicore extract (lbzip2) if available(set via links in /usr/sbin)
     echo "extracting toolchain" 
     extract_toolchain
 fi
 }
 
-function fetch_uboot {
-# Fetch uboot
+patch_uboot() {
+cd $UBOOT_DIR
+git am --signoff <  $SCRIPT_ROOT_DIR/$PATCH_FILE
+}
 
+fetch_uboot() {
 if [ ! -d ${UBOOT_DIR} ]; then
     echo "cloning u-boot"
     git clone git://git.denx.de/u-boot.git uboot
@@ -87,6 +94,7 @@ if [ ! -z "$UBOOT_VERSION" ]
 then
     git checkout $UBOOT_VERSION $CHKOUT_OPTIONS
 fi
+patch_uboot
 cd ..
 }
 
@@ -101,7 +109,7 @@ sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libc6-dev d
 
 }
 
-function build_uboot {
+build_uboot() {
 # compile u-boot + spl
 export ARCH=arm
 export PATH=$CC_DIR/bin/:$PATH
