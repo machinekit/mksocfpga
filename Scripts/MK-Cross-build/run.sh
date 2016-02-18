@@ -8,8 +8,11 @@ CURRENT_DIR=`pwd`
 WORK_DIR=$CURRENT_DIR
 
 ROOTFS_DIR=${WORK_DIR}/rootfs
-IMG_FILE=${CURRENT_DIR}/mksoc_sdcard-beta2.img
+#IMG_FILE=${CURRENT_DIR}/mksoc_sdcard-beta2.img
+IMG_FILE=${CURRENT_DIR}/mksoc_sdcard.img
+IMG_ROOT_PART=p3
 ROOTFS_MNT=/mnt/rootfs
+
 
 MK_SOURCEFILE_NAME=machinekit-src.tar.bz2
 
@@ -88,7 +91,7 @@ sudo rm /usr/sbin/policy-rc.d
 exit
 EOT'
 
-sudo chmod +x $ROOTFS_DIR/home/build.sh
+sudo chmod +x $ROOTFS_MNT/home/build.sh
 }
 
 kill_ch_proc(){
@@ -129,7 +132,7 @@ echo "mounting SD-Image"
 DRIVE=`bash -c 'sudo losetup --show -f '$IMG_FILE''`
 sudo partprobe $DRIVE
 sudo mkdir -p $ROOTFS_MNT
-sudo mount ${DRIVE}p3 $ROOTFS_MNT
+sudo mount ${DRIVE}$IMG_ROOT_PART $ROOTFS_MNT
 
 echo "------------------------------------------"
 echo "   copying files to root mount            "
@@ -152,10 +155,14 @@ sudo mount -o bind /dev dev/
 sudo chroot ./ /bin/su - machinekit /bin/bash -c /home/build.sh
 
 cd $CURRENT_DIR
+
 PREFIX=$ROOTFS_MNT
 kill_ch_proc
-PREFIX=$ROOTFS_MNT
-umount_ch_proc
+
+sudo umount -R $ROOTFS_MNT
+
+#PREFIX=$ROOTFS_MNT
+#umount_ch_proc
 
 sync
 sudo losetup -D
@@ -169,7 +176,7 @@ sync
 #install_clone_deps
 #mk_clone
 
-compress_clone
+#compress_clone
 
 run_build_sh
 

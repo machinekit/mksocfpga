@@ -4,13 +4,18 @@
 # Variables
 #------------------------------------------------------------------------------------------------------
 CURRENT_DIR=`pwd`
-WORK_DIR=$1
-SCRIPT_ROOT_DIR=$2
-CC_FOLDER_NAME=$3
-CC_URL=$4
-KERNEL_FOLDER_NAME=$5
-KERNEL_URL=$6
-KERNEL_CHKOUT=$7
+WORK_DIR=${1}
+SCRIPT_ROOT_DIR=${2}
+CC_FOLDER_NAME=${3}
+CC_URL=${4}
+KERNEL_FOLDER_NAME=${5}
+KERNEL_URL=${6}
+KERNEL_CHKOUT=${7}
+KERNEL_FILE_URL=${8}
+PATCH_URL=${9}
+PATCH_FILE=${10}
+
+echo "NOTE: in build_kernel.sh param = ${8}"
 
 #----------- Git clone URL's ------------------------------------------#
 #--------- RHN kernel -------------------------------------------------#
@@ -79,6 +84,10 @@ CC_DIR="${WORK_DIR}/${CC_FOLDER_NAME}"
 CC_FILE="${CC_FOLDER_NAME}.tar.xz"
 CC="${CC_DIR}/bin/arm-linux-gnueabihf-"
 
+KERNEL_FILE=${KERNEL_FOLDER_NAME}.tar.xz
+#PATCH_FILE=$PATCH_441_FILE
+
+
 KERNEL_CONF='socfpga_defconfig'
 
 #----------------------------------------------------------------------#
@@ -136,6 +145,7 @@ clone_kernel() {
         cd $KERNEL_BUILD_DIR/linux 
         git clean -d -f -x
         git fetch linux
+        git checkout $KERNEL_CHKOUT
     else
         mkdir -p $KERNEL_BUILD_DIR
         cd $KERNEL_BUILD_DIR
@@ -145,11 +155,14 @@ clone_kernel() {
         git fetch linux
         git checkout -b $KERNEL_CHKOUT
 #Uio Patch:
-cat <<EOT >> arch/arm/configs/socfpga_defconfig 
-CONFIG_UIO=y
-CONFIG_UIO_PDRV=y
-CONFIG_UIO_PDRV_GENIRQ=y
-EOT
+#cat <<EOT >> arch/arm/configs/socfpga_defconfig 
+#CONFIG_UIO=y
+#CONFIG_UIO_PDRV=y
+#CONFIG_UIO_PDRV_GENIRQ=y
+#EOT
+#git add 
+#git commit -s -a -m "getting rid of -dirty"
+
 echo "Kernel UIO Patch added"
     fi
     cd ..  
@@ -183,6 +196,7 @@ xzcat ../$PATCH_FILE | patch -p1
 
 build_kernel() {
 
+set -v
 
 export CROSS_COMPILE=$CC
 cd $KERNEL_DIR
@@ -219,12 +233,12 @@ if [ ! -z "$WORK_DIR" ]; then
 install_dep
 echo "fetching / extracting toolchain"
 get_toolchain
-#echo "Downloading / extracting kernel"
-#fetch_kernel
-#    echo "Applying patch"
-#    patch_kernel
-echo "cloning kernel"
-clone_kernel
+echo "Downloading / extracting kernel"
+fetch_kernel
+    echo "Applying patch"
+    patch_kernel
+#echo "cloning kernel"
+#clone_kernel
 echo "building kernel"
 build_kernel
 echo "#---------------------------------------------------------------------------------- "

@@ -21,7 +21,8 @@ MAKE_CONFIG='u-boot-with-spl-dtb.sfp'
 
 UBOOT_SPLFILE=${UBOOT_DIR}/u-boot-with-spl-dtb.sfp
 
-PATCH_FILE="u-boot-${UBOOT_VERSION}-Setup-load-socfpga_rbf-Change-rootfs_p2-p3.patch"
+#PATCH_FILE="u-boot-${UBOOT_VERSION}-Setup-load-socfpga_rbf-Change-rootfs_p2-p3.patch"
+PATCH_FILE="u-boot-${UBOOT_VERSION}-Setup-load-socfpga_rbf-Add-fpga-rbf-configure.patch"
 
 UBOOT_DIR=${WORK_DIR}/uboot
 
@@ -29,17 +30,17 @@ UBOOT_DIR=${WORK_DIR}/uboot
 # u-boot, toolchain, imagegen vars
 #-------------------------------------------
 #--------- altera socfpga kernel --------------------------------------#
-
+CC_FOLDER_NAME="gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux"
 #CC_DIR="${WORK_DIR}/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux"
 #CC_FILE="${CC_DIR}.tar.bz2"
-#CC_URL="https://releases.linaro.org/14.09/components/toolchain/binaries/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux.tar.bz2"
+CC_URL="https://releases.linaro.org/14.09/components/toolchain/binaries/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux.tar.xz"
 
 #--------- patched kernel ---------------------------------------------#
-CC_FOLDER_NAME="gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf"
+#CC_FOLDER_NAME="gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf"
 
 CC_DIR="${WORK_DIR}/${CC_FOLDER_NAME}"
 CC_FILE="${CC_FOLDER_NAME}.tar.xz"
-CC_URL="http://releases.linaro.org/components/toolchain/binaries/latest-5.2/arm-linux-gnueabihf/${CC_FILE}"
+#CC_URL="http://releases.linaro.org/components/toolchain/binaries/latest-5.2/arm-linux-gnueabihf/${CC_FILE}"
 
 #----------------------------------------------------------------------#
 
@@ -94,7 +95,10 @@ if [ ! -z "$UBOOT_VERSION" ]
 then
     git checkout $UBOOT_VERSION $CHKOUT_OPTIONS
 fi
-patch_uboot
+#git reset --hard
+#git clean -d -f -x
+#patch_uboot
+#git commit -s -a -m "getting rid of -dirty"
 cd ..
 }
 
@@ -132,6 +136,7 @@ if [ ! -z "$WORK_DIR" ]; then
     cd $WORK_DIR
     get_toolchain
     fetch_uboot
+    patch_uboot
     cd $UBOOT_DIR
     build_uboot
 else

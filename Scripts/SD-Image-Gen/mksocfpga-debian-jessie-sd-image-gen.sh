@@ -51,7 +51,8 @@ UBOOT_SPLFILE=${CURRENT_DIR}/uboot/u-boot-with-spl-dtb.sfp
 
 ##--------- altera socfpga kernel --------------------------------------#
 ALT_KERNEL_URL='https://github.com/altera-opensource/linux-socfpga.git'
-ALT_KERNEL_CHKOUT='linux-rt linux/socfpga-3.10-ltsi-rt'
+#ALT_KERNEL_CHKOUT='linux-rt linux/socfpga-3.10-ltsi-rt'
+ALT_KERNEL_CHKOUT='linux/socfpga-3.10-ltsi-rt'
 
 # cross toolchain
 #--------- altera rt-ltsi socfpga kernel --------------------------------------------------#
@@ -138,7 +139,7 @@ cd ..
 
 
 build_rootfs_into_image() {
-$SCRIPT_ROOT_DIR/gen_rootfs.sh $CURRENT_DIR $ROOTFS_DIR $IMG_FILE
+$SCRIPT_ROOT_DIR/gen_rootfs-jessie.sh $CURRENT_DIR $ROOTFS_DIR $IMG_FILE
 }
 
 build_rootfs_into_folder() {
@@ -295,11 +296,11 @@ sudo chroot $ROOTFS_MNT /bin/bash -c /home/initial.sh
 echo "will fix profile locale"
 fix_profile
 
-sudo rm $ROOTFS_MNT/usr/sbin/policy-rc.d
+#sudo rm $ROOTFS_MNT/usr/sbin/policy-rc.d
 
 cd $CURRENT_DIR
-PREFIX=$ROOTFS_MNT
-kill_ch_proc
+#PREFIX=$ROOTFS_MNT
+#kill_ch_proc
 
 #PREFIX=$ROOTFS_MNT
 #umount_ch_proc
@@ -318,13 +319,12 @@ sudo mount ${DRIVE}p3 $ROOTFS_MNT
 
 echo "Rootfs configured ... compressing ...."
 cd $ROOTFS_MNT
-sudo tar -cjSf $CURRENT_DIR/final-rootfs.tar.bz2 *
+sudo tar -cjSf $CURRENT_DIR/$COMPNAME--rootfs.tar.bz2 *
 cd $CURRENT_DIR
 echo "final rootfs compressed finish ... unmounting"
 
 sudo umount -R $ROOTFS_MNT
 sudo losetup -D
-
 }
 
 function create_image {
@@ -372,6 +372,9 @@ sudo mount ${DRIVE}p3 $ROOTFS_MNT
 #RHN:
 #sudo tar xfvp $ROOTFS_DIR/armhf-rootfs-*.tar -C $ROOTFS_MNT
 
+sudo tar xvfj $CURRENT_DIR/final--rootfs.tar.bz2 -C $ROOTFS_MNT
+
+
 # kernel modules -------#
 cd $KERNEL_DIR
 export PATH=$CC_DIR/bin/:$PATH
@@ -411,14 +414,16 @@ build_kernel
 
 ##build_rootfs_into_folder
 
-#create_image
+create_image
 #build_rootfs_into_image
 
-#raw-compress made above
-
+#COMPNAME=raw
+#compress_rootfs
 ##fetch_extract_rcn_rootfs
 
-run_initial_sh
+#run_initial_sh
+
+#COMPNAME=final
 #compress_rootfs
 
 install_files

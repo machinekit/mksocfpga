@@ -160,7 +160,11 @@ sudo apt install libczmq2 libczmq-dev
 
 replace_mk_source(){
 cd ${HOME}
-sudo rm -Rf machinekit
+if [ -d machinekit ]; then
+    echo "the target directory machinekit already exists ... replacing"
+    sudo rm -Rf machinekit
+fi
+echo "extracting machinekit"
 tar -jxf $MK_SOURCEFILE_NAME 
 }
 
@@ -328,7 +332,7 @@ echo "git config --global user.email \"youremail\""
 ##mk_clone
 sudo mount /dev/shm
 
-#install_mk_fresh_deps
+install_mk_fresh_deps
 
 replace_mk_source
 mk_build

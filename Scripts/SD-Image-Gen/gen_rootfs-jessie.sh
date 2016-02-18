@@ -24,7 +24,7 @@ DEFGROUPS="sudo,kmem,adm,dialout,machinekit,video,plugdev"
 #------------------------------------------------------------------------------------------------------
 install_dep() {
     sudo apt-get -y install qemu binfmt-support qemu-user-static schroot debootstrap libc6
-    sudo dpkg --add-architecture armhf
+#    sudo dpkg --add-architecture armhf
     sudo apt update
     sudo apt -y --force-yes upgrade
     sudo update-binfmts --display | grep interpreter

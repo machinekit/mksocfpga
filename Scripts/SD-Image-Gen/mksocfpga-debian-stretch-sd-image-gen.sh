@@ -3,7 +3,7 @@
 # Working Invokes selected scripts in same folder that generates a working armhf Debian Jessie sd-card-image().img
 # for the Terasic De0 Nano / Altera Atlas Soc-Fpga dev board
 
-#TODO:   complete MK depedencies
+#TODO:   move variables to main script
 
 # 1.initial source: make minimal rootfs on amd64 Debian Jessie, according to "How to create bare minimum Debian Wheezy rootfs from scratch"
 # http://olimex.wordpress.com/2014/07/21/how-to-create-bare-minimum-debian-wheezy-rootfs-from-scratch/
@@ -17,7 +17,9 @@ WORK_DIR=$1
 
 ROOTFS_DIR=${CURRENT_DIR}/rootfs
 MK_KERNEL_DRIVER_FOLDER=$SCRIPT_ROOT_DIR/../../SW/MK/kernel-drivers
-BOOT_FILES_DIR=$SCRIPT_ROOT_DIR/../boot_files
+
+#BOOT_FILES_DIR=$SCRIPT_ROOT_DIR/../boot_files
+BOOT_FILES_DIR=/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/boot_files
 
 #------------------------------------------------------------------------------------------------------
 # Variables Custom settings
@@ -25,8 +27,14 @@ BOOT_FILES_DIR=$SCRIPT_ROOT_DIR/../boot_files
 
 #IMG_FILE=${CURRENT_DIR}/mksoc_sdcard-test.img
 IMG_FILE=${CURRENT_DIR}/mksoc_sdcard.img
+## Expandable image
+#IMG_ROOT_PART=p3
+#IMG_BOOT_PART=p2
 
-#UBOOT_VERSION='v2015.10'
+## Old Inverted image
+IMG_ROOT_PART=p2
+IMG_BOOT_PART=p1
+
 #UBOOT_VERSION='v2016.01'
 UBOOT_VERSION='v2016.01'
 
@@ -51,25 +59,24 @@ UBOOT_SPLFILE=${CURRENT_DIR}/uboot/u-boot-with-spl-dtb.sfp
 
 ##--------- altera socfpga kernel --------------------------------------#
 ALT_KERNEL_URL='https://github.com/altera-opensource/linux-socfpga.git'
-ALT_KERNEL_CHKOUT='linux-rt linux/socfpga-3.10-ltsi-rt'
+ALT_KERNEL_CHKOUT='linux/socfpga-3.10-ltsi-rt'
 
 # cross toolchain
 #--------- altera rt-ltsi socfpga kernel --------------------------------------------------#
-ALT_CC_FOLDER_NAME="gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux"
-ALT_CC_URL="https://releases.linaro.org/14.09/components/toolchain/binaries/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux.tar.xz"
-ALT_KERNEL_FOLDER_NAME="linux-3.10"
+#ALT_CC_FOLDER_NAME="gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux"
+#ALT_CC_URL="https://releases.linaro.org/14.09/components/toolchain/binaries/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux.tar.xz"
+#ALT_KERNEL_FOLDER_NAME="linux-3.10"
 
 #--------- rt-ltsi patched kernel ---------------------------------------------------------#
-#CC_FOLDER_NAME="gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf"
-#CC_URL="http://releases.linaro.org/components/toolchain/binaries/latest-5.2/arm-linux-gnueabihf/${CC_FILE}"
-
-#4.1-KERNEL
-#KERNEL_4115_FOLDER_NAME="linux-4.1.15"
-#PATCH_4115_FILE="patch-4.1.15-rt17.patch.xz"
+PCH_CC_FOLDER_NAME="gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf"
+#PCH_CC_URL="http://releases.linaro.org/components/toolchain/binaries/latest-5.2/arm-linux-gnueabihf/${CC_FILE}"
+PCH_CC_FILE="${PCH_CC_FOLDER_NAME}.tar.xz"
+PCH_CC_URL="http://releases.linaro.org/components/toolchain/binaries/5.2-2015.11-1/arm-linux-gnueabihf/${PCH_CC_FILE}"
+#http://releases.linaro.org/components/toolchain/binaries/5.2-2015.11-1/arm-linux-gnueabihf/gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf.tar.xz
 
 #4.4-KERNEL
-#KERNEL_441_FOLDER_NAME="linux-4.4.1"
-#PATCH_441_FILE="patch-4.4.1-rt5.patch.xz"
+KERNEL_441_FOLDER_NAME="linux-4.4.1"
+PATCH_441_FILE="patch-4.4.1-rt6.patch.xz"
 
 #-------------- all kernel ----------------------------------------------------------------#
 # mksoc uio kernel driver module filder:
@@ -77,21 +84,32 @@ UIO_DIR=$MK_KERNEL_DRIVER_FOLDER/hm2reg_uio-module
 ADC_DIR=$MK_KERNEL_DRIVER_FOLDER/hm2adc_uio-module
 
 # --- config ----------------------------------#
-KERNEL_FOLDER_NAME=$ALT_KERNEL_FOLDER_NAME
+#KERNEL_FOLDER_NAME=$ALT_KERNEL_FOLDER_NAME
 KERNEL_URL=$ALT_KERNEL_URL
 KERNEL_CHKOUT=$ALT_KERNEL_CHKOUT
 
 #----- select toolchain -------------#
 # CC_FOLDER_NAME=$RHN_CC_FOLDER_NAME
 # CC_URL=$RHN_CC_URL
-CC_FOLDER_NAME=$ALT_CC_FOLDER_NAME
-CC_URL=$ALT_CC_URL
+#CC_FOLDER_NAME=$ALT_CC_FOLDER_NAME
+#CC_URL=$ALT_CC_URL
+CC_FOLDER_NAME=$PCH_CC_FOLDER_NAME
+#CC_URL=$PCH_CC_URL
 # --- config end ------------------------------#
+KERNEL_FOLDER_NAME=$KERNEL_441_FOLDER_NAME
+KERNEL_FILE=${KERNEL_FOLDER_NAME}.tar.xz
+PATCH_FILE=$PATCH_441_FILE
+
 # --- config end ------------------------------#
 
 CC_DIR="${CURRENT_DIR}/${CC_FOLDER_NAME}"
 CC_FILE="${CC_FOLDER_NAME}.tar.xz"
 CC="${CC_DIR}/bin/arm-linux-gnueabihf-"
+
+CC_URL=$PCH_CC_URL
+
+KERNEL_FILE_URL="ftp://ftp.kernel.org/pub/linux/kernel/v4.x/${KERNEL_FILE}"
+PATCH_URL='https://www.kernel.org/pub/linux/kernel/projects/rt/4.4/'${PATCH_FILE}
 
 
 KERNEL_BUILD_DIR=${CURRENT_DIR}/arm-linux-${KERNEL_FOLDER_NAME}-gnueabifh-kernel
@@ -118,7 +136,9 @@ $SCRIPT_ROOT_DIR/build_uboot.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $UBOOT_VERSION ##/
 }
 
 function build_kernel {
-$SCRIPT_ROOT_DIR/build_kernel.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $CC_FOLDER_NAME $CC_URL $KERNEL_FOLDER_NAME $KERNEL_URL $KERNEL_CHKOUT
+echo "NOTE: in main: KERNEL_FILE_URL = ${KERNEL_FILE_URL}"
+$SCRIPT_ROOT_DIR/build_kernel.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $CC_FOLDER_NAME $CC_URL $KERNEL_FOLDER_NAME $KERNEL_URL $KERNEL_CHKOUT $KERNEL_FILE_URL $PATCH_URL $PATCH_FILE
+#$SCRIPT_ROOT_DIR/build_kernel.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $CC_FOLDER_NAME $CC_URL $KERNEL_FOLDER_NAME $KERNEL_FILE_URL $PATCH_URL
 }
 
 build_patched_kernel() {
@@ -138,11 +158,16 @@ cd ..
 
 
 build_rootfs_into_image() {
-$SCRIPT_ROOT_DIR/gen_rootfs.sh $CURRENT_DIR $ROOTFS_DIR $IMG_FILE
+$SCRIPT_ROOT_DIR/gen_rootfs-stretch.sh $CURRENT_DIR $ROOTFS_DIR $IMG_FILE $IMG_ROOT_PART
 }
 
 build_rootfs_into_folder() {
 $SCRIPT_ROOT_DIR/gen_rootfs.sh $CURRENT_DIR $ROOTFS_DIR
+}
+
+function create_image {
+#$SCRIPT_ROOT_DIR/create_img.sh $CURRENT_DIR $IMG_FILE
+$SCRIPT_ROOT_DIR/create_inv_img.sh $CURRENT_DIR $IMG_FILE
 }
 
 #-----------------------------------------------------------------------------------
@@ -280,7 +305,7 @@ DRIVE=`bash -c 'sudo losetup --show -f '$IMG_FILE''`
 sudo partprobe $DRIVE
 
 sudo mkdir -p $ROOTFS_MNT
-sudo mount ${DRIVE}p3 $ROOTFS_MNT
+sudo mount ${DRIVE}$IMG_ROOT_PART $ROOTFS_MNT
 
 cd $ROOTFS_MNT # or where you are preparing the chroot dir
 sudo mount -t proc proc proc/
@@ -295,11 +320,9 @@ sudo chroot $ROOTFS_MNT /bin/bash -c /home/initial.sh
 echo "will fix profile locale"
 fix_profile
 
-sudo rm $ROOTFS_MNT/usr/sbin/policy-rc.d
-
 cd $CURRENT_DIR
-PREFIX=$ROOTFS_MNT
-kill_ch_proc
+#PREFIX=$ROOTFS_MNT
+#kill_ch_proc
 
 #PREFIX=$ROOTFS_MNT
 #umount_ch_proc
@@ -314,21 +337,17 @@ DRIVE=`bash -c 'sudo losetup --show -f '$IMG_FILE''`
 sudo partprobe $DRIVE
 
 sudo mkdir -p $ROOTFS_MNT
-sudo mount ${DRIVE}p3 $ROOTFS_MNT
+sudo mount ${DRIVE}$IMG_ROOT_PART $ROOTFS_MNT
 
 echo "Rootfs configured ... compressing ...."
 cd $ROOTFS_MNT
-sudo tar -cjSf $CURRENT_DIR/final-rootfs.tar.bz2 *
+sudo tar -cjSf $CURRENT_DIR/$COMPNAME--rootfs.tar.bz2 *
+
 cd $CURRENT_DIR
 echo "final rootfs compressed finish ... unmounting"
 
 sudo umount -R $ROOTFS_MNT
 sudo losetup -D
-
-}
-
-function create_image {
-$SCRIPT_ROOT_DIR/create_img.sh $CURRENT_DIR $IMG_FILE
 }
 
 function install_files {
@@ -344,7 +363,7 @@ DRIVE=`bash -c 'sudo losetup --show -f '$IMG_FILE''`
 sudo partprobe $DRIVE
 echo "# --------- installing boot partition files (kernel, dts, dtb) ---------"
 sudo mkdir -p $BOOT_MNT
-sudo mount -o uid=1000,gid=1000 ${DRIVE}p2 $BOOT_MNT
+sudo mount -o uid=1000,gid=1000 ${DRIVE}$IMG_BOOT_PART $BOOT_MNT
 
 echo "copying boot sector files"
 sudo cp $KERNEL_DIR/arch/arm/boot/zImage $BOOT_MNT
@@ -363,9 +382,11 @@ sudo umount $BOOT_MNT
 
 echo "# --------- installing rootfs partition files (chroot, kernel modules) ---------"
 sudo mkdir -p $ROOTFS_MNT
-sudo mount ${DRIVE}p3 $ROOTFS_MNT
+sudo mount ${DRIVE}$IMG_ROOT_PART $ROOTFS_MNT
 
 # Rootfs -------#
+sudo tar xvfj $CURRENT_DIR/final--rootfs.tar.bz2 -C $ROOTFS_MNT
+
 #cd $ROOTFS_DIR
 #sudo tar cf - . | (sudo tar xvf - -C $ROOTFS_MNT)
 
@@ -375,7 +396,7 @@ sudo mount ${DRIVE}p3 $ROOTFS_MNT
 # kernel modules -------#
 cd $KERNEL_DIR
 export PATH=$CC_DIR/bin/:$PATH
-#export CROSS_COMPILE=$CC
+export CROSS_COMPILE=$CC
 sudo make ARCH=arm INSTALL_MOD_PATH=$ROOTFS_MNT modules_install
 sudo make ARCH=arm -C $KERNEL_DIR M=$UIO_DIR INSTALL_MOD_PATH=$ROOTFS_MNT modules_install
 #sudo make ARCH=arm -C $KERNEL_DIR M=$ADC_DIR INSTALL_MOD_PATH=$ROOTFS_MNT modules_install
@@ -404,25 +425,28 @@ set -e
 
 if [ ! -z "$WORK_DIR" ]; then
 
-#build_uboot
+build_uboot
 #build_kernel
 
 ##build_rcn_kernel
 
 ##build_rootfs_into_folder
 
-#create_image
-#build_rootfs_into_image
+create_image
 
-#raw-compress made above
+#build_rootfs_into_image
+#COMPNAME=raw
+#compress_rootfs
 
 ##fetch_extract_rcn_rootfs
 
-run_initial_sh
-compress_rootfs
+#run_initial_sh
 
-#install_files
-#install_uboot
+#COMPNAME=final
+#compress_rootfs
+
+install_files
+install_uboot
 
 echo "#---------------------------------------------------------------------------------- "
 echo "#-------             Image building process complete                       -------- "
