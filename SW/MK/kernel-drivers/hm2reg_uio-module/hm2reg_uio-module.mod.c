@@ -19,4 +19,4 @@ __used
 __attribute__((section(".modinfo"))) =
 "depends=";
 
-MODULE_ALIAS("of:N*T*Cmachkt,hm2reg-io-1.0");
+MODULE_ALIAS("of:N*T*Cmachkt,hm2reg-io-1.0*");

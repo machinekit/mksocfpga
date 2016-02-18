@@ -1,8 +1,8 @@
-cmd_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.o := /home/mib/Development/Projects2/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/arm-linux-gnueabihf-gcc -Wp,-MD,/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/.hm2reg_uio-module.o.d  -nostdinc -isystem /home/mib/Development/Projects2/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../lib/gcc/arm-linux-gnueabihf/4.9.2/include -I./arch/arm/include -Iarch/arm/include/generated/uapi -Iarch/arm/include/generated  -Iinclude -I./arch/arm/include/uapi -Iarch/arm/include/generated/uapi -I./include/uapi -Iinclude/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -mlittle-endian -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -std=gnu89 -fno-dwarf2-cfi-asm -fno-ipa-sra -mabi=aapcs-linux -mno-thumb-interwork -mfpu=vfp -funwind-tables -marm -D__LINUX_ARM_ARCH__=7 -march=armv7-a -msoft-float -Uarm -fno-delete-null-pointer-checks -O2 --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fno-stack-protector -Wno-unused-but-set-variable -fomit-frame-pointer -fno-var-tracking-assignments -g -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -Werror=date-time -DCC_HAVE_ASM_GOTO  -DMODULE  -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(hm2reg_uio_module)"  -D"KBUILD_MODNAME=KBUILD_STR(hm2reg_uio_module)" -c -o /home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.o /home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.c
+cmd_/home/mib/Development/the-snowwhite-git/mksocfpgs-jessie-pc/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.o := /home/mib/Development/Projects3/gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc -Wp,-MD,/home/mib/Development/the-snowwhite-git/mksocfpgs-jessie-pc/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/.hm2reg_uio-module.o.d  -nostdinc -isystem /home/mib/Development/Projects3/gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/5.2.1/include -I./arch/arm/include -Iarch/arm/include/generated/uapi -Iarch/arm/include/generated  -Iinclude -I./arch/arm/include/uapi -Iarch/arm/include/generated/uapi -I./include/uapi -Iinclude/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -mlittle-endian -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -std=gnu89 -fno-dwarf2-cfi-asm -fno-ipa-sra -mabi=aapcs-linux -mno-thumb-interwork -mfpu=vfp -funwind-tables -marm -D__LINUX_ARM_ARCH__=7 -march=armv7-a -msoft-float -Uarm -fno-delete-null-pointer-checks -O2 --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fno-stack-protector -Wno-unused-but-set-variable -fomit-frame-pointer -fno-var-tracking-assignments -g -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -Werror=date-time -DCC_HAVE_ASM_GOTO  -DMODULE  -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(hm2reg_uio_module)"  -D"KBUILD_MODNAME=KBUILD_STR(hm2reg_uio_module)" -c -o /home/mib/Development/the-snowwhite-git/mksocfpgs-jessie-pc/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.o /home/mib/Development/the-snowwhite-git/mksocfpgs-jessie-pc/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.c
 
-source_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.o := /home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.c
+source_/home/mib/Development/the-snowwhite-git/mksocfpgs-jessie-pc/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.o := /home/mib/Development/the-snowwhite-git/mksocfpgs-jessie-pc/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.c
 
-deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.o := \
+deps_/home/mib/Development/the-snowwhite-git/mksocfpgs-jessie-pc/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.o := \
     $(wildcard include/config/of.h) \
   include/linux/platform_device.h \
     $(wildcard include/config/suspend.h) \
@@ -69,7 +69,7 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
     $(wildcard include/config/panic/timeout.h) \
     $(wildcard include/config/tracing.h) \
     $(wildcard include/config/ftrace/mcount/record.h) \
-  /home/mib/Development/Projects2/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/lib/gcc/arm-linux-gnueabihf/4.9.2/include/stdarg.h \
+  /home/mib/Development/Projects3/gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/5.2.1/include/stdarg.h \
   include/linux/linkage.h \
   include/linux/stringify.h \
   include/linux/export.h \
@@ -83,6 +83,7 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
     $(wildcard include/config/smp.h) \
   include/linux/irqflags.h \
     $(wildcard include/config/trace/irqflags.h) \
+    $(wildcard include/config/preempt/rt/full.h) \
     $(wildcard include/config/irqsoff/tracer.h) \
     $(wildcard include/config/preempt/tracer.h) \
     $(wildcard include/config/trace/irqflags/support.h) \
@@ -104,7 +105,6 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
     $(wildcard include/config/arm/heavy/mb.h) \
     $(wildcard include/config/arch/has/barriers.h) \
     $(wildcard include/config/arm/dma/mem/bufferable.h) \
-  include/asm-generic/barrier.h \
   include/asm-generic/bitops/non-atomic.h \
   include/asm-generic/bitops/fls64.h \
   include/asm-generic/bitops/sched.h \
@@ -163,16 +163,18 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
   include/linux/thread_info.h \
     $(wildcard include/config/compat.h) \
     $(wildcard include/config/debug/stack/usage.h) \
+    $(wildcard include/config/preempt/lazy.h) \
   include/linux/bug.h \
     $(wildcard include/config/generic/bug.h) \
   arch/arm/include/asm/bug.h \
+    $(wildcard include/config/bug.h) \
     $(wildcard include/config/debug/bugverbose.h) \
     $(wildcard include/config/arm/lpae.h) \
   arch/arm/include/asm/opcodes.h \
     $(wildcard include/config/cpu/endian/be32.h) \
   include/asm-generic/bug.h \
-    $(wildcard include/config/bug.h) \
     $(wildcard include/config/generic/bug/relative/pointers.h) \
+    $(wildcard include/config/preempt/rt/base.h) \
   arch/arm/include/asm/thread_info.h \
     $(wildcard include/config/crunch.h) \
     $(wildcard include/config/arm/thumbee.h) \
@@ -207,15 +209,16 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
     $(wildcard include/config/discontigmem.h) \
     $(wildcard include/config/sparsemem/vmemmap.h) \
     $(wildcard include/config/sparsemem.h) \
-  include/linux/pfn.h \
   include/asm-generic/getorder.h \
   include/linux/spinlock_types.h \
+  include/linux/spinlock_types_raw.h \
     $(wildcard include/config/generic/lockbreak.h) \
     $(wildcard include/config/debug/spinlock.h) \
   arch/arm/include/asm/spinlock_types.h \
   include/linux/lockdep.h \
     $(wildcard include/config/lockdep.h) \
     $(wildcard include/config/lock/stat.h) \
+  include/linux/spinlock_types_nort.h \
   include/linux/rwlock_types.h \
   include/linux/atomic.h \
     $(wildcard include/config/generic/atomic64.h) \
@@ -299,8 +302,7 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
   include/linux/bitmap.h \
   include/linux/seqlock.h \
   include/linux/completion.h \
-  include/linux/wait.h \
-  include/uapi/linux/wait.h \
+  include/linux/wait-simple.h \
   include/linux/debugobjects.h \
     $(wildcard include/config/debug/objects.h) \
     $(wildcard include/config/debug/objects/free.h) \
@@ -311,7 +313,6 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
     $(wildcard include/config/arch/supports/int128.h) \
   arch/arm/include/asm/div64.h \
   arch/arm/include/asm/compiler.h \
-  include/asm-generic/div64.h \
   include/linux/time64.h \
   include/uapi/linux/time.h \
   include/linux/jiffies.h \
@@ -327,6 +328,8 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
   include/linux/timekeeping.h \
   include/linux/rcutree.h \
   include/linux/rbtree.h \
+  include/linux/wait.h \
+  include/uapi/linux/wait.h \
   include/linux/kobject_ns.h \
   include/linux/stat.h \
   arch/arm/include/uapi/asm/stat.h \
@@ -339,7 +342,6 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
   include/linux/workqueue.h \
     $(wildcard include/config/debug/objects/work.h) \
     $(wildcard include/config/freezer.h) \
-    $(wildcard include/config/wq/watchdog.h) \
   include/linux/timer.h \
     $(wildcard include/config/timer/stats.h) \
     $(wildcard include/config/debug/objects/timers.h) \
@@ -356,23 +358,21 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
     $(wildcard include/config/zone/dma.h) \
     $(wildcard include/config/zone/dma32.h) \
     $(wildcard include/config/deferred/struct/page/init.h) \
-    $(wildcard include/config/memory/isolation.h) \
-    $(wildcard include/config/compaction.h) \
     $(wildcard include/config/cma.h) \
   include/linux/mmdebug.h \
     $(wildcard include/config/debug/vm.h) \
     $(wildcard include/config/debug/virtual.h) \
-    $(wildcard include/config/debug/vm/pgflags.h) \
   include/linux/mmzone.h \
     $(wildcard include/config/force/max/zoneorder.h) \
+    $(wildcard include/config/memory/isolation.h) \
     $(wildcard include/config/memcg.h) \
     $(wildcard include/config/zone/device.h) \
     $(wildcard include/config/memory/hotplug.h) \
+    $(wildcard include/config/compaction.h) \
     $(wildcard include/config/flat/node/mem/map.h) \
     $(wildcard include/config/page/extension.h) \
     $(wildcard include/config/no/bootmem.h) \
     $(wildcard include/config/numa/balancing.h) \
-    $(wildcard include/config/transparent/hugepage.h) \
     $(wildcard include/config/have/memory/present.h) \
     $(wildcard include/config/have/memoryless/nodes.h) \
     $(wildcard include/config/need/node/memmap/size.h) \
@@ -413,6 +413,7 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
     $(wildcard include/config/need/per/cpu/embed/first/chunk.h) \
     $(wildcard include/config/need/per/cpu/page/first/chunk.h) \
     $(wildcard include/config/have/setup/per/cpu/area.h) \
+  include/linux/pfn.h \
   arch/arm/include/asm/percpu.h \
   include/asm-generic/percpu.h \
   include/linux/percpu-defs.h \
@@ -440,7 +441,6 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
     $(wildcard include/config/file/locking.h) \
     $(wildcard include/config/quota.h) \
     $(wildcard include/config/fs/dax.h) \
-    $(wildcard include/config/mandatory/file/locking.h) \
     $(wildcard include/config/block.h) \
     $(wildcard include/config/migration.h) \
   include/linux/kdev_t.h \
@@ -454,7 +454,7 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
     $(wildcard include/config/arch/use/cmpxchg/lockref.h) \
   include/linux/path.h \
   include/linux/list_lru.h \
-    $(wildcard include/config/slob.h) \
+    $(wildcard include/config/memcg/kmem.h) \
   include/linux/shrinker.h \
   include/linux/radix-tree.h \
   include/linux/pid.h \
@@ -468,7 +468,6 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
   include/linux/blk_types.h \
     $(wildcard include/config/blk/cgroup.h) \
     $(wildcard include/config/blk/dev/integrity.h) \
-  include/linux/delayed_call.h \
   include/uapi/linux/fs.h \
   include/uapi/linux/limits.h \
   include/uapi/linux/ioctl.h \
@@ -515,13 +514,13 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
     $(wildcard include/config/multi/irq/handler.h) \
   include/linux/irq_cpustat.h \
   include/linux/hrtimer.h \
+    $(wildcard include/config/missed/timer/offsets/hist.h) \
     $(wildcard include/config/high/res/timers.h) \
-    $(wildcard include/config/time/low/res.h) \
     $(wildcard include/config/timerfd.h) \
   include/linux/timerqueue.h \
   include/linux/module.h \
-    $(wildcard include/config/modules/tree/lookup.h) \
     $(wildcard include/config/module/sig.h) \
+    $(wildcard include/config/modules/tree/lookup.h) \
     $(wildcard include/config/kallsyms.h) \
     $(wildcard include/config/tracepoints.h) \
     $(wildcard include/config/event/tracing.h) \
@@ -561,6 +560,7 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
     $(wildcard include/config/failslab.h) \
     $(wildcard include/config/slab.h) \
     $(wildcard include/config/slub.h) \
+    $(wildcard include/config/slob.h) \
   include/linux/kmemleak.h \
     $(wildcard include/config/debug/kmemleak.h) \
   include/linux/kasan.h \
@@ -589,25 +589,7 @@ deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../
     $(wildcard include/config/hugetlbfs.h) \
   include/linux/of_address.h \
     $(wildcard include/config/pci.h) \
-  include/linux/io.h \
-    $(wildcard include/config/have/arch/huge/vmap.h) \
-    $(wildcard include/config/has/ioport/map.h) \
-  arch/arm/include/asm/io.h \
-    $(wildcard include/config/need/mach/io/h.h) \
-    $(wildcard include/config/pcmcia/soc/common.h) \
-    $(wildcard include/config/isa.h) \
-    $(wildcard include/config/pccard.h) \
-  include/asm-generic/pci_iomap.h \
-    $(wildcard include/config/no/generic/pci/ioport/map.h) \
-    $(wildcard include/config/generic/pci/iomap.h) \
-  include/xen/xen.h \
-    $(wildcard include/config/xen.h) \
-    $(wildcard include/config/xen/dom0.h) \
-    $(wildcard include/config/xen/pvh.h) \
-  include/asm-generic/io.h \
-    $(wildcard include/config/generic/iomap.h) \
-  include/linux/vmalloc.h \
 
-/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.o: $(deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.o)
+/home/mib/Development/the-snowwhite-git/mksocfpgs-jessie-pc/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.o: $(deps_/home/mib/Development/the-snowwhite-git/mksocfpgs-jessie-pc/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.o)
 
-$(deps_/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.o):
+$(deps_/home/mib/Development/the-snowwhite-git/mksocfpgs-jessie-pc/mksocfpga/Scripts/SD-Image-Gen/../../SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.o):
