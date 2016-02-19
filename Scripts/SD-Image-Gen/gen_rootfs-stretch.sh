@@ -35,7 +35,6 @@ run_bootstrap() {
 sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,dialog,kmod,dbus,dbus-x11,libpam-systemd,systemd-ui,systemd,systemd-sysv,dhcpcd-gtk,dhcpcd-dbus,autodns-dhcp,dhcpcd5,iputils-ping,iproute2,traceroute,autofs,xorg $distro $ROOTFS_DIR http://ftp.debian.org/debian/
 }
 
-
 #function run_bootstrap {
 #sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=adduser,resolvconf,apt-#utils,ssh,sudo,ntpdate,openssl,vim,nano,cryptsetup,lvm2,locales,login,build-essential,gcc,g++,gdb,make,subversion,git,curl,zip,unzip,pbzip2,pigz,dialog,systemd,openssh-#server,ntpdate,less,cpufrequtils,isc-dhcp-client,ntp,console-setup,ca-certificates,xserver-xorg,xserver-xorg-video-dummy,debian-archive-keyring,debian-keyring,debian-#ports-archive-keyring,netbase,iproute2,iputils-ping,iputils-arping,iputils-tracepath,wget,kmod,haveged $distro $ROOTFS_DIR http://ftp.debian.org/debian/
 #}
@@ -755,11 +754,11 @@ run_initial_sh
 }
 
 run_func() {
-#    install_dep
+#install_dep
 output=$( run_bootstrap )
-echo "NOTE: run_bootstrap out =\n   $output"
-#    run_bootstrap
-#    setup_configfiles    
+echo "NOTE: run_bootstrap output is =\n   $output"
+run_bootstrap
+setup_configfiles    
 ##    init_chroot
 }
 

@@ -3,7 +3,7 @@
 # Working Invokes selected scripts in same folder that generates a working armhf Debian Jessie sd-card-image().img
 # for the Terasic De0 Nano / Altera Atlas Soc-Fpga dev board
 
-#TODO:   move variables to main script
+#TODO:   complete MK depedencies
 
 # 1.initial source: make minimal rootfs on amd64 Debian Jessie, according to "How to create bare minimum Debian Wheezy rootfs from scratch"
 # http://olimex.wordpress.com/2014/07/21/how-to-create-bare-minimum-debian-wheezy-rootfs-from-scratch/
@@ -34,7 +34,6 @@ IMG_ROOT_PART=p3
 #IMG_BOOT_PART=p1
 #IMG_ROOT_PART=p2
 
-#UBOOT_VERSION='v2016.01'
 UBOOT_VERSION="v2016.01"
 
 
@@ -57,6 +56,7 @@ UBOOT_SPLFILE=${CURRENT_DIR}/uboot/u-boot-with-spl-dtb.sfp
 
 ##--------- altera socfpga kernel --------------------------------------#
 ALT_KERNEL_URL="https://github.com/altera-opensource/linux-socfpga.git"
+#ALT_KERNEL_CHKOUT='linux-rt linux/socfpga-3.10-ltsi-rt'
 ALT_KERNEL_CHKOUT="linux/socfpga-3.10-ltsi-rt"
 
 # cross toolchain
@@ -134,7 +134,6 @@ $SCRIPT_ROOT_DIR/build_uboot.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $UBOOT_VERSION
 }
 
 function build_kernel {
-echo "NOTE: in main: KERNEL_FILE_URL = ${KERNEL_FILE_URL}"
 $SCRIPT_ROOT_DIR/build_kernel.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $CC_FOLDER_NAME $CC_URL $KERNEL_FOLDER_NAME $KERNEL_URL $KERNEL_CHKOUT $KERNEL_FILE_URL $PATCH_URL $PATCH_FILE
 }
 
@@ -154,8 +153,28 @@ cd ..
 }
 
 
+compress_rootfs(){
+DRIVE=`bash -c 'sudo losetup --show -f '$IMG_FILE''`
+sudo partprobe $DRIVE
+
+sudo mkdir -p $ROOTFS_MNT
+sudo mount ${DRIVE}$IMG_ROOT_PART $ROOTFS_MNT
+
+echo "Rootfs configured ... compressing ...."
+cd $ROOTFS_MNT
+sudo tar -cjSf $CURRENT_DIR/$COMPNAME--rootfs.tar.bz2 *
+
+cd $CURRENT_DIR
+echo "final rootfs compressed finish ... unmounting"
+
+sudo umount -R $ROOTFS_MNT
+sudo losetup -D
+}
+
 build_rootfs_into_image() {
 $SCRIPT_ROOT_DIR/gen_rootfs-stretch.sh $CURRENT_DIR $ROOTFS_DIR $IMG_FILE $IMG_ROOT_PART
+COMPNAME=raw
+compress_rootfs
 }
 
 build_rootfs_into_folder() {
@@ -326,24 +345,8 @@ sudo umount -R $ROOTFS_MNT
 sudo losetup -D
 sync
 
-}
-
-compress_rootfs(){
-DRIVE=`bash -c 'sudo losetup --show -f '$IMG_FILE''`
-sudo partprobe $DRIVE
-
-sudo mkdir -p $ROOTFS_MNT
-sudo mount ${DRIVE}$IMG_ROOT_PART $ROOTFS_MNT
-
-echo "Rootfs configured ... compressing ...."
-cd $ROOTFS_MNT
-sudo tar -cjSf $CURRENT_DIR/$COMPNAME--rootfs.tar.bz2 *
-
-cd $CURRENT_DIR
-echo "final rootfs compressed finish ... unmounting"
-
-sudo umount -R $ROOTFS_MNT
-sudo losetup -D
+COMPNAME=final
+compress_rootfs
 }
 
 function install_files {
@@ -412,7 +415,6 @@ sync
 }
 
 
-
 #------------------.............. run functions section ..................-----------#
 echo "#---------------------------------------------------------------------------------- "
 echo "#-----------+++     Full Image building process start       +++-------------------- "
@@ -430,7 +432,7 @@ build_kernel
 
 create_image
 
-#build_rootfs_into_image
+build_rootfs_into_image
 #COMPNAME=raw
 #compress_rootfs
 
