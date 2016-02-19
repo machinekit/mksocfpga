@@ -1,18 +1,47 @@
 # mksocfpga
 Further development of the Machinekit SocFpga
 
+Update(19 feb-2016)
+
+Partition layout changed: rootfs -->p3 (this should make downloaded images easiely expandable)
+
+fpga config on boot patched onto u-boot.
+
+Enable uio driver patched onto kernel config.
+
+Kernel changed to mainline 4.4.1-rt with rt ltsi patch 4.4.1-rc6
+
+TODO: fix network ipv4 access (via systemd upgrade...)
+
+u-boot compiles with 4.9 and 5.2 gcc (linaro x86_64 cross + ?)
+
+4.4.1 kernel builds with gcc 5.2     (linaro x86_64 cross + ?)
+
+rootfs has native armhf gcc 4.9
+
+No manual u-boot env changes needed
+
+SD-Cross-Build scripts split into Debian Jessie and Stretch edition 
+
+---
+
 update(14-feb-2014)
 
-Fully bootable sd-image (MK-Rip-built)
+Fully bootable sd-image (MK-Rip-built) (3.10-rt-ltsi kernel from Altera socfpga repo)
+
 Remember usb serial console 115200 8n1 on first boot.
 3 - sek > press kay and:
+
 https://github.com/the-snowwhite/mksocfpga/blob/master/docs/set-uboot-env.md
 
 Msel (SW10):
+
  010101  
+
 (123456)
 
 https://drive.google.com/file/d/0BwyLvgyVIdi8QTRjVGZDbk1OZGs/view?usp=sharing
+
 https://drive.google.com/file/d/0BwyLvgyVIdi8amE3ZW1fLUxld2s/view?usp=sharing
 
 ---
