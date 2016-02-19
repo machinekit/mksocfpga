@@ -154,16 +154,6 @@ clone_kernel() {
         git remote add linux $KERNEL_URL
         git fetch linux
         git checkout -b $KERNEL_CHKOUT
-#Uio Patch:
-#cat <<EOT >> arch/arm/configs/socfpga_defconfig 
-#CONFIG_UIO=y
-#CONFIG_UIO_PDRV=y
-#CONFIG_UIO_PDRV_GENIRQ=y
-#EOT
-#git add 
-#git commit -s -a -m "getting rid of -dirty"
-
-echo "Kernel UIO Patch added"
     fi
     cd ..  
 }
@@ -192,6 +182,14 @@ fetch_kernel() {
 patch_kernel() {
 cd $KERNEL_DIR
 xzcat ../$PATCH_FILE | patch -p1
+#Uio Patch:
+cat <<EOT >> arch/arm/configs/socfpga_defconfig 
+CONFIG_UIO=y
+CONFIG_UIO_PDRV=y
+CONFIG_UIO_PDRV_GENIRQ=y
+EOT
+
+echo "Kernel UIO Patch added"
 }
 
 build_kernel() {

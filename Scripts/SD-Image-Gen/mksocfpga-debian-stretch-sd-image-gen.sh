@@ -18,25 +18,24 @@ WORK_DIR=$1
 ROOTFS_DIR=${CURRENT_DIR}/rootfs
 MK_KERNEL_DRIVER_FOLDER=$SCRIPT_ROOT_DIR/../../SW/MK/kernel-drivers
 
-#BOOT_FILES_DIR=$SCRIPT_ROOT_DIR/../boot_files
-BOOT_FILES_DIR=/home/mib/Developer/the-snowwhite_git/mksocfpga/Scripts/boot_files
+BOOT_FILES_DIR=$SCRIPT_ROOT_DIR/../boot_files
 
 #------------------------------------------------------------------------------------------------------
 # Variables Custom settings
 #------------------------------------------------------------------------------------------------------
 
 #IMG_FILE=${CURRENT_DIR}/mksoc_sdcard-test.img
-IMG_FILE=${CURRENT_DIR}/mksoc_sdcard.img
+IMG_FILE=${CURRENT_DIR}/mksocfpga_sdcard.img
 ## Expandable image
-#IMG_ROOT_PART=p3
-#IMG_BOOT_PART=p2
+IMG_BOOT_PART=p2
+IMG_ROOT_PART=p3
 
 ## Old Inverted image
-IMG_ROOT_PART=p2
-IMG_BOOT_PART=p1
+#IMG_BOOT_PART=p1
+#IMG_ROOT_PART=p2
 
 #UBOOT_VERSION='v2016.01'
-UBOOT_VERSION='v2016.01'
+UBOOT_VERSION="v2016.01"
 
 
 distro=jessie
@@ -49,7 +48,6 @@ distro=jessie
 #set -e      #halt on all errors
 #--------------  u-boot  ------------------------------------------------------------------#
 
-#UBOOT_VERSION=''
 UBOOT_SPLFILE=${CURRENT_DIR}/uboot/u-boot-with-spl-dtb.sfp
 
 #----------- Git kernel clone URL's -----------------------------------#
@@ -58,8 +56,8 @@ UBOOT_SPLFILE=${CURRENT_DIR}/uboot/u-boot-with-spl-dtb.sfp
 #RHN_KERNEL_CHKOUT='origin/v4.4.x'
 
 ##--------- altera socfpga kernel --------------------------------------#
-ALT_KERNEL_URL='https://github.com/altera-opensource/linux-socfpga.git'
-ALT_KERNEL_CHKOUT='linux/socfpga-3.10-ltsi-rt'
+ALT_KERNEL_URL="https://github.com/altera-opensource/linux-socfpga.git"
+ALT_KERNEL_CHKOUT="linux/socfpga-3.10-ltsi-rt"
 
 # cross toolchain
 #--------- altera rt-ltsi socfpga kernel --------------------------------------------------#
@@ -132,13 +130,12 @@ ROOTFS_MNT=/mnt/rootfs
 #-----------------------------------------------------------------------------------
 
 function build_uboot {
-$SCRIPT_ROOT_DIR/build_uboot.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $UBOOT_VERSION ##//  p2 = $CHROOT_DIR
+$SCRIPT_ROOT_DIR/build_uboot.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $UBOOT_VERSION
 }
 
 function build_kernel {
 echo "NOTE: in main: KERNEL_FILE_URL = ${KERNEL_FILE_URL}"
 $SCRIPT_ROOT_DIR/build_kernel.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $CC_FOLDER_NAME $CC_URL $KERNEL_FOLDER_NAME $KERNEL_URL $KERNEL_CHKOUT $KERNEL_FILE_URL $PATCH_URL $PATCH_FILE
-#$SCRIPT_ROOT_DIR/build_kernel.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $CC_FOLDER_NAME $CC_URL $KERNEL_FOLDER_NAME $KERNEL_FILE_URL $PATCH_URL
 }
 
 build_patched_kernel() {
@@ -166,8 +163,7 @@ $SCRIPT_ROOT_DIR/gen_rootfs.sh $CURRENT_DIR $ROOTFS_DIR
 }
 
 function create_image {
-#$SCRIPT_ROOT_DIR/create_img.sh $CURRENT_DIR $IMG_FILE
-$SCRIPT_ROOT_DIR/create_inv_img.sh $CURRENT_DIR $IMG_FILE
+$SCRIPT_ROOT_DIR/create_img.sh $CURRENT_DIR $IMG_FILE
 }
 
 #-----------------------------------------------------------------------------------
@@ -426,7 +422,7 @@ set -e
 if [ ! -z "$WORK_DIR" ]; then
 
 build_uboot
-#build_kernel
+build_kernel
 
 ##build_rcn_kernel
 

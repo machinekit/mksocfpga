@@ -6,10 +6,10 @@
 # Variables
 #------------------------------------------------------------------------------------------------------
 CURRENT_DIR=`pwd`
-WORK_DIR=$1
+WORK_DIR=${1}
 
-SCRIPT_ROOT_DIR=$2
-UBOOT_VERSION=$3
+SCRIPT_ROOT_DIR=${2}
+UBOOT_VERSION=${3}
 
 #UBOOT_VERSION='v2015.10'
 #UBOOT_VERSION='v2016.01'
@@ -21,8 +21,7 @@ MAKE_CONFIG='u-boot-with-spl-dtb.sfp'
 
 UBOOT_SPLFILE=${UBOOT_DIR}/u-boot-with-spl-dtb.sfp
 
-#PATCH_FILE="u-boot-${UBOOT_VERSION}-Setup-load-socfpga_rbf-Change-rootfs_p2-p3.patch"
-PATCH_FILE="u-boot-${UBOOT_VERSION}-Setup-load-socfpga_rbf-Add-fpga-rbf-configure.patch"
+PATCH_FILE="u-boot-${UBOOT_VERSION}-changes.patch"
 
 UBOOT_DIR=${WORK_DIR}/uboot
 
@@ -93,12 +92,13 @@ fi
 cd $UBOOT_DIR
 if [ ! -z "$UBOOT_VERSION" ]
 then
+    git fetch origin
+    git reset --hard origin/master
+    echo "Will now check out " $UBOOT_VERSION
     git checkout $UBOOT_VERSION $CHKOUT_OPTIONS
+    echo "Will now apply patch: " $SCRIPT_ROOT_DIR/$PATCH_FILE
+    patch_uboot
 fi
-#git reset --hard
-#git clean -d -f -x
-#patch_uboot
-#git commit -s -a -m "getting rid of -dirty"
 cd ..
 }
 
@@ -114,6 +114,7 @@ sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libc6-dev d
 }
 
 build_uboot() {
+cd $UBOOT_DIR
 # compile u-boot + spl
 export ARCH=arm
 export PATH=$CC_DIR/bin/:$PATH
@@ -136,8 +137,7 @@ if [ ! -z "$WORK_DIR" ]; then
     cd $WORK_DIR
     get_toolchain
     fetch_uboot
-    patch_uboot
-    cd $UBOOT_DIR
+    
     build_uboot
 else
     echo "no workdir parameter given"
