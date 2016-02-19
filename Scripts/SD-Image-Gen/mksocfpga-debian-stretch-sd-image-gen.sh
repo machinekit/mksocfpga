@@ -61,9 +61,9 @@ ALT_KERNEL_CHKOUT="linux/socfpga-3.10-ltsi-rt"
 
 # cross toolchain
 #--------- altera rt-ltsi socfpga kernel --------------------------------------------------#
-ALT_CC_FOLDER_NAME="gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux"
-ALT_CC_URL="https://releases.linaro.org/14.09/components/toolchain/binaries/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux.tar.xz"
-ALT_KERNEL_FOLDER_NAME="linux-3.10"
+#ALT_CC_FOLDER_NAME="gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux"
+#ALT_CC_URL="https://releases.linaro.org/14.09/components/toolchain/binaries/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux.tar.xz"
+#ALT_KERNEL_FOLDER_NAME="linux-3.10"
 
 #--------- rt-ltsi patched kernel ---------------------------------------------------------#
 PCH_CC_FOLDER_NAME="gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf"
@@ -152,6 +152,7 @@ cd ..
 
 }
 
+
 compress_rootfs(){
 DRIVE=`bash -c 'sudo losetup --show -f '$IMG_FILE''`
 sudo partprobe $DRIVE
@@ -164,14 +165,14 @@ cd $ROOTFS_MNT
 sudo tar -cjSf $CURRENT_DIR/$COMPNAME--rootfs.tar.bz2 *
 
 cd $CURRENT_DIR
-echo "NOTE: ""rootfs is now compressed in: "$CURRENT_DIR/$COMPNAME--rootfs.tar.bz2
+echo "final rootfs compressed finish ... unmounting"
 
 sudo umount -R $ROOTFS_MNT
 sudo losetup -D
 }
 
 build_rootfs_into_image() {
-$SCRIPT_ROOT_DIR/gen_rootfs-jessie.sh $CURRENT_DIR $ROOTFS_DIR $IMG_FILE $IMG_ROOT_PART
+$SCRIPT_ROOT_DIR/gen_rootfs-stretch.sh $CURRENT_DIR $ROOTFS_DIR $IMG_FILE $IMG_ROOT_PART
 COMPNAME=raw
 compress_rootfs
 }
@@ -254,11 +255,9 @@ export LANG=C
 
 apt -y update
 apt -y upgrade
-apt -y install dialog apt-utils sudo
-apt -y install adduser resolvconf ssh ntpdate openssl nano locales
-apt -y install kmod dbus dbus-x11 libpam-systemd systemd-ui systemd systemd-sysv dhcpcd-gtk dhcpcd-dbus autodns-dhcp dhcpcd5 iputils-ping iproute2 traceroute
+sudo apt-get -y install resolvconf apt-utils ssh ntpdate openssl nano locales
 
-#apt -y install xorg
+#apt-get -y install xorg
 
 locale-gen en_US en_US.UTF-8 en_GB en_GB.UTF-8 en_DK en_DK.UTF-8
 
@@ -337,8 +336,8 @@ echo "will fix profile locale"
 fix_profile
 
 cd $CURRENT_DIR
-PREFIX=$ROOTFS_MNT
-kill_ch_proc
+#PREFIX=$ROOTFS_MNT
+#kill_ch_proc
 
 #PREFIX=$ROOTFS_MNT
 #umount_ch_proc
@@ -403,7 +402,6 @@ sudo make ARCH=arm -C $KERNEL_DIR M=$UIO_DIR INSTALL_MOD_PATH=$ROOTFS_MNT module
 
 #sudo make -j$NCORES LOADADDR=0x8000 modules_install INSTALL_MOD_PATH=$ROOTFS_MNT
 #sudo chroot $ROOTFS_MNT rm /usr/sbin/policy-rc.d
-sudo rm $ROOTFS_MNT/usr/sbin/policy-rc.d
 
 sudo umount $ROOTFS_MNT
 sudo losetup -D
@@ -435,12 +433,15 @@ build_kernel
 create_image
 
 build_rootfs_into_image
+#COMPNAME=raw
+#compress_rootfs
 
 ##fetch_extract_rcn_rootfs
 
-run_initial_sh
-##COMPNAME=final
-##compress_rootfs
+#run_initial_sh
+
+#COMPNAME=final
+#compress_rootfs
 
 install_files
 install_uboot

@@ -25,7 +25,7 @@ sudo losetup --show -f $SD_IMG
 sudo fdisk /dev/loop0 << EOF
 n
 p
-3
+1
 
 +1M
 t
@@ -34,14 +34,14 @@ n
 p
 2
 
-+3600M
++98M
 n
 p
-1
+3
 
 
 t
-1
+2
 b
 w
 EOF
@@ -50,8 +50,8 @@ sudo partprobe $DRIVE
 
 echo "creating file systems"
 
-sudo mkfs.vfat -F 32 -n "BOOT" ${DRIVE}p1
-sudo mke2fs -j -L "rootfs" ${DRIVE}p2
+sudo mkfs.vfat -F 32 -n "BOOT" ${DRIVE}p2
+sudo mke2fs -j -L "rootfs" ${DRIVE}p3
 
 sync
 sudo partprobe $DRIVE

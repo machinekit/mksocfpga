@@ -6,34 +6,13 @@
 # Variables
 #------------------------------------------------------------------------------------------------------
 CURRENT_DIR=`pwd`
-WORK_DIR=$1
+WORK_DIR=${1}
 
-UBOOT_DIR=${WORK_DIR}/uboot
-distro=jessie
+SCRIPT_ROOT_DIR=${2}
+UBOOT_VERSION=${3}
 
-#-------------------------------------------
-# u-boot, toolchain, imagegen vars
-#-------------------------------------------
-#--------- altera socfpga kernel --------------------------------------#
-
-#CC_DIR="${WORK_DIR}/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux"
-#CC_FILE="${CC_DIR}.tar.bz2"
-#CC_URL="https://releases.linaro.org/14.09/components/toolchain/binaries/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux.tar.bz2"
-
-#--------- patched kernel ---------------------------------------------#
-CC_FOLDER_NAME="gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf"
-
-CC_DIR="${WORK_DIR}/${CC_FOLDER_NAME}"
-CC_FILE="${CC_FOLDER_NAME}.tar.xz"
-CC_URL="http://releases.linaro.org/components/toolchain/binaries/latest-5.2/arm-linux-gnueabihf/${CC_FILE}"
-
-#----------------------------------------------------------------------#
-
-CC="${CC_DIR}/bin/arm-linux-gnueabihf-"
-
-#UBOOT_VERSION=''
 #UBOOT_VERSION='v2015.10'
-UBOOT_VERSION='v2016.01'
+#UBOOT_VERSION='v2016.01'
 CHKOUT_OPTIONS=''
 #CHKOUT_OPTIONS='-b tmp'
 
@@ -41,6 +20,31 @@ BOARD_CONFIG='socfpga_de0_nano_soc_defconfig'
 MAKE_CONFIG='u-boot-with-spl-dtb.sfp'
 
 UBOOT_SPLFILE=${UBOOT_DIR}/u-boot-with-spl-dtb.sfp
+
+PATCH_FILE="u-boot-${UBOOT_VERSION}-changes.patch"
+
+UBOOT_DIR=${WORK_DIR}/uboot
+
+#-------------------------------------------
+# u-boot, toolchain, imagegen vars
+#-------------------------------------------
+#--------- altera socfpga kernel --------------------------------------#
+CC_FOLDER_NAME="gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux"
+#CC_DIR="${WORK_DIR}/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux"
+#CC_FILE="${CC_DIR}.tar.bz2"
+CC_URL="https://releases.linaro.org/14.09/components/toolchain/binaries/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux.tar.xz"
+
+#--------- patched kernel ---------------------------------------------#
+#CC_FOLDER_NAME="gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf"
+
+CC_DIR="${WORK_DIR}/${CC_FOLDER_NAME}"
+CC_FILE="${CC_FOLDER_NAME}.tar.xz"
+#CC_URL="http://releases.linaro.org/components/toolchain/binaries/latest-5.2/arm-linux-gnueabihf/${CC_FILE}"
+
+#----------------------------------------------------------------------#
+
+CC="${CC_DIR}/bin/arm-linux-gnueabihf-"
+
 
 NCORES=`nproc`
 
@@ -58,7 +62,7 @@ extract_toolchain() {
 }
 
 
-function get_toolchain {
+get_toolchain() {
 # download linaro cross compiler toolchain
 
 if [ ! -d ${CC_DIR} ]; then
@@ -67,15 +71,18 @@ if [ ! -d ${CC_DIR} ]; then
     	wget -c ${CC_URL}
     fi
 # extract linaro cross compiler toolchain
-# uses multicore extract (lbzip2) if available
+# uses multicore extract (lbzip2) if available(set via links in /usr/sbin)
     echo "extracting toolchain" 
     extract_toolchain
 fi
 }
 
-function fetch_uboot {
-# Fetch uboot
+patch_uboot() {
+cd $UBOOT_DIR
+git am --signoff <  $SCRIPT_ROOT_DIR/$PATCH_FILE
+}
 
+fetch_uboot() {
 if [ ! -d ${UBOOT_DIR} ]; then
     echo "cloning u-boot"
     git clone git://git.denx.de/u-boot.git uboot
@@ -85,7 +92,12 @@ fi
 cd $UBOOT_DIR
 if [ ! -z "$UBOOT_VERSION" ]
 then
+    git fetch origin
+    git reset --hard origin/master
+    echo "Will now check out " $UBOOT_VERSION
     git checkout $UBOOT_VERSION $CHKOUT_OPTIONS
+    echo "Will now apply patch: " $SCRIPT_ROOT_DIR/$PATCH_FILE
+    patch_uboot
 fi
 cd ..
 }
@@ -101,7 +113,8 @@ sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libc6-dev d
 
 }
 
-function build_uboot {
+build_uboot() {
+cd $UBOOT_DIR
 # compile u-boot + spl
 export ARCH=arm
 export PATH=$CC_DIR/bin/:$PATH
@@ -124,7 +137,7 @@ if [ ! -z "$WORK_DIR" ]; then
     cd $WORK_DIR
     get_toolchain
     fetch_uboot
-    cd $UBOOT_DIR
+    
     build_uboot
 else
     echo "no workdir parameter given"

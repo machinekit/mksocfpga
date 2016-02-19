@@ -7,12 +7,13 @@ CURRENT_DIR=`pwd`
 WORK_DIR=$1
 ROOTFS_DIR=$2
 SD_IMG=$3
+IMG_ROOT_PART=$4
 
 MOUNT_DIR=
 ROOTFS_MNT=/mnt/rootfs
 
 ROOTFS_IMG=${WORK_DIR}/rootfs.img
-DRIVE=/dev/loop0
+#DRIVE=/dev/loop0
 
 distro=jessie
 
@@ -23,28 +24,41 @@ DEFGROUPS="sudo,kmem,adm,dialout,machinekit,video,plugdev"
 # build armhf Debian qemu-debootstrap chroot port
 #------------------------------------------------------------------------------------------------------
 install_dep() {
-    sudo apt-get -y install qemu binfmt-support qemu-user-static schroot debootstrap 
+    sudo apt-get -y install qemu binfmt-support qemu-user-static schroot debootstrap libc6
+#    sudo dpkg --add-architecture armhf
+    sudo apt update
+    sudo apt -y --force-yes upgrade
+    sudo update-binfmts --display | grep interpreter
+}
+
+run_bootstrap() {
+sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,dialog,kmod,dbus,dbus-x11,libpam-systemd,systemd-ui,systemd,systemd-sysv,dhcpcd-gtk,dhcpcd-dbus,autodns-dhcp,dhcpcd5,iputils-ping,iproute2,traceroute,autofs,xorg $distro $ROOTFS_DIR http://ftp.debian.org/debian/
 }
 
 #function run_bootstrap {
-#sudo qemu-debootstrap --arch=armhf --variant=buildd  --no-check-gpg --include=adduser,resolvconf,apt-utils,ssh,sudo,ntpdate,openssl,vim,nano,cryptsetup,lvm2,locales,login,build-essential,gcc,g++,gdb,make,subversion,git,curl,zip,unzip,pbzip2,pigz,dialog,systemd,openssh-server,ntpdate,less,cpufrequtils,isc-dhcp-client,ntp,console-setup,ca-certificates,xserver-xorg,xserver-xorg-video-dummy,debian-archive-keyring,debian-keyring,debian-ports-archive-keyring,netbase,iproute2,iputils-ping,iputils-arping,iputils-tracepath,wget,kmod,haveged $distro $ROOTFS_DIR http://ftp.debian.org/debian/
+#sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=adduser,resolvconf,apt-#utils,ssh,sudo,ntpdate,openssl,vim,nano,cryptsetup,lvm2,locales,login,build-essential,gcc,g++,gdb,make,subversion,git,curl,zip,unzip,pbzip2,pigz,dialog,systemd,openssh-#server,ntpdate,less,cpufrequtils,isc-dhcp-client,ntp,console-setup,ca-certificates,xserver-xorg,xserver-xorg-video-dummy,debian-archive-keyring,debian-keyring,debian-#ports-archive-keyring,netbase,iproute2,iputils-ping,iputils-arping,iputils-tracepath,wget,kmod,haveged $distro $ROOTFS_DIR http://ftp.debian.org/debian/
 #}
 
-run_bootstrap() {
-sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,kmod,dbus,dbus-x11,libpam-systemd,systemd-ui,systemd,systemd-sysv,dhcpcd-gtk,dhcpcd-dbus,autodns-dhcp,dhcpcd5,iputils-ping,iproute2,traceroute,autofs,xorg $distro $ROOTFS_DIR http://ftp.debian.org/debian/
-}
+# run_bootstrap() {
+# sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=libpython-stdlib,python2.7,sudo,locales,nano,kmod,dbus,dbus-x11,libpam-systemd,systemd-ui,systemd,systemd-sysv,dhcpcd-gtk,dhcpcd-dbus,autodns-dhcp,dhcpcd5,iputils-ping,iproute2,traceroute,autofs,xorg $distro $ROOTFS_DIR http://ftp.debian.org/debian/
+# }
+# 
 
-setup_configfiles() {
+#run_bootstrap() {
+#sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg  $distro $ROOTFS_DIR http://ftp.debian.org/debian/
+#}
 
-echo "Setting up config files "
 
+gen_policy_rc_d() {
 sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/usr/sbin/policy-rc.d
 echo "************************************" >&2
 echo "All rc.d operations denied by policy" >&2
 echo "************************************" >&2
 exit 101
 EOT'
+}
 
+gen_sudoers() {
 sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/sudoers
 #
 # This file MUST be edited with the 'visudo' command as root.
@@ -79,8 +93,9 @@ machinekit ALL=(ALL:ALL) NOPASSWD: ALL
 %machinekit ALL=(ALL:ALL) NOPASSWD: ALL
 EOT'
 
+}
 
-
+gen_sources_list() {
 sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/apt/sources.list
 deb http://ftp.dk.debian.org/debian '$distro'  main contrib non-free
 deb-src http://ftp.dk.debian.org/debian  '$distro' main contrib non-free
@@ -90,7 +105,10 @@ deb http://security.debian.org/ '$distro'/updates main contrib non-free
 deb-src http://security.debian.org '$distro'/updates main contrib non-free
 EOT'
 
+}
 
+
+gen_fstab(){
 sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/fstab
 # /etc/fstab: static file system information.
 #
@@ -100,10 +118,9 @@ tmpfs          /tmp            tmpfs   defaults                  0 0
 none           /dev/shm        tmpfs   rw,nosuid,nodev,noexec    0 0
 EOT'
 
+}
 
-sudo sh -c 'echo mksoc > '$ROOTFS_DIR'/etc/hostname'
-
-#127.0.1.1       mksoc.local      mksoc
+gen_hosts() {
 sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/hosts
 
 127.0.0.1       localhost
@@ -115,12 +132,10 @@ ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
 EOT'
 
-sudo rm /etc/resolv.conf
-sudo ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+}
 
-sudo mkdir -p /etc/systemd/network
-
-sudo sh -c 'cat <<EOT > /etc/systemd/network/wired.network
+gen_wired_network() {
+sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/systemd/network/wired.network
 [Match]
 Name=eth0
 
@@ -129,16 +144,10 @@ Address=192.168.10.11/24
 Gateway=192.168.10.1
 DNS=8.8.8.8
 EOT'
- 
-#sudo sh -c 'cat <<EOT >> '$ROOTFS_DIR'/etc/network/interfaces
-#auto lo eth0
-#iface lo inet loopback
-#allow-hotplug eth0
-#    iface eth0 inet dhcp
-#EOT'
 
-sudo sh -c 'echo T0:2345:respawn:rootfs/sbin/getty -L ttyS0 115200 vt100 >> '$ROOTFS_DIR'/etc/inittab'
+}
 
+gen_locale_gen() {
 sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/locale.gen
 # This file lists locales that you wish to have built. You can find a list
 # of valid supported locales at /usr/share/i18n/SUPPORTED, and you can add
@@ -619,29 +628,67 @@ en_US.UTF-8 UTF-8
 # zu_ZA.UTF-8 UTF-8
 EOT'
 
+}
+
+setup_configfiles() {
+
+echo "Setting up config files "
+
+gen_policy_rc_d
+
+gen_sudoers
+
+gen_sources_list
+
+gen_fstab
+
+sudo sh -c 'echo mksoc > '$ROOTFS_DIR'/etc/hostname'
+
+gen_hosts
+
+
+sudo rm /etc/resolv.conf
+sudo ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+sudo mkdir -p /etc/systemd/network
+
+gen_wired_network
+ 
+#sudo sh -c 'cat <<EOT >> '$ROOTFS_DIR'/etc/network/interfaces
+#auto lo eth0
+#iface lo inet loopback
+#allow-hotplug eth0
+#    iface eth0 inet dhcp
+#EOT'
+
+sudo sh -c 'echo T0:2345:respawn:rootfs/sbin/getty -L ttyS0 115200 vt100 >> '$ROOTFS_DIR'/etc/inittab'
+
+gen_locale_gen
+
 sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/locale.conf
 LANG=en_US.UTF-8 UTF-8
 LC_COLLATE=C
 LC_TIME=en_GB.UTF-8
 EOT'
 
-sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/X11/xorg.conf
-
-Section "Screen"
-       Identifier   "Default Screen"
-       tDevice       "Dummy"
-       DefaultDepth 24
-EndSection
-
-Section "Device"
-    Identifier "Dummy"
-    Driver "dummy"
-    Option "IgnoreEDID" "true"
-    Option "NoDDC" "true"
-EndSection
-EOT'
+# sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/X11/xorg.conf
+# 
+# Section "Screen"
+#        Identifier   "Default Screen"
+#        tDevice       "Dummy"
+#        DefaultDepth 24
+# EndSection
+# 
+# Section "Device"
+#     Identifier "Dummy"
+#     Driver "dummy"
+#     Option "IgnoreEDID" "true"
+#     Option "NoDDC" "true"
+# EndSection
+# EOT'
 
 echo "Config files genetated"
+
 }
 
 gen_initial_sh() {
@@ -657,8 +704,9 @@ export LANG=C
 
 
 sudo apt-get -y update
-#sudo apt-get -y upgrade
-sudo apt-get -y install xorg
+sudo apt-get -y upgrade
+sudo apt-get -y install adduser resolvconf apt-utils ssh sudo ntpdate openssl nano locales
+#sudo apt-get -y install xorg
 
 sudo locale-gen
 
@@ -706,9 +754,11 @@ run_initial_sh
 }
 
 run_func() {
-##    install_dep  #install qemu 2.5 from sid instead
-#    run_bootstrap
-    setup_configfiles
+#install_dep
+output=$( run_bootstrap )
+echo "NOTE: run_bootstrap output is =\n   $output"
+run_bootstrap
+setup_configfiles    
 ##    init_chroot
 }
 
@@ -717,7 +767,7 @@ if [ ! -z "$SD_IMG" ]; then
     DRIVE=`bash -c 'sudo losetup --show -f '$SD_IMG''`
     sudo partprobe $DRIVE
     sudo mkdir -p $ROOTFS_MNT
-    sudo mount ${DRIVE}p2 $ROOTFS_MNT
+    sudo mount ${DRIVE}$IMG_ROOT_PART $ROOTFS_MNT
     echo "NOTE: ""chroot is mounted in: ${ROOTFS_MNT}"
     ROOTFS_DIR=$ROOTFS_MNT
     echo "NOTE: "'rootfs_dir ='$ROOTFS_DIR
