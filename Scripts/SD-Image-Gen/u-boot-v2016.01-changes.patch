@@ -1,14 +1,14 @@
-From 7cf55da1a5a5704a633d966214ee1e0edf5db453 Mon Sep 17 00:00:00 2001
+From 4251d06a8207a8de4b9010184f139ea87c2481fa Mon Sep 17 00:00:00 2001
 From: the-snowwhite <producer@holotronic.dk>
-Date: Fri, 19 Feb 2016 11:54:36 +0100
-Subject: [PATCH 1/2] Load socfpga.rbf and configure fpga
+Date: Sun, 21 Feb 2016 11:48:30 +0100
+Subject: [PATCH 1/2] add fpga config on boot from socfpga.rbf in boot parttion
 
 ---
- include/configs/socfpga_de0_nano_soc.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ include/configs/socfpga_de0_nano_soc.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/include/configs/socfpga_de0_nano_soc.h b/include/configs/socfpga_de0_nano_soc.h
-index cbc7396..8ec4009 100644
+index cbc7396..40af164 100644
 --- a/include/configs/socfpga_de0_nano_soc.h
 +++ b/include/configs/socfpga_de0_nano_soc.h
 @@ -37,7 +37,7 @@
@@ -20,11 +20,12 @@ index cbc7396..8ec4009 100644
  #define CONFIG_LOADADDR		0x01000000
  #define CONFIG_SYS_LOAD_ADDR	CONFIG_LOADADDR
  
-@@ -57,12 +57,16 @@
+@@ -57,12 +57,17 @@
  	"bootimage=zImage\0" \
  	"fdt_addr=100\0" \
  	"fdtimage=socfpga.dtb\0" \
 +	"fpgaimage=socfpga.rbf\0" \
++	"fpgadata=0x2000000\0" \
 +	"fpgaconfig=load mmc 0:1 ${fpgadata} ${fpgaimage};" \
 +	"fpga load 0 ${fpgadata} ${filesize}\0" \
  	"bootm ${loadaddr} - ${fdt_addr}\0" \
@@ -41,23 +42,24 @@ index cbc7396..8ec4009 100644
 2.7.0
 
 
-From 68ecdce28fb63a7466d1a1df61c3fb58aa63dc94 Mon Sep 17 00:00:00 2001
+From a0e3c7252b31433fbfe6bfad65a26d54de1dc59c Mon Sep 17 00:00:00 2001
 From: the-snowwhite <producer@holotronic.dk>
-Date: Fri, 19 Feb 2016 11:56:41 +0100
-Subject: [PATCH 2/2] Change bootpart to p2 and rootfspart to p3
+Date: Sun, 21 Feb 2016 11:51:11 +0100
+Subject: [PATCH 2/2] Change sd-card partition layout boot p1-->p2 rootfs
+ p2-->p3
 
 ---
  include/configs/socfpga_de0_nano_soc.h | 10 +++++-----
  1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/include/configs/socfpga_de0_nano_soc.h b/include/configs/socfpga_de0_nano_soc.h
-index 8ec4009..a00bd17 100644
+index 40af164..abe5202 100644
 --- a/include/configs/socfpga_de0_nano_soc.h
 +++ b/include/configs/socfpga_de0_nano_soc.h
-@@ -58,17 +58,17 @@
- 	"fdt_addr=100\0" \
+@@ -59,17 +59,17 @@
  	"fdtimage=socfpga.dtb\0" \
  	"fpgaimage=socfpga.rbf\0" \
+ 	"fpgadata=0x2000000\0" \
 -	"fpgaconfig=load mmc 0:1 ${fpgadata} ${fpgaimage};" \
 +	"fpgaconfig=load mmc 0:2 ${fpgadata} ${fpgaimage};" \
  	"fpga load 0 ${fpgadata} ${filesize}\0" \
