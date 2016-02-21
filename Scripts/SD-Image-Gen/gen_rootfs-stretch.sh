@@ -36,7 +36,13 @@ install_dep() {
 # }
 
 run_bootstrap() {
-sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,dialog,kmod,dbus,dbus-x11,libpam-systemd,systemd-ui,systemd,systemd-sysv,dhcpcd-gtk,dhcpcd-dbus,autodns-dhcp,dhcpcd5,iputils-ping,iproute2,traceroute,autofs,xorg $distro $ROOTFS_DIR http://ftp.debian.org/debian/
+qoutput1='sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,dialog,adduser,resolvconf,apt-utils,ssh,ntpdate,openssl,kmod,dbus,dbus-x11,xorg,libpam-systemd,systemd-ui,systemd,systemd-sysv,iputils-ping,iproute2,traceroute,autofs ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian'
+echo " "
+echo "Note: Eval.Start.."
+eval $qoutput1
+echo " "
+echo "Note: Eval..Done ."
+
 }
 
 #function run_bootstrap {
@@ -696,8 +702,31 @@ echo "Config files genetated"
 
 
 run_func() {
+
 install_dep
-run_bootstrap
+
+output=$( run_bootstrap )
+if [ $? -eq 0  ]; then
+    echo ""
+    echo "ECHO_err0: qoutput1 value in error is = ${output}"
+    echo ""
+else
+    echo ""
+    echo "ECHO_good: run_debootstrap output = nonzero:NoError"
+    echo "ECHO_good: qoutput value in error is = ${output}"
+    echo ""
+fi
+echo " "
+echo "Runnung stage 2 -----!"
+#sudo mkdir -p $ROOTFS_MNT/usr/share/keyrings/
+#sudo cp /usr/share/keyrings/debian-archive-keyring.gpg $ROOTFS_MNT/usr/share/keyrings/
+
+sudo sh -c 'sed -i.bak s/"set -e"/"set -x"/g '$ROOTFS_MNT'/debootstrap/debootstrap'
+
+echo "qemu stage2 mod applied "
+
+sudo chroot $ROOTFS_MNT /debootstrap/debootstrap --second-stage
+
 setup_configfiles    
 ##    init_chroot
 }
