@@ -165,7 +165,7 @@ cd $ROOTFS_MNT
 sudo tar -cjSf $CURRENT_DIR/$COMPNAME--rootfs.tar.bz2 *
 
 cd $CURRENT_DIR
-echo "final rootfs compressed finish ... unmounting"
+echo "${COMPNAME} rootfs compressed finish ... unmounting"
 
 sudo umount -R $ROOTFS_MNT
 sudo losetup -D
@@ -255,26 +255,26 @@ export LANG=C
 
 apt -y update
 apt -y upgrade
-sudo apt-get -y install resolvconf apt-utils ssh ntpdate openssl nano locales
 
-#apt-get -y install xorg
+#sudo apt-get -y install resolvconf apt-utils ssh ntpdate openssl nano locales
+#apt -y install xorg
 
-locale-gen en_US en_US.UTF-8 en_GB en_GB.UTF-8 en_DK en_DK.UTF-8
+#locale-gen en_US en_US.UTF-8 en_GB en_GB.UTF-8 en_DK en_DK.UTF-8
+locale-gen en_US en_US.UTF-8 en_GB en_GB.UTF-8
 
 echo "root:machinekit" | chpasswd
 
-echo "NOTE: " "Will add user machinekit pw: machinekit"
+echo "ECHO: " "Will add user machinekit pw: machinekit"
 /usr/sbin/useradd -s /bin/bash -d /home/machinekit -m machinekit
 echo "machinekit:machinekit" | chpasswd
 adduser machinekit sudo
 chsh -s /bin/bash machinekit
 
-echo "NOTE: ""User Added"
+echo "ECHO: ""User Added"
 
-echo "NOTE: ""Will now add user to groups"
+echo "ECHO: ""Will now add user to groups"
 usermod -a -G '$DEFGROUPS' machinekit
 sync
-
 
 cat <<EOT >> /home/machinekit/.bashrc
 
@@ -287,7 +287,7 @@ EOT
 systemctl enable systemd-networkd
 systemctl enable systemd-resolved
 
-echo "NOTE: ""Will now run apt update, upgrade"
+echo "ECHO: ""Will now run apt update, upgrade"
 apt -y update
 apt -y upgrade
 exit
@@ -310,6 +310,9 @@ EOT
 exit
 EOF'
 
+sudo chroot $ROOTFS_MNT chown machinekit:machinekit /home/fix-profile.sh
+sudo chroot $ROOTFS_MNT chmod +x /home/fix-profile.sh
+sudo chroot $ROOTFS_MNT chown machinekit:machinekit /home/fix-profile.sh
 }
 
 function run_initial_sh {
@@ -328,7 +331,7 @@ sudo mount -t sysfs sys sys/
 sudo mount -o bind /dev dev/
 
 gen_initial_sh
-echo "NOTE: gen_initial.sh finhed ... will now run in chroot"
+echo "ECHO: gen_initial.sh finhed ... will now run in chroot"
 
 sudo chroot $ROOTFS_MNT /bin/bash -c /home/initial.sh
 #sudo chroot $ROOTFS_DIR rm /usr/sbin/policy-rc.d
@@ -336,13 +339,13 @@ echo "will fix profile locale"
 fix_profile
 
 cd $CURRENT_DIR
-#PREFIX=$ROOTFS_MNT
-#kill_ch_proc
+PREFIX=$ROOTFS_MNT
+kill_ch_proc
 
-#PREFIX=$ROOTFS_MNT
-#umount_ch_proc
-sudo umount -R $ROOTFS_MNT
-sudo losetup -D
+PREFIX=$ROOTFS_MNT
+umount_ch_proc
+#sudo umount -R $ROOTFS_MNT
+#sudo losetup -D
 sync
 
 COMPNAME=final
@@ -384,7 +387,7 @@ sudo mkdir -p $ROOTFS_MNT
 sudo mount ${DRIVE}$IMG_ROOT_PART $ROOTFS_MNT
 
 # Rootfs -------#
-sudo tar xvfj $CURRENT_DIR/final--rootfs.tar.bz2 -C $ROOTFS_MNT
+#sudo tar xvfj $CURRENT_DIR/final--rootfs.tar.bz2 -C $ROOTFS_MNT
 
 #cd $ROOTFS_DIR
 #sudo tar cf - . | (sudo tar xvf - -C $ROOTFS_MNT)
@@ -423,8 +426,8 @@ set -e
 
 if [ ! -z "$WORK_DIR" ]; then
 
-build_uboot
-build_kernel
+#build_uboot
+#build_kernel
 
 ##build_rcn_kernel
 
@@ -438,10 +441,10 @@ build_rootfs_into_image
 
 ##fetch_extract_rcn_rootfs
 
-#run_initial_sh
+run_initial_sh
 
-#COMPNAME=final
-#compress_rootfs
+##COMPNAME=final
+##compress_rootfs
 
 install_files
 install_uboot

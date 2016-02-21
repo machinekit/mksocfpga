@@ -15,7 +15,7 @@ ROOTFS_MNT=/mnt/rootfs
 ROOTFS_IMG=${WORK_DIR}/rootfs.img
 #DRIVE=/dev/loop0
 
-distro=jessie
+distro=stretch
 
 DEFGROUPS="sudo,kmem,adm,dialout,machinekit,video,plugdev"
 
@@ -30,6 +30,10 @@ install_dep() {
     sudo apt -y --force-yes upgrade
     sudo update-binfmts --display | grep interpreter
 }
+
+# run_bootstrap() {
+# sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,dialog,adduser,resolvconf,apt-utils,ssh,ntpdate,openssl,kmod,dbus,dbus-x11,libpam-systemd,systemd-ui,systemd,systemd-sysv,iputils-ping,iproute2,traceroute,autofs ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian
+# }
 
 run_bootstrap() {
 sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,dialog,kmod,dbus,dbus-x11,libpam-systemd,systemd-ui,systemd,systemd-sysv,dhcpcd-gtk,dhcpcd-dbus,autodns-dhcp,dhcpcd5,iputils-ping,iproute2,traceroute,autofs,xorg $distro $ROOTFS_DIR http://ftp.debian.org/debian/
@@ -124,7 +128,7 @@ gen_hosts() {
 sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/hosts
 
 127.0.0.1       localhost
-127.0.1.1       mksoc.local      mksoc
+127.0.1.1       mksocfpga.local      mksocfpga
 ::1             localhost ip6-localhost ip6-loopback
 #fe00::0         ip6-localnet
 #ff00::0         ip6-mcastprefix
@@ -140,9 +144,7 @@ sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/systemd/network/wired.network
 Name=eth0
 
 [Network]
-Address=192.168.10.11/24
-Gateway=192.168.10.1
-DNS=8.8.8.8
+DHCP=yes
 EOT'
 
 }
@@ -642,9 +644,9 @@ gen_sources_list
 
 gen_fstab
 
-sudo sh -c 'echo mksoc > '$ROOTFS_DIR'/etc/hostname'
+sudo sh -c 'echo mksocfpga > '$ROOTFS_DIR'/etc/hostname'
 
-gen_hosts
+#gen_hosts
 
 
 sudo rm /etc/resolv.conf
@@ -663,7 +665,8 @@ gen_wired_network
 
 sudo sh -c 'echo T0:2345:respawn:rootfs/sbin/getty -L ttyS0 115200 vt100 >> '$ROOTFS_DIR'/etc/inittab'
 
-gen_locale_gen
+#gen_locale_gen
+
 
 sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/locale.conf
 LANG=en_US.UTF-8 UTF-8
@@ -691,72 +694,9 @@ echo "Config files genetated"
 
 }
 
-gen_initial_sh() {
-export DEFGROUPS="sudo,kmem,adm,dialout,machinekit,video,plugdev"
-echo "------------------------------------------"
-echo "generating initial.sh chroot config script"
-echo "------------------------------------------"
-sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/home/initial.sh
-#!/bin/bash
-
-DEFGROUPS="sudo,kmem,adm,dialout,machinekit,video,plugdev"
-export LANG=C
-
-
-sudo apt-get -y update
-sudo apt-get -y upgrade
-sudo apt-get -y install adduser resolvconf apt-utils ssh sudo ntpdate openssl nano locales
-#sudo apt-get -y install xorg
-
-sudo locale-gen
-
-echo "NOTE: " "Will add user machinekit pw: machinekit"
-sudo /usr/sbin/useradd -s /bin/bash -d /home/machinekit -m machinekit
-sudo bash -c "echo "machinekit:machinekit" | chpasswd"
-sudo adduser machinekit sudo
-sudo chsh -s /bin/bash machinekit
-
-echo "NOTE: ""User Added"
-
-echo "NOTE: ""Will now add user to groups"
-sudo usermod -a -G '$DEFGROUPS' machinekit
-sync
-
-echo "NOTE: ""Will now run apt update, upgrade"
-sudo apt-get -y update
-
-exit
-EOT'
-
-sudo chmod +x $ROOTFS_DIR/home/initial.sh
-}
-
-run_initial_sh() {
-echo "------------------------------------------"
-echo "running initial.sh config script in chroot"
-echo "------------------------------------------"
-cd $ROOTFS_DIR # or where you are preparing the chroot dir
-sudo mount -t proc proc proc/
-sudo mount -t sysfs sys sys/
-sudo mount -o bind /dev dev/
-
-sudo chroot $ROOTFS_DIR /bin/bash -c /home/initial.sh
-sudo chroot $ROOTFS_DIR rm /usr/sbin/policy-rc.d
-
-sudo umount dev/
-sudo umount sys/
-sudo umount proc/
-}
-
-init_chroot() {
-gen_initial_sh
-run_initial_sh
-}
 
 run_func() {
-#install_dep
-output=$( run_bootstrap )
-echo "NOTE: run_bootstrap output is =\n   $output"
+install_dep
 run_bootstrap
 setup_configfiles    
 ##    init_chroot
@@ -768,18 +708,18 @@ if [ ! -z "$SD_IMG" ]; then
     sudo partprobe $DRIVE
     sudo mkdir -p $ROOTFS_MNT
     sudo mount ${DRIVE}$IMG_ROOT_PART $ROOTFS_MNT
-    echo "NOTE: ""chroot is mounted in: ${ROOTFS_MNT}"
+    echo "ECHO: ""chroot is mounted in: ${ROOTFS_MNT}"
     ROOTFS_DIR=$ROOTFS_MNT
-    echo "NOTE: "'rootfs_dir ='$ROOTFS_DIR
+    echo "ECHO: "'rootfs_dir ='$ROOTFS_DIR
     run_func
     sudo umount $ROOTFS_MNT
-    echo "NOTE: ""chroot was unounted "
-    echo "NOTE: ""rootfs is now installed in imagefile:"$SD_IMG
+    echo "ECHO: ""chroot was unounted "
+    echo "ECHO: ""rootfs is now installed in imagefile:"$SD_IMG
     sudo losetup -D
     sync
 else
-    echo "NOTE: ""no Imagefile parameter given chroot will only be made in current local folder:"   
-    echo "NOTE: "'rootfs_dir ='$ROOTFS_DIR 
+    echo "ECHO: ""no Imagefile parameter given chroot will only be made in current local folder:"   
+    echo "ECHO: "'rootfs_dir ='$ROOTFS_DIR 
     run_func
 fi
 }
