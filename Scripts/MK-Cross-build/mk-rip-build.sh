@@ -85,7 +85,7 @@ BRANCH=master
 
 # for the cyclone v soc install use:
 #CONFIG_ARGS=" --with-rt-preempt --with-posix --with-extra-kernel-sources=/home/mib/Documents/Altera/WS2/test/rocketboards"
-CONFIG_ARGS=" --with-rt-preempt --with-posix --with-platform=socfpga"
+CONFIG_ARGS=" --with-rt-preempt --with-posix --with-platform-socfpga"
 
 # echo commands during execution - very verbose
 # comment out once you trust this

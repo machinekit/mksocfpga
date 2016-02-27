@@ -37,7 +37,7 @@ IMG_ROOT_PART=p3
 UBOOT_VERSION="v2016.01"
 
 
-distro=jessie
+distro=sid
 
 #CHROOT_DIR=$HOME/stretch
 
@@ -171,7 +171,7 @@ sudo umount -R $ROOTFS_MNT
 sudo losetup -D
 }
 
-build_rootfs_into_image() {
+build_rootfs_in_image_and_compress() {
 $SCRIPT_ROOT_DIR/gen_rootfs-stretch.sh $CURRENT_DIR $ROOTFS_DIR $IMG_FILE $IMG_ROOT_PART
 COMPNAME=raw
 compress_rootfs
@@ -259,8 +259,7 @@ apt -y upgrade
 #sudo apt-get -y install resolvconf apt-utils ssh ntpdate openssl nano locales
 #apt -y install xorg
 
-#locale-gen en_US en_US.UTF-8 en_GB en_GB.UTF-8 en_DK en_DK.UTF-8
-locale-gen en_US en_US.UTF-8 en_GB en_GB.UTF-8
+#locale-gen en_GB.UTF-8 en_US.UTF-8 en_DK.UTF-8
 
 echo "root:machinekit" | chpasswd
 
@@ -284,8 +283,12 @@ export LANGUAGE=en_US.UTF-8
 EOT
 
 
-systemctl enable systemd-networkd
-systemctl enable systemd-resolved
+#systemctl enable systemd-resolved
+#systemctl enable systemd-networkd
+
+rm -f /etc/resolv.conf
+ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
 
 echo "ECHO: ""Will now run apt update, upgrade"
 apt -y update
@@ -309,10 +312,11 @@ EOT
 
 exit
 EOF'
+sudo chmod +x $ROOTFS_MNT/home/fix-profile.sh
 
 sudo chroot $ROOTFS_MNT chown machinekit:machinekit /home/fix-profile.sh
-sudo chroot $ROOTFS_MNT chmod +x /home/fix-profile.sh
-sudo chroot $ROOTFS_MNT chown machinekit:machinekit /home/fix-profile.sh
+sudo chroot $ROOTFS_MNT /bin/su -l machinekit /bin/sh -c /home/fix-profile.sh
+sudo chroot $ROOTFS_MNT /bin/su -l root /usr/sbin/locale-gen en_GB.UTF-8 en_US.UTF-8
 }
 
 function run_initial_sh {
@@ -324,6 +328,10 @@ sudo partprobe $DRIVE
 
 sudo mkdir -p $ROOTFS_MNT
 sudo mount ${DRIVE}$IMG_ROOT_PART $ROOTFS_MNT
+
+## extract raw-rootfs into image:
+sudo tar xvfj $CURRENT_DIR/raw--rootfs.tar.bz2 -C $ROOTFS_MNT
+
 
 cd $ROOTFS_MNT # or where you are preparing the chroot dir
 sudo mount -t proc proc proc/
@@ -337,6 +345,7 @@ sudo chroot $ROOTFS_MNT /bin/bash -c /home/initial.sh
 #sudo chroot $ROOTFS_DIR rm /usr/sbin/policy-rc.d
 echo "will fix profile locale"
 fix_profile
+echo "profile locale fixed ... unmounting .."
 
 cd $CURRENT_DIR
 PREFIX=$ROOTFS_MNT
@@ -370,16 +379,16 @@ sudo mount -o uid=1000,gid=1000 ${DRIVE}$IMG_BOOT_PART $BOOT_MNT
 echo "copying boot sector files"
 sudo cp $KERNEL_DIR/arch/arm/boot/zImage $BOOT_MNT
 
-# Quartus files:
-if [ -d ${BOOT_FILES_DIR} ]; then
-    sudo cp -fv $BOOT_FILES_DIR/socfpga* $BOOT_MNT
-else    
-    echo "mksocfpga boot files missing"
-fi
+## Quartus files:
+# if [ -d ${BOOT_FILES_DIR} ]; then
+#     sudo cp -fv $BOOT_FILES_DIR/socfpga* $BOOT_MNT
+# else    
+#     echo "mksocfpga boot files missing"
+# fi
 
-#sudo cp $KERNEL_DIR/arch/arm/boot/dts/socfpga_cyclone5.dts $BOOT_MNT/socfpga.dts
-#sudo cp $KERNEL_DIR/linux/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts $BOOT_MNT/socfpga.dts
-#sudo cp $KERNEL_DIR/arch/arm/boot/dts/socfpga_cyclone5.dtb $BOOT_MNT/socfpga.dtb
+sudo cp -v $KERNEL_DIR/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts $BOOT_MNT/socfpga.dts
+sudo cp -v $KERNEL_DIR/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dtb $BOOT_MNT/socfpga.dtb
+sudo cp -v $BOOT_FILES_DIR/socfpga.rbf $BOOT_MNT/socfpga.rbf
 sudo umount $BOOT_MNT
 
 echo "# --------- installing rootfs partition files (chroot, kernel modules) ---------"
@@ -387,7 +396,7 @@ sudo mkdir -p $ROOTFS_MNT
 sudo mount ${DRIVE}$IMG_ROOT_PART $ROOTFS_MNT
 
 # Rootfs -------#
-#sudo tar xvfj $CURRENT_DIR/final--rootfs.tar.bz2 -C $ROOTFS_MNT
+sudo tar xvfj $CURRENT_DIR/final--rootfs.tar.bz2 -C $ROOTFS_MNT
 
 #cd $ROOTFS_DIR
 #sudo tar cf - . | (sudo tar xvf - -C $ROOTFS_MNT)
@@ -435,16 +444,14 @@ if [ ! -z "$WORK_DIR" ]; then
 
 create_image
 
-build_rootfs_into_image
-#COMPNAME=raw
-#compress_rootfs
+build_rootfs_in_image_and_compress
 
 ##fetch_extract_rcn_rootfs
 
+create_image
+
 run_initial_sh
 
-##COMPNAME=final
-##compress_rootfs
 
 install_files
 install_uboot
