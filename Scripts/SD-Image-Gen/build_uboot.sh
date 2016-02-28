@@ -50,7 +50,7 @@ NCORES=`nproc`
 
 install_dep() {
 # install deps for u-boot build
-sudo apt -y install  device-tree-compiler bc u-boot-tools 
+sudo apt -y install lib32z1 device-tree-compiler bc u-boot-tools 
 # install linaro gcc 4.9 crosstoolchain dependency:
 sudo apt -y install lib32stdc++6
 
