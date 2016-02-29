@@ -39,7 +39,7 @@ install_dep() {
 ##,ntpdate,avahi-discover
 ## ntpdate,dhcpcd5,
 run_bootstrap() {
-qoutput1='sudo qemu-debootstrap --foreign --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,adduser,apt-utils,libssh2-1,openssh-client,openssh-server,openssl,kmod,dbus,dbus-x11,xorg,xserver-xorg-video-dummy,upower,rsyslog,libpam-systemd,systemd-sysv,net-tools,lsof,less,accountsservice,iputils-ping,python,ifupdown2,iproute2,isc-dhcp-client,avahi-daemon,avahi-discover,libnss-mdns,debianutils,traceroute ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian'
+qoutput1='sudo qemu-debootstrap --foreign --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,adduser,apt-utils,libssh2-1,openssh-client,openssh-server,openssl,kmod,dbus,dbus-x11,xorg,xserver-xorg-video-dummy,upower,rsyslog,libpam-systemd,systemd-sysv,net-tools,lsof,less,accountsservice,iputils-ping,python,ifupdown2,iproute2,isc-dhcp-client,dhcpcd5,avahi-daemon,uuid-runtime,avahi-discover,libnss-mdns,debianutils,traceroute,strace ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian'
 echo " "
 echo "Note: Eval.Start.."
 eval $qoutput1
@@ -146,19 +146,27 @@ EOT'
 }
 
 gen_wired_network() {
-sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/systemd/network/20-dhcp.network
+# sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/systemd/network/20-dhcp.network
+# [Match]
+# Name=eth0
+# 
+# [Network]
+# DHCP=ipv4
+# #IPv6PrivacyExtensions=true
+# #IPv6AcceptRouterAdvertisements=False
+# IPv6AcceptRouterAdvertisements=kernel
+# 
+# [DHCP]
+# UseDomains=true
+# 
+# EOT'
+
+sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/systemd/network/wired.network
 [Match]
 Name=eth0
 
 [Network]
-DHCP=ipv4
-#IPv6PrivacyExtensions=true
-#IPv6AcceptRouterAdvertisements=False
-IPv6AcceptRouterAdvertisements=kernel
-
-[DHCP]
-UseDomains=true
-
+DHCP=yes
 EOT'
 }
 

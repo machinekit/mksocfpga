@@ -52,7 +52,7 @@ UBOOT_SPLFILE=${CURRENT_DIR}/uboot/u-boot-with-spl-dtb.sfp
 #----------- Git kernel clone URL's -----------------------------------#
 #--------- RHN kernel -------------------------------------------------#
 #RHN_KERNEL_URL='https://github.com/RobertCNelson/armv7-multiplatform'
-#RHN_KERNEL_CHKOUT='origin/v4.4.x'
+#RHN_KERNEL_CHKOUT='origin/v4.4.1'
 
 ##--------- altera socfpga kernel --------------------------------------#
 ALT_KERNEL_URL="https://github.com/altera-opensource/linux-socfpga.git"
@@ -73,8 +73,8 @@ PCH_CC_URL="http://releases.linaro.org/components/toolchain/binaries/5.2-2015.11
 #http://releases.linaro.org/components/toolchain/binaries/5.2-2015.11-1/arm-linux-gnueabihf/gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf.tar.xz
 
 #4.4-KERNEL
-KERNEL_441_FOLDER_NAME="linux-4.4.1"
-PATCH_441_FILE="patch-4.4.1-rt6.patch.xz"
+KERNEL_44_FOLDER_NAME="linux-4.4.3"
+PATCH_44_FILE="patch-4.4.3-rt9.patch.gz"
 
 #-------------- all kernel ----------------------------------------------------------------#
 # mksoc uio kernel driver module filder:
@@ -94,9 +94,9 @@ KERNEL_CHKOUT=$ALT_KERNEL_CHKOUT
 CC_FOLDER_NAME=$PCH_CC_FOLDER_NAME
 #CC_URL=$PCH_CC_URL
 # --- config end ------------------------------#
-KERNEL_FOLDER_NAME=$KERNEL_441_FOLDER_NAME
+KERNEL_FOLDER_NAME=$KERNEL_44_FOLDER_NAME
 KERNEL_FILE=${KERNEL_FOLDER_NAME}.tar.xz
-PATCH_FILE=$PATCH_441_FILE
+PATCH_FILE=$PATCH_44_FILE
 
 # --- config end ------------------------------#
 
@@ -146,7 +146,7 @@ cd $CURRENT_DIR
 git clone https://github.com/RobertCNelson/armv7-multiplatform
 cd armv7-multiplatform/
 
-git checkout origin/v4.4.x -b tmp
+git checkout origin/v4.4.1 -b tmp
 ./build_kernel.sh
 cd ..
 
@@ -249,6 +249,10 @@ sudo sh -c 'cat <<EOF > '$ROOTFS_MNT'/home/initial.sh
 #!/bin/bash
 
 set -x
+
+ln -s /proc/mounts /etc/mtab
+
+#ln -s /run /var/run 
 
 export DEFGROUPS="sudo,kmem,adm,dialout,machinekit,video,plugdev"
 export LANG=C
@@ -398,6 +402,14 @@ sudo mount ${DRIVE}$IMG_ROOT_PART $ROOTFS_MNT
 # Rootfs -------#
 sudo tar xvfj $CURRENT_DIR/final--rootfs.tar.bz2 -C $ROOTFS_MNT
 
+POLICY_FILE=$ROOTFS_MNT/usr/sbin/policy-rc.d
+
+if [ -f ${POLICY_FILE} ]; then
+    echo "removing ${POLICY_FILE}"
+    sudo rm -f ${POLICY_FILE}
+fi
+
+
 #cd $ROOTFS_DIR
 #sudo tar cf - . | (sudo tar xvf - -C $ROOTFS_MNT)
 
@@ -435,8 +447,8 @@ set -e
 
 if [ ! -z "$WORK_DIR" ]; then
 
-#build_uboot
-#build_kernel
+build_uboot
+build_kernel
 
 ##build_rcn_kernel
 

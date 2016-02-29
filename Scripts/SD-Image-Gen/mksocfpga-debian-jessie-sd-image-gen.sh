@@ -73,8 +73,8 @@ PCH_CC_URL="http://releases.linaro.org/components/toolchain/binaries/5.2-2015.11
 #http://releases.linaro.org/components/toolchain/binaries/5.2-2015.11-1/arm-linux-gnueabihf/gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf.tar.xz
 
 #4.4-KERNEL
-KERNEL_441_FOLDER_NAME="linux-4.4.1"
-PATCH_441_FILE="patch-4.4.1-rt6.patch.xz"
+KERNEL_44_FOLDER_NAME="linux-4.4.3"
+PATCH_44_FILE="patch-4.4.3-rt9.patch.gz"
 
 #-------------- all kernel ----------------------------------------------------------------#
 # mksoc uio kernel driver module filder:
@@ -94,9 +94,9 @@ KERNEL_CHKOUT=$ALT_KERNEL_CHKOUT
 CC_FOLDER_NAME=$PCH_CC_FOLDER_NAME
 #CC_URL=$PCH_CC_URL
 # --- config end ------------------------------#
-KERNEL_FOLDER_NAME=$KERNEL_441_FOLDER_NAME
+KERNEL_FOLDER_NAME=$KERNEL_44_FOLDER_NAME
 KERNEL_FILE=${KERNEL_FOLDER_NAME}.tar.xz
-PATCH_FILE=$PATCH_441_FILE
+PATCH_FILE=$PATCH_44_FILE
 
 # --- config end ------------------------------#
 
@@ -426,24 +426,24 @@ set -e
 if [ ! -z "$WORK_DIR" ]; then
 
 build_uboot
-build_kernel
+#build_kernel
 
 ##build_rcn_kernel
 
 ##build_rootfs_into_folder
 
-create_image
+#create_image
 
-build_rootfs_into_image
+#build_rootfs_into_image
 
 ##fetch_extract_rcn_rootfs
 
-run_initial_sh
+#run_initial_sh
 ##COMPNAME=final
 ##compress_rootfs
 
-install_files
-install_uboot
+#install_files
+#install_uboot
 
 echo "#---------------------------------------------------------------------------------- "
 echo "#-------             Image building process complete                       -------- "

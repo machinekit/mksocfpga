@@ -20,7 +20,7 @@ echo "NOTE: in build_kernel.sh param = ${8}"
 #----------- Git clone URL's ------------------------------------------#
 #--------- RHN kernel -------------------------------------------------#
 #RHN_KERNEL_URL='https://github.com/RobertCNelson/armv7-multiplatform'
-#RHN_KERNEL_CHKOUT='origin/v4.4.x'
+#RHN_KERNEL_CHKOUT='origin/v4.4.1'
 
 ##--------- altera socfpga kernel --------------------------------------#
 #ALT_KERNEL_URL='https://github.com/altera-opensource/linux-socfpga.git'
@@ -34,8 +34,8 @@ echo "NOTE: in build_kernel.sh param = ${8}"
 #PATCH_4115_FILE="patch-4.1.15-rt17.patch.xz"
 
 ##4.4-KERNEL
-#KERNEL_441_FOLDER_NAME="linux-4.4.1"
-#PATCH_441_FILE="patch-4.4.1-rt5.patch.xz"
+#KERNEL_44_FOLDER_NAME="linux-4.4.1"
+#PATCH_44_FILE="patch-4.4.1-rt5.patch.xz"
 
 #-----------  Toolchains ----------------------------------------------#
 #--------- altera rt-ltsi socfpga kernel ------------------------------#
@@ -59,8 +59,8 @@ ADC_DIR=$MK_KERNEL_DRIVER_FOLDER/hm2adc_uio-module
 #----- select mainline kernel -------#
 # KERNEL_FILE=${KERNEL_4115_FOLDER_NAME}.tar.xz
 # PATCH_FILE=$PATCH_4115_FILE
-#KERNEL_FILE=${KERNEL_441_FOLDER_NAME}.tar.xz
-#PATCH_FILE=$PATCH_441_FILE
+#KERNEL_FILE=${KERNEL_44_FOLDER_NAME}.tar.xz
+#PATCH_FILE=$PATCH_44_FILE
 #----- select clone url -------------#
 # KERNEL_URL=$RHN_KERNEL_URL
 # KERNEL_CHKOUT=$RHN_KERNEL_CHKOUT
@@ -85,7 +85,7 @@ CC_FILE="${CC_FOLDER_NAME}.tar.xz"
 CC="${CC_DIR}/bin/arm-linux-gnueabihf-"
 
 KERNEL_FILE=${KERNEL_FOLDER_NAME}.tar.xz
-#PATCH_FILE=$PATCH_441_FILE
+#PATCH_FILE=$PATCH_44_FILE
 
 
 KERNEL_CONF='socfpga_defconfig'
@@ -182,14 +182,34 @@ fetch_kernel() {
 patch_kernel() {
 cd $KERNEL_DIR
 xzcat ../$PATCH_FILE | patch -p1
+echo "rt-Patch applied"
 #Uio Patch:
 cat <<EOT >> arch/arm/configs/socfpga_defconfig 
 CONFIG_UIO=y
 CONFIG_UIO_PDRV=y
 CONFIG_UIO_PDRV_GENIRQ=y
+#CONFIG_IP_ADVANCED_ROUTER=y
+#CONFIG_IP_MULTIPLE_TABLES=y
+#CONFIG_CFS_BANDWIDTH=y
+#CONFIG_CGROUPS=y
+#CONFIG_INOTIFY_USER=y
+#CONFIG_SIGNALFD=y
+#CONFIG_TIMERFD=y
+#CONFIG_EPOLL=y
+#CONFIG_SYSFS=y
+#CONFIG_SYSFS_DEPRECATED=n
+#CONFIG_FW_LOADER_USER_HELPER=n
+#CONFIG_NET_NS=y
+#CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
+#CONFIG_AUTOFS4_FS=m
+#CONFIG_CGROUP_SCHED=y
+#CONFIG_FAIR_GROUP_SCHED=y
+#CONFIG_RT_GROUP_SCHED=n
+#CONFIG_AUDIT=n
 EOT
-
 echo "Kernel UIO Patch added"
+echo "config file mods applied"
+
 }
 
 build_kernel() {
