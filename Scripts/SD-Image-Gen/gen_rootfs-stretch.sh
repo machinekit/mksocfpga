@@ -37,20 +37,20 @@ install_dep() {
 
 ##,rpcbind,autofs
 ##,ntpdate,avahi-discover
-## ntpdate,dhcpcd5,
-run_bootstrap() {
-qoutput1='sudo qemu-debootstrap --foreign --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,adduser,apt-utils,libssh2-1,openssh-client,openssh-server,openssl,kmod,dbus,dbus-x11,xorg,xserver-xorg-video-dummy,upower,rsyslog,libpam-systemd,systemd-sysv,net-tools,lsof,less,accountsservice,iputils-ping,python,ifupdown2,iproute2,isc-dhcp-client,dhcpcd5,avahi-daemon,uuid-runtime,avahi-discover,libnss-mdns,debianutils,traceroute,strace ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian'
-echo " "
-echo "Note: Eval.Start.."
-eval $qoutput1
-echo " "
-echo "Note: Eval..Done ."
+## ntpdate,dhcpcd5,isc-dhcp-client,
+# run_bootstrap() {
+# qoutput1='sudo qemu-debootstrap --foreign --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,adduser,apt-utils,libssh2-1,openssh-client,openssh-server,openssl,kmod,dbus,dbus-x11,xorg,xserver-xorg-video-dummy,upower,rsyslog,libpam-systemd,systemd-sysv,net-tools,lsof,less,accountsservice,iputils-ping,python,ifupdown2,iproute2,isc-dhcp-client,dhcpcd5,avahi-daemon,uuid-runtime,avahi-discover,libnss-mdns,debianutils,traceroute,strace ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian'
+# echo " "
+# echo "Note: Eval.Start.."
+# eval $qoutput1
+# echo " "
+# echo "Note: Eval..Done ."
+# 
+# }
 
+function run_bootstrap {
+sudo qemu-debootstrap --foreign --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,adduser,apt-utils,libssh2-1,openssh-client,openssh-server,openssl,kmod,dbus,dbus-x11,xorg,xserver-xorg-video-dummy,upower,rsyslog,libpam-systemd,systemd-sysv,net-tools,lsof,less,accountsservice,iputils-ping,python,ifupdown2,iproute2,dhcpcd5,avahi-daemon,uuid-runtime,avahi-discover,libnss-mdns,debianutils,traceroute,strace,cgroupfs-mount ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian
 }
-
-#function run_bootstrap {
-#sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=adduser,resolvconf,apt-#utils,ssh,sudo,ntpdate,openssl,vim,nano,cryptsetup,lvm2,locales,login,build-essential,gcc,g++,gdb,make,subversion,git,curl,zip,unzip,pbzip2,pigz,dialog,systemd,openssh-#server,ntpdate,less,cpufrequtils,isc-dhcp-client,ntp,console-setup,ca-certificates,xserver-xorg,xserver-xorg-video-dummy,debian-archive-keyring,debian-keyring,debian-#ports-archive-keyring,netbase,iproute2,iputils-ping,iputils-arping,iputils-tracepath,wget,kmod,haveged $distro $ROOTFS_DIR http://ftp.debian.org/debian/
-#}
 
 #run_bootstrap() {
 #sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg  $distro $ROOTFS_DIR http://ftp.debian.org/debian/
@@ -128,17 +128,17 @@ EOT'
 
 }
 
-#127.0.0.1       localhost
-#127.0.1.1       mksocfpga.local      mksocfpga
-#::1             localhost ip6-localhost ip6-loopback
-#ff02::1         ip6-allnodes
-#ff02::2         ip6-allrouters
+
+# 127.0.0.1       localhost.localdomain   localhost       mksocfpga
+# ::1             localhost.localdomain   localhost       mksocfpga
+# ff02::1         ip6-allnodes
+# ff02::2         ip6-allrouters
 
 gen_hosts() {
 sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/hosts
-
-127.0.0.1       localhost.localdomain   localhost       mksocfpga
-::1             localhost.localdomain   localhost       mksocfpga
+127.0.0.1       localhost.localdomain localhost
+127.0.1.1       mksocfpga.holotronic.lan      mksocfpga
+::1             localhost ip6-localhost ip6-loopback
 ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
 EOT'
@@ -161,7 +161,7 @@ gen_wired_network() {
 # 
 # EOT'
 
-sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/systemd/network/wired.network
+sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/systemd/network/10-wired.network
 [Match]
 Name=eth0
 
@@ -671,7 +671,7 @@ gen_fstab
 
 sudo sh -c 'echo mksocfpga > '$ROOTFS_DIR'/etc/hostname'
 
-gen_hosts
+#gen_hosts
 
 
 sudo mkdir -p $ROOTFS_DIR/etc/systemd/network
@@ -721,25 +721,28 @@ run_func() {
 
 install_dep
 
-output=$( run_bootstrap )
-if [ $? -eq 0  ]; then
-    echo ""
-    echo "ECHO_Good: qoutput1 value  is = ${output}"
-    echo ""
-else
-    echo ""
-    echo "ECHO_err: run_debootstrap output = nonzero:Error"
-    echo "ECHO_err: qoutput value is = ${output}"
-    echo ""
-    sudo sh -c 'sed -i.bak s/"set -e"/"set -x"/g '$ROOTFS_MNT'/debootstrap/debootstrap'
-    echo ""
-    echo "qemu stage2 mod applied "
-    echo " "
-    echo "Runnung stage 2 manually -----!"
-    sudo chroot $ROOTFS_MNT /debootstrap/debootstrap --second-stage
-    echo "stage manual run done  -----!"
-    echo ""
-fi
+# output=$( run_bootstrap )
+# if [ $? -eq 0  ]; then
+#     echo ""
+#     echo "ECHO_Good: qoutput1 value  is = ${output}"
+#     echo ""
+# else
+#     echo ""
+#     echo "ECHO_err: run_debootstrap output = nonzero:Error"
+#     echo "ECHO_err: qoutput value is = ${output}"
+#     echo ""
+#     sudo sh -c 'sed -i.bak s/"set -e"/"set -x"/g '$ROOTFS_MNT'/debootstrap/debootstrap'
+#     echo ""
+#     echo "qemu stage2 mod applied "
+#     echo " "
+#     echo "Runnung stage 2 manually -----!"
+#     sudo chroot $ROOTFS_MNT /debootstrap/debootstrap --second-stage
+#     echo "stage manual run done  -----!"
+#     echo ""
+# fi
+
+run_bootstrap
+
 echo "will now run setup_configfiles() "
 setup_configfiles    
 
