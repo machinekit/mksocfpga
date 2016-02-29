@@ -1,6 +1,10 @@
 # mksocfpga
 Further development of the Machinekit SocFpga
 
+Update(29 feb-2016)
+
+Kernel changed to mainline 4.4.3 with 4.4.3-rt9.patch
+
 Update(19 feb-2016)
 
 Partition layout changed: rootfs -->p3 (this should make downloaded images easiely expandable)
@@ -15,7 +19,7 @@ TODO: fix network ipv4 access (via systemd upgrade...)
 
 u-boot compiles with 4.9 and 5.2 gcc (linaro x86_64 cross + ?)
 
-4.4.1 kernel builds with gcc 5.2     (linaro x86_64 cross + ?)
+4.4 kernel builds with gcc 5.2     (linaro x86_64 cross + ?)
 
 rootfs has native armhf gcc 4.9
 
