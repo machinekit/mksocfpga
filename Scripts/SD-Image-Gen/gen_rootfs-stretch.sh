@@ -8,14 +8,14 @@ WORK_DIR=$1
 ROOTFS_DIR=$2
 SD_IMG=$3
 IMG_ROOT_PART=$4
+distro=$5
 
 MOUNT_DIR=
 ROOTFS_MNT=/mnt/rootfs
 
 ROOTFS_IMG=${WORK_DIR}/rootfs.img
-#DRIVE=/dev/loop0
+DRIVE=
 
-distro=stretch
 
 DEFGROUPS="sudo,kmem,adm,dialout,machinekit,video,plugdev"
 
@@ -31,11 +31,7 @@ install_dep() {
     sudo update-binfmts --display | grep interpreter
 }
 
-# run_bootstrap() {
-# sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,dialog,adduser,resolvconf,apt-utils,ssh,ntpdate,openssl,kmod,dbus,dbus-x11,libpam-systemd,systemd-ui,systemd,systemd-sysv,iputils-ping,iproute2,traceroute,autofs ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian
-# }
-
-##,rpcbind,autofs
+##,rpcbind
 ##,ntpdate,avahi-discover
 ## ntpdate,dhcpcd5,isc-dhcp-client,
 # run_bootstrap() {
@@ -48,8 +44,12 @@ install_dep() {
 # 
 # }
 
-function run_bootstrap {
-sudo qemu-debootstrap --foreign --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,adduser,apt-utils,libssh2-1,openssh-client,openssh-server,openssl,kmod,dbus,dbus-x11,xorg,xserver-xorg-video-dummy,upower,rsyslog,libpam-systemd,systemd-sysv,net-tools,lsof,less,accountsservice,iputils-ping,python,ifupdown2,iproute2,dhcpcd5,avahi-daemon,uuid-runtime,avahi-discover,libnss-mdns,debianutils,traceroute,strace,cgroupfs-mount ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian
+function run_jessie_bootstrap {
+sudo qemu-debootstrap --foreign --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,adduser,apt-utils,libssh2-1,openssh-client,openssh-server,openssl,kmod,dbus,dbus-x11,xorg,xserver-xorg-video-dummy,upower,rsyslog,udev,libpam-systemd,systemd-sysv,net-tools,lsof,less,accountsservice,iputils-ping,python,ifupdown,iproute2,dhcpcd5,avahi-daemon,uuid-runtime,avahi-discover,libnss-mdns,debianutils,traceroute,strace,cgroupfs-mount,autofs ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian
+}
+
+function run_stretch_bootstrap {
+sudo qemu-debootstrap --foreign --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,adduser,apt-utils,libssh2-1,openssh-client,openssh-server,openssl,kmod,dbus,dbus-x11,xorg,xserver-xorg-video-dummy,upower,rsyslog,udev,libpam-systemd,systemd-sysv,net-tools,lsof,less,accountsservice,iputils-ping,python,ifupdown2,iproute2,dhcpcd5,avahi-daemon,uuid-runtime,avahi-discover,libnss-mdns,debianutils,traceroute,strace,cgroupfs-mount,autofs ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian
 }
 
 #run_bootstrap() {
@@ -134,13 +134,16 @@ EOT'
 # ff02::1         ip6-allnodes
 # ff02::2         ip6-allrouters
 
+# ::1             localhost ip6-localhost ip6-loopback
+# ff02::1         ip6-allnodes
+# ff02::2         ip6-allrouters
+
 gen_hosts() {
+#echo -e "127.0.1.1\tmksocfpga" | sudo tee -a $ROOTFS_DIR/etc/hosts
+
 sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/hosts
-127.0.0.1       localhost.localdomain localhost
-127.0.1.1       mksocfpga.holotronic.lan      mksocfpga
-::1             localhost ip6-localhost ip6-loopback
-ff02::1         ip6-allnodes
-ff02::2         ip6-allrouters
+127.0.0.1       localhost.localdomain       localhost   mksocfpga
+192.168.2,9     mksocfpga.holotronic.lan    mksocfpga
 EOT'
 
 }
@@ -166,7 +169,7 @@ sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/systemd/network/10-wired.network
 Name=eth0
 
 [Network]
-DHCP=yes
+DHCP=ipv4
 EOT'
 }
 
@@ -671,7 +674,7 @@ gen_fstab
 
 sudo sh -c 'echo mksocfpga > '$ROOTFS_DIR'/etc/hostname'
 
-#gen_hosts
+gen_hosts
 
 
 sudo mkdir -p $ROOTFS_DIR/etc/systemd/network
@@ -741,9 +744,19 @@ install_dep
 #     echo ""
 # fi
 
-run_bootstrap
 
-echo "will now run setup_configfiles() "
+if [ "$distro" = "jessie" ]; then
+    echo "MSG: running bootstrap for jessie os"
+    run_jessie_bootstrap
+elif [ "$distro" = "stretch" ]; then
+    echo "MSG: running bootstrap for stretch os"
+    run_stretch_bootstrap
+else
+    echo "MSG: Dist detect failure distro = $distro"
+    exit 1
+fi
+
+echo "will now run setup_configfiles "
 setup_configfiles    
 
 }

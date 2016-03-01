@@ -24,8 +24,9 @@ BOOT_FILES_DIR=$SCRIPT_ROOT_DIR/../boot_files
 # Variables Custom settings
 #------------------------------------------------------------------------------------------------------
 
-#IMG_FILE=${CURRENT_DIR}/mksoc_sdcard-test.img
-IMG_FILE=${CURRENT_DIR}/mksocfpga_sdcard.img
+#distro=stretch
+distro=jessie
+
 ## Expandable image
 IMG_BOOT_PART=p2
 IMG_ROOT_PART=p3
@@ -35,11 +36,6 @@ IMG_ROOT_PART=p3
 #IMG_ROOT_PART=p2
 
 UBOOT_VERSION="v2016.01"
-
-
-distro=jessie
-
-#CHROOT_DIR=$HOME/stretch
 
 #-------------------------------------------
 # u-boot, toolchain, imagegen vars
@@ -52,12 +48,12 @@ UBOOT_SPLFILE=${CURRENT_DIR}/uboot/u-boot-with-spl-dtb.sfp
 #----------- Git kernel clone URL's -----------------------------------#
 #--------- RHN kernel -------------------------------------------------#
 #RHN_KERNEL_URL='https://github.com/RobertCNelson/armv7-multiplatform'
-#RHN_KERNEL_CHKOUT='origin/v4.4.x'
+#RHN_ALT_KERNEL_BRANCH='origin/v4.4.x'
 
 ##--------- altera socfpga kernel --------------------------------------#
 ALT_KERNEL_URL="https://github.com/altera-opensource/linux-socfpga.git"
-#ALT_KERNEL_CHKOUT='linux-rt linux/socfpga-3.10-ltsi-rt'
-ALT_KERNEL_CHKOUT="linux/socfpga-3.10-ltsi-rt"
+#ALT_KERNEL_BRANCH='linux-rt linux/socfpga-3.10-ltsi-rt'
+ALT_KERNEL_BRANCH="linux/socfpga-3.10-ltsi-rt"
 
 # cross toolchain
 #--------- altera rt-ltsi socfpga kernel --------------------------------------------------#
@@ -67,7 +63,6 @@ ALT_KERNEL_FOLDER_NAME="linux-3.10"
 
 #--------- rt-ltsi patched kernel ---------------------------------------------------------#
 PCH_CC_FOLDER_NAME="gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf"
-#PCH_CC_URL="http://releases.linaro.org/components/toolchain/binaries/latest-5.2/arm-linux-gnueabihf/${CC_FILE}"
 PCH_CC_FILE="${PCH_CC_FOLDER_NAME}.tar.xz"
 PCH_CC_URL="http://releases.linaro.org/components/toolchain/binaries/5.2-2015.11-1/arm-linux-gnueabihf/${PCH_CC_FILE}"
 #http://releases.linaro.org/components/toolchain/binaries/5.2-2015.11-1/arm-linux-gnueabihf/gcc-linaro-5.2-2015.11-1-x86_64_arm-linux-gnueabihf.tar.xz
@@ -82,32 +77,37 @@ UIO_DIR=$MK_KERNEL_DRIVER_FOLDER/hm2reg_uio-module
 ADC_DIR=$MK_KERNEL_DRIVER_FOLDER/hm2adc_uio-module
 
 # --- config ----------------------------------#
-#KERNEL_FOLDER_NAME=$ALT_KERNEL_FOLDER_NAME
+KERNEL_FOLDER_NAME=$ALT_KERNEL_FOLDER_NAME
 KERNEL_URL=$ALT_KERNEL_URL
-KERNEL_CHKOUT=$ALT_KERNEL_CHKOUT
+ALT_KERNEL_BRANCH=$ALT_KERNEL_BRANCH
 
 #----- select toolchain -------------#
 # CC_FOLDER_NAME=$RHN_CC_FOLDER_NAME
 # CC_URL=$RHN_CC_URL
-#CC_FOLDER_NAME=$ALT_CC_FOLDER_NAME
-#CC_URL=$ALT_CC_URL
-CC_FOLDER_NAME=$PCH_CC_FOLDER_NAME
-#CC_URL=$PCH_CC_URL
+CC_FOLDER_NAME=$ALT_CC_FOLDER_NAME
+#CC_FOLDER_NAME=$PCH_CC_FOLDER_NAME
 # --- config end ------------------------------#
-KERNEL_FOLDER_NAME=$KERNEL_44_FOLDER_NAME
+#KERNEL_FOLDER_NAME=$KERNEL_44_FOLDER_NAME
 KERNEL_FILE=${KERNEL_FOLDER_NAME}.tar.xz
-PATCH_FILE=$PATCH_44_FILE
 
-# --- config end ------------------------------#
+#PATCH_FILE=$PATCH_44_FILE
+#KERNEL_FILE_URL="ftp://ftp.kernel.org/pub/linux/kernel/v4.x/${KERNEL_FILE}"
+#PATCH_URL='https://www.kernel.org/pub/linux/kernel/projects/rt/4.4/'${PATCH_FILE}
+
+CC_URL=$ALT_CC_URL
+#CC_URL=$PCH_CC_URL
+
+BOOT_MNT=/mnt/boot
+ROOTFS_MNT=/mnt/rootfs
+
+# --- all config end ------------------------------#
 
 CC_DIR="${CURRENT_DIR}/${CC_FOLDER_NAME}"
 CC_FILE="${CC_FOLDER_NAME}.tar.xz"
 CC="${CC_DIR}/bin/arm-linux-gnueabihf-"
 
-CC_URL=$PCH_CC_URL
-
-KERNEL_FILE_URL="ftp://ftp.kernel.org/pub/linux/kernel/v4.x/${KERNEL_FILE}"
-PATCH_URL='https://www.kernel.org/pub/linux/kernel/projects/rt/4.4/'${PATCH_FILE}
+#IMG_FILE=${CURRENT_DIR}/mksoc_sdcard-test.img
+IMG_FILE=${CURRENT_DIR}/mksocfpga_${distro}_${KERNEL_FOLDER_NAME}_sdcard.img
 
 
 KERNEL_BUILD_DIR=${CURRENT_DIR}/arm-linux-${KERNEL_FOLDER_NAME}-gnueabifh-kernel
@@ -115,9 +115,6 @@ KERNEL_BUILD_DIR=${CURRENT_DIR}/arm-linux-${KERNEL_FOLDER_NAME}-gnueabifh-kernel
 KERNEL_DIR=${KERNEL_BUILD_DIR}/linux
 
 NCORES=`nproc`
-
-BOOT_MNT=/mnt/boot
-ROOTFS_MNT=/mnt/rootfs
 
 #Rhn-rootfs:
 #ROOTFS_URL='https://rcn-ee.com/rootfs/eewiki/minfs/debian-8.2-minimal-armhf-2015-09-07.tar.xz'
@@ -134,7 +131,7 @@ $SCRIPT_ROOT_DIR/build_uboot.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $UBOOT_VERSION
 }
 
 function build_kernel {
-$SCRIPT_ROOT_DIR/build_kernel.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $CC_FOLDER_NAME $CC_URL $KERNEL_FOLDER_NAME $KERNEL_URL $KERNEL_CHKOUT $KERNEL_FILE_URL $PATCH_URL $PATCH_FILE
+$SCRIPT_ROOT_DIR/build_kernel.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $CC_FOLDER_NAME $CC_URL $KERNEL_FOLDER_NAME $KERNEL_URL $ALT_KERNEL_BRANCH $KERNEL_FILE_URL $PATCH_URL $PATCH_FILE
 }
 
 build_patched_kernel() {
@@ -152,7 +149,12 @@ cd ..
 
 }
 
+function create_image {
+$SCRIPT_ROOT_DIR/create_img.sh $CURRENT_DIR $IMG_FILE
+}
+
 compress_rootfs(){
+COMPNAME=$distro_$COMP_PREFIX
 DRIVE=`bash -c 'sudo losetup --show -f '$IMG_FILE''`
 sudo partprobe $DRIVE
 
@@ -164,7 +166,7 @@ cd $ROOTFS_MNT
 sudo tar -cjSf $CURRENT_DIR/$COMPNAME--rootfs.tar.bz2 *
 
 cd $CURRENT_DIR
-echo "NOTE: ""rootfs is now compressed in: "$CURRENT_DIR/$COMPNAME--rootfs.tar.bz2
+echo "${COMPNAME} rootfs compressed finish ... unmounting"
 
 sudo umount -R $ROOTFS_MNT
 sudo losetup -D
@@ -172,16 +174,12 @@ sudo losetup -D
 
 build_rootfs_into_image() {
 $SCRIPT_ROOT_DIR/gen_rootfs-jessie.sh $CURRENT_DIR $ROOTFS_DIR $IMG_FILE $IMG_ROOT_PART
-COMPNAME=raw
+COMP_PREFIX=raw
 compress_rootfs
 }
 
 build_rootfs_into_folder() {
 $SCRIPT_ROOT_DIR/gen_rootfs.sh $CURRENT_DIR $ROOTFS_DIR
-}
-
-function create_image {
-$SCRIPT_ROOT_DIR/create_img.sh $CURRENT_DIR $IMG_FILE
 }
 
 #-----------------------------------------------------------------------------------
@@ -346,7 +344,7 @@ sudo umount -R $ROOTFS_MNT
 sudo losetup -D
 sync
 
-COMPNAME=final
+COMP_PREFIX=final
 compress_rootfs
 }
 
@@ -439,7 +437,7 @@ build_uboot
 ##fetch_extract_rcn_rootfs
 
 #run_initial_sh
-##COMPNAME=final
+##COMP_PREFIX=final
 ##compress_rootfs
 
 #install_files

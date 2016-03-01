@@ -52,12 +52,12 @@ UBOOT_SPLFILE=${CURRENT_DIR}/uboot/u-boot-with-spl-dtb.sfp
 #----------- Git kernel clone URL's -----------------------------------#
 #--------- RHN kernel -------------------------------------------------#
 #RHN_KERNEL_URL='https://github.com/RobertCNelson/armv7-multiplatform'
-#RHN_KERNEL_CHKOUT='origin/v4.4.x'
+#RHN_ALT_KERNEL_BRANCH='origin/v4.4.x'
 
 ##--------- altera socfpga kernel --------------------------------------#
 ALT_KERNEL_URL="https://github.com/altera-opensource/linux-socfpga.git"
-#ALT_KERNEL_CHKOUT='linux-rt linux/socfpga-3.10-ltsi-rt'
-ALT_KERNEL_CHKOUT="linux/socfpga-3.10-ltsi-rt"
+#ALT_KERNEL_BRANCH='linux-rt linux/socfpga-3.10-ltsi-rt'
+ALT_KERNEL_BRANCH="linux/socfpga-3.10-ltsi-rt"
 
 # cross toolchain
 #--------- altera rt-ltsi socfpga kernel --------------------------------------------------#
@@ -84,7 +84,7 @@ ADC_DIR=$MK_KERNEL_DRIVER_FOLDER/hm2adc_uio-module
 # --- config ----------------------------------#
 #KERNEL_FOLDER_NAME=$ALT_KERNEL_FOLDER_NAME
 KERNEL_URL=$ALT_KERNEL_URL
-KERNEL_CHKOUT=$ALT_KERNEL_CHKOUT
+ALT_KERNEL_BRANCH=$ALT_KERNEL_BRANCH
 
 #----- select toolchain -------------#
 # CC_FOLDER_NAME=$RHN_CC_FOLDER_NAME
@@ -134,7 +134,7 @@ $SCRIPT_ROOT_DIR/build_uboot.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $UBOOT_VERSION
 }
 
 function build_kernel {
-$SCRIPT_ROOT_DIR/build_kernel.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $CC_FOLDER_NAME $CC_URL $KERNEL_FOLDER_NAME $KERNEL_URL $KERNEL_CHKOUT $KERNEL_FILE_URL $PATCH_URL $PATCH_FILE
+$SCRIPT_ROOT_DIR/build_kernel.sh $CURRENT_DIR $SCRIPT_ROOT_DIR $CC_FOLDER_NAME $CC_URL $KERNEL_FOLDER_NAME $KERNEL_URL $ALT_KERNEL_BRANCH $KERNEL_FILE_URL $PATCH_URL $PATCH_FILE
 }
 
 build_patched_kernel() {
@@ -154,6 +154,7 @@ cd ..
 
 
 compress_rootfs(){
+COMPNAME=$distro_$COMP_PREFIX
 DRIVE=`bash -c 'sudo losetup --show -f '$IMG_FILE''`
 sudo partprobe $DRIVE
 
@@ -173,7 +174,7 @@ sudo losetup -D
 
 build_rootfs_in_image_and_compress() {
 $SCRIPT_ROOT_DIR/gen_rootfs-stretch.sh $CURRENT_DIR $ROOTFS_DIR $IMG_FILE $IMG_ROOT_PART
-COMPNAME=raw
+COMP_PREFIX=raw
 compress_rootfs
 }
 
@@ -357,7 +358,7 @@ umount_ch_proc
 #sudo losetup -D
 sync
 
-COMPNAME=final
+COMP_PREFIX=final
 compress_rootfs
 }
 

@@ -1,0 +1,23 @@
+From f133e18978b94ee553cb0cd12bedc17226fc1949 Mon Sep 17 00:00:00 2001
+From: the-snowwhite <producer@holotronic.dk>
+Date: Tue, 1 Mar 2016 21:21:34 +0100
+Subject: [PATCH 5819/5820] add uio kernel module
+
+---
+ arch/arm/configs/socfpga_defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm/configs/socfpga_defconfig b/arch/arm/configs/socfpga_defconfig
+index f7e1631..4ab2f7f 100644
+--- a/arch/arm/configs/socfpga_defconfig
++++ b/arch/arm/configs/socfpga_defconfig
+@@ -192,3 +192,6 @@ CONFIG_PREEMPT_RT=y
+ CONFIG_PREEMPT_RT_FULL=y
+ CONFIG_MARVELL_PHY=y
+ CONFIG_FHANDLE=y
++CONFIG_UIO=y
++CONFIG_UIO_PDRV=y
++CONFIG_UIO_PDRV_GENIRQ=y
+-- 
+2.7.0
+

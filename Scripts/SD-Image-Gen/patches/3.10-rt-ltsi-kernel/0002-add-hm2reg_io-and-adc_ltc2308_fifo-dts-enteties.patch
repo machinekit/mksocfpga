@@ -1,0 +1,43 @@
+From d0c5abc37fae40dc11d33be1f1b17bc20c6eb116 Mon Sep 17 00:00:00 2001
+From: the-snowwhite <producer@holotronic.dk>
+Date: Tue, 1 Mar 2016 21:36:19 +0100
+Subject: [PATCH 2/2] add hm2reg_io and adc_ltc2308_fifo dts enteties
+
+---
+ arch/arm/boot/dts/socfpga.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
+index 4fc29ef..77ec7f7 100644
+--- a/arch/arm/boot/dts/socfpga.dtsi
++++ b/arch/arm/boot/dts/socfpga.dtsi
+@@ -947,5 +947,26 @@
+ 			clocks = <&per_base_clk>;
+ 			status = "disabled";
+ 		};
++            
++		hm2reg_io_0: hm2-socfpga@0xff240000 {
++			compatible = "machkt,hm2reg-io-1.0";
++			reg = <0xff240000 0x00010000>;
++/*			interrupts = <0 172 4>;*/
++			clocks = <&osc1>;
++			address_width = <14>;
++			data_width = <32>;
++         status = "enabled";
++		};
++
++		adc_ltc2308_fifo_0: ltc2308-adc@0xff250000 {
++			compatible = "machkt,adc-ltc2308-1.1";
++			reg = <0xff250000 0x00000008>;
++/*			interrupts = <0 172 4>;*/
++			clocks = <&osc1 &h2f_usr1_clk>;
++			clock-names = "clock_sink", "clock_sink_adc";
++			address_width = <3>;
++			data_width = <32>;
++			status = "disabled";
++		};
+ 	};
+ };
+-- 
+2.7.0
+
