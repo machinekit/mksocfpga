@@ -1,6 +1,34 @@
 # mksocfpga
 Further development of the Machinekit SocFpga
 
+
+Update (4-marts-2016)
+
+I have been working on the scripts path months trying to get network access to function on the 4.x kernels.
+
+Having not much success with this I have reverted back to the 3.10-rt-ltsi kernel in the Altera repo, to get on with debugging the hw I/O interface.
+
+Right now there are functioning sd-image gen scripts mainly developed on Debian Stretch that can generate various debian dists (tested with jessie, stretch and sid).
+
+The main script is right now split in 2 versions named after the host they are meant to run on.
+
+
+Most of the script cofiguration is moved to the main script:
+
+Toolchain, dist, kernel version, sd-imagename 
+
+Kernel (git cloned, or file download & patched, url's)
+
+Networking on the 3.10 jessie beta3 image is ipv4 dhcp plug and play, all you would need to add would be to set your own static custom mac address in u-boot so your dhcp server dosn't keep generating new leases every time you reboot the soc.
+
+Pending MK PR commit now passes all checks and has been through lots of bug fixes and typo corrections. 
+
+Right now I will put focus once again onto the quartus project, to get the data write (read) to function properly.
+
+Beta3 image is online (in my shared Machinekit gdrive folder) and I expect to sneak in a public announcement of the bugfix release later today.
+
+---
+
 Update(29 feb-2016)
 
 Kernel changed to mainline 4.4.3 with 4.4.3-rt9.patch
