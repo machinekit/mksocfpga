@@ -3,7 +3,7 @@
 # Working Invokes selected scripts in same folder that generates a working armhf Debian Jessie sd-card-image().img
 # for the Terasic De0 Nano / Altera Atlas Soc-Fpga dev board
 
-#TODO:   complete MK depedencies
+#TODO:   complete Script dependencies and cleanup
 
 # 1.initial source: make minimal rootfs on amd64 Debian Jessie, according to "How to create bare minimum Debian Wheezy rootfs from scratch"
 # http://olimex.wordpress.com/2014/07/21/how-to-create-bare-minimum-debian-wheezy-rootfs-from-scratch/
@@ -19,6 +19,11 @@ ROOTFS_DIR=${CURRENT_DIR}/rootfs
 MK_KERNEL_DRIVER_FOLDER=${SCRIPT_ROOT_DIR}/../../SW/MK/kernel-drivers
 
 BOOT_FILES_DIR=${SCRIPT_ROOT_DIR}/../boot_files
+
+DRIVE=/dev/mapper/loop0
+
+MK_BUILDTFILE_NAME=machinekit-built.tar.bz2
+
 
 #------------------------------------------------------------------------------------------------------
 # Variables Custom settings
@@ -165,8 +170,10 @@ ${SCRIPT_ROOT_DIR}/create_img.sh ${CURRENT_DIR} ${IMG_FILE}
 
 compress_rootfs(){
 COMPNAME=${COMP_REL}_${COMP_PREFIX}
-DRIVE=`bash -c 'sudo losetup --show -f '${IMG_FILE}''`
-sudo partprobe ${DRIVE}
+
+#DRIVE=`bash -c 'sudo losetup --show -f '${IMG_FILE}''`
+#sudo partprobe ${DRIVE}
+sudo kpartx -a -s -v ${IMG_FILE}
 
 sudo mkdir -p ${ROOTFS_MNT}
 sudo mount ${DRIVE}${IMG_ROOT_PART} ${ROOTFS_MNT}
@@ -179,7 +186,8 @@ cd ${CURRENT_DIR}
 echo "${COMPNAME} rootfs compressed finish ... unmounting"
 
 sudo umount -R ${ROOTFS_MNT}
-sudo losetup -D
+#sudo losetup -D
+sudo kpartx -d -s -v ${IMG_FILE}
 }
 
 build_rootfs_in_image_and_compress() {
@@ -302,7 +310,11 @@ echo "ECHO: ""Will now run apt update, upgrade"
 apt -y update
 apt -y upgrade
 rm -f /etc/resolv.conf
-ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+#ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+# enable systemd-resolved
+ln -s /lib/systemd/system/systemd-resolved.service /etc/systemd/system/multi-user.target.wants/systemd-resolved.service
+
 
 exit
 EOF'
@@ -334,8 +346,10 @@ function run_initial_sh {
 echo "------------------------------------------"
 echo "----  running initial.sh      ------------"
 echo "------------------------------------------"
-DRIVE=`bash -c 'sudo losetup --show -f '${IMG_FILE}''`
-sudo partprobe ${DRIVE}
+#DRIVE=`bash -c 'sudo losetup --show -f '${IMG_FILE}''`
+#sudo partprobe ${DRIVE}
+
+sudo kpartx -a -s -v ${IMG_FILE}
 
 sudo mkdir -p ${ROOTFS_MNT}
 sudo mount ${DRIVE}${IMG_ROOT_PART} ${ROOTFS_MNT}
@@ -382,8 +396,9 @@ echo "#-----------------------------          ----------------------------------
 echo "#-------------------------------------------------------------------------------#"
 echo "#-------------------------------------------------------------------------------#"
 
-DRIVE=`bash -c 'sudo losetup --show -f '${IMG_FILE}''`
-sudo partprobe ${DRIVE}
+#DRIVE=`bash -c 'sudo losetup --show -f '${IMG_FILE}''`
+#sudo partprobe ${DRIVE}
+sudo kpartx -a -s -v ${IMG_FILE}
 echo "# --------- installing boot partition files (kernel, dts, dtb) ---------"
 sudo mkdir -p ${BOOT_MNT}
 sudo mount -o uid=1000,gid=1000 ${DRIVE}${IMG_BOOT_PART} ${BOOT_MNT}
@@ -409,7 +424,8 @@ else
 fi
 
 
-sudo cp -v ${BOOT_FILES_DIR}/socfpga.rbf ${BOOT_MNT}/socfpga.rbf
+#sudo cp -v ${BOOT_FILES_DIR}/socfpga.rbf ${BOOT_MNT}/socfpga.rbf
+sudo cp -v -f ${BOOT_FILES_DIR}/socfpga.* ${BOOT_MNT}/
 sudo umount ${BOOT_MNT}
 
 echo "# --------- installing rootfs partition files (chroot, kernel modules) ---------"
@@ -418,6 +434,18 @@ sudo mount ${DRIVE}${IMG_ROOT_PART} ${ROOTFS_MNT}
 
 # Rootfs -------#
 sudo tar xvfj ${CURRENT_DIR}/${COMP_REL}_final--rootfs.tar.bz2 -C ${ROOTFS_MNT}
+
+# MKRip -------#
+MK_BUILDTFILE_NAME="don't"
+
+if [ -f ${MK_BUILDTFILE_NAME} ]; then
+    echo "installing ${MK_BUILDTFILE_NAME}"
+#    sudo mkdir -p ${ROOTFS_MNT}/home/machinekit/machinekit
+#    sudo tar xvfj ${CURRENT_DIR}/${MK_BUILDTFILE_NAME} -C ${ROOTFS_MNT}/home/machinekit/machinekit
+    sudo tar xvfj ${CURRENT_DIR}/${MK_BUILDTFILE_NAME} -C ${ROOTFS_MNT}/home/machinekit
+fi
+
+
 
 
 
@@ -449,7 +477,8 @@ if [ -f ${POLICY_FILE} ]; then
 fi
 
 sudo umount ${ROOTFS_MNT}
-sudo losetup -D
+#sudo losetup -D
+sudo kpartx -d -s -v ${IMG_FILE}
 sync
 }
 
@@ -468,6 +497,8 @@ set -e
 
 if [ ! -z "${WORK_DIR}" ]; then
 
+sudo apt install kpartx
+
 #build_uboot
 #build_kernel
 
@@ -475,15 +506,15 @@ if [ ! -z "${WORK_DIR}" ]; then
 
 ##build_rootfs_into_folder
 
-#create_image
+create_image
 
-#build_rootfs_in_image_and_compress
+build_rootfs_in_image_and_compress
 
 ##fetch_extract_rcn_rootfs
 
 create_image
 
-#run_initial_sh
+run_initial_sh
 
 
 install_files

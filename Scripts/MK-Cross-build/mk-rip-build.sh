@@ -62,6 +62,7 @@ set -x
 SCRATCH=${HOME}/machinekit
 
 MK_SOURCEFILE_NAME=machinekit-src.tar.bz2
+MK_BUILDTFILE_NAME=machinekit-built.tar.bz2
 
 # git repository to pull from
 REPO=git://github.com/machinekit/machinekit.git
@@ -126,7 +127,7 @@ install_mk_fresh_deps() {
 
 sudo apt -y install libudev-dev libmodbus-dev libboost-python-dev libusb-1.0-0-dev autoconf pkg-config glib-2.0 gtk+-2.0 tcllib tcl-dev tk-dev bwidget libxaw7-dev libreadline6-dev python-tk libqt4-opengl libqt4-opengl-dev libtk-img python-opengl glade python-xlib python-gtkglext1 python-configobj python-vte libglade2-dev python-glade2 python-gtksourceview2 libncurses-dev libreadline-dev libboost-serialization-dev libboost-thread-dev libjansson-dev lsb-release git dpkg-dev rsyslog automake uuid-runtime ccache  avahi-daemon avahi-discover libnss-mdns bc cython netcat
 
-sudo apt-get -y install python-zmq libjansson-dev python-pyftpdlib libzmq3-dev
+sudo apt -y install python-zmq libjansson-dev python-pyftpdlib libzmq3-dev
 
 sudo sh -c \
     "echo 'deb http://deb.dovetail-automata.com jessie main' > \
@@ -141,6 +142,10 @@ sudo apt -y upgrade
 sudo apt install libwebsockets3 libwebsockets-dev
 
 sudo apt install libczmq2 libczmq-dev
+
+# stretch sid:
+##sudo apt install libczmq3 libczmq-dev
+
 
 ##cd ${HOME}
 #wget -O libwebsockets3_1.3-1.deb http://deb.dovetail-automata.com/pool/main/libw/libwebsockets/libwebsockets3_1.3-1~git95a8abb~1448232640git95a8abb~1jessie~1da_armhf.deb
@@ -165,7 +170,15 @@ if [ -d machinekit ]; then
     sudo rm -Rf machinekit
 fi
 echo "extracting machinekit"
-tar -jxf $MK_SOURCEFILE_NAME 
+tar -jxvf $MK_SOURCEFILE_NAME 
+}
+
+compress_mk_build(){
+cd ${HOME}
+if [ -d machinekit ]; then
+    echo "the target directory machinekit exists ... compressing"
+    tar -jcvf "${MK_BUILDTFILE_NAME}" ./machinekit
+fi
 }
 
 mk_build() {
@@ -187,13 +200,13 @@ sudo cp ./rtapi/shmdrv/limits.d-machinekit.conf /etc/security/limits.d/linuxcnc.
 sudo cp ./rtapi/shmdrv/shmdrv.rules /etc/udev/rules.d/50-LINUXCNC-shmdrv.rules
 
 echo installing dependencies 
-sudo apt-get -y install --no-install-recommends devscripts equivs
+sudo apt -y install --no-install-recommends devscripts equivs
 
 cd "$SCRATCH"
 echo now in directory: `pwd` 
 
 debian/configure -pr 
-sudo mk-build-deps -i -r 
+sudo sh -c 'echo "y" | mk-build-deps -i -r' 
 
 echo building in "$SCRATCH/src"
 cd "$SCRATCH/src"
@@ -328,7 +341,7 @@ echo "git config --global user.email \"youremail\""
 #---------------------------------------------------------------------------#
 #----------- run functions -------------------------------------------------#
 #---------------------------------------------------------------------------#
-##install_clone_deps
+install_clone_deps
 ##mk_clone
 sudo mount /dev/shm
 
@@ -340,3 +353,4 @@ mk_build
 mk_build_check
 
 sudo umount /dev/shm
+#compress_mk_build

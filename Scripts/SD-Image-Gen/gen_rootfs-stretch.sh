@@ -14,7 +14,7 @@ MOUNT_DIR=
 ROOTFS_MNT=/mnt/rootfs
 
 ROOTFS_IMG=${WORK_DIR}/rootfs.img
-DRIVE=
+DRIVE=/dev/mapper/loop0
 
 
 DEFGROUPS="sudo,kmem,adm,dialout,machinekit,video,plugdev"
@@ -48,11 +48,12 @@ function run_jessie_bootstrap {
 sudo qemu-debootstrap --foreign --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,adduser,apt-utils,libssh2-1,openssh-client,openssh-server,openssl,kmod,dbus,dbus-x11,xorg,xserver-xorg-video-dummy,upower,rsyslog,udev,libpam-systemd,systemd-sysv,net-tools,lsof,less,accountsservice,iputils-ping,python,ifupdown,iproute2,dhcpcd5,avahi-daemon,uuid-runtime,avahi-discover,libnss-mdns,debianutils,traceroute,strace,cgroupfs-mount,autofs ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian
 }
 
+##  ifupdown2,
 function run_stretch_bootstrap {
-sudo qemu-debootstrap --foreign --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,adduser,apt-utils,libssh2-1,openssh-client,openssh-server,openssl,kmod,dbus,dbus-x11,xorg,xserver-xorg-video-dummy,upower,rsyslog,udev,libpam-systemd,systemd-sysv,net-tools,lsof,less,accountsservice,iputils-ping,python,ifupdown2,iproute2,dhcpcd5,avahi-daemon,uuid-runtime,avahi-discover,libnss-mdns,debianutils,traceroute,strace,cgroupfs-mount,autofs ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian
+sudo qemu-debootstrap --foreign --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,adduser,apt-utils,libssh2-1,openssh-client,openssh-server,openssl,kmod,dbus,dbus-x11,xorg,xserver-xorg-video-dummy,upower,rsyslog,udev,libpam-systemd,systemd-sysv,net-tools,lsof,less,accountsservice,iputils-ping,python,ifupdown,iproute2,dhcpcd5,avahi-daemon,uuid-runtime,avahi-discover,libnss-mdns,debianutils,traceroute,strace,cgroupfs-mount,autofs ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian
 }
 
-#run_bootstrap() {
+#run_jessie-host_bootstrap() {
 #sudo qemu-debootstrap --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg  $distro $ROOTFS_DIR http://ftp.debian.org/debian/
 #}
 
@@ -763,8 +764,9 @@ setup_configfiles
 
 gen_install_in-img() {
 if [ ! -z "$SD_IMG" ]; then
-    DRIVE=`bash -c 'sudo losetup --show -f '$SD_IMG''`
-    sudo partprobe $DRIVE
+#    DRIVE=`bash -c 'sudo losetup --show -f '$SD_IMG''`
+    sudo kpartx -a -s -v ${SD_IMG}
+#    sudo partprobe $DRIVE
     sudo mkdir -p $ROOTFS_MNT
     sudo mount ${DRIVE}$IMG_ROOT_PART $ROOTFS_MNT
     echo "ECHO: ""chroot is mounted in: ${ROOTFS_MNT}"
@@ -774,7 +776,8 @@ if [ ! -z "$SD_IMG" ]; then
     sudo umount $ROOTFS_MNT
     echo "ECHO: ""chroot was unounted "
     echo "ECHO: ""rootfs is now installed in imagefile:"$SD_IMG
-    sudo losetup -D
+#    sudo losetup -D
+    sudo kpartx -d -s -v ${SD_IMG}
     sync
 else
     echo "ECHO: ""no Imagefile parameter given chroot will only be made in current local folder:"   
