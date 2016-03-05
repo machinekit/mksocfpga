@@ -9,7 +9,7 @@
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
-   element adc_ltc2308_fifo_0
+   element adc_0
    {
       datum _sortIndex
       {
@@ -17,7 +17,7 @@
          type = "int";
       }
    }
-   element adc_ltc2308_fifo_0.slave
+   element adc_0.adc_slave
    {
       datum baseAddress
       {
@@ -303,6 +303,22 @@
          type = "String";
       }
    }
+   element soc_system
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
+   element soc_system
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
    element sysid_qsys
    {
       datum _sortIndex
@@ -346,8 +362,8 @@
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface
-   name="adc"
-   internal="adc_ltc2308_fifo_0.conduit_end"
+   name="adc_io"
+   internal="adc_0.external_interface"
    type="conduit"
    dir="end" />
  <interface
@@ -405,11 +421,14 @@
  <interface name="memory" internal="hps_0.memory" type="conduit" dir="end" />
  <interface name="mk_io" internal="hm2reg_io_0.pins" type="conduit" dir="end" />
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
- <module
-   name="adc_ltc2308_fifo_0"
-   kind="adc_ltc2308_fifo"
-   version="1.1"
-   enabled="1" />
+ <module name="adc_0" kind="altera_up_avalon_adc" version="15.1" enabled="1">
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
+  <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone V" />
+  <parameter name="board" value="DE0-Nano-SoC" />
+  <parameter name="board_rev" value="Autodetect" />
+  <parameter name="numch_" value="8" />
+  <parameter name="sclk_freq" value="20.0" />
+ </module>
  <module name="button_pio" kind="altera_avalon_pio" version="15.1" enabled="1">
   <parameter name="bitClearingEdgeCapReg" value="true" />
   <parameter name="bitModifyingOutReg" value="false" />
@@ -420,7 +439,7 @@
   <parameter name="generateIRQ" value="true" />
   <parameter name="irqType" value="EDGE" />
   <parameter name="resetValue" value="0" />
-  <parameter name="simDoTestBenchWiring" value="false" />
+  <parameter name="simDoTestBenchWiring" value="true" />
   <parameter name="simDrivenValue" value="0" />
   <parameter name="width" value="4" />
  </module>
@@ -440,7 +459,7 @@
   <parameter name="generateIRQ" value="true" />
   <parameter name="irqType" value="EDGE" />
   <parameter name="resetValue" value="0" />
-  <parameter name="simDoTestBenchWiring" value="false" />
+  <parameter name="simDoTestBenchWiring" value="true" />
   <parameter name="simDrivenValue" value="0" />
   <parameter name="width" value="4" />
  </module>
@@ -928,7 +947,7 @@
   <parameter name="dbg_trace_clk_div" value="0" />
   <parameter name="desired_can0_clk_mhz" value="100.0" />
   <parameter name="desired_can1_clk_mhz" value="100.0" />
-  <parameter name="desired_cfg_clk_mhz" value="100.0" />
+  <parameter name="desired_cfg_clk_mhz" value="97.368421" />
   <parameter name="desired_emac0_clk_mhz" value="250.0" />
   <parameter name="desired_emac1_clk_mhz" value="250.0" />
   <parameter name="desired_gpio_db_clk_hz" value="32000" />
@@ -1080,7 +1099,7 @@
    version="15.1"
    enabled="1">
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone V" />
-  <parameter name="id" value="-1395322110" />
+  <parameter name="id" value="-1395322109" />
  </module>
  <connection
    kind="avalon"
@@ -1089,6 +1108,15 @@
    end="onchip_memory2_0.s1">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.1"
+   start="hps_0.h2f_lw_axi_master"
+   end="adc_0.adc_slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00050000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1148,8 +1176,8 @@
  <connection
    kind="avalon"
    version="15.1"
-   start="hps_0.h2f_lw_axi_master"
-   end="adc_ltc2308_fifo_0.slave">
+   start="fpga_only_master.master"
+   end="adc_0.adc_slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00050000" />
   <parameter name="defaultConnection" value="false" />
@@ -1236,15 +1264,6 @@
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
-   kind="avalon"
-   version="15.1"
-   start="fpga_only_master.master"
-   end="adc_ltc2308_fifo_0.slave">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00050000" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
    kind="clock"
    version="15.1"
    start="clk_0.clk"
@@ -1259,6 +1278,7 @@
  <connection kind="clock" version="15.1" start="clk_0.clk" end="dipsw_pio.clk" />
  <connection kind="clock" version="15.1" start="clk_0.clk" end="button_pio.clk" />
  <connection kind="clock" version="15.1" start="clk_0.clk" end="jtag_uart.clk" />
+ <connection kind="clock" version="15.1" start="clk_0.clk" end="adc_0.clk" />
  <connection
    kind="clock"
    version="15.1"
@@ -1270,11 +1290,6 @@
    start="clk_0.clk"
    end="intr_capturer_0.clock" />
  <connection kind="clock" version="15.1" start="clk_0.clk" end="hm2reg_io_0.clock" />
- <connection
-   kind="clock"
-   version="15.1"
-   start="clk_0.clk"
-   end="adc_ltc2308_fifo_0.clock_sink" />
  <connection
    kind="clock"
    version="15.1"
@@ -1291,11 +1306,6 @@
    start="clk_0.clk"
    end="hps_0.h2f_lw_axi_clock" />
  <connection
-   kind="clock"
-   version="15.1"
-   start="hps_0.h2f_user1_clock"
-   end="adc_ltc2308_fifo_0.clock_sink_adc" />
- <connection
    kind="interrupt"
    version="15.1"
    start="hps_0.f2h_irq0"
@@ -1390,11 +1400,6 @@
  <connection
    kind="reset"
    version="15.1"
-   start="clk_0.clk_reset"
-   end="adc_ltc2308_fifo_0.reset_sink" />
- <connection
-   kind="reset"
-   version="15.1"
    start="fpga_only_master.master_reset"
    end="fpga_only_master.clk_reset" />
  <connection
@@ -1456,6 +1461,16 @@
    kind="reset"
    version="15.1"
    start="fpga_only_master.master_reset"
+   end="adc_0.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="adc_0.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
    end="onchip_memory2_0.reset1" />
  <connection
    kind="reset"
@@ -1472,16 +1487,6 @@
    version="15.1"
    start="hps_only_master.master_reset"
    end="intr_capturer_0.reset_sink" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="fpga_only_master.master_reset"
-   end="adc_ltc2308_fifo_0.reset_sink" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
-   end="adc_ltc2308_fifo_0.reset_sink" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />
 </system>
