@@ -123,6 +123,8 @@ CC="${CC_DIR}/bin/arm-linux-gnueabihf-"
 #IMG_FILE=${CURRENT_DIR}/mksoc_sdcard-test.img
 IMG_FILE=${CURRENT_DIR}/mksocfpga_${distro}_${KERNEL_FOLDER_NAME}_sdcard.img
 
+MK_RIPROOTFS_NAME=${CURRENT_DIR}/mksocfpga_${distro}_${KERNEL_FOLDER_NAME}_mk-rip-rootfs-final.tar.bz2
+
 COMP_REL=${distro}_${KERNEL_FOLDER_NAME}
 
 KERNEL_BUILD_DIR=${CURRENT_DIR}/arm-linux-${KERNEL_FOLDER_NAME}-gnueabifh-kernel
@@ -396,9 +398,9 @@ echo "#-----------------------------          ----------------------------------
 echo "#-------------------------------------------------------------------------------#"
 echo "#-------------------------------------------------------------------------------#"
 
-#DRIVE=`bash -c 'sudo losetup --show -f '${IMG_FILE}''`
-#sudo partprobe ${DRIVE}
+# mount image:
 sudo kpartx -a -s -v ${IMG_FILE}
+
 echo "# --------- installing boot partition files (kernel, dts, dtb) ---------"
 sudo mkdir -p ${BOOT_MNT}
 sudo mount -o uid=1000,gid=1000 ${DRIVE}${IMG_BOOT_PART} ${BOOT_MNT}
@@ -423,7 +425,7 @@ else
     sudo cp -v ${KERNEL_DIR}/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dtb ${BOOT_MNT}/socfpga.dtb
 fi
 
-
+# copy dts, dtb, rbf files from quartus:
 #sudo cp -v ${BOOT_FILES_DIR}/socfpga.rbf ${BOOT_MNT}/socfpga.rbf
 sudo cp -v -f ${BOOT_FILES_DIR}/socfpga.* ${BOOT_MNT}/
 sudo umount ${BOOT_MNT}
@@ -433,10 +435,12 @@ sudo mkdir -p ${ROOTFS_MNT}
 sudo mount ${DRIVE}${IMG_ROOT_PART} ${ROOTFS_MNT}
 
 # Rootfs -------#
-sudo tar xfj ${CURRENT_DIR}/${COMP_REL}_final--rootfs.tar.bz2 -C ${ROOTFS_MNT}
+
+#sudo tar xfj ${CURRENT_DIR}/${COMP_REL}_final--rootfs.tar.bz2 -C ${ROOTFS_MNT}
+sudo tar xfj ${MK_RIPROOTFS_NAME} -C ${ROOTFS_MNT}
 
 # MKRip -------#
-MK_BUILDTFILE_NAME="don't"
+MK_BUILDTFILE_NAME="do-not-install"
 
 if [ -f ${MK_BUILDTFILE_NAME} ]; then
     echo "installing ${MK_BUILDTFILE_NAME}"
@@ -444,9 +448,6 @@ if [ -f ${MK_BUILDTFILE_NAME} ]; then
 #    sudo tar xfj ${CURRENT_DIR}/${MK_BUILDTFILE_NAME} -C ${ROOTFS_MNT}/home/machinekit/machinekit
     sudo tar xfj ${CURRENT_DIR}/${MK_BUILDTFILE_NAME} -C ${ROOTFS_MNT}/home/machinekit
 fi
-
-#cd ${ROOTFS_DIR
-#sudo tar cf - . | (sudo tar xvf - -C ${ROOTFS_MNT)
 
 #RHN:
 #sudo tar xfvp ${ROOTFS_DIR/armhf-rootfs-*.tar -C ${ROOTFS_MNT
@@ -461,10 +462,7 @@ echo ""
 export CROSS_COMPILE=${CC}
 sudo make ARCH=arm CROSS_COMPILE=${CC} INSTALL_MOD_PATH=${ROOTFS_MNT} modules_install
 sudo make ARCH=arm CROSS_COMPILE=${CC} -C ${KERNEL_DIR} M=${UIO_DIR} INSTALL_MOD_PATH=${ROOTFS_MNT} modules_install
-#sudo make ARCH=arm -C ${KERNEL_DIR M=${ADC_DIR INSTALL_MOD_PATH=${ROOTFS_MNT modules_install
 
-#sudo make -j${NCORES LOADADDR=0x8000 modules_install INSTALL_MOD_PATH=${ROOTFS_MNT
-#sudo chroot ${ROOTFS_MNT rm /usr/sbin/policy-rc.d
 POLICY_FILE=${ROOTFS_MNT}/usr/sbin/policy-rc.d
 
 if [ -f ${POLICY_FILE} ]; then
@@ -493,24 +491,24 @@ set -e
 
 if [ ! -z "${WORK_DIR}" ]; then
 
-sudo apt install kpartx
+#sudo apt install kpartx
 
-build_uboot
-build_kernel
+#build_uboot
+#build_kernel
 
-##build_rcn_kernel
+## build_rcn_kernel
 
-##build_rootfs_into_folder
+## build_rootfs_into_folder
 
-create_image
+#create_image
 
-build_rootfs_in_image_and_compress
+#build_rootfs_in_image_and_compress
 
 ##fetch_extract_rcn_rootfs
 
 create_image
 
-run_initial_sh
+#run_initial_sh
 
 install_files
 install_uboot

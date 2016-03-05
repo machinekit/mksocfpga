@@ -706,7 +706,7 @@ sudo apt-get -y update
 sudo apt-get -y upgrade
 sudo apt-get -y install dialog apt-utils sudo
 sudo apt-get -y install adduser resolvconf ssh ntpdate openssl nano locales
-sudo apt-get -y install kmod dbus dbus-x11 libpam-systemd systemd-ui systemd systemd-sysv dhcpcd-gtk dhcpcd-dbus autodns-dhcp dhcpcd5 iputils-ping iproute2 traceroute autofs
+sudo apt-get -y install kmod dbus dbus-x11 libpam-systemd systemd-ui systemd systemd-sysv dhcpcd-gtk dhcpcd-dbus autodns-dhcp dhcpcd5 iputils-ping iproute2 traceroute ntp autofs
 #sudo apt-get -y install xorg
 
 sudo locale-gen
