@@ -355,7 +355,8 @@ sudo mkdir -p ${ROOTFS_MNT}
 sudo mount ${DRIVE}${IMG_ROOT_PART} ${ROOTFS_MNT}
 
 ## extract raw-rootfs into image:
-sudo tar xvfj ${CURRENT_DIR}/${COMP_REL}_raw--rootfs.tar.bz2 -C ${ROOTFS_MNT}
+echo "extracting raw rootfs into image"
+sudo tar xfj ${CURRENT_DIR}/${COMP_REL}_raw--rootfs.tar.bz2 -C ${ROOTFS_MNT}
 
 sudo cp /etc/resolv.conf ${ROOTFS_MNT}/etc/resolv.conf
 
@@ -368,7 +369,7 @@ gen_initial_sh
 echo "ECHO: gen_initial.sh finhed ... will now run in chroot"
 
 sudo chroot ${ROOTFS_MNT} /bin/bash -c /home/initial.sh
-#sudo chroot ${ROOTFS_DIR rm /usr/sbin/policy-rc.d
+
 echo "will fix profile locale"
 fix_profile
 echo "profile locale fixed ... unmounting .."
@@ -379,8 +380,7 @@ kill_ch_proc
 
 PREFIX=${ROOTFS_MNT}
 umount_ch_proc
-#sudo umount -R ${ROOTFS_MNT
-#sudo losetup -D
+
 sync
 
 COMP_PREFIX=final
@@ -433,7 +433,7 @@ sudo mkdir -p ${ROOTFS_MNT}
 sudo mount ${DRIVE}${IMG_ROOT_PART} ${ROOTFS_MNT}
 
 # Rootfs -------#
-sudo tar xvfj ${CURRENT_DIR}/${COMP_REL}_final--rootfs.tar.bz2 -C ${ROOTFS_MNT}
+sudo tar xfj ${CURRENT_DIR}/${COMP_REL}_final--rootfs.tar.bz2 -C ${ROOTFS_MNT}
 
 # MKRip -------#
 MK_BUILDTFILE_NAME="don't"
@@ -441,13 +441,9 @@ MK_BUILDTFILE_NAME="don't"
 if [ -f ${MK_BUILDTFILE_NAME} ]; then
     echo "installing ${MK_BUILDTFILE_NAME}"
 #    sudo mkdir -p ${ROOTFS_MNT}/home/machinekit/machinekit
-#    sudo tar xvfj ${CURRENT_DIR}/${MK_BUILDTFILE_NAME} -C ${ROOTFS_MNT}/home/machinekit/machinekit
-    sudo tar xvfj ${CURRENT_DIR}/${MK_BUILDTFILE_NAME} -C ${ROOTFS_MNT}/home/machinekit
+#    sudo tar xfj ${CURRENT_DIR}/${MK_BUILDTFILE_NAME} -C ${ROOTFS_MNT}/home/machinekit/machinekit
+    sudo tar xfj ${CURRENT_DIR}/${MK_BUILDTFILE_NAME} -C ${ROOTFS_MNT}/home/machinekit
 fi
-
-
-
-
 
 #cd ${ROOTFS_DIR
 #sudo tar cf - . | (sudo tar xvf - -C ${ROOTFS_MNT)
@@ -499,8 +495,8 @@ if [ ! -z "${WORK_DIR}" ]; then
 
 sudo apt install kpartx
 
-#build_uboot
-#build_kernel
+build_uboot
+build_kernel
 
 ##build_rcn_kernel
 
@@ -515,7 +511,6 @@ build_rootfs_in_image_and_compress
 create_image
 
 run_initial_sh
-
 
 install_files
 install_uboot

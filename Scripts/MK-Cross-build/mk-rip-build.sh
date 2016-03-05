@@ -56,8 +56,8 @@
 # please adapt as needed.
 
 ## ----- begin configurable options ---
-set -x
-
+set -x 
+set -e
 # this is where the test build will go. 
 SCRATCH=${HOME}/machinekit
 
@@ -127,40 +127,47 @@ install_mk_fresh_deps() {
 
 sudo apt -y install libudev-dev libmodbus-dev libboost-python-dev libusb-1.0-0-dev autoconf pkg-config glib-2.0 gtk+-2.0 tcllib tcl-dev tk-dev bwidget libxaw7-dev libreadline6-dev python-tk libqt4-opengl libqt4-opengl-dev libtk-img python-opengl glade python-xlib python-gtkglext1 python-configobj python-vte libglade2-dev python-glade2 python-gtksourceview2 libncurses-dev libreadline-dev libboost-serialization-dev libboost-thread-dev libjansson-dev lsb-release git dpkg-dev rsyslog automake uuid-runtime ccache  avahi-daemon avahi-discover libnss-mdns bc cython netcat
 
+#sudo apt -y install python-zmq libjansson-dev python-pyftpdlib
 sudo apt -y install python-zmq libjansson-dev python-pyftpdlib libzmq3-dev
 
+
+
 sudo sh -c \
-    "echo 'deb http://deb.dovetail-automata.com jessie main' > \
-    /etc/apt/sources.list.d/machinekit.list"
+"echo 'Package: *
+Pin: release a=stable
+Pin-Priority: 900
+
+Package: *
+Pin: release o=Debian
+Pin-Priority: -10' > \
+/etc/apt/preferences.d/stretch;"
+
+sudo sh -c 'cat <<EOT >> /etc/apt/sources.list
+deb http://ftp.dk.debian.org/debian stretch  main
+deb-src http://ftp.dk.debian.org/debian stretch main
+EOT'
+
 sudo apt -y update
-sudo apt -y --force-yes install dovetail-automata-keyring
+
+sudo apt -y install -t stretch libczmq3 libczmq-dev
+
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 43DDF224
+sudo sh -c \
+  "echo 'deb http://deb.machinekit.io/debian jessie main' > \
+  /etc/apt/sources.list.d/machinekit.list"
+
 sudo apt -y update
-sudo apt-get -f install
+
+sudo apt -f install
+sudo apt-get -y autoremove
 sudo apt -y update
 sudo apt -y upgrade
 
-sudo apt install libwebsockets3 libwebsockets-dev
-
-sudo apt install libczmq2 libczmq-dev
+sudo apt -y install libwebsockets3 libwebsockets-dev
 
 # stretch sid:
 ##sudo apt install libczmq3 libczmq-dev
 
-
-##cd ${HOME}
-#wget -O libwebsockets3_1.3-1.deb http://deb.dovetail-automata.com/pool/main/libw/libwebsockets/libwebsockets3_1.3-1~git95a8abb~1448232640git95a8abb~1jessie~1da_armhf.deb
-#wget -O libwebsockets-dev_1.3-1.deb http://deb.dovetail-automata.com/pool/main/libw/libwebsockets/libwebsockets-dev_1.3-1~git95a8abb~1448232640git95a8abb~1jessie~1da_armhf.deb
-#sudo dpkg -i libwebsockets3_1.3-1.deb libwebsockets-dev_1.3-1.deb
-
-##sudo apt-get -y -f install
-
-##sudo apt-get -y install python-zmq
-#sudo apt-get -y update
-#wget http://ftp.dk.debian.org/debian/pool/main/c/czmq/libczmq-dev_3.0.2-2_armhf.deb
-#wget http://ftp.dk.debian.org/debian/pool/main/c/czmq/libczmq3_3.0.2-2_armhf.deb
-#sudo dpkg -i libczmq3_3.0.2-2_armhf.deb libczmq-dev_3.0.2-2_armhf.deb
-##sudo dpkg -i libczmq2_2.2.0-0.5.deb  libczmq-dev_2.2.0-0.5.deb
-#sudo apt-get -y -f install
 }
 
 replace_mk_source(){
@@ -170,14 +177,14 @@ if [ -d machinekit ]; then
     sudo rm -Rf machinekit
 fi
 echo "extracting machinekit"
-tar -jxvf $MK_SOURCEFILE_NAME 
+tar -jxf $MK_SOURCEFILE_NAME 
 }
 
 compress_mk_build(){
 cd ${HOME}
 if [ -d machinekit ]; then
     echo "the target directory machinekit exists ... compressing"
-    tar -jcvf "${MK_BUILDTFILE_NAME}" ./machinekit
+    tar -jcf "${MK_BUILDTFILE_NAME}" ./machinekit
 fi
 }
 
@@ -224,7 +231,7 @@ echo now in directory: `pwd`
 # git status
 
 # configure and build
-sh autogen.sh
+./autogen.sh
 
 ./configure ${CONFIG_ARGS}
 
@@ -261,22 +268,23 @@ set -v -e #sudo chroot $ROOTFS_MNT rm /usr/sbin/policy-rc.d
 CORES=`nproc`
 
 ## make sure some files are in place to finish the build without errors
-#cd "$SCRATCH/src"
-#sudo cp ./rtapi/rsyslogd-linuxcnc.conf /etc/rsyslog.d/linuxcnc.conf
-#sudo touch  /var/log/linuxcnc.log
-#sudo chmod 644 /var/log/linuxcnc.log
-#sudo service rsyslog restart
-#sudo cp ./rtapi/shmdrv/limits.d-machinekit.conf /etc/security/limits.d/linuxcnc.conf
-#sudo cp ./rtapi/shmdrv/shmdrv.rules /etc/udev/rules.d/50-LINUXCNC-shmdrv.rules
+cd "$SCRATCH/src"
+sudo cp ./rtapi/rsyslogd-linuxcnc.conf /etc/rsyslog.d/linuxcnc.conf
+sudo touch  /var/log/linuxcnc.log
+sudo chmod 644 /var/log/linuxcnc.log
+sudo service rsyslog restart
+sudo cp ./rtapi/shmdrv/limits.d-machinekit.conf /etc/security/limits.d/linuxcnc.conf
+sudo cp ./rtapi/shmdrv/shmdrv.rules /etc/udev/rules.d/50-LINUXCNC-shmdrv.rules
 
-#echo installing dependencies 
-#sudo apt-get -y install --no-install-recommends devscripts equivs
 
-#cd "$SCRATCH"
-#echo now in directory: `pwd` 
+echo installing dependencies 
+sudo apt-get -y install --no-install-recommends devscripts equivs
 
-#debian/configure -pr 
-#sudo mk-build-deps -i -r 
+cd "$SCRATCH"
+echo now in directory: `pwd` 
+
+debian/configure -px
+sudo mk-build-deps -i -r 
 
 echo building in "$SCRATCH/src"
 cd "$SCRATCH/src"
@@ -294,7 +302,7 @@ echo now in directory: `pwd`
 # git status
 
 # configure and build
-sh autogen.sh
+./autogen.sh
 
 ./configure ${CONFIG_ARGS}
 
@@ -329,10 +337,21 @@ mk_build_check() {
 set +x
 echo "looks like the build succeeded!"
 echo ""
-echo "to run linuxcnc from this build, please execute first:"
-echo ". $SCRATCH/scripts/rip-environment" 
+#echo "to run linuxcnc from this build, please execute first:"
+#echo ". $SCRATCH/scripts/rip-environment" 
+echo " Setting up bashrc for rip-environment"
+
+cat <<EOT >> /home/machinekit/.bashrc
+
+sh -c "echo 'if [ -f ~/machinekit/scripts/rip-environment ]; then\n\
+    source ~/machinekit/scripts/rip-environment\n\
+    echo \"Environment set up for running Machinekit and LinuxCNC\"\n\
+fi\n' >> ~/.bashrc"
+EOT
 echo ""
+echo "bashrc setup OK"
 sudo service rsyslog stop
+echo ""
 echo "Please set your name and email for git with:"
 echo "git config --global user.name yourname"
 echo "git config --global user.email \"youremail\""
@@ -353,4 +372,4 @@ mk_build
 mk_build_check
 
 sudo umount /dev/shm
-#compress_mk_build
+compress_mk_build

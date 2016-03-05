@@ -7,7 +7,7 @@ CURRENT_DIR=`pwd`
 #WORK_DIR=$1
 WORK_DIR=$CURRENT_DIR
 
-ROOTFS_DIR=${WORK_DIR}/rootfs
+#ROOTFS_DIR=${WORK_DIR}/rootfs
 #IMG_FILE=${CURRENT_DIR}/mksoc_sdcard-beta2.img
 #IMG_FILE=${CURRENT_DIR}/mksoc_sdcard.img
 IMG_FILE=${CURRENT_DIR}/mksocfpga_jessie_linux-3.10_sdcard.img
@@ -18,8 +18,10 @@ DRIVE=/dev/mapper/loop0
 MK_SOURCEFILE_NAME=machinekit-src.tar.bz2
 MK_BUILDTFILE_NAME=machinekit-built.tar.bz2
 
+MK_RIPROOTFS_NAME=mksocfpga_jessie_linux-3.10_mk-rip-rootfs-final.tar.bz2
+
 # this is where the test build will go. 
-MK_BUILDDIR=${ROOTFS_DIR}/machinekit/machinekit
+#MK_BUILDDIR=${ROOTFS_DIR}/machinekit/machinekit
 
 # git repository to pull from
 REPO=git://github.com/machinekit/machinekit.git
@@ -58,18 +60,25 @@ fi
 }
 
 compress_clone(){
-echo "compressing machinekit folder"
-cd ${WORK_DIR}
-tar -jcf "${MK_SOURCEFILE_NAME}" ./machinekit
+    echo "compressing machinekit folder"
+    cd ${WORK_DIR}
+    tar -jcf "${MK_SOURCEFILE_NAME}" ./machinekit
 }
 
-#compress_mk_build(){
-cd ${HOME}
-if [ -d machinekit ]; then
-    echo "the target directory machinekit exists ... compressing"
-    tar -jcvf "${MK_BUILDTFILE_NAME}" ./machinekit
-fi
-#}
+compress_mkrip_rootfs(){
+    echo "compressing final mk-rip-rootfs"
+    cd ${ROOTFS_MNT}
+    sudo tar -cjSf ${CURRENT_DIR}/${MK_RIPROOTFS_NAME} *
+    cd ${WORK_DIR}
+}
+
+# compress_mk_build(){
+# cd ${HOME}
+# if [ -d machinekit ]; then
+#     echo "the target directory machinekit exists ... compressing"
+#     tar -jcf "${MK_BUILDTFILE_NAME}" ./machinekit
+# fi
+# }
 
 copy_files(){
 echo "copying build-script and machinekit tar.bz2"
@@ -86,6 +95,8 @@ exit 101
 EOT'
 }
 
+POLICY_FILE=/usr/sbin/policy-rc.d
+
 gen_build_sh() {
 echo "------------------------------------------"
 echo "generating run.sh chroot config script"
@@ -95,22 +106,21 @@ sudo sh -c 'cat <<EOT > '${ROOTFS_MNT}'/home/build.sh
 
 set -x
 
-POLICY_FILE=/usr/sbin/policy-rc.d
 
 compress_mk_build(){
 cd /home/machinekit
 if [ -d machinekit ]; then
     echo "the target directory machinekit exists ... compressing"
-    tar -jcvf "'${MK_BUILDTFILE_NAME}'" ./machinekit
+    tar -jcf "'${MK_BUILDTFILE_NAME}'" ./machinekit
 fi
 }
 
 
 /home/mk-rip-build.sh
 
-if [ -f ${POLICY_FILE} ]; then
-    echo "removing ${POLICY_FILE}"
-    sudo rm -f ${POLICY_FILE}
+if [ -f '${POLICY_FILE}' ]; then
+    echo "removing '${POLICY_FILE}'"
+    sudo rm -f '${POLICY_FILE}'
 fi
 
 compress_mk_build
@@ -156,8 +166,6 @@ done
 
 run_build_sh() {
 echo "mounting SD-Image"
-#DRIVE=`bash -c 'sudo losetup --show -f '$IMG_FILE''`
-#sudo partprobe $DRIVE
 
 sudo kpartx -a -s -v ${IMG_FILE}
 
@@ -169,7 +177,7 @@ echo "------------------------------------------"
 echo "   copying files to root mount            "
 echo "------------------------------------------"
 #cd $ROOTFS_DIR
-#sudo tar cf - . | (sudo tar xvf - -C $ROOTFS_MNT)
+#sudo tar cf - . | (sudo tar xf - -C $ROOTFS_MNT)
 
 copy_files
 gen_build_sh
@@ -186,17 +194,27 @@ sudo mount -o bind /dev dev/
 #echo "will now exit in mount"
 #exit 1
 # fix dns:
-sudo rm ${ROOTFS_MNT}/etc/resolv.conf
-sudo cp -f /etc/resolv.conf ${ROOTFS_MNT}/etc/resolv.conf
+RESOLVCONF_FILE=${ROOTFS_MNT}/etc/resolv.conf
+
+
+if [ -f ${RESOLVCONF_FILE} ]; then
+    sudo rm ${RESOLVCONF_FILE}
+fi
+
+sudo cp -f /etc/resolv.conf ${RESOLVCONF_FILE}
 
 HOSTS_FILE=${ROOTFS_MNT}/etc/hosts
 
 if [ -f ${HOSTS_FILE} ]; then
     echo "renaming ${HOSTS_FILE}"
     sudo mv ${HOSTS_FILE} ${HOSTS_FILE}.bak
-    echo "repacing ${HOSTS_FILE} with one from host"
+    echo "replacing ${HOSTS_FILE} with one from host"
+    sudo cp /etc/hosts ${HOSTS_FILE}    
+else
     sudo cp /etc/hosts ${HOSTS_FILE}    
 fi
+
+cd ${ROOTFS_MNT}
 
 sudo chroot ./ /bin/su - machinekit /bin/bash -c /home/build.sh
 
@@ -213,9 +231,10 @@ cd ${CURRENT_DIR}
 
 sudo cp -f $ROOTFS_MNT/home/machinekit/${MK_BUILDTFILE_NAME}  ${WORK_DIR}
 
-
 PREFIX=${ROOTFS_MNT}
 kill_ch_proc
+
+compress_mkrip_rootfs
 
 sudo umount -R ${ROOTFS_MNT}
 
@@ -223,7 +242,6 @@ sudo umount -R ${ROOTFS_MNT}
 #umount_ch_proc
 
 sync
-#sudo losetup -D
 sudo kpartx -d -v ${IMG_FILE}
 sync
 
