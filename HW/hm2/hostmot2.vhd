@@ -582,7 +582,6 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 	signal StepGenTableMaxSel: std_logic;
 	signal StepGenTableSel: std_logic;
 
-	
 -- Step generators master rate related signals
 
 	signal LoadStepGenBasicRate: std_logic;

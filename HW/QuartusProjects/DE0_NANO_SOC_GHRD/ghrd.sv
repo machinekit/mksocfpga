@@ -128,6 +128,8 @@ module ghrd(
 //=======================================================
 //  REG/WIRE declarations
 //=======================================================
+  parameter AddrWidth = 16;
+  
   wire  hps_fpga_reset_n;
   wire [1:0] fpga_debounced_buttons;
   wire [6:0]  fpga_led_internal;
@@ -142,7 +144,7 @@ module ghrd(
   assign fpga_clk_50 = FPGA_CLK2_50;
   assign stm_hw_events    = {{15{1'b0}}, SW, fpga_led_internal, fpga_debounced_buttons};
 // hm2
-  wire [15:0] 	hm_address;
+  wire [AddrWidth-3:0] 	hm_address;
   wire [31:0] 	hm_datao;
   wire [31:0] 	hm_datai;
   wire       	hm_read;
@@ -349,7 +351,7 @@ assign LED[0]=led_level;
 
 assign clklow_sig = fpga_clk_50;
 assign clkhigh_sig = hm_clk_high;
-//assign clkmed_sig = hm_clk_med;
+assign clkmed_sig = hm_clk_med;
 
 //import work::*;
 
@@ -360,8 +362,10 @@ parameter IOPORTS = 2;
 wire [IOWIDTH-1:0] iobits_sig;
 assign GPIO_0[IOWIDTH-1:0] = iobits_sig;
 
-//wire [LIOWidth-1:0] liobits_sig;
+wire [LIOWidth-1:0] liobits_sig;
 //assign GPIO_1[LIOWidth-1:0] = liobits_sig;
+assign ARDUINO_IO[LIOWidth-1:0] = liobits_sig;
+
 
 
 //HostMot2 #(.IOWidth(IOWIDTH),.IOPorts(IOPORTS)) HostMot2_inst
@@ -374,13 +378,13 @@ HostMot2 HostMot2_inst
 	.writestb(hm_write) ,	// input  writestb_sig
 
 	.clklow(clklow_sig) ,	// input  clklow_sig  				-- PCI clock --> all
-//	.clkmed(clkmed_sig) ,	// input  clkmed_sig  				-- Processor clock --> sserialwa, twiddle
+	.clkmed(clkmed_sig) ,	// input  clkmed_sig  				-- Processor clock --> sserialwa, twiddle
 	.clkhigh(clkhigh_sig) ,	// input  clkhigh_sig				-- High speed clock --> most
 //	.int(int_sig) ,	// output  int_sig							--int => LINT, ---> PCI ?
 //	.dreq(dreq_sig) ,	// output  dreq_sig							
 //	.demandmode(demandmode_sig) ,	// output  demandmode_sig
 	.iobits(iobits_sig) ,	// inout [iowidth-1:0] 				--iobits => IOBITS,-- external I/O bits	
-//	.liobits(liobits_sig) ,	// inout [liowidth-1:0] 			--liobits_sig
+	.liobits(liobits_sig) ,	// inout [liowidth-1:0] 			--liobits_sig
 //	.rates(rates_sig) ,	// output [4:0] rates_sig
 //	.leds(leds_sig) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
 	.leds(GPIO_0[35:34]) 	// output [ledcount-1:0] leds_sig		--leds => LEDS

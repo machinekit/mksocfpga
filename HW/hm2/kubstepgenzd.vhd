@@ -150,7 +150,7 @@ architecture Behavioral of stepgend is
 	signal dtimer : std_logic; 
 	signal sample : std_logic;
 
-	component x2aSRL16
+	component SRL16E
 --
 --    generic (INIT : bit_vector);
 
@@ -170,8 +170,8 @@ architecture Behavioral of stepgend is
 begin
 
 	steptable: for i in 0 to tablewidth -1 generate
---		asr16e: x2aSRL16 generic map (x"0000") port map(
-		asr16e: x2aSRL16 port map(
+--		asr16e: SRL16E generic map (x"0000") port map(
+		asr16e: SRL16E port map(
  			 D	  => ibus(i),
           CE  => loadtable,
           CLK => clk,
