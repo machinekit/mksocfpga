@@ -6,7 +6,8 @@ use work.lpm_components.all;
 use work.Shiftreg16;
 use work.Mux16x1;
 
-ENTITY x2aSRL16 IS
+ENTITY SRL16E IS
+	generic(INIT : bit_vector := x"0000");
 	port
 	(
 --		A : IN STD_LOGIC_VECTOR(3 downto 0);
@@ -19,9 +20,9 @@ ENTITY x2aSRL16 IS
 		D : IN STD_LOGIC;
 		Q : OUT STD_LOGIC
 	);
-	END x2aSRL16;
+	END SRL16E;
 	
-ARCHITECTURE arch OF x2aSRL16 IS
+ARCHITECTURE arch OF SRL16E IS
 
 	SIGNAL q_sig	: STD_LOGIC_VECTOR (15 DOWNTO 0);
 	SIGNAL adr_sig	: STD_LOGIC_VECTOR (3 DOWNTO 0);

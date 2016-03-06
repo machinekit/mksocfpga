@@ -160,7 +160,7 @@ architecture Behavioral of stepgeni is
 	signal indexd: std_logic_vector(1 downto 0);
 	signal probed: std_logic_vector(1 downto 0);
 	signal countlatch : std_logic_vector(lsize-1 downto 0);
-	component x2aSRL16
+	component SRL16E
 --
 --    generic (INIT : bit_vector);
 
@@ -180,8 +180,8 @@ architecture Behavioral of stepgeni is
 begin
 
 	steptable: for i in 0 to tablewidth -1 generate
---		asr16e: x2aSRL16 generic map (x"0000") port map(
-		asr16e: x2aSRL16 port map(
+--		asr16e: SRL16E generic map (x"0000") port map(
+		asr16e: SRL16E port map(
  			 D	  => ibus(i),
           CE  => loadtable,
           CLK => clk,
