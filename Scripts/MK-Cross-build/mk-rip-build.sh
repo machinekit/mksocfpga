@@ -343,11 +343,13 @@ echo " Setting up bashrc for rip-environment"
 
 cat <<EOT >> /home/machinekit/.bashrc
 
-sh -c "echo 'if [ -f ~/machinekit/scripts/rip-environment ]; then\n\
-    source ~/machinekit/scripts/rip-environment\n\
-    echo \"Environment set up for running Machinekit and LinuxCNC\"\n\
-fi\n' >> ~/.bashrc"
+if [ -f ~/machinekit/scripts/rip-environment ]; then
+    source ~/machinekit/scripts/rip-environment
+    echo "Environment set up for running Machinekit and LinuxCNC"
+    echo ""
+fi
 EOT
+
 echo ""
 echo "bashrc setup OK"
 sudo service rsyslog stop
