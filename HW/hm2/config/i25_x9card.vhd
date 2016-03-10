@@ -82,7 +82,7 @@ package i25_x9card is
 		constant PortWidth: integer := 17;
 		constant LIOWidth: integer := 6;
 		constant LEDCount: integer := 2;
-		constant SepClocks: boolean := true;
+		constant	SepClocks: boolean := true;
 		constant OneWS: boolean := true;
 		constant DIDVID : std_logic_vector(31 downto 0) := x"51252718";		
 		constant SSID : std_logic_vector(31 downto 0) := x"51252718";

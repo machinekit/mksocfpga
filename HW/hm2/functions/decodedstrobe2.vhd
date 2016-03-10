@@ -1,10 +1,9 @@
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
-use ieee.std_logic_unsigned.all;
-use ieee.math_real.all;
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.std_logic_UNSIGNED.ALL;
+use IEEE.std_logic_ARITH.ALL;
 --
--- Copyright (C) 2007, Peter C. Wallace, Mesa Electronics
+-- Copyright (C) 2009, Peter C. Wallace, Mesa Electronics
 -- http://www.mesanet.com
 --
 -- This program is is licensed under a disjunctive dual license giving you
@@ -68,66 +67,23 @@ use ieee.math_real.all;
 --     POSSIBILITY OF SUCH DAMAGE.
 -- 
 
-entity qcounterated is
-    generic ( clock : integer);
-	 port ( ibus : in  std_logic_vector (31 downto 0);
-		     obus : out  std_logic_vector (31 downto 0);	 
-           loadrate : in  std_logic;
-			  loadtimerselect : in  std_logic;
-			  readtimerselect : in  std_logic;
-			  timers : in std_logic_vector(4 downto 0);
-			  timer : out std_logic;
-           timerenable : out std_logic;
-           rateout : out  std_logic;
-			  clk : in std_logic);
-			  
-end qcounterated;
+package decodedstrobe2 is
+	function decodedstrobe2(paddr: in std_logic_vector;maddr: in std_logic_vector;ena1 : in std_logic;ena2: in std_logic) return std_logic;
+end decodedstrobe2;
 
-architecture Behavioral of qcounterated is
-constant defaultdivisor : real := round((real(clock)/16000000.0)) -2.0;
-signal rate: std_logic_vector(11 downto 0) := std_logic_vector(to_unsigned(integer(defaultdivisor),12)); 
-signal count: std_logic_vector (11 downto 0); 
-alias  countmsb: std_logic is  count(11);
-signal timerselect: std_logic_vector(3 downto 0);
-
-begin
-	arate: process (clk,count)
+package body decodedstrobe2 is
+	
+	function decodedstrobe2(paddr: in std_logic_vector;maddr: in std_logic_vector;ena1: in std_logic;ena2: in std_logic)
+	return std_logic is
+	variable result: std_logic;
 	begin
-		report("Encoder rate divisor: "& real'image(defaultdivisor));
-		if rising_edge(clk) then	
-			if countmsb= '0' then 
-				count <= count -1;
-			else
-				count <= rate;
-			end if;
-			if loadrate = '1' then
-			   rate <= ibus(11 downto 0);
-			end if;
-			if loadtimerselect = '1' then
-				timerselect <= ibus(15 downto 12);
-			end if;			
-		
-		end if;	-- clk
-
-		obus <= (others => 'Z');
-		if readtimerselect = '1' then
-			obus(15 downto 12) <= timerselect;
-			obus(11 downto 0) <= (others => '0');	
-			obus(31 downto 16) <= (others => '0');	
+		if (paddr=maddr) and (ena1 = '1') and (ena2 = '1') then
+			result := '1';
+		else
+			result := '0';
 		end if;	
-		
-		case timerselect(2 downto 0) is
-			when "000" => timer <= timers(0);
-			when "001" => timer <= timers(1);
-			when "010" => timer <= timers(2);
-			when "011" => timer <= timers(3);
-			when "100" => timer <= timers(4);	
-			when others => timer <= timers(0);
-		end case;
-		
-		timerenable <= timerselect(3);	
-		rateout <= countmsb;
+		return result;
+	end;
+	
+end decodedstrobe2;
 
-	end process;
-
-end Behavioral;

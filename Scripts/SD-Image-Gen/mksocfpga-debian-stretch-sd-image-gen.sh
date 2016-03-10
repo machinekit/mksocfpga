@@ -15,6 +15,10 @@ SCRIPT_ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 CURRENT_DIR=`pwd`
 WORK_DIR=${1}
 
+CURRENT_DATE=`date -I`
+#REL_DATE=${CURRENT_DATE}
+REL_DATE=2016-03-07
+
 ROOTFS_DIR=${CURRENT_DIR}/rootfs
 MK_KERNEL_DRIVER_FOLDER=${SCRIPT_ROOT_DIR}/../../SW/MK/kernel-drivers
 
@@ -121,9 +125,11 @@ CC_FILE="${CC_FOLDER_NAME}.tar.xz"
 CC="${CC_DIR}/bin/arm-linux-gnueabihf-"
 
 #IMG_FILE=${CURRENT_DIR}/mksoc_sdcard-test.img
-IMG_FILE=${CURRENT_DIR}/mksocfpga_${distro}_${KERNEL_FOLDER_NAME}_sdcard.img
 
-MK_RIPROOTFS_NAME=${CURRENT_DIR}/mksocfpga_${distro}_${KERNEL_FOLDER_NAME}_mk-rip-rootfs-final.tar.bz2
+FILE_PRELUDE=${CURRENT_DIR}/mksocfpga_${distro}_${KERNEL_FOLDER_NAME}-${REL_DATE}
+IMG_FILE=${FILE_PRELUDE}_sdcard.img
+
+MK_RIPROOTFS_NAME=${FILE_PRELUDE}_mk-rip-rootfs-final.tar.bz2
 
 COMP_REL=${distro}_${KERNEL_FOLDER_NAME}
 
@@ -173,8 +179,6 @@ ${SCRIPT_ROOT_DIR}/create_img.sh ${CURRENT_DIR} ${IMG_FILE}
 compress_rootfs(){
 COMPNAME=${COMP_REL}_${COMP_PREFIX}
 
-#DRIVE=`bash -c 'sudo losetup --show -f '${IMG_FILE}''`
-#sudo partprobe ${DRIVE}
 sudo kpartx -a -s -v ${IMG_FILE}
 
 sudo mkdir -p ${ROOTFS_MNT}
@@ -188,7 +192,6 @@ cd ${CURRENT_DIR}
 echo "${COMPNAME} rootfs compressed finish ... unmounting"
 
 sudo umount -R ${ROOTFS_MNT}
-#sudo losetup -D
 sudo kpartx -d -s -v ${IMG_FILE}
 }
 
@@ -400,8 +403,9 @@ echo "#-------------------------------------------------------------------------
 
 # mount image:
 sudo kpartx -a -s -v ${IMG_FILE}
-
+echo ""
 echo "# --------- installing boot partition files (kernel, dts, dtb) ---------"
+echo ""
 sudo mkdir -p ${BOOT_MNT}
 sudo mount -o uid=1000,gid=1000 ${DRIVE}${IMG_BOOT_PART} ${BOOT_MNT}
 
@@ -429,15 +433,16 @@ fi
 #sudo cp -v ${BOOT_FILES_DIR}/socfpga.rbf ${BOOT_MNT}/socfpga.rbf
 sudo cp -v -f ${BOOT_FILES_DIR}/socfpga.* ${BOOT_MNT}/
 sudo umount ${BOOT_MNT}
-
+echo ""
 echo "# --------- installing rootfs partition files (chroot, kernel modules) ---------"
+echo ""
 sudo mkdir -p ${ROOTFS_MNT}
 sudo mount ${DRIVE}${IMG_ROOT_PART} ${ROOTFS_MNT}
 
 # Rootfs -------#
 
-#sudo tar xfj ${CURRENT_DIR}/${COMP_REL}_final--rootfs.tar.bz2 -C ${ROOTFS_MNT}
-sudo tar xfj ${MK_RIPROOTFS_NAME} -C ${ROOTFS_MNT}
+sudo tar xfj ${CURRENT_DIR}/${COMP_REL}_final--rootfs.tar.bz2 -C ${ROOTFS_MNT}
+#sudo tar xfj ${MK_RIPROOTFS_NAME} -C ${ROOTFS_MNT}
 
 # MKRip -------#
 MK_BUILDTFILE_NAME="do-not-install"
@@ -462,6 +467,7 @@ echo ""
 export CROSS_COMPILE=${CC}
 sudo make ARCH=arm CROSS_COMPILE=${CC} INSTALL_MOD_PATH=${ROOTFS_MNT} modules_install
 sudo make ARCH=arm CROSS_COMPILE=${CC} -C ${KERNEL_DIR} M=${UIO_DIR} INSTALL_MOD_PATH=${ROOTFS_MNT} modules_install
+#sudo make ARCH=arm CROSS_COMPILE=${CC} -C ${KERNEL_DIR} M=${ADC_DIR} INSTALL_MOD_PATH=${ROOTFS_MNT} modules_install
 
 POLICY_FILE=${ROOTFS_MNT}/usr/sbin/policy-rc.d
 
@@ -504,7 +510,7 @@ if [ ! -z "${WORK_DIR}" ]; then
 
 #build_rootfs_in_image_and_compress
 
-##fetch_extract_rcn_rootfs
+## fetch_extract_rcn_rootfs
 
 create_image
 

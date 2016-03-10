@@ -272,7 +272,7 @@ static const struct dev_pm_ops uio_pdrv_genirq_dev_pm_ops = {
 
 #ifdef CONFIG_OF
 static const struct of_device_id uio_of_genirq_match[] = {
-    { .compatible = "machkt,adc-ltc2308-1.1", },
+    { .compatible = "machkt,adc-io-1.1", },
     { }
 };
 MODULE_DEVICE_TABLE(of, uio_of_genirq_match);
@@ -294,6 +294,6 @@ static struct platform_driver hm2adc_uio = {
 module_platform_driver(hm2adc_uio);
 
 MODULE_AUTHOR("Michael Brown");
-MODULE_DESCRIPTION("CVSoc Userspace I/O platform driver with generic IRQ handling developed for Machinekit use");
+MODULE_DESCRIPTION("ADC Userspace I/O platform driver with generic IRQ handling developed for Machinekit use");
 MODULE_LICENSE("GPL v2");
 MODULE_ALIAS("platform:" DRIVER_NAME);

@@ -7,10 +7,13 @@ CURRENT_DIR=`pwd`
 #WORK_DIR=$1
 WORK_DIR=$CURRENT_DIR
 
+REL_CURRENT_DATE=`date -I`
+#REL_CURRENT_DATE="2016-03-07"
+
 #ROOTFS_DIR=${WORK_DIR}/rootfs
 #IMG_FILE=${CURRENT_DIR}/mksoc_sdcard-beta2.img
 #IMG_FILE=${CURRENT_DIR}/mksoc_sdcard.img
-IMG_FILE=${CURRENT_DIR}/mksocfpga_jessie_linux-3.10_sdcard.img
+IMG_FILE=${CURRENT_DIR}/mksocfpga_jessie_linux-3.10-${REL_CURRENT_DATE}_sdcard.img
 IMG_ROOT_PART=p3
 ROOTFS_MNT=/mnt/rootfs
 DRIVE=/dev/mapper/loop0
@@ -18,7 +21,7 @@ DRIVE=/dev/mapper/loop0
 MK_SOURCEFILE_NAME=machinekit-src.tar.bz2
 MK_BUILDTFILE_NAME=machinekit-built.tar.bz2
 
-MK_RIPROOTFS_NAME=mksocfpga_jessie_linux-3.10_mk-rip-rootfs-final.tar.bz2
+MK_RIPROOTFS_NAME=mksocfpga_jessie_linux-3.10-${REL_CURRENT_DATE}_mk-rip-rootfs-final.tar.bz2
 
 # this is where the test build will go. 
 #MK_BUILDDIR=${ROOTFS_DIR}/machinekit/machinekit
@@ -67,9 +70,18 @@ compress_clone(){
 
 compress_mkrip_rootfs(){
     echo "compressing final mk-rip-rootfs"
+    
+    sudo kpartx -a -s -v ${IMG_FILE}
+
+    sudo mkdir -p ${ROOTFS_MNT}
+    sudo mount ${DRIVE}${IMG_ROOT_PART} ${ROOTFS_MNT}
+
+    
     cd ${ROOTFS_MNT}
     sudo tar -cjSf ${CURRENT_DIR}/${MK_RIPROOTFS_NAME} *
     cd ${WORK_DIR}
+    sudo umount -R ${ROOTFS_MNT}
+    sudo kpartx -d -s -v ${IMG_FILE}
 }
 
 # compress_mk_build(){
@@ -234,16 +246,19 @@ sudo cp -f $ROOTFS_MNT/home/machinekit/${MK_BUILDTFILE_NAME}  ${WORK_DIR}
 PREFIX=${ROOTFS_MNT}
 kill_ch_proc
 
-compress_mkrip_rootfs
+PREFIX=${ROOTFS_MNT}
+umount_ch_proc
+
+echo "killed processes in mount now syncing..."
+sync
 
 sudo umount -R ${ROOTFS_MNT}
-
-#PREFIX=$ROOTFS_MNT
-#umount_ch_proc
 
 sync
 sudo kpartx -d -v ${IMG_FILE}
 sync
+
+compress_mkrip_rootfs
 
 }
 

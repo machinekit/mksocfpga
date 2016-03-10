@@ -339,8 +339,12 @@ echo "looks like the build succeeded!"
 echo ""
 #echo "to run linuxcnc from this build, please execute first:"
 #echo ". $SCRATCH/scripts/rip-environment" 
+SOURCE_ENV_STRING=source ~/machinekit/scripts/rip-environment
+
 echo " Setting up bashrc for rip-environment"
 
+if grep -Fxq ${SOURCE_ENV_STRING} /home/machinekit/.bashrc
+then
 cat <<EOT >> /home/machinekit/.bashrc
 
 if [ -f ~/machinekit/scripts/rip-environment ]; then
@@ -349,6 +353,10 @@ if [ -f ~/machinekit/scripts/rip-environment ]; then
     echo ""
 fi
 EOT
+else
+    echo "Environment allready set up for running Machinekit and LinuxCNC"
+    echo ""
+fi
 
 echo ""
 echo "bashrc setup OK"

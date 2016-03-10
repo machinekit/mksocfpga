@@ -297,7 +297,7 @@ begin
 								PushData <= '1';					-- write and advance write data pointer every double word 
 							end if;	
 							BytePointer <= BytePointer +1;
-						end if;	-- bitcount = 0					
+						end if;					
 						if BitCount = "1001" then	-- false start bit check
 							if RXPipe(1) = '1' then
 								Go <= '0';				-- abort receive
@@ -323,7 +323,7 @@ begin
 						end if;
 					end if;
 				end if;						
-			end if; -- Go or FDGo
+			end if;
 
 			if PushData = '1' then
 				PushData <= '0';

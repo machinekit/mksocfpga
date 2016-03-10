@@ -92,9 +92,9 @@ use IEEE.STD_LOGIC_UNSIGNED.all;
 -- Starts at address 0 from reset
 -- THE BAD NEWS: pipelined processor with no locks so --->
 -- Instruction hazards: 
---   PUSH/POP must precede JSR by at least 2 instructions
---  
---   PUSH/POP must precede RET by at least 2 instructions
+--   TTR must precede JSR by at least 2 instructions
+--   RTT must precede JSR by at least 2 instructions
+--   TTR must precede JMP@R by at least 2 instructions
 --   (option) No unconditional jumps in 2 instructions after a conditional jump 
 -- Data hazards:
 --   Stored data requires 3 instructions before fetch
@@ -190,12 +190,12 @@ architecture Behavioral of Big32v2 is
   constant addit : std_logic_vector (3 downto 0) := x"B";
   
 -- return register save/restore						-- 8IXXXXh
-  constant pop   : std_logic_vector (3 downto 0) := x"C";	
-  constant push  : std_logic_vector (3 downto 0) := x"D";
-  constant ldsp  : std_logic_vector (3 downto 0) := x"E";
-  constant stsp  : std_logic_vector (3 downto 0) := x"F";
-
+  constant rtt   : std_logic_vector (3 downto 0) := x"C";	
+  constant ttr   : std_logic_vector (3 downto 0) := x"D";  
+  constant ldrt   : std_logic_vector (3 downto 0) := x"E";
+  constant strt   : std_logic_vector (3 downto 0) := x"F";  
 -- basic signals
+
   signal accumcar  : std_logic_vector (width downto 0);  -- accumulator+carry
   alias accum      : std_logic_vector (width-1 downto 0) is accumcar(width-1 downto 0);
   alias carrybit   : std_logic is accumcar(width);
@@ -245,6 +245,8 @@ architecture Behavioral of Big32v2 is
   signal idt       : std_logic_vector (maddwidth -1 downto 0);
 
   signal idn0		 : std_logic_vector (maddwidth -1 downto 0);
+  signal idr       : std_logic_vector (paddwidth -1 downto 0);
+  signal idrt		 : std_logic_vector (paddwidth -1 downto 0);
   signal nextpc    : std_logic_vector (paddwidth -1 downto 0);
   signal pcplus1   : std_logic_vector (paddwidth -1 downto 0);
   signal acczero   : std_logic;
@@ -254,13 +256,6 @@ architecture Behavioral of Big32v2 is
   signal product : std_logic_vector (width -1 downto 0);
   signal apatch : std_logic_vector (width/2 -1 downto 0);
   signal opatch : std_logic_vector (width/2 -1 downto 0);
-  signal spw: std_logic_vector (3 downto 0);
-  signal spr: std_logic_vector (3 downto 0);	
-  signal stackdin: std_logic_vector (width-1 downto 0);
-  signal stackdout: std_logic_vector (width-1 downto 0);
-  signal stackwe: std_logic;
-  signal dopush: std_logic;
-  signal dopop: std_logic;
  
   function rotcleft(v : std_logic_vector ) return std_logic_vector is
     variable result   : std_logic_vector(width downto 0);
@@ -300,23 +295,9 @@ architecture Behavioral of Big32v2 is
 
 begin  -- the CPU
 
-	StackRam : entity work.adpram 
-	generic map (
-		width => width,
-		depth => 16
-				)
-	port map(
-		addra => spw,
-		addrb => spr,
-		clk  => clk,
-		dina  => stackdin,
---		douta => 
-		doutb => stackdout,
-		wea	=> stackwe
-		);
 
-  nextpcproc : process (clk, reset, pc, acczero, nextpc, 
-                        id2, ind0, ind2, idbus, opcode0,
+  nextpcproc : process (clk, reset, pc, acczero, nextpc, id2,
+                        ind0, ind2,idr, idbus, opcode0,
                         opcode2, carrybit, accumcar)  -- next pc calculation - jump decode
   begin
     jumpq <= (((SignBit xor SignXor2) and SignMask2) or
@@ -330,7 +311,7 @@ begin  -- the CPU
     else
       if (opcode0 = jmp) or (opcode0= jsr) then
         if ind0 = '1' then              	-- indirect (computed jump or return)
-          nextpc <= stackdout(paddwidth -1 downto 0);
+          nextpc <= idr;
         else                            	-- direct (jump or jsr)
           nextpc <= idbus(paddwidth -1 downto 0);
         end if;
@@ -481,10 +462,10 @@ begin  -- the CPU
 						when addiz		=> idz <= maddpipe2;
 						when addit     => idt <= maddpipe2;
 
-						when pop			=> accum <= stackdout;
-						when stsp      => spw <= accum(3 downto 0);
-						when ldsp		=> accum(3 downto 0) <= spw;
-												accum(width-1 downto 4) <= (others => '0');
+						when rtt	      => idrt <= idr;
+						when ttr       => idr <= idrt;
+						when ldrt		=> accum(maddwidth-1 downto 0) <= idr;
+						when strt      => idr <= accum(maddwidth-1 downto 0);
 					
 						when others    => null;
 					end case;
@@ -504,44 +485,16 @@ begin  -- the CPU
 				end if;	
 			end if;	
 
+			if (opcode0 = jsr)  then 			-- save return address -- note priority over ttr!     
+				idr  <= pcplus1;  
+			end if;   
+		
 			if macnext = '1' then
 				macc <= macc + accum;
 			end if;	
-		
-			if dopush = '1' then
-				spw <= spw +1; 
-			end if;
-
-			if dopop = '1' then
-				spw <= spw -1; 
-			end if;
-					
+				
 		end if;  -- clk
-		
-		if opcode0 = jsr then
-			stackdin(paddwidth-1 downto 0) <= pcplus1;		--  a jsr (note jsr has priority)
-			stackdin(width -1 downto paddwidth) <=(others => '0');
-		else
-			stackdin <= accum;
-		end if;
-		
-		if (opcode0 = jsr) or ((opcode2 = idxo) and (opropcode2 = push))  then 	   
-			stackwe <= '1';
-			dopush <= '1';	
-		else	
-			stackwe <= '0';
-			dopush <= '0';	
-		end if;   
-
-      if ((opcode0= jmp) and (ind0 = '1'))			-- jmp indirect is a return 
-      or ((opcode2 = idxo) and (opropcode2 = pop))  then  
-			dopop <= '1';	
-		else
-			dopop <= '0';	
-		end if;  
-
-		spr <= spw -1;		
-		
+	
 		product <= accum(15 downto 0) * oprr(15 downto 0);
 		if accum(15) = '1' then
 			apatch <= oprr(15 downto 0);

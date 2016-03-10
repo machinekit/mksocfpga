@@ -965,7 +965,7 @@ set_global_assignment -name VHDL_FILE ../../hm2/pins/PIN_DRINGx2_34.vhd -library
 set_global_assignment -name QIP_FILE "../../hm2/pins/lpm-ip/Mux16x1.qip"
 set_global_assignment -name QIP_FILE "../../hm2/pins/lpm-ip/Shiftreg16.qip"
 set_global_assignment -name VHDL_FILE ../../hm2/pins/IDROMConst.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/pins/SRL16E.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/pins/x2a_SRL16.vhd
 set_global_assignment -name VHDL_FILE ../../hm2/kubstepgenzd.vhd
 set_global_assignment -name VHDL_FILE ../../hm2/kubstepgenzid.vhd
 set_global_assignment -name VHDL_FILE ../../hm2/kubstepgenzi.vhd

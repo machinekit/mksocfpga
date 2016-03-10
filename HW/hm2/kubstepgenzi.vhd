@@ -3,9 +3,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-LIBRARY work;
-use work.lpm_components.all;
-
 
 --
 -- Copyright (C) 2007, Peter C. Wallace, Mesa Electronics
@@ -162,7 +159,7 @@ architecture Behavioral of stepgeni is
 	signal countlatch : std_logic_vector(lsize-1 downto 0);
 	component SRL16E
 --
---    generic (INIT : bit_vector);
+    generic (INIT : bit_vector);
 
 
 --
@@ -180,8 +177,7 @@ architecture Behavioral of stepgeni is
 begin
 
 	steptable: for i in 0 to tablewidth -1 generate
---		asr16e: SRL16E generic map (x"0000") port map(
-		asr16e: SRL16E port map(
+		asr16e: SRL16E generic map (x"0000") port map(
  			 D	  => ibus(i),
           CE  => loadtable,
           CLK => clk,

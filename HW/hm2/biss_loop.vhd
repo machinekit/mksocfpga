@@ -101,6 +101,7 @@ architecture Behavioral of biss is
 constant DDSWidth : integer := 16; -- 16 max
 constant BitLength : integer := 10; -- limited by SLR16 x 32 bits wide so 512 bits 
 
+signal TestData : std_logic_vector(255 downto 0) := x"FFA0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABC";
 signal BitLengthReg : std_logic_vector(BitLength-1 downto 0);
 signal BitCount : std_logic_vector(BitLength-1 downto 0);
 signal BitrateDDSReg : std_logic_vector(DDSWidth-1 downto 0);
@@ -117,6 +118,8 @@ signal RecvDDSAccum : std_logic_vector(DDSWidth-1 downto 0);
 alias  RecvDDSMSB : std_logic is RecvDDSAccum(DDSWidth-1);
 signal OldRecvDDSMSB : std_logic;  
 signal SampleTime: std_logic; 
+signal TestXmitTime : std_logic;
+signal TestDataSR : std_logic_vector(255 downto 0);
 signal XmitClockStop : std_logic; 
 signal BISSDataD : std_logic; 
 signal BISSDataPipe: std_logic_vector(2 downto 0); 
@@ -213,9 +216,7 @@ begin
 		
 	asimplebiss: process (clk, StartReq2, StartReq1, PopReq2, PopReq1, OldRecvDDSMSB, BISSDataPipe,
                       	RecvDDSAccum, OldXmitDDSMSB, XmitDDSAccum, DGo, BitPointer, SampleTime,
-								DataCounter, SyncDAV, poplifo, PopData, llifoempty,hclk, readcontrol0,Readcontrol1,
-								Timer,Timers,TimerSelect,BitLengthReg,FilterTimeReg,BitRateDDSReg,PstartMask,
-								TStartMask,RGo,XGo)
+								DataCounter, SyncDAV, poplifo, PopData, llifoempty,hclk, readcontrol0,Readcontrol1 )
 	begin
 		if rising_edge(hclk) then
 			
@@ -239,15 +240,19 @@ begin
 			
  			BISSDataPipe <= BISSDataPipe(1 downto 0) & FilteredBISSData;  		-- Two stage rx data pipeline to compensate for
 																									-- two clock delay from start bit detection to acquire loop startup
---			OldBitPointerMSB <= BitPointerMSB;
+			OldBitPointerMSB <= BitPointerMSB;
 			if XGo = '1' then 
 				XmitDDSAccum <= XmitDDSAccum + BitRateDDSReg;	-- start clock
+				if TestXmitTime = '1' then
+					TestDataSR <= TestDataSR(254 downto 0) & '1'; -- shift left
+				end if;	
 				if RGo = '1' then							-- RGo means we detected start bit
 					RecvDDSAccum <= RecvDDSAccum + BitRateDDSReg;
 					if SampleTime = '1' then					
 						if BitCount = 0 then
 							RGo <= '0';						-- done with receive
 							DAV <= '1';
+							TestDataSR <= TestData;
 						else
 							if DGo = '1' and RGo = '1' then
 								BitCount <= BitCount -1;
@@ -295,6 +300,7 @@ begin
 			if (StartReq2 and StartReq1) = '1' then
 				BitCount <= BitLengthReg;
 				BitPointer <= BitLengthReg(4 downto 0); --5 bit remainder
+				TestDataSR <= TestData; 
 				XGo <= '1';
 				RGo <= '0';
 				DGo <= '0';
@@ -361,7 +367,7 @@ begin
 			when "010" => Timer <= timers(2);
 			when "011" => Timer <= timers(3);
 			when "100" => Timer <= timers(4);	
-			when others => Timer <= Timers(0);
+			when others => null;
 		end case;	
 		
 		if StartReq2 = '1' then 
@@ -375,6 +381,7 @@ begin
 		
 		SampleTime <= (not OldRecvDDSMSB) and RecvDDSMSB;			-- sample on rising edge of DDS MSB, that is 1/2 cycle from edge
 		XmitClockStop  <= OldXmitDDSMSB and (not XmitDDSMSB); 	-- stop xmit clock in idle state
+		TestXmitTime <= (not OldXmitDDSMSB) and XmitDDSMSB;			-- test data xmit time
 
 		obus <= (others => 'Z');
 		if	readcontrol0 =  '1' then
@@ -390,7 +397,7 @@ begin
 			obus(9)	<= TstartMask;
 			obus(10) <= RGo;
 			obus(11) <= '0';
-			obus(14 downto 12) <= TimerSelect;
+			obus(14 downto 12) <=	TimerSelect;
 			obus(15) <= SyncDAV;
 			obus(31 downto 16) <= (others => '0');
 		end if;
@@ -402,7 +409,8 @@ begin
 		lifohasdata <= not llifoempty;
 		bissclk <= 	not XmitDDSMSB;
 		busyout <= XGo or not SyncDAV;
-		davout <= SyncDAV;
+--		davout <= SyncDAV;
+		davout <= TestDataSR(255);
 	end process asimplebiss;
 	
 end Behavioral;

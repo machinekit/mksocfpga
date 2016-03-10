@@ -89,11 +89,13 @@ use IEEE.STD_LOGIC_UNSIGNED.all;
 -- 7 bit offset for indirect addressing (ADD sinetable(6) etc)
 -- 10 bit direct memory addressing range
 -- 12 bit indirect addressing range with 7 bit offset
--- 16 levels of subroutine call/return
+-- 2 levels of subroutine call/return
 -- Starts at address 0 from reset
 -- THE BAD NEWS: pipelined processor with no locks so --->
 -- Instruction hazards: 
--- PUSH must precede JMP@ by at least 2 instructions
+--	TTR must precede JSR by at least 2 instructions
+--	RTT must precede JSR by at least 2 instructions
+--	TTR must precede JMP@R by at least 2 instructions
 -- Data hazards:
 --	Stored data requires 3 instructions before fetch 
 -- No reads with side effects in conditional jump shadow (2 inst after cond jump)
@@ -105,7 +107,7 @@ use IEEE.STD_LOGIC_UNSIGNED.all;
 
 -------------------------------------------------------------------------------
 
-entity DumbAss8sqws is					-- s --> jump shadow nop q--> quad index w --> writeback
+entity DumbAss8sqw is					-- s --> jump shadow nop q--> quad index w --> writeback
 	generic(									-- note dont mix this processor up with plain DumbAss8sq
 		width : integer := 8;			-- data width
 		iwidth	: integer := 16;		-- instruction width
@@ -126,10 +128,10 @@ entity DumbAss8sqws is					-- s --> jump shadow nop q--> quad index w --> writeb
 		mread:  out std_logic;											-- memory read signal
 		carryflg : out std_logic										-- carry flag
 		);
-end DumbAss8sqws;
+end DumbAss8sqw;
 
 
-architecture Behavioral of DumbAss8sqws is
+architecture Behavioral of DumbAss8sqw is
 
 
   constant carrymask : std_logic_vector := b"0_1111_1111";  -- mask to drop carry bit
@@ -193,10 +195,11 @@ architecture Behavioral of DumbAss8sqws is
   constant addit	: std_logic_vector (4 downto 0) := "11110"; -- xF0
   
 -- return register save/restore
-  constant pop	   : std_logic_vector (4 downto 0) := "11001"; -- xC8
-  constant push   : std_logic_vector (4 downto 0) := "11011"; -- xD8
-  constant ldsp	: std_logic_vector (4 downto 0) := "11101"; -- xE8
-  constant stsp   : std_logic_vector (4 downto 0) := "11111"; -- xF8
+  constant rtt	   : std_logic_vector (4 downto 0) := "11001"; -- xC8
+  constant ldrl   : std_logic_vector (4 downto 0) := "11011"; -- xD8
+  constant ttr	   : std_logic_vector (4 downto 0) := "11101"; -- xE8
+  constant ldrh   : std_logic_vector (4 downto 0) := "11111"; -- xF8
+  
 -- basic signals
 
   signal accumcar  : std_logic_vector (width downto 0);  -- accumulator+carry
@@ -243,16 +246,11 @@ architecture Behavioral of DumbAss8sqws is
   signal maddpipe1  : std_logic_vector (maddwidth -1 downto 0);
   signal maddpipe2  : std_logic_vector (maddwidth -1 downto 0);
   signal maddpipe3  : std_logic_vector (maddwidth -1 downto 0);
+  signal idret		  : std_logic_vector (paddwidth -1 downto 0);
+  signal idtmp		  : std_logic_vector (paddwidth -1 downto 0);
   signal nextpc	  : std_logic_vector (paddwidth -1 downto 0);
   signal pcplus1	: std_logic_vector (paddwidth -1 downto 0);
   signal zero		: std_logic;
-  signal spw: std_logic_vector (3 downto 0);
-  signal spr: std_logic_vector (3 downto 0);	
-  signal stackdin: std_logic_vector (paddwidth-1 downto 0);
-  signal stackdout: std_logic_vector (paddwidth-1 downto 0);
-  signal stackwe: std_logic;
-  signal dopush: std_logic;
-  signal dopop: std_logic;
 
   function rotcleft(v : std_logic_vector ) return std_logic_vector is
 	 variable result	: std_logic_vector(width downto 0);
@@ -272,24 +270,10 @@ architecture Behavioral of DumbAss8sqws is
 
 begin  -- the CPU
 
-	StackRam : entity work.adpram 
-	generic map (
-		width => paddwidth,
-		depth => 16
-				)
-	port map(
-		addra => spw,
-		addrb => spr,
-		clk  => clk,
-		dina  => stackdin,
---		douta => 
-		doutb => stackdout,
-		wea	=> stackwe
-		);
 
   nextpcproc : process (clk, reset, pc, zero, nextpc, id2,
-								ind0, ind2, idbus, opcode0, jind0, jind2,
-								opcode2, carrybit,pcplus1, stackdout)  -- next pc calculation - jump decode
+								ind0, ind2,idret, idbus, opcode0,
+								opcode2, carrybit,pcplus1)  -- next pc calculation - jump decode
 	begin
 		pcplus1 <= pc + '1';	 
 		iabus <= nextpc;							 -- program memory address from combinatorial	 
@@ -298,7 +282,7 @@ begin  -- the CPU
 		else
 			if (opcode0 = jmp) or (opcode0 = jsr) then
 				if jind0 = '1' then					 -- indirect
-					nextpc <= stackdout;
+					nextpc <= idret;
 				else										 -- direct
 					nextpc <= idbus(paddwidth -1 downto 0);
 				end if;
@@ -308,7 +292,7 @@ begin  -- the CPU
 			((opcode2 = jmpnc) and (carrybit = '0')) or
 			((opcode2 = jmpc) and (carrybit = '1')) then
 				if jind2 = '1' then				 	 	-- indirect
-					nextpc <=  stackdout;
+					nextpc <= idret;
 				else								  			-- direct
 					nextpc <= id2(paddwidth -1 downto 0);
 				end if;
@@ -376,8 +360,7 @@ begin  -- the CPU
 	 end if;
   end process oprrproc;
 
-  accumproc : process (clk, accum, carrybit, accumcar, id2, opcode0, 
-							  pcplus1, opcode2, opropcode2, jind0, spw)  -- accumulator instruction decode - operate
+  accumproc : process (clk, accum, carrybit, accumcar, id2)  -- accumulator instruction decode - operate
   begin
 	 carryflg <= carrybit;
 	 if accum = x"00" then
@@ -406,10 +389,11 @@ begin  -- the CPU
 										accumcar(width-4 downto 0) <= (others => '0');
 					when shnr	=> accumcar(width-4 downto 0) <= accumcar(width downto 4);
 										accumcar(width downto 4)   <= (others => '0');
-					when pop			=> accum <= stackdout(width-1 downto 0);
-					when stsp      => spw <= accum(3 downto 0);
-					when ldsp		=> accum(3 downto 0) <= spw;
-											accum(width-1 downto 4) <= (others => '0');
+					when rtt		=> idtmp <= idret; -- return to temp
+					when ttr		=> idret <= idtmp; -- temp to return
+					when ldrl	=> idret(7 downto 0) <= accum; -- load return low
+										idret(paddwidth-1 downto 8) <= (others => '0'); -- fast page 0 computed jumps
+					when ldrh	=> idret(paddwidth-1 downto 8) <= accum(paddwidth-9 downto 0); 
 					when others	=> null;
 				end case;
 
@@ -453,14 +437,9 @@ begin  -- the CPU
 				accumcar <= '0'&accum - oprr - maskedcarry; -- sub/subc
 			end if;
 		end  if;					
-		
-		if dopush = '1' then
-			spw <= spw +1; 
+		if (opcode0 = jsr) then			 	-- save return address -- note priority over ttr!	  
+			idret  <= pcplus1;  
 		end if;	
-		if dopop = '1' then
-			spw <= spw -1; 
-		end if;
-		
 --		if opcode0 = opr then				-- this can be done at pipe 0 at the cost of 6 or so slices
 --			if opropcode0 = addix then
 --				idx <= mra;
@@ -476,31 +455,6 @@ begin  -- the CPU
 --			end if;
 --		end if;			
 	end if;  -- clk
-	
-	if opcode0 = jsr then
-		stackdin <= pcplus1;		--  a jsr (note jsr has priority)
-	else
-		stackdin(width-1 downto 0) <= accum;
-		stackdin(paddwidth-1 downto width) <=(others => '0');
-	end if;
-		
-	if (opcode0 = jsr) or ((opcode2 = opr) and (opropcode2 = push))  then 	   
-		stackwe <= '1';
-		dopush <= '1';	
-	else	
-		stackwe <= '0';
-		dopush <= '0';	
-	end if;   
-
-   if ((opcode0= jmp) and (jind0 = '1'))			-- jmp indirect is a return 
-   or ((opcode2 = opr)and (opropcode2 = pop))  then  
-		dopop <= '1';	
-	else
-		dopop <= '0';	
-	end if;   
-	
-	spr <= spw -1;		
-	
 end process accumproc;
 
   staproc : process (clk, accum, maddpipe3, opcode3, writeback3, wbena3, accumcar, id2)  -- sta decode  -- not much to do but enable mwrite
