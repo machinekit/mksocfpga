@@ -149,10 +149,10 @@ begin
 					tdata(i) <= altdata(i);
 				else
 					tdata(i) <= not altdata(i);
-				end if;							
+				end if;		 
 			end if;
 			if opendrainsel(i) = '0' then				-- normal DDR	
-				if (ddrreg(i) = '1')  then 
+				if ddrreg(i) = '1' then 
 					tsoutreg(i) <= tdata(i);
 				else
 					tsoutreg(i) <= 'Z';

@@ -128,8 +128,13 @@ module ghrd(
 //=======================================================
 //  REG/WIRE declarations
 //=======================================================
-  parameter AddrWidth = 16;
   
+  parameter AddrWidth = 16;
+  parameter IOWidth = 34;
+  parameter LIOWidth = 6;
+  parameter IOPorts = 2;
+
+
   wire  hps_fpga_reset_n;
   wire [1:0] fpga_debounced_buttons;
   wire [6:0]  fpga_led_internal;
@@ -149,7 +154,7 @@ module ghrd(
   wire [31:0] 	hm_datai;
   wire       	hm_read;
   wire 			hm_write;
-  wire 			hm_chipsel;
+  wire [3:0]	hm_chipsel;
   wire			hm_clk_med;	
   wire			hm_clk_high;	
   wire 			clklow_sig;
@@ -269,10 +274,10 @@ module ghrd(
 //     .mk_io_hm2_we                 				(hm_chipsel),                    //                          .hm2_chipsel
      .clk_100mhz_out_clk                    	(hm_clk_med),                    //            clk_100mhz_out.clk
      .clk_200mhz_out_clk                    	(hm_clk_high),                    //            clk_100mhz_out.clk
-	  .adc_io_cs_n                            (ADC_CONVST),                            //                       adc.CONVST
-	  .adc_io_sclk                            (ADC_SCK),                               //                          .SCK
-	  .adc_io_din                             (ADC_SDI),                               //                          .SDI
-	  .adc_io_dout                            (ADC_SDO)                                //                          .SDO
+	  .adc_io_convst                            (ADC_CONVST),                            //                       adc.CONVST
+	  .adc_io_sck                            (ADC_SCK),                               //                          .SCK
+	  .adc_io_sdi                             (ADC_SDI),                               //                          .SDI
+	  .adc_io_sdo                            (ADC_SDO)                                //                          .SDO
 //      .axi_str_data                      (out_data[7:0]),                      //               stream_port.data
 //      .axi_str_valid                     (out_data[8]),                     //                          .valid
 //      .axi_str_ready                     (ar_in_sig[1])                      //                          .ready
@@ -355,24 +360,20 @@ assign clkmed_sig = hm_clk_med;
 
 //import work::*;
 
-parameter IOWIDTH = 34;
-parameter LIOWidth = 6;
-parameter IOPORTS = 2;
-
-wire [IOWIDTH-1:0] iobits_sig;
-assign GPIO_0[IOWIDTH-1:0] = iobits_sig;
+wire [IOWidth-1:0] iobits_sig;
+assign GPIO_0[IOWidth-1:0] = iobits_sig;
 
 wire [LIOWidth-1:0] liobits_sig;
 //assign GPIO_1[LIOWidth-1:0] = liobits_sig;
 assign ARDUINO_IO[LIOWidth-1:0] = liobits_sig;
 
 
-
-//HostMot2 #(.IOWidth(IOWIDTH),.IOPorts(IOPORTS)) HostMot2_inst
+//HostMot2 #(.IOWidth(IOWidth),.IOPorts(IOPorts)) HostMot2_inst
 HostMot2 HostMot2_inst
 (
 	.ibus(hm_datai) ,	// input [buswidth-1:0] ibus_sig
 	.obus(hm_datao) ,	// output [buswidth-1:0] obus_sig
+//	.addr(hm_address) ,	// input [addrwidth-1:2] addr_sig	-- addr => A(AddrWidth-1 downto 2),
 	.addr(hm_address) ,	// input [addrwidth-1:2] addr_sig	-- addr => A(AddrWidth-1 downto 2),
 	.readstb(hm_read ) ,	// input  readstb_sig
 	.writestb(hm_write) ,	// input  writestb_sig
@@ -381,8 +382,12 @@ HostMot2 HostMot2_inst
 	.clkmed(clkmed_sig) ,	// input  clkmed_sig  				-- Processor clock --> sserialwa, twiddle
 	.clkhigh(clkhigh_sig) ,	// input  clkhigh_sig				-- High speed clock --> most
 //	.int(int_sig) ,	// output  int_sig							--int => LINT, ---> PCI ?
-	.iobits(iobits_sig) ,	// inout [iowidth-1:0] 				--iobits => IOBITS,-- external I/O bits	
-	.liobits(liobits_sig) ,	// inout [liowidth-1:0] 			--liobits_sig
+//	.dreq(dreq_sig) ,	// output  dreq_sig							
+//	.demandmode(demandmode_sig) ,	// output  demandmode_sig
+	.iobits(iobits_sig) ,	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits	
+	.liobits(liobits_sig) ,	// inout [lIOWidth-1:0] 			--liobits_sig
+//	.rates(rates_sig) ,	// output [4:0] rates_sig
+//	.leds(leds_sig) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
 	.leds(GPIO_0[35:34]) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
 );
 /*
@@ -403,7 +408,7 @@ defparam HostMot2_inst.BoardNameLow = BoardNameMESA;
 defparam HostMot2_inst.BoardNameHigh = "BoardName5i25";
 defparam HostMot2_inst.FPGASize = 9;
 defparam HostMot2_inst.FPGAPins = 144;
-defparam HostMot2_inst.IOPorts = 1;
+defparam HostMot2_inst.IOPorts = 2;
 defparam HostMot2_inst.IOWidth = 34;
 defparam HostMot2_inst.LIOWidth = 6;
 defparam HostMot2_inst.PortWidth = 17;

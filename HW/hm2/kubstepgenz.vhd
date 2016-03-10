@@ -3,9 +3,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
---LIBRARY work;
---use work.lpm_components.all;
-
 
 --
 -- Copyright (C) 2007, Peter C. Wallace, Mesa Electronics

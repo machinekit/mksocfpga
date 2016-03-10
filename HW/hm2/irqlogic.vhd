@@ -1,11 +1,7 @@
-
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
-use ieee.std_logic_unsigned.all;
-use ieee.math_real.all;
-
---
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
 --
 -- Copyright (C) 2007, Peter C. Wallace, Mesa Electronics
 -- http://www.mesanet.com
@@ -71,68 +67,73 @@ use ieee.math_real.all;
 --     POSSIBILITY OF SUCH DAMAGE.
 -- 
 
-entity qcounterateskd is
-    generic ( clock : integer);
-	 port ( ibus : in  std_logic_vector (31 downto 0);
-			  obus : out std_logic_vector (31 downto 0);	
-           loadrate : in  std_logic;
-			  loadtimerselect : in  std_logic;
-			  readtimerselect : in  std_logic;
-			  timers : in std_logic_vector(4 downto 0);
-			  timer : out std_logic;
-           timerenable : out std_logic;
-           rateout : out  std_logic;
-			  deskewout : out  std_logic_vector(3 downto 0);
-			  clk : in std_logic);
-			  
-end qcounterateskd;
+entity irqlogic is
+    generic ( 
+			buswidth : integer;
+			dividerwidth : integer
+			);		
+	 port ( 
+			clk : in  std_logic;
+         ibus : in  std_logic_vector (buswidth-1 downto 0);
+         obus : out  std_logic_vector (buswidth-1 downto 0);
+         loaddiv : in  std_logic;
+         readdiv : in  std_logic;
+         loadstatus : in  std_logic;
+         readstatus : in  std_logic;
+         clear : in  std_logic;
+         ratesource : in  std_logic_vector (7 downto 0);
+         int : out  std_logic);
+end irqlogic;
 
-architecture Behavioral of qcounterateskd is
+architecture Behavioral of irqlogic is
 
-constant defaultdivisor : real := round((real(clock)/8000000.0)) -2.0; -- default mux rate is 8 MHz
-signal rate: std_logic_vector(11 downto 0) := std_logic_vector(to_unsigned(integer(defaultdivisor),12)); 
-signal count: std_logic_vector(11 downto 0);
-signal deskew: std_logic_vector (3 downto 0) := "0000";
-alias  countmsb: std_logic is  count(11);
-signal timerselect: std_logic_vector(3 downto 0);
+signal irqdiv : std_logic_vector (dividerwidth-1 downto 0);
+alias irqdivmsb : std_logic is irqdiv(dividerwidth-1);
+signal divlatch : std_logic_vector (dividerwidth-1 downto 0);
+signal statusreg : std_logic_vector(4 downto 0);
+alias mask : std_logic is statusreg(1);
+alias irqff : std_logic is statusreg(0);
+alias ratesel : std_logic_vector(2 downto 0) is statusreg(4 downto 2);
+signal rated : std_logic_vector(1 downto 0);
+signal rate : std_logic;
 
 begin
-	arate: process (clk,count,deskew)
-	begin
-		report("Muxed encoder rate divisor: "& real'image(defaultdivisor));
-		if rising_edge(clk) then	
-			if countmsb= '0' then 
-				count <= count -1;
-			else
-				count <= rate;
-			end if;
-			if loadrate = '1' then
-			   rate <= ibus(11 downto 0);
-				deskew <= ibus(31 downto 28);
-			end if;		
-			if loadtimerselect = '1' then
-				timerselect <= ibus(15 downto 12);
-			end if;			
-		end if;	
 
+	PeriodicIRQlogic : process (clk,statusreg,irqff,readstatus,ratesource,readdiv, divlatch)
+	begin
+		if rising_edge(clk) then
+			rated  <= rated(0) & rate;
+			if loadstatus = '1' then 
+				statusreg <= ibus(4 downto 0);
+			end if;	
+			if loaddiv = '1' then 
+				divlatch <= ibus(dividerwidth-1 downto 0);
+				irqdiv <= ibus(dividerwidth-1 downto 0);
+			end if;	
+			if rated = "10" then					-- falling edge of rate source
+				if irqdivmsb = '1' then			-- note special case where divider latch MSB is set = divide by 1 
+					irqdiv <= divlatch;
+					irqff <= '1';
+				else
+					irqdiv <= irqdiv -1;
+				end if;
+			end if; -- rate falling edge
+			if clear = '1' then
+				irqff <= '0';
+			end if;		
+		end if; -- (clk)	
 		obus <= (others => 'Z');
-		if readtimerselect = '1' then
-			obus(15 downto 12) <= timerselect;
-			obus(11 downto 0) <= (others => '0');	
-			obus(31 downto 16) <= (others => '0');	
-		end if;	
-		
-		case timerselect(2 downto 0) is
-			when "000" => timer <= timers(0);
-			when "001" => timer <= timers(1);
-			when "010" => timer <= timers(2);
-			when "011" => timer <= timers(3);
-			when "100" => timer <= timers(4);	
-			when others => timer <= timers(0);
-		end case;
-		
-		timerenable <= timerselect(3);	
-		rateout <= countmsb;
-		deskewout <= deskew;
+		if readstatus = '1' then
+			obus(4 downto 0) <= statusreg;
+			obus(buswidth-1 downto 5) <= (others => '0');
+		end if;
+		if readdiv = '1' then
+			obus(dividerwidth-1 downto 0) <= divlatch;
+			obus(buswidth-1 downto dividerwidth) <= (others => '0');
+		end if;
+		int <= not (irqff and mask);
+		rate <= ratesource(CONV_INTEGER(ratesel));		-- we chose ratesource from appropriate PWM ref gen bit
 	end process;
+
 end Behavioral;
+

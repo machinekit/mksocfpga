@@ -107,7 +107,7 @@ alias CPOL : std_logic is ModeReg(6);
 alias CPHA : std_logic is ModeReg(7);
 alias RateDivReg : std_logic_vector(DivWidth -1 downto 0) is ModeReg(11 downto 8);  -- sets SPI shift clock rate CLK/(2*(N+1))
 alias  BurstDivReg : std_logic_vector(11 downto 0) is ModeReg(23 downto 12);	-- sets A-D conversion rate during burst CLK/(N+2);
-alias  BurstCountReg : std_logic_vector(7 downto 0) is ModeReg(31 downto 24); -- sets length of A-D burst (N+2)
+alias  BurstCountReg : std_logic_vector(7 downto 0) is ModeReg(31 downto 24); -- sets length of A-D burst
 signal fixaddr0 : std_logic;
 signal burstcount: std_logic_vector(7 downto 0);
 signal burstdiv: std_logic_vector(11 downto 0);
