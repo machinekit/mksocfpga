@@ -67,7 +67,7 @@ use IEEE.std_logic_UNSIGNED.ALL;
 --     POSSIBILITY OF SUCH DAMAGE.
 -- 
 library pins;
-use pins.PIN_DRINGx2_34.all;
+use pins.PIN_G540x2_34.all;
 use work.IDROMConst.all;
 --library UNISIM;
 --use UNISIM.VComponents.all;

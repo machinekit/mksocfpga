@@ -149,7 +149,7 @@ module ghrd(
   wire [31:0] 	hm_datai;
   wire       	hm_read;
   wire 			hm_write;
-  wire [3:0]	hm_chipsel;
+  wire 			hm_chipsel;
   wire			hm_clk_med;	
   wire			hm_clk_high;	
   wire 			clklow_sig;
@@ -381,12 +381,8 @@ HostMot2 HostMot2_inst
 	.clkmed(clkmed_sig) ,	// input  clkmed_sig  				-- Processor clock --> sserialwa, twiddle
 	.clkhigh(clkhigh_sig) ,	// input  clkhigh_sig				-- High speed clock --> most
 //	.int(int_sig) ,	// output  int_sig							--int => LINT, ---> PCI ?
-//	.dreq(dreq_sig) ,	// output  dreq_sig							
-//	.demandmode(demandmode_sig) ,	// output  demandmode_sig
 	.iobits(iobits_sig) ,	// inout [iowidth-1:0] 				--iobits => IOBITS,-- external I/O bits	
 	.liobits(liobits_sig) ,	// inout [liowidth-1:0] 			--liobits_sig
-//	.rates(rates_sig) ,	// output [4:0] rates_sig
-//	.leds(leds_sig) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
 	.leds(GPIO_0[35:34]) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
 );
 /*

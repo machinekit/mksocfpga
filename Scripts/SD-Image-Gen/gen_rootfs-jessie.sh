@@ -114,6 +114,7 @@ sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/fstab
 #
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
 /dev/root      /               ext3    noatime,errors=remount-ro 0 1
+/dev/mmcblk0p2 /boot           auto    defaults                  0 2
 tmpfs          /tmp            tmpfs   defaults                  0 0
 none           /dev/shm        tmpfs   rw,nosuid,nodev,noexec    0 0
 EOT'
