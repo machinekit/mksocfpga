@@ -6,7 +6,7 @@ module splitting the (outside hps) address bus into 2(in / out).
 So initially I have settled on using a basic Avalon interface as this is the most straight forward way to implement an I/O path with 1 16-bit adressbus and 2 unidirectional 32-bit data buses.
 
 
-[Hps/cpu to fpga pathways through bridges](https://github.com/the-snowwhite/mksocfpga/blob/master/docs/pics/Hps-fpga-bridges.png)
+![Hps/cpu to fpga pathways through bridges](https://github.com/the-snowwhite/mksocfpga/blob/master/docs/pics/Hps-fpga-bridges.png)
 
 
 Would be an idea to build this hm2 top controller module into the qsys design as an ip core instead of having it hanging outside through a bus type interface port?  --> no ..
@@ -43,7 +43,7 @@ https://github.com/the-snowwhite/mksocfpga/blob/master/HW/QuartusProjects/DE0_NA
 https://github.com/the-snowwhite/mksocfpga/blob/master/HW/hm2/config/PIN_G540x2_34.vhd
 
 
-[Hostmot2 top instance](https://github.com/the-snowwhite/mksocfpga/blob/master/docs/pics/Hostmot2-vhd_inst-pinouts.png) 
+![Hostmot2 top instance](https://github.com/the-snowwhite/mksocfpga/blob/master/docs/pics/Hostmot2-vhd_inst-pinouts.png) 
 
 
 
