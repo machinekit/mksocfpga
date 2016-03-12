@@ -354,7 +354,7 @@ if [ -f ~/machinekit/scripts/rip-environment ]; then
 fi
 EOT
 else
-    echo "Environment allready set up for running Machinekit and LinuxCNC"
+    echo "Environment allready set up for running Machinekit"
     echo ""
 fi
 
