@@ -1,8 +1,8 @@
 REad:
 
-addr 0  `define READ_REG_MEASURE_DONE   0       slave_read_status       slave_readdata <= {14'b0, measure_fifo_done};
+addr 0  `define READ_REG_MEASURE_DONE   0   slave_read_status   slave_readdata <= {measure_fifo_ch, measure_fifo_num, measure_fifo_done}};
 
-addr 1  `define READ_REG_ADC_VALUE      1       slave_read_data         slave_readdata <= fifo_q;      
+addr 1  `define READ_REG_ADC_VALUE      1   slave_read_data     slave_readdata <= fifo_q;      
 
 WRite:
 // write for control
@@ -10,9 +10,9 @@ reg 				measure_fifo_start;
 reg  [11:0] 	measure_fifo_num;
 reg	[2:0]		measure_fifo_ch;
 
-addr 0  `define WRITE_REG_START_CH      0       {measure_fifo_ch, measure_fifo_start} <= slave_wriredata[3:0];
+addr 0  `define WRITE_REG_START_CH      0       {measure_fifo_ch, measure_fifo_start} <= slave_writedata[3:0];
 
-addr 1  `define WRITE_REG_MEASURE_NUM   1       measure_fifo_num <= slave_wriredata;
+addr 1  `define WRITE_REG_MEASURE_NUM   1       measure_fifo_num <= slave_writedata;
 
 
 sudo insmod adcreg.ko
@@ -102,7 +102,11 @@ sudo insmod adcreg.ko
 # read values
 ./adcfs a
 
-#-------------------------------------------------#
+#---------- working command sequence example ---------------------------------------#
+
+# set measure number (number of samples = 2)
+./adcfs w 4 10
+
 
 # set sample channel 2 start (ch_nr << 1 | 0x001)
 ./adcfs w 0 4
