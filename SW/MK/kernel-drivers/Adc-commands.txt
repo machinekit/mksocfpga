@@ -1,0 +1,154 @@
+REad:
+
+addr 0  `define READ_REG_MEASURE_DONE   0       slave_read_status       slave_readdata <= {14'b0, measure_fifo_done};
+
+addr 1  `define READ_REG_ADC_VALUE      1       slave_read_data         slave_readdata <= fifo_q;      
+
+WRite:
+// write for control
+reg 				measure_fifo_start;
+reg  [11:0] 	measure_fifo_num;
+reg	[2:0]		measure_fifo_ch;
+
+addr 0  `define WRITE_REG_START_CH      0       {measure_fifo_ch, measure_fifo_start} <= slave_wriredata[3:0];
+
+addr 1  `define WRITE_REG_MEASURE_NUM   1       measure_fifo_num <= slave_wriredata;
+
+
+sudo insmod adcreg.ko
+
+
+set measure counter:
+
+	setdata = 0x202;
+	adr = 0x04;
+	iowrite16(setdata, adcreg_mem + adr);
+
+	setdata = CounterData;
+	adr = 0x04;
+	iowrite16(setdata, adcreg_mem + adr);
+
+
+
+	setdata = 0x100;
+	adr = 0x00;
+	iowrite16(setdata, adcreg_mem + adr);
+
+	setdata = 0x000;
+	adr = 0x02;
+	iowrite16(setdata, adcreg_mem + adr);
+
+	setdata = 0x202;
+	adr = 0x04;
+	iowrite16(setdata, adcreg_mem + adr);
+
+	adr = 0x00;
+	setdata = 0xFFF;
+	iowrite16(setdata, adcreg_mem + adr);
+*/
+
+#set measure ch (0-7 << 1)
+./adcfs w 0 0
+
+#set measurecount (12 bit)
+./adcfs w 4 3 
+#sleep 1
+
+# start measurement
+./adcfs w 0 1
+
+#read measurement
+./adcfs a
+
+cat /proc/kallsyms
+
+
+
+#set measurecount (12 bit)
+./adcfs w 4 3 
+
+#set measure ch (0-7 << 1)
+./adcfs w 0 0
+
+# start measurement
+./adcfs w 0 1
+
+
+#-------------------------------------------------#
+
+./adcfs w 0 0
+./adcfs r 0
+./adcfs w 0 1
+
+./adcfs w 0 0
+sleep 0.15
+./adcfs w 0 1
+
+#--------------------------------------#
+
+sudo insmod adcreg.ko
+
+# set write channel to 2 (ch_nr >> 1)
+./adcfs w 0 4
+
+# set measure number (number of samples = 2)
+./adcfs w 4 10
+
+# set sample channel 2 start (ch_nr << 1 | 0x011)
+./adcfs w 0 4
+./adcfs w 0 5
+./adcfs w 0 4
+
+# read values
+./adcfs a
+
+#-------------------------------------------------#
+
+# set sample channel 2 start (ch_nr << 1 | 0x001)
+./adcfs w 0 4
+./adcfs w 0 5
+./adcfs w 0 4
+
+# read values
+./adcfs a
+
+# set sample channel 3 start (ch_nr << 1 | 0x001)
+./adcfs w 0 6
+./adcfs w 0 7
+./adcfs w 0 6
+
+# read values
+./adcfs a
+
+sudo mv socfpga.rbf /boot
+
+ 
+sudo reboot
+
+
+ssh -X machinekit@mksocfpga.local
+
+
+
+sudo insmod adcreg.ko
+
+#sudo chmod 666 /sys/bus/platform/drivers/adcreg/adcreg
+
+sudo modinfo adcreg.ko
+
+machinekit@mksocfpga:~$ sudo modinfo adcreg.ko
+filename:       /home/machinekit/adcreg.ko
+license:        Dual BSD/GPL
+license:        Dual BSD/GPL
+depends:        
+vermagic:       3.10.37-ltsi-rt37-05839-gd0c5abc SMP preempt mod_unload ARMv7 p2v8 
+ 
+machinekit@mksocfpga:~$ sudo modinfo hm2reg_uio_module
+filename:       /lib/modules/3.10.37-ltsi-rt37-05839-gd0c5abc/extra/home/mib/Development/the-snowwhite-git/mksocfpga-work/mksocfpga/SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.ko
+alias:          platform:hm2cvsoc
+license:        GPL v2
+description:    CVSoc Userspace I/O platform driver with generic IRQ handling developed for Machinekit use
+author:         Michael Brown
+alias:          of:N*T*Cmachkt,hm2reg-io-1.0*
+depends:        
+vermagic:       3.10.37-ltsi-rt37-05839-gd0c5abc SMP preempt mod_unload ARMv7 p2v8 

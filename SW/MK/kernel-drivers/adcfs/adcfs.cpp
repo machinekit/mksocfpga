@@ -46,31 +46,42 @@ bool FPGAFS::Init()
 
 int FPGAFS::adcregSize( void ){
     int size = 0;
-//    ifstream file( FILE_DEV, ios::binary | ios::ate);
-    ifstream file( FILE_DEV, ios::binary | ios::ate );
-//    file.seekg(0, ios::end);
-//    file.seekg(0);
-//    char c;
-    
-//    while (file.get(c));
+    ifstream file( FILE_DEV, ios::binary | ios::ate);
     
     size = file.tellg();
-    cout << "adcregSize: filesixe = " << size << "\n";
+    
+    cout << "FPGAFS::adcregSize: page size = " << size << "\n";
     file.close();
     return size;
 }
 
 int FPGAFS::adcregReadall( char** buf){
-    int count = 0; int size = adcregSize();
-    char* bufpoint = new char[size];
-    ifstream in( FILE_DEV, ios::binary  | ios::ate);
-
+    int insize = 0, size = 0, count = 0;
+    insize = adcregSize();
+    char* bufpoint = new char[insize];
+    char c;
+    
+    ifstream in( FILE_DEV, ios::binary);
     in.seekg(0);
+    size = 22;
+/*    
+    while (in.get(c)){	// loop getting single characters
+      cout << c;
+      *bufpoint << c;
+      size = in.tellg();
+    }
+    */
+//    
+//    ifstream in( FILE_DEV, ios::binary  | ios::ate);
+//    ifstream in( FILE_DEV, ios::binary);
+
+//    in.seekg(0);
     in.get(bufpoint,size);
 //    while(count < size){
 //        bufpoint[count++] = in.get();
 //    }
     *buf = bufpoint;
+    cout << "FPGAFS::adcregReadall: bufsize = " << size << "\n";
     in.close();
     return size;
 }
