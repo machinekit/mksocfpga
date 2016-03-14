@@ -57,7 +57,7 @@ add_fileset_file adc_ltc2308_hw.tcl OTHER PATH adc_ltc2308_hw.tcl
 set_module_assignment embeddedsw.dts.group adc-ltc2308
 set_module_assignment embeddedsw.dts.name adc-io
 set_module_assignment embeddedsw.dts.params.address_width 3
-set_module_assignment embeddedsw.dts.params.data_width 32
+set_module_assignment embeddedsw.dts.params.data_width 16
 set_module_assignment embeddedsw.dts.vendor holotc
 
 
@@ -98,7 +98,7 @@ add_interface_port slave slave_read_n read_n Input 1
 add_interface_port slave slave_readdata readdata Output 16
 add_interface_port slave slave_addr address Input 1
 add_interface_port slave slave_wrtie_n write_n Input 1
-add_interface_port slave slave_wriredata writedata Input 16
+add_interface_port slave slave_writedata writedata Input 16
 set_interface_assignment slave embeddedsw.configuration.isFlash 0
 set_interface_assignment slave embeddedsw.configuration.isMemoryDevice 0
 set_interface_assignment slave embeddedsw.configuration.isNonVolatileStorage 0
