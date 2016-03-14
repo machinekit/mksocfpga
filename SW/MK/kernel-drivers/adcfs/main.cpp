@@ -130,15 +130,16 @@ int main (int argc, char *argv[] ) {
         cout << "File Size = " << buffsize << " \n";
         int val;
 	int readbuffsize = fpga.adcregReadall(& buf);
-	cout << "(readbuffsize) Got " << readbuffsize << " bytes \n";
+	int num_samples = ((buf[1] << 7) | (buf[0] >> 1));
+	cout << "(readbuffsize) Got " << readbuffsize << " bytes \n" << "and " << buf;
         cout << "Buff Size = " << buffsize << " \n";
 	for(int j=0;j<(addr_size/2);j++){
-            cout <<"\n" << std::dec << j << "\t";
-            for(int i=0;i<2;i++){
+            cout <<"\n" << std::dec << j << "\t" << ((buf[(j*2)+1] << 8) | (buf[(j*2)])) << "\t" << "0x";
+            for(int i=1;i>-1;i--){
                 val = buf[i+(j*2)];
-                if (i==2) cout <<"\t";
-                cout << std::hex << val  << "\t";
-                cout << std::dec ;
+//                if (i=0) cout <<"\t";
+                cout << std::hex<< val;
+//                cout << std::dec ;
             }
         }
         cout << "\n";

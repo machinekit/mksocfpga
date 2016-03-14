@@ -27,11 +27,11 @@ ssize_t adcreg_show(struct device_driver *drv, char *buf)
 	
 	indata =  ioread16(adcreg_mem);
 	sample_count = (indata >> 1)+1;
-	printk("\nadcreg_show: measure_count = %u\n",sample_count);
+	printk("\n \nadcreg_show_1: sample_count = %u\n",sample_count);
 	
 	size = sizeof(buf);
 	
-	printk("\nadcreg_show: initial buf size = %u bytes\n", size);
+	printk("\nadcreg_show_2: initial buf size = %u bytes\n", size);
 	size = (sample_count << 1); 
 /*
 	for (bufindex=0;bufindex < size;bufindex++)
@@ -47,11 +47,11 @@ ssize_t adcreg_show(struct device_driver *drv, char *buf)
 		buf[bufindex] = (indata & 0xFF); buf[bufindex+1] = (indata >> 8);
         }
 
-        printk("adcreg_show: deliverd %u bytes\n",sizeof(buf));
+        printk("\nadcreg_show_3: wrote %u bytes\n",sizeof(buf));
 
-	for (bufindex=0;bufindex < (size >> 1);bufindex=bufindex+2)
+	for (bufindex=0;bufindex < size ;bufindex=bufindex+2)
         {
-	    printk("bufindex --> %u-1 , 2 \t bufdata = %04x  %04x \n", bufindex, buf[bufindex], buf[bufindex+1]);
+	    printk("\nAddress --> %u \t Highbyte, Lowbyte  = 0x%02x  0x%02x \n \n", (bufindex >> 1), buf[bufindex+1], buf[bufindex]);
 	}
 
 	return size;
