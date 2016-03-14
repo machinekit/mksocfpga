@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include <string.h>
+
 using namespace std;
 
 bool ADC_LTC2308_Read(int, int, u_int16_t );
@@ -125,22 +127,18 @@ int main (int argc, char *argv[] ) {
     
     if (option == 'a'){
         char* buf = NULL;
-//        int buffsize = fpga.adcregReadall(& buf);
-        int buffsize = fpga.adcregSize();
-        cout << "File Size = " << buffsize << " \n";
-        int val;
+	u_int16_t s_word, s_val;
+	u_int8_t s_ch;
+	int val;
 	int readbuffsize = fpga.adcregReadall(& buf);
 	int num_samples = ((buf[1] << 7) | (buf[0] >> 1));
-	cout << "(readbuffsize) Got " << readbuffsize << " bytes \n" << "and " << buf;
-        cout << "Buff Size = " << buffsize << " \n";
-	for(int j=0;j<(addr_size/2);j++){
-            cout <<"\n" << std::dec << j << "\t" << ((buf[(j*2)+1] << 8) | (buf[(j*2)])) << "\t" << "0x";
-            for(int i=1;i>-1;i--){
-                val = buf[i+(j*2)];
-//                if (i=0) cout <<"\t";
-                cout << std::hex<< val;
-//                cout << std::dec ;
-            }
+        cout << "\nOption a: Read " << readbuffsize << " bytes" << "\tGot " <<  num_samples << "samples \n";
+
+	for(int j=0;j<readbuffsize;j+=2){
+	    s_word = ((buf[j+1] << 8) | buf[j]);
+	    s_val = (s_word & 0x07FF);
+	    s_ch = ((s_word >> 12) & 0x0003); 
+            cout <<"\n" << std::dec << j << "\t" << s_ch << "\t" << s_val << "\t" << std::hex << "0x" << s_val << "\n";
         }
         cout << "\n";
         
