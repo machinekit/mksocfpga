@@ -136,8 +136,8 @@ int main (int argc, char *argv[] ) {
 
 	for(int j=0;j<readbuffsize;j+=2){
 	    s_word = ((buf[j+1] << 8) | buf[j]);
-	    s_val = (s_word & 0x07FF);
-	    s_ch = ((s_word >> 12) & 0x0003); 
+	    s_val = (s_word & 0x0FFF);
+	    s_ch = ((s_word >> 12) & 0x0007); 
             cout <<"\n" << std::dec << j << "\t" << s_ch << "\t" << s_val << "\t" << std::hex << "0x" << s_val << "\n";
         }
         cout << "\n";
