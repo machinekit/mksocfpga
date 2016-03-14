@@ -58,7 +58,7 @@ reg measure_fifo_done;
 always @ (posedge slave_clk)	
 begin
 	if (slave_read_status)   
-		slave_readdata <= {2'b0, measure_count, measure_fifo_done};
+		slave_readdata <= {measure_fifo_ch, measure_fifo_num, measure_fifo_done};
 	else if (slave_read_data)   
 		slave_readdata <= {3'b0, fifo_q};
 end
