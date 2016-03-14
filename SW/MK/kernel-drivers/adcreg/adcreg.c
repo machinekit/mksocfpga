@@ -11,9 +11,7 @@
 #define adcreg_BASE 0xff250000
 #define adcreg_SIZE 32
 
-#define PRINT_INFO 
-
-//#define DRIVER_NAME "adcreg"
+//#define PRINT_INFO 
 
 void *adcreg_mem;
 
