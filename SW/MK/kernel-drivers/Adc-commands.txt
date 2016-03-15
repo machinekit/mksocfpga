@@ -92,7 +92,7 @@ sudo insmod adcreg.ko
 ./adcfs w 0 4
 
 # set measure number (number of samples = 2)
-./adcfs w 4 10
+./adcfs w 1 10
 
 # set sample channel 2 start (ch_nr << 1 | 0x011)
 ./adcfs w 0 4
@@ -103,9 +103,10 @@ sudo insmod adcreg.ko
 ./adcfs a
 
 #---------- working command sequence example ---------------------------------------#
+sudo insmod adcreg.ko
 
 # set measure number (number of samples = 2)
-./adcfs w 1 10
+./adcfs w 1 2047  # limit !
 
 
 # set sample channel 2 start (ch_nr << 1 | 0x001)
