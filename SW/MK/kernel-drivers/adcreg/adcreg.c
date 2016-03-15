@@ -9,7 +9,7 @@
 #include <linux/io.h>
 
 #define adcreg_BASE 0xff250000
-#define adcreg_SIZE 32
+#define adcreg_SIZE 4096
 
 //#define PRINT_INFO 
 
@@ -22,38 +22,41 @@ static struct device_driver adcreg_driver = {
 
 ssize_t adcreg_show(struct device_driver *drv, char *buf)
 {
- 	u16 bufindex, size;
-	u16 indata, sample_count;
+ 	u16 bufindex, size, length;
+	u16 indata, sample_count, s_ch;
 	
 	indata =  ioread16(adcreg_mem);
-	sample_count = (indata >> 1)+1;
+	sample_count = ((indata >> 1) & 0x0FFF)+1;
+	s_ch = ((indata >> 13) & 0x0007);
 #ifdef PRINT_INFO 	
-	printk("\n \nadcreg_show_1: sample_count = %u\n",sample_count);
+	printk("\n \nadcreg_show_1: sample_count = %u\t s_ch = %u\n",sample_count,s_ch);
 #endif
 	
 	size = sizeof(buf);
 
 #ifdef PRINT_INFO 	
-	printk("\nadcreg_show_2: initial buf size = %u bytes\n", size);
+	printk("\nadcreg_show_2: initial buf width = %u bytes\n", size);
 #endif
-	size = (sample_count << 1); 
+	length = (sample_count << 1); 
 
 	buf[0] = (indata & 0xFF); buf[1] = (indata >> 8);
-	for (bufindex=2;bufindex < size-1;bufindex=bufindex+2)
+
+	for (bufindex=2;bufindex < length-1;bufindex=bufindex+2)
  	{
                 indata =  ioread16(adcreg_mem + 4);
 		buf[bufindex] = (indata & 0xFF); buf[bufindex+1] = (indata >> 8);
         }
+
 #ifdef PRINT_INFO
-        printk("\nadcreg_show_3: wrote %u bytes\n",sizeof(buf));
+        printk("\nadcreg_show_3: wrote %u bytes\n",length);
 #endif
 #ifdef PRINT_INFO
-	for (bufindex=0;bufindex < size ;bufindex=bufindex+2)
+	for (bufindex=0;bufindex < length ;bufindex=bufindex+2)
         {
 	    printk("\nAddress --> %u \t Highbyte, Lowbyte  = 0x%02x  0x%02x \n \n", (bufindex >> 1), buf[bufindex+1], buf[bufindex]);
 	}
 #endif
-	return size;
+	return length;
 }
 
 ssize_t adcreg_store(struct device_driver *drv, const char *buf, size_t count)
@@ -67,8 +70,9 @@ ssize_t adcreg_store(struct device_driver *drv, const char *buf, size_t count)
 #ifdef PRINT_INFO
 	printk("adcreg_store:  Data reveived by adcreg count = %u \n", count);
 #endif
-	setadr = buf[0] + (buf[1] << 8);
-	setdata = buf[2] + (buf[3] << 8);
+//	setadr = buf[0] + (buf[1] << 8);
+	setadr = (buf[0] & 0x07);//   + (buf[1] << 8);
+	setdata = ((buf[2] + (buf[3] << 8)) & 0x07FF);
 	
 #ifdef PRINT_INFO
 	printk("\nAddress %u\t will be written with %u  0x%04x  \n", setadr, setdata, setdata);

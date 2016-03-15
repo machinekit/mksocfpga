@@ -15,10 +15,19 @@ bool ADC_LTC2308_Read(int ch, int nReadNum, u_int16_t szData[]){
 
     u_int16_t Value;
     int i;
-    bool bSuccess = false;
+    bool bSuccess = false, set_success = false;
     u_int32_t Timeout;
     
     FPGAFS fpga;
+    // set measure number (num of samples to run);
+    set_success = fpga.adcregSet(0x4,nReadNum);
+    if(set_success){
+	set_success = fpga.adcregSet(0x0,((ch << 1) | 0x0000));
+	set_success = fpga.adcregSet(0x0,((ch << 1) | 0x0001));
+	set_success = fpga.adcregSet(0x0,((ch << 1) | 0x0000));
+    }
+
+/*   
     cout << "will now nReadnum \n";
     fpga.adcregSet(0x01, nReadNum);
 
@@ -49,6 +58,8 @@ bool ADC_LTC2308_Read(int ch, int nReadNum, u_int16_t szData[]){
       }
       return bSuccess;
     }
+*/
+    return set_success;
 }
 
 int main (int argc, char *argv[] ) {
@@ -68,12 +79,29 @@ int main (int argc, char *argv[] ) {
     u_int16_t szAdcValue[10];
     int nActiveChannel;
     
-    nActiveChannel = 3;
+//    nActiveChannel = 3;
     nNum = sizeof(szAdcValue)/sizeof(szAdcValue[0]);
+
+    FPGAFS fpga;
+    
+    if (argc >= 2) {
+        option = *argv[1];
+        if (option != 'w' && option != 'r' && option != 'a' && option != 'd') {
+            cout<< "Invalid option for 1 argument \n" <<
+            " a as argument displays all address values \n" << 
+            " d as argument displays adc value \n" << 
+            " r (read) + an address location displays a single location \n" << 
+            " w (write) + and arddress location + writes a single location \n";
+            exit(EXIT_FAILURE);
+//             cout<< "Invalid option setting. " <<
+//             "Option must be either r (read) or w (write)\n";
+//             exit(EXIT_FAILURE);
+        }
+    }
     
     if (argc == 2) {
         option = *argv[1];
-        if ( option != 'a' && option != 'd') {
+        if ( option != 'a' ) {
             cout<< "Invalid option for 1 argument \n" <<
             " a as argument displays all address values \n" << 
             " d as argument displays adc value \n" << 
@@ -81,141 +109,85 @@ int main (int argc, char *argv[] ) {
             " w (write) + and arddress location + writes a single location \n";
             exit(EXIT_FAILURE);
         }
-    }
-    
-    
-    if (argc >= 2) {
-        option = *argv[1];
-        if (option != 'w' && option != 'r' && option != 'a' && option != 'd') {
-            cout<< "Invalid option setting. " <<
-            "Option must be either r (read) or w (write)\n";
-            exit(EXIT_FAILURE);
-        }
+
+	if (option == 'a'){
+	    char* buf = NULL;
+	    u_int16_t s_word, s_val;
+//	    u_int8_t s_ch;
+	    int val;
+	    int readbuffsize = fpga.adcregReadall(& buf);
+	    u_int16_t info_word = ((buf[1] << 8) | buf[0]);
+	    u_int16_t num_samples = ((info_word >> 1) & 0x0FFF);
+	    u_int16_t s_ch = ((info_word >> 13) & 0x0007);
+	    
+	    cout << "\nOption a: Read " << readbuffsize << " bytes" << "\tGot " <<  num_samples << " samples from adc ch: " << s_ch << " status bit = " << (info_word & 1) << "\n";
+
+	    for(int j=1;j<num_samples;j++){
+		s_word = ((buf[(j*2)+1] << 8) | buf[j*2]);
+		s_val = (s_word & 0x0FFF);
+//		s_ch = ((s_word >> 12) & 0x0007); 
+//		cout <<"\n" << std::dec << j << "\t" << s_ch << "\t" << s_val << "\t" << std::hex << "0x" << s_val << "\n";
+		cout <<"\n" << std::dec << j << "\t" << s_val << "\t" << std::hex << "0x" << s_val << "\n";
+	    }
+	    cout << "\n";
+        
+	    if(buf!=NULL)
+	    {
+		delete[] buf;
+	    }
+	}
     }
         
     if (argc >= 3) {
         // check the bounds of the address //
-        offset = atol(argv[2]);
-        if (offset > ((addr_size / 2)-1)) {
-            cout << "Invalid offset input. \n" <<
-            "Address must be between 0 and " << ((addr_size / 2) -1) << " inclusive.\n";
-            exit(EXIT_FAILURE);
-        }
-        cout<< "offset = " << offset << "\n";
-        
-    }
+	int address_reg = atol(argv[2]);
+	if (address_reg > 1) {
+	    cout << "Invalid address input. \n" <<
+	    "Address must be between 0 and " << 1 << " inclusive.\n";
+	    exit(EXIT_FAILURE);
+	}
+	offset = address_reg << 2;
+	cout<< "offset = " << offset << "\n";
 
-    FPGAFS fpga;
-    
-    if (argc == 4) {
-        // check the bounds of the value being set //
-        value = atol(argv[3]);
-        if (value > 4095) {
-            cout << "Invalid number setting. " <<
-            "Value must be between 0 and 4095, inclusive.\n";
-            exit(EXIT_FAILURE);
-        }
-    
-	if (option == 'w') {
-	    cout << "w option running \n";
-	    char datavalue = fpga.adcregSet(offset,value);
-	    int pval = datavalue;
-	    cout << "\n Register " << offset << " Set Value = " << value << " adcregSet return value = "<< pval << " \n";
+	if (argc == 3) {
+	    option = *argv[1];
+	    if ( option != 'r' ) {
+	      cout<< "Invalid option for 1 argument \n" <<
+		" a as argument displays all address values \n" << 
+		" d as argument displays adc value \n" << 
+		" r (read) + an address location displays a single location \n" << 
+		" w (write) + and arddress location + writes a single location \n";
+		exit(EXIT_FAILURE);
+	    }
+	    if (option == 'r') {
+		cout << "r option running \n";
+		char datavalue = fpga.adcregGet(offset);
+		int pval = datavalue;
+		cout << "\n Register " << offset << " Value = " << pval << " \n";
+	    }
+	}
+	else if (argc == 4) {
+	    // check the bounds of the value being set //
+	    value = atol(argv[3]);
+	    if (value > 4095) {
+		cout << "Invalid number setting. " <<
+		"Value must be between 0 and 4095, inclusive.\n";
+		exit(EXIT_FAILURE);
+	    }
+
+	    if (option == 'w') {
+		cout << "w option running \n";
+		char datavalue = fpga.adcregSet(offset,value);
+		int pval = datavalue;
+		cout << "\n Register " << offset << " Set Value = " << value << " adcregSet return value = "<< pval << " \n";
+	    }
+	    else if (option == 'd') {
+		cout << "d option running \n";
+		if (!ADC_LTC2308_Read(nActiveChannel, nNum, szAdcValue)) {
+		    cout<< "failed to read \n"; 
+		}
+	    }
 	}
     }
-
-    
-    if (option == 'a'){
-        char* buf = NULL;
-	u_int16_t s_word, s_val;
-	u_int8_t s_ch;
-	int val;
-	int readbuffsize = fpga.adcregReadall(& buf);
-	int num_samples = ((buf[1] << 7) | (buf[0] >> 1));
-        cout << "\nOption a: Read " << readbuffsize << " bytes" << "\tGot " <<  num_samples << "samples \n";
-
-	for(int j=0;j<readbuffsize;j+=2){
-	    s_word = ((buf[j+1] << 8) | buf[j]);
-	    s_val = (s_word & 0x0FFF);
-	    s_ch = ((s_word >> 12) & 0x0007); 
-            cout <<"\n" << std::dec << j << "\t" << s_ch << "\t" << s_val << "\t" << std::hex << "0x" << s_val << "\n";
-        }
-        cout << "\n";
-        
-        if(buf!=NULL)
-        {
-            delete[] buf;
-        }
-    }
-    else if (option == 'r') {
-        cout << "r option running \n";
-        char datavalue = fpga.adcregGet(offset);
-        int pval = datavalue;
-        cout << "\n Register " << offset << " Value = " << pval << " \n";
-    }
-    
-    else if (option == 'd') {
-        cout << "d option running \n";
-	if (!ADC_LTC2308_Read(nActiveChannel, nNum, szAdcValue)) {
-	    cout<< "failed to read \n"; 
-	}
-//        char datavalue = fpga.adcregGet(offset);
-//        int pval = datavalue;
-//        cout << "Register " << offset << " Value = " << pval << " \n";
-    }
-    
-    
-//    cout << "Hmmm = \n";
-    
-    /*    printf("Hello\n");
-    int fd, ret = EXIT_FAILURE;
-    unsigned char  value,option,datavalue;
-    uint16_t  offset;
-    int index;
-    off_t hmreg_base = (LWHPS2FPGA_BRIDGE_BASE);// + HMREG_OFFSET);
-    printf("Welcome \n");
-
-    // open the memory device file //
-    fd = open("/dev/mem", O_RDWR|O_SYNC);
-    if (fd < 0) {
-        perror("open");
-        exit(EXIT_FAILURE);
-    }
-    
-    // map the LWHPS2FPGA bridge into process memory //
-    bridge_map = mmap(NULL, PAGE_SIZE, PROT_WRITE, MAP_SHARED,
-                      fd, hmreg_base);
-    if (bridge_map == MAP_FAILED) {
-        perror("mmap");
-        goto cleanup;
-    }
-    
-    // get the registers peripheral's base offset //
-    hmreg_mem = (unsigned char *) (bridge_map + HMREG_OFFSET);
-    
-    else if (option == 'w' && argc == 4){
-        *(hmreg_mem + offset) = value;
-        printf("Value %d written to 0x%x\n",value,offset);
-    }
-    else if (option == 'a'){
-        for(index=0;index<256;index++) {
-            datavalue = *(hmreg_mem + index);
-            printf("Register 0x%x Value = 0x%x \n",index,datavalue);
-        }
-    }
-    
-    if (munmap(bridge_map, PAGE_SIZE) < 0) {
-        perror("munmap");
-        goto cleanup;
-    }
-    
-    ret = 0;
-    
-    cleanup:
-    close(fd);
-    return ret;
-*/
-
     cout << "\n#---------------------------------   End of adcfs adc tester  ---------------------------#\n";
-
 }
