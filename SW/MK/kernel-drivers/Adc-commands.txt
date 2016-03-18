@@ -1,4 +1,4 @@
-#------- Added adc-ip-v1 - tag -----------------#
+#------- Added adc-ip-v1-bin-doc - tag -----------------#
 WRite:
 // write for control
 reg 				measure_fifo_start;
