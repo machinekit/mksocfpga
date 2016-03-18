@@ -120,14 +120,15 @@ int main (int argc, char *argv[] ) {
 	    u_int16_t num_samples = ((info_word >> 1) & 0x0FFF);
 	    u_int16_t s_ch = ((info_word >> 13) & 0x0007);
 	    
-	    cout << "\nOption a: Read " << readbuffsize << " bytes" << "\tGot " <<  num_samples << " samples from adc ch: " << s_ch << " status bit = " << (info_word & 1) << "\n";
+	    cout << "\nOption a: Read " << readbuffsize << " bytes" << " Got " <<  num_samples << " samples from adc ch: " << s_ch << 
+	    " status word = 0x" << std::hex << info_word << " status bit = " << std::dec << (info_word & 1) << "\n";
 
-	    for(int j=1;j<num_samples;j++){
+	    for(int j=1;j<num_samples+1;j++){
 		s_word = ((buf[(j*2)+1] << 8) | buf[j*2]);
 		s_val = (s_word & 0x0FFF);
-//		s_ch = ((s_word >> 12) & 0x0007); 
-//		cout <<"\n" << std::dec << j << "\t" << s_ch << "\t" << s_val << "\t" << std::hex << "0x" << s_val << "\n";
-		cout <<"\n" << std::dec << j << "\t" << s_val << "\t" << std::hex << "0x" << s_val << "\n";
+		s_ch = ((s_word >> 12) & 0x0007); 
+		cout <<"\n" << std::dec << j << "\t" << s_ch << "\t" << s_val << "\t" << std::hex << "0x" << s_val << "\n";
+//		cout <<"\n" << std::dec << j << "\t" << s_val << "\t" << std::hex << "0x" << s_val << "\n";
 	    }
 	    cout << "\n";
         
