@@ -16,7 +16,7 @@ wire [2:0] fifo_ch_q;
 
 addr 0  `define READ_REG_MEASURE_DONE   0   slave_read_status   slave_readdata <= {measure_fifo_ch, measure_fifo_num, measure_fifo_done};
 
-addr 1  `define READ_REG_ADC_VALUE      1   slave_read_data     slave_readdata <= {1'b0, fifo_ch_q, fifo_q};     
+addr 1  `define READ_REG_ADC_VALUE      1   slave_read_data     slave_readdata <= {1'b0, fifo_ch_q, fifo_q};
 
 
 
@@ -30,7 +30,7 @@ mib@debian9-ws:~/Development/the-snowwhite-git/mksocfpga-work/mksocfpga/Scripts$
 machinekit@mksocfpga:~$ sudo mv socfpga.* /boot
 machinekit@mksocfpga:~$ sudo reboot
 
-sudo mv socfpga.* /boot 
+sudo mv socfpga.* /boot
 sudo reboot
 
 
@@ -74,6 +74,16 @@ sudo insmod adcreg.ko
 ./adcfs w 0 20
 ./adcfs w 0 21
 ./adcfs w 0 20
+
+./adcfs a
+
+#---------- Single channel select --------------#
+
+./adcfs w 1 16
+
+./adcfs w 0 0
+./adcfs w 0 1
+./adcfs w 0 0
 
 ./adcfs a
 
@@ -124,7 +134,7 @@ set measure counter:
 ./adcfs w 0 0
 
 #set measurecount (12 bit)
-./adcfs w 4 3 
+./adcfs w 4 3
 #sleep 1
 
 # start measurement
@@ -138,7 +148,7 @@ cat /proc/kallsyms
 
 
 #set measurecount (12 bit)
-./adcfs w 4 3 
+./adcfs w 4 3
 
 #set measure ch (0-7 << 1)
 ./adcfs w 0 0
@@ -187,9 +197,9 @@ machinekit@mksocfpga:~$ sudo modinfo adcreg.ko
 filename:       /home/machinekit/adcreg.ko
 license:        Dual BSD/GPL
 license:        Dual BSD/GPL
-depends:        
-vermagic:       3.10.37-ltsi-rt37-05839-gd0c5abc SMP preempt mod_unload ARMv7 p2v8 
- 
+depends:
+vermagic:       3.10.37-ltsi-rt37-05839-gd0c5abc SMP preempt mod_unload ARMv7 p2v8
+
 machinekit@mksocfpga:~$ sudo modinfo hm2reg_uio_module
 filename:       /lib/modules/3.10.37-ltsi-rt37-05839-gd0c5abc/extra/home/mib/Development/the-snowwhite-git/mksocfpga-work/mksocfpga/SW/MK/kernel-drivers/hm2reg_uio-module/hm2reg_uio-module.ko
 alias:          platform:hm2cvsoc
@@ -197,5 +207,5 @@ license:        GPL v2
 description:    CVSoc Userspace I/O platform driver with generic IRQ handling developed for Machinekit use
 author:         Michael Brown
 alias:          of:N*T*Cmachkt,hm2reg-io-1.0*
-depends:        
-vermagic:       3.10.37-ltsi-rt37-05839-gd0c5abc SMP preempt mod_unload ARMv7 p2v8 
+depends:
+vermagic:       3.10.37-ltsi-rt37-05839-gd0c5abc SMP preempt mod_unload ARMv7 p2v8
