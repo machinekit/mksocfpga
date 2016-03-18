@@ -17,7 +17,8 @@ PATCH_FILE=${10}
 
 echo "NOTE: in build_kernel.sh param KERNEL_FOLDER_NAME = ${5}"
 
-ALT_SOC_KERNEL_PATCH_FILE=/socfpga-3.10-ltsi-rt_hm2_io_adc-changes.patch
+#ALT_SOC_KERNEL_PATCH_FILE=/socfpga-3.10-ltsi-rt_hm2_io_adc-changes.patch
+ALT_SOC_KERNEL_PATCH_FILE=/socfpga-3.10-ltsi-rt_hm2_io_adc-ext4-changes.patch
 
 #----------- Git clone URL's ------------------------------------------#
 #--------- RHN kernel -------------------------------------------------#
@@ -105,14 +106,6 @@ KERNEL_DIR=${KERNEL_BUILD_DIR}/linux
 
 NCORES=`nproc`
 
-install_dep() {
-# install deps for kernel build
-sudo apt -y install bc u-boot-tools 
-# install linaro gcc 4.9 crosstoolchain dependency:
-sudo apt -y install lib32stdc++6
-
-}
-
 extract_toolchain() {
 #    if hash lbzip2 2>/dev/null; then
 #        echo "lbzip2 found"
@@ -134,7 +127,6 @@ if [ ! -d ${CC_DIR} ]; then
     fi
 # extract linaro cross compiler toolchain
 # uses multicore extract (lbzip2) if available
-    install_dep
     echo "extracting toolchain" 
     extract_toolchain	
 fi
@@ -175,8 +167,8 @@ clone_kernel() {
         git fetch linux
         git checkout -b linux-rt linux/${KERNEL_BRANCH}
 #        uiomod_kernel
-        patch_git_kernel
     fi
+patch_git_kernel
 #uiomod_kernel
 cd ..  
 }
@@ -227,6 +219,11 @@ CONFIG_FW_LOADER_USER_HELPER=n
 CONFIG_TIMERFD=y
 CONFIG_EPOLL=y
 CONFIG_NET_NS=y
+CONFIG_PREEMPT_RT=y
+CONFIG_PREEMPT_RT_FULL=y
+CONFIG_MARVELL_PHY=y
+CONFIG_FHANDLE=y
+CONFIG_LBDAF=y
 #CONFIG_CFS_BANDWIDTH=y
 #CONFIG_CGROUPS=y
 #CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
@@ -272,13 +269,13 @@ echo "#-------------------------------------------------------------------------
 echo "#-------------------+++        build_kernel.sh Start        +++-------------------- "
 echo "#---------------------------------------------------------------------------------- "
 
-set -e -x
+set -e
 
 if [ ! -z "${WORK_DIR}" ]; then
-install_dep
-echo "fetching / extracting toolchain"
-get_toolchain
-echo "Downloading / extracting kernel"
+if [ ! -d ${CC_DIR} ]; then
+    echo "fetching / extracting toolchain"
+    get_toolchain
+fi
 
 if [ ! -z "${PATCH_FILE}" ]; then
     echo "MSG: building rt-Patched kernel"
@@ -288,7 +285,7 @@ if [ ! -z "${PATCH_FILE}" ]; then
 else
     echo "MSG: building git cloned kernel"
     echo "cloning kernel"
-#    clone_kernel
+    clone_kernel
 fi
 echo "building kernel"
 build_kernel

@@ -23,14 +23,6 @@ DEFGROUPS="sudo,kmem,adm,dialout,machinekit,video,plugdev"
 #------------------------------------------------------------------------------------------------------
 # build armhf Debian qemu-debootstrap chroot port
 #------------------------------------------------------------------------------------------------------
-install_dep() {
-    sudo apt-get -y install qemu binfmt-support qemu-user-static schroot debootstrap libc6
-#    sudo dpkg --add-architecture armhf
-    sudo apt update
-    sudo apt -y --force-yes upgrade
-    sudo update-binfmts --display | grep interpreter
-}
-
 ##,rpcbind
 ##,ntpdate,avahi-discover
 ## ntpdate,dhcpcd5,isc-dhcp-client,
@@ -45,12 +37,12 @@ install_dep() {
 # }
 
 function run_jessie_bootstrap {
-sudo qemu-debootstrap --foreign --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,adduser,apt-utils,libssh2-1,openssh-client,openssh-server,openssl,kmod,dbus,dbus-x11,xorg,xserver-xorg-video-dummy,upower,rsyslog,udev,libpam-systemd,systemd-sysv,net-tools,lsof,less,accountsservice,iputils-ping,python,ifupdown,iproute2,dhcpcd5,avahi-daemon,uuid-runtime,avahi-discover,libnss-mdns,debianutils,traceroute,strace,cgroupfs-mount,ntp,autofs ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian
+sudo qemu-debootstrap --foreign --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,vim,adduser,apt-utils,libssh2-1,openssh-client,openssh-server,openssl,kmod,dbus,dbus-x11,xorg,xserver-xorg-video-dummy,upower,rsyslog,udev,libpam-systemd,systemd-sysv,net-tools,lsof,less,accountsservice,iputils-ping,python,ifupdown,iproute2,dhcpcd5,avahi-daemon,uuid-runtime,avahi-discover,libnss-mdns,debianutils,traceroute,strace,cgroupfs-mount,ntp,autofs ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian
 }
 
 ##  ifupdown2,
 function run_stretch_bootstrap {
-sudo qemu-debootstrap --foreign --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,adduser,apt-utils,libssh2-1,openssh-client,openssh-server,openssl,kmod,dbus,dbus-x11,xorg,xserver-xorg-video-dummy,upower,rsyslog,udev,libpam-systemd,systemd-sysv,net-tools,lsof,less,accountsservice,iputils-ping,python,ifupdown,iproute2,dhcpcd5,avahi-daemon,uuid-runtime,avahi-discover,libnss-mdns,debianutils,traceroute,strace,cgroupfs-mount,ntp,autofs ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian
+sudo qemu-debootstrap --foreign --arch=armhf --variant=buildd  --keyring /usr/share/keyrings/debian-archive-keyring.gpg --include=sudo,locales,nano,vim,adduser,apt-utils,libssh2-1,openssh-client,openssh-server,openssl,kmod,dbus,dbus-x11,xorg,xserver-xorg-video-dummy,upower,rsyslog,udev,libpam-systemd,systemd-sysv,net-tools,lsof,less,accountsservice,iputils-ping,python,ifupdown,iproute2,dhcpcd5,avahi-daemon,uuid-runtime,avahi-discover,libnss-mdns,debianutils,traceroute,strace,cgroupfs-mount,ntp,autofs ${distro} ${ROOTFS_DIR} http://ftp.debian.org/debian
 }
 
 #run_jessie-host_bootstrap() {
@@ -122,7 +114,7 @@ sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/fstab
 # /etc/fstab: static file system information.
 #
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
-/dev/root      /               ext3    noatime,errors=remount-ro 0 1
+/dev/root      /               ext4    noatime,errors=remount-ro 0 1
 /dev/mmcblk0p2 /boot           auto    defaults                  0 2
 tmpfs          /tmp            tmpfs   defaults                  0 0
 none           /dev/shm        tmpfs   rw,nosuid,nodev,noexec    0 0
@@ -145,7 +137,7 @@ gen_hosts() {
 
 sudo sh -c 'cat <<EOT > '$ROOTFS_DIR'/etc/hosts
 127.0.0.1       localhost.localdomain       localhost   mksocfpga
-192.168.2,9     mksocfpga.holotronic.lan    mksocfpga
+127.0.1,1       mksocfpga.local             mksocfpga
 EOT'
 
 }
@@ -724,8 +716,6 @@ echo "Config files genetated"
 
 run_func() {
 
-install_dep
-
 # output=$( run_bootstrap )
 # if [ $? -eq 0  ]; then
 #     echo ""
@@ -765,9 +755,7 @@ setup_configfiles
 
 gen_install_in-img() {
 if [ ! -z "$SD_IMG" ]; then
-#    DRIVE=`bash -c 'sudo losetup --show -f '$SD_IMG''`
     sudo kpartx -a -s -v ${SD_IMG}
-#    sudo partprobe $DRIVE
     sudo mkdir -p $ROOTFS_MNT
     sudo mount ${DRIVE}$IMG_ROOT_PART $ROOTFS_MNT
     echo "ECHO: ""chroot is mounted in: ${ROOTFS_MNT}"
@@ -777,7 +765,6 @@ if [ ! -z "$SD_IMG" ]; then
     sudo umount $ROOTFS_MNT
     echo "ECHO: ""chroot was unounted "
     echo "ECHO: ""rootfs is now installed in imagefile:"$SD_IMG
-#    sudo losetup -D
     sudo kpartx -d -s -v ${SD_IMG}
     sync
 else

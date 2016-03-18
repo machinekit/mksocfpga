@@ -1,0 +1,27 @@
+From db241ace3f914e3d3d0c20db0bd27daedfefa85f Mon Sep 17 00:00:00 2001
+From: the-snowwhite <producer@holotronic.dk>
+Date: Thu, 17 Mar 2016 16:05:02 +0100
+Subject: [PATCH 3/3] added CONFIG_LBDAF=y to config for fixing ext4 rootfs
+ boot
+
+Signed-off-by: the-snowwhite <producer@holotronic.dk>
+---
+ arch/arm/configs/socfpga_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/configs/socfpga_defconfig b/arch/arm/configs/socfpga_defconfig
+index 4ab2f7f..a1703c7 100644
+--- a/arch/arm/configs/socfpga_defconfig
++++ b/arch/arm/configs/socfpga_defconfig
+@@ -12,7 +12,7 @@ CONFIG_OPROFILE=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_HOTPLUG=y
+-# CONFIG_LBDAF is not set
++CONFIG_LBDAF=y
+ # CONFIG_BLK_DEV_BSG is not set
+ # CONFIG_IOSCHED_DEADLINE is not set
+ # CONFIG_IOSCHED_CFQ is not set
+-- 
+2.7.0
+

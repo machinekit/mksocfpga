@@ -53,7 +53,7 @@ sudo kpartx -u -s -v ${IMG_FILE}
 echo "creating file systems"
 
 sudo mkfs.vfat -F 32 -n "BOOT" ${DRIVE}p2
-sudo mke2fs -j -L "rootfs" ${DRIVE}p3
+sudo mkfs.ext4 -j -L "rootfs" ${DRIVE}p3
 
 sync
 #sudo partprobe $DRIVE

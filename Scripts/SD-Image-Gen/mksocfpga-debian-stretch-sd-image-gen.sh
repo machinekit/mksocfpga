@@ -149,6 +149,43 @@ NCORES=`nproc`
 # build files
 #-----------------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------------
+# build files
+#-----------------------------------------------------------------------------------
+
+install_uboot_dep() {
+# install deps for u-boot build
+sudo apt -y install lib32z1 device-tree-compiler bc u-boot-tools
+# install linaro gcc 4.9 crosstoolchain dependency:
+sudo apt -y install lib32stdc++6
+
+}
+
+install_kernel_dep() {
+# install deps for kernel build
+sudo apt -y install bc u-boot-tools
+# install linaro gcc 4.9 crosstoolchain dependency:
+sudo apt -y install lib32stdc++6
+
+}
+
+install_rootfs_dep() {
+    sudo apt-get -y install qemu binfmt-support qemu-user-static schroot debootstrap libc6
+#    sudo dpkg --add-architecture armhf
+    sudo apt update
+    sudo apt -y --force-yes upgrade
+    sudo update-binfmts --display | grep interpreter
+}
+
+
+install_deps() {
+#install_uboot_dep
+#install_kernel_dep
+#sudo apt install kpartx
+#install_rootfs_dep
+echo "deps installed"
+}
+
 function build_uboot {
 ${SCRIPT_ROOT_DIR}/build_uboot.sh ${CURRENT_DIR} ${SCRIPT_ROOT_DIR} ${UBOOT_VERSION}
 }
@@ -320,6 +357,7 @@ rm -f /etc/resolv.conf
 # enable systemd-resolved
 ln -s /lib/systemd/system/systemd-resolved.service /etc/systemd/system/multi-user.target.wants/systemd-resolved.service
 
+# fix user ping:
 
 exit
 EOF'
@@ -345,6 +383,7 @@ sudo chmod +x ${ROOTFS_MNT}/home/fix-profile.sh
 sudo chroot ${ROOTFS_MNT} chown machinekit:machinekit /home/fix-profile.sh
 sudo chroot ${ROOTFS_MNT} /bin/su -l machinekit /bin/sh -c /home/fix-profile.sh
 sudo chroot ${ROOTFS_MNT} /bin/su -l root /usr/sbin/locale-gen en_GB.UTF-8 en_US.UTF-8
+sudo chroot ${ROOTFS_MNT} /bin/su -l root /bin/chmod u+s /bin/ping /bin/ping6
 }
 
 function run_initial_sh {
@@ -497,10 +536,10 @@ set -e
 
 if [ ! -z "${WORK_DIR}" ]; then
 
-#sudo apt install kpartx
+#install_deps
 
 #build_uboot
-#build_kernel
+build_kernel
 
 ## build_rcn_kernel
 

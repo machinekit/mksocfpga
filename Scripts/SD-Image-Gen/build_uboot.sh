@@ -48,14 +48,6 @@ CC="${CC_DIR}/bin/arm-linux-gnueabihf-"
 
 NCORES=`nproc`
 
-install_dep() {
-# install deps for u-boot build
-sudo apt -y install lib32z1 device-tree-compiler bc u-boot-tools 
-# install linaro gcc 4.9 crosstoolchain dependency:
-sudo apt -y install lib32stdc++6
-
-}
-
 extract_toolchain() {
     echo "using tar for xz extract"
     tar xf ${CC_FILE}
@@ -86,7 +78,6 @@ fetch_uboot() {
 if [ ! -d ${UBOOT_DIR} ]; then
     echo "cloning u-boot"
     git clone git://git.denx.de/u-boot.git uboot
-    install_dep
 fi
 
 cd $UBOOT_DIR
