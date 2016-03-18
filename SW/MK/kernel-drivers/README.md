@@ -5,7 +5,7 @@ hm2reg_uio-module is currently implemented in Machinekit via the hostmot2 hm2_so
 
 This documents the:
 
-adcreg:  Driver module for the modded Nano Soc adc ip core.
+adcreg:  Driver module for the modded Nano Soc adc ip core. [relative link here](../../../HW/ip/ADC_LTC2308_FIFO/)
 
 adcfs:   c++ adc read test app:
 
