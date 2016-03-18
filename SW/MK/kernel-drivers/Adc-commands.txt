@@ -1,18 +1,91 @@
-REad:
-
-addr 0  `define READ_REG_MEASURE_DONE   0   slave_read_status   slave_readdata <= {measure_fifo_ch, measure_fifo_num, measure_fifo_done}};
-
-addr 1  `define READ_REG_ADC_VALUE      1   slave_read_data     slave_readdata <= fifo_q;      
-
 WRite:
 // write for control
 reg 				measure_fifo_start;
 reg  [11:0] 	measure_fifo_num;
 reg	[2:0]		measure_fifo_ch;
+reg				auto_ch_select;
 
-addr 0  `define WRITE_REG_START_CH      0       {measure_fifo_ch, measure_fifo_start} <= slave_writedata[3:0];
+addr 0  `define WRITE_REG_START_CH      0   {measure_fifo_ch, measure_fifo_start} <= slave_writedata[3:0];
 
-addr 1  `define WRITE_REG_MEASURE_NUM   1       measure_fifo_num <= slave_writedata;
+addr 1  `define WRITE_REG_MEASURE_NUM   1   {auto_ch_select, measure_fifo_num} <= slave_writedata[12:0];
+
+REad:
+reg measure_fifo_done;
+wire [11:0]	 fifo_q;
+wire [2:0] fifo_ch_q;
+
+addr 0  `define READ_REG_MEASURE_DONE   0   slave_read_status   slave_readdata <= {measure_fifo_ch, measure_fifo_num, measure_fifo_done};
+
+addr 1  `define READ_REG_ADC_VALUE      1   slave_read_data     slave_readdata <= {1'b0, fifo_ch_q, fifo_q};     
+
+
+
+#------- quartus files copy ---------------------#
+mib@debian9-ws:~/Development/the-snowwhite-git/mksocfpga-work/mksocfpga/Scripts$ ./inst-rbf-dtb.sh
+
+mib@debian9-ws:~/Development/the-snowwhite-git/mksocfpga-work/mksocfpga/Scripts$ scp boot_files/socfpga.* machinekit@mksocfpga.local:~/
+
+mib@debian9-ws:~/Development/the-snowwhite-git/mksocfpga-work/mksocfpga/Scripts$ ssh -X machinekit@mksocfpga.local
+
+machinekit@mksocfpga:~$ sudo mv socfpga.* /boot
+machinekit@mksocfpga:~$ sudo reboot
+
+sudo mv socfpga.* /boot 
+sudo reboot
+
+
+ssh -X machinekit@mksocfpga.local
+
+sudo insmod adcreg.ko
+
+#cat /sys/bus/platform/drivers/adcreg/adcreg > test.dat
+
+#---------- working command sequence example ---------------------------------------#
+sudo insmod adcreg.ko
+
+# set measure number (number of samples = 2)
+./adcfs w 1 2047  # limit !
+
+
+./adcfs w 1 32  # limit !
+
+
+
+# set sample channel 2 start (ch_nr << 1 | 0x001)
+./adcfs w 0 4
+./adcfs w 0 5
+./adcfs w 0 4
+
+# read values
+./adcfs a
+
+# set sample channel 0 start (ch_nr << 1 | 0x001)
+./adcfs w 0 0
+./adcfs w 0 1
+./adcfs w 0 0
+
+# read values
+./adcfs a
+
+#---------- Auto channel select ----------------#
+# set auto select 32 Above limit
+./adcfs w 1 16
+
+./adcfs w 0 20
+./adcfs w 0 21
+./adcfs w 0 20
+
+./adcfs a
+
+
+
+
+
+sudo mv socfpga.* /boot
+
+sudo reboot
+
+ssh -X machinekit@mksocfpga.local
 
 
 sudo insmod adcreg.ko
@@ -102,40 +175,9 @@ sudo insmod adcreg.ko
 # read values
 ./adcfs a
 
-#---------- working command sequence example ---------------------------------------#
-sudo insmod adcreg.ko
-
-# set measure number (number of samples = 2)
-./adcfs w 1 2047  # limit !
-
-
-# set sample channel 2 start (ch_nr << 1 | 0x001)
-./adcfs w 0 4
-./adcfs w 0 5
-./adcfs w 0 4
-
-# read values
-./adcfs a
-
-# set sample channel 3 start (ch_nr << 1 | 0x001)
-./adcfs w 0 6
-./adcfs w 0 7
-./adcfs w 0 6
-
-# read values
-./adcfs a
-
-sudo mv socfpga.rbf /boot
-
- 
-sudo reboot
-
-
-ssh -X machinekit@mksocfpga.local
 
 
 
-sudo insmod adcreg.ko
 
 #sudo chmod 666 /sys/bus/platform/drivers/adcreg/adcreg
 
