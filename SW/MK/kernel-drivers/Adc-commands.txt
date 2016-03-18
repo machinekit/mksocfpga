@@ -44,7 +44,7 @@ sudo insmod adcreg.ko
 #---------- working command sequence example ---------------------------------------#
 sudo insmod adcreg.ko
 
-# set measure number (number of samples = 2)
+# set measure number (number of samples = 2047)
 ./adcfs w 1 2047  # limit !
 
 
@@ -57,7 +57,7 @@ sudo insmod adcreg.ko
 ./adcfs w 0 5
 ./adcfs w 0 4
 
-# read values
+# read and print all sampled values to screen
 ./adcfs a
 
 # set sample channel 0 start (ch_nr << 1 | 0x001)
@@ -65,17 +65,19 @@ sudo insmod adcreg.ko
 ./adcfs w 0 1
 ./adcfs w 0 0
 
-# read values
+# read and print all sampled values to screen
 ./adcfs a
 
 #---------- Auto channel select ----------------#
-# set auto select 32 Above limit
+# set measure number (number of samples = 16)
 ./adcfs w 1 16
 
+# set sample channel 2 ready/start/ready and auto update bit(ch_nr << 1 | 0x00(0/1) | 0x010)
 ./adcfs w 0 20
 ./adcfs w 0 21
 ./adcfs w 0 20
 
+# read and print all sampled values to screen
 ./adcfs a
 
 #---------- Single channel select --------------#
