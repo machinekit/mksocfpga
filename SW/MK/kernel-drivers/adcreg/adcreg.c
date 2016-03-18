@@ -9,9 +9,8 @@
 #include <linux/io.h>
 
 #define adcreg_BASE 0xff250000
-//#define adcreg_SIZE 4096
 
-#define PRINT_INFO 
+//#define PRINT_INFO
 
 void *adcreg_mem;
 
@@ -21,34 +20,33 @@ static struct device_driver adcreg_driver = {
 };
 
 
-//static ssize_t adcreg_show(struct device_driver *drv, struct device_attribute *attr, char *buf)
 static ssize_t adcreg_show(struct device_driver *drv, char *buf)
 {
  	u16 bufindex, data_size, length,file_length, count;
 	u16 indata, sample_count, s_ch;
 	u16 measure_fifo_done;
-	
+
 	indata =  ioread16(adcreg_mem);
 	measure_fifo_done = (indata & 0x0001);
 	sample_count = ((indata >> 1) & 0x0FFF);
 	s_ch = ((indata >> 13) & 0x0007);
-#ifdef PRINT_INFO 	
+#ifdef PRINT_INFO
 	printk("\n \nadcreg_show_1: status = %u\ts_ch = %u\tsample_count = %u\n",measure_fifo_done,s_ch,sample_count);
 #endif
-	
-	data_size = sizeof(indata);	
 
-#ifdef PRINT_INFO 	
+	data_size = sizeof(indata);
+
+#ifdef PRINT_INFO
 	printk("\nadcreg_show_2: initial buf width = %u bytes\t mem pointer width = %u\n", data_size, sizeof(adcreg_mem));
 #endif
 	if(measure_fifo_done){
-	    length = (sample_count * data_size); 
+	    length = (sample_count * data_size);
 	    file_length = length + data_size;
-#ifdef PRINT_INFO 	
+#ifdef PRINT_INFO
 	    printk("\nadcreg_show_3: length = %u\n", length);
 #endif
 	    buf[0] = (indata & 0xFF); buf[1] = (indata >> 8);
-	    count = 0;  
+	    count = 0;
 	    for (bufindex=data_size;bufindex < file_length;bufindex=bufindex+data_size)
 	    {
                 indata =  ioread16(adcreg_mem + 4);
@@ -73,10 +71,8 @@ static ssize_t adcreg_show(struct device_driver *drv, char *buf)
 	  file_length = data_size;
 	}
 	return file_length;
-//	return scnprintf(buf, PAGE_SIZE, "%s\n", drv->name);
 }
 
-//static ssize_t adcreg_store(struct device_driver *drv, struct device_attribute *attr, const char *buf, size_t count)
 static ssize_t adcreg_store(struct device_driver *drv, const char *buf, size_t count)
 {
 	u16 setadr, setdata;
@@ -91,9 +87,7 @@ static ssize_t adcreg_store(struct device_driver *drv, const char *buf, size_t c
 //	setadr = buf[0] + (buf[1] << 8);
 	setadr = (buf[0] & 0x07);
 	setdata = (buf[2] + (buf[3] << 8));
-//	setdata = (buf[2] & 0x07FF);
-//	setdata = (buf[2] & 0x0FFF);
-	
+
 #ifdef PRINT_INFO
 	printk("\nAddress %u\t will be written with %u  0x%04x  \n", setadr, setdata, setdata);
 #endif
@@ -122,7 +116,7 @@ static int __init adcreg_init(void)
 		driver_unregister(&adcreg_driver);
 		return ret;
 	}
-        
+
         res = request_mem_region(adcreg_BASE, PAGE_SIZE, "adcreg");
 	if (res == NULL) {
 		driver_remove_file(&adcreg_driver, &driver_attr_adcreg);
