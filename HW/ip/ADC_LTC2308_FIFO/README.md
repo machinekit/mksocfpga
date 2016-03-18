@@ -54,3 +54,4 @@ A typical data read cycle would consist of:
 NOTE: the measure_fifo_done signal (bit 0 in reg 0), is 1 when the adc data measurement run is finished an data is ready to be read.
 
 See the adcreg driver and app example software (in mksocfpga/SW/MK/kernel-drivers/  folder) for specifics.
+[here: relative link](../../../SW/MK/kernel-drivers/)
