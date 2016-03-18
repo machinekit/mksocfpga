@@ -58,7 +58,7 @@
 *.mif
 *.hex
 *.ddb
-#*.stp
+*.stp
 *.rar
 *.dpf
 *.qdf
