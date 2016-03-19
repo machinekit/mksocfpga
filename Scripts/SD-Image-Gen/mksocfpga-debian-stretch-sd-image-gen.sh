@@ -357,7 +357,6 @@ rm -f /etc/resolv.conf
 # enable systemd-resolved
 ln -s /lib/systemd/system/systemd-resolved.service /etc/systemd/system/multi-user.target.wants/systemd-resolved.service
 
-# fix user ping:
 
 exit
 EOF'
@@ -383,7 +382,9 @@ sudo chmod +x ${ROOTFS_MNT}/home/fix-profile.sh
 sudo chroot ${ROOTFS_MNT} chown machinekit:machinekit /home/fix-profile.sh
 sudo chroot ${ROOTFS_MNT} /bin/su -l machinekit /bin/sh -c /home/fix-profile.sh
 sudo chroot ${ROOTFS_MNT} /bin/su -l root /usr/sbin/locale-gen en_GB.UTF-8 en_US.UTF-8
-sudo chroot ${ROOTFS_MNT} /bin/su -l root /bin/chmod u+s /bin/ping /bin/ping6
+
+# fix user ping:
+sudo chmod u+s ${ROOTFS_MNT}/bin/ping ${ROOTFS_MNT}/bin/ping6
 }
 
 function run_initial_sh {
