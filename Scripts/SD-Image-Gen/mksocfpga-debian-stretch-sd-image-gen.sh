@@ -92,7 +92,8 @@ URL_PATCH_LTSI="http://ltsi.linuxfoundation.org/sites/ltsi/files/"
 #-------------- all kernel ----------------------------------------------------------------#
 # mksoc uio kernel driver module filder:
 UIO_DIR=${MK_KERNEL_DRIVER_FOLDER}/hm2reg_uio-module
-ADC_DIR=${MK_KERNEL_DRIVER_FOLDER}/hm2adc_uio-module
+#ADC_DIR=${MK_KERNEL_DRIVER_FOLDER}/hm2adc_uio-module
+ADC_DIR=${MK_KERNEL_DRIVER_FOLDER}/adcreg
 
 # --- config ----------------------------------#
 KERNEL_FOLDER_NAME=${ALT_KERNEL_FOLDER_NAME}
@@ -258,7 +259,7 @@ if [ ! -d ${ROOTFS_DIR} ]; then
     fi
 # extract footfs-file
     tar xf ${ROOTFS_FILE}
-    echo "extracting rhn rootfs" 
+    echo "extracting rhn rootfs"
 fi
 }
 
@@ -309,7 +310,7 @@ set -x
 
 ln -s /proc/mounts /etc/mtab
 
-#ln -s /run /var/run 
+#ln -s /run /var/run
 
 export DEFGROUPS="sudo,kmem,adm,dialout,machinekit,video,plugdev"
 export LANG=C
@@ -356,7 +357,6 @@ rm -f /etc/resolv.conf
 
 # enable systemd-resolved
 ln -s /lib/systemd/system/systemd-resolved.service /etc/systemd/system/multi-user.target.wants/systemd-resolved.service
-
 
 exit
 EOF'
@@ -455,7 +455,7 @@ sudo cp ${KERNEL_DIR}/arch/arm/boot/zImage ${BOOT_MNT}
 ## Quartus files:
 # if [ -d ${BOOT_FILES_DIR} ]; then
 #     sudo cp -fv ${BOOT_FILES_DIR/socfpga* ${BOOT_MNT
-# else    
+# else
 #     echo "mksocfpga boot files missing"
 # fi
 
@@ -507,7 +507,7 @@ echo ""
 export CROSS_COMPILE=${CC}
 sudo make ARCH=arm CROSS_COMPILE=${CC} INSTALL_MOD_PATH=${ROOTFS_MNT} modules_install
 sudo make ARCH=arm CROSS_COMPILE=${CC} -C ${KERNEL_DIR} M=${UIO_DIR} INSTALL_MOD_PATH=${ROOTFS_MNT} modules_install
-#sudo make ARCH=arm CROSS_COMPILE=${CC} -C ${KERNEL_DIR} M=${ADC_DIR} INSTALL_MOD_PATH=${ROOTFS_MNT} modules_install
+sudo make ARCH=arm CROSS_COMPILE=${CC} -C ${KERNEL_DIR} M=${ADC_DIR} INSTALL_MOD_PATH=${ROOTFS_MNT} modules_install
 
 POLICY_FILE=${ROOTFS_MNT}/usr/sbin/policy-rc.d
 
@@ -540,21 +540,21 @@ if [ ! -z "${WORK_DIR}" ]; then
 #install_deps
 
 #build_uboot
-build_kernel
+#build_kernel
 
 ## build_rcn_kernel
 
 ## build_rootfs_into_folder
 
-#create_image
+create_image
 
-#build_rootfs_in_image_and_compress
+build_rootfs_in_image_and_compress
 
 ## fetch_extract_rcn_rootfs
 
 create_image
 
-#run_initial_sh
+run_initial_sh
 
 install_files
 install_uboot
