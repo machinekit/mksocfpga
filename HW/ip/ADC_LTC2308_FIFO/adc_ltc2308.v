@@ -43,7 +43,7 @@ input 		          		ADC_SDO;
 `define CMD_BITS_NUM			6
 `define CH_NUM					8
 
-`define tWHCONV            3   // CONVST High Time, min 20 ns
+`define tWHCONV            1   // CONVST High Time, min 20 ns
 `define tCONV     			64 //52  // tCONV: type 1.3 us, MAX 1.6 us, 1600/25(assumed clk is 40mhz)=64  -> 1.3us/25ns = 52
                               // set 64 for suite for 1.6 us max
 //                         +12 //data
@@ -72,13 +72,13 @@ begin
 end
 
 wire reset_n;
-assign reset_n = (~pre_measure_start & measure_start)?1'b0:1'b1;
+assign reset_n = (!pre_measure_start & measure_start)?1'b0:1'b1;
 
 // tick
 reg [15:0] tick;	
 always @ (posedge clk or negedge reset_n)	
 begin
-	if (~reset_n)
+	if (!reset_n)
 		tick <= 0;
 	else if (tick < `tDONE)
 		tick <= tick + 1;
@@ -95,7 +95,7 @@ assign ADC_CONVST = (tick >= `tCONVST_HIGH_START && tick < `tCONVST_HIGH_END)?1'
 reg clk_enable; // must sync to clk in clk low
 always @ (negedge clk or negedge reset_n)	 
 begin
-	if (~reset_n)
+	if (!reset_n)
 		clk_enable <= 1'b0;
 	else if ((tick >= `tCLK_START && tick < `tCLK_END))
 		clk_enable <= 1'b1;
@@ -117,7 +117,7 @@ assign measure_dataread = read_data;
 
 always @ (negedge clk or negedge reset_n)	
 begin
-	if (~reset_n)
+	if (!reset_n)
 	begin
 		read_data <= 0;
 		write_pos <= `DATA_BITS_NUM-1;
@@ -137,7 +137,7 @@ assign read_ch_done = (tick == `tDONE)?1'b1:1'b0;
 
 always @ (posedge clk or negedge reset_n)	
 begin
-	if (~reset_n)
+	if (!reset_n)
 		measure_done <= 1'b0;
 	else if (read_ch_done)
 		measure_done <= 1'b1;
@@ -155,7 +155,7 @@ reg [(`CMD_BITS_NUM-1):0] config_cmd;
 
 always @(negedge reset_n)
 begin
-	if (~reset_n)
+	if (!reset_n)
 	begin
 		case (measure_ch)
 			0 : config_cmd <= {4'h8, `UNI_MODE, `SLP_MODE}; 

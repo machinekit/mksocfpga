@@ -120,7 +120,7 @@ AR_REGEX += \
 	Makefile ip readme.txt ds5 \
 	altera_avalon* *.qpf *.qsf *.sdc *.v *.sv *.vhd *.qsys *.tcl *.stp \
 	*.sed quartus.ini *.sof *.rbf *.sopcinfo *.jdi output_files \
-	hps_isw_handoff */*.svd */synthesis/*.svd *.dts *.dtb *.xml \
+	hps_isw_handoff */*.svd */synthesis/*.svd *.dts *.dtb *.xml *.sh *.ipx\
 	$(SOFTWARE_DIR)
 
 AR_FILTER_OUT += %_tb.qsys
