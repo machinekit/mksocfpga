@@ -17,7 +17,8 @@ PATCH_FILE=${10}
 
 echo "NOTE: in build_kernel.sh param KERNEL_FOLDER_NAME = ${5}"
 
-ALT_SOC_KERNEL_PATCH_FILE=/socfpga-3.10-ltsi-rt_hm2_io_adc-changes.patch
+#ALT_SOC_KERNEL_PATCH_FILE=/socfpga-3.10-ltsi-rt_hm2_io_adc-changes.patch
+ALT_SOC_KERNEL_PATCH_FILE=/socfpga-3.10-ltsi-rt_hm2_io_adc-ext4-changes.patch
 
 #----------- Git clone URL's ------------------------------------------#
 #--------- RHN kernel -------------------------------------------------#
@@ -55,7 +56,8 @@ ALT_SOC_KERNEL_PATCH_FILE=/socfpga-3.10-ltsi-rt_hm2_io_adc-changes.patch
 # mksoc uio kernel driver module filder:
 MK_KERNEL_DRIVER_FOLDER=${SCRIPT_ROOT_DIR}/../../SW/MK/kernel-drivers
 UIO_DIR=${MK_KERNEL_DRIVER_FOLDER}/hm2reg_uio-module
-ADC_DIR=${MK_KERNEL_DRIVER_FOLDER}/hm2adc_uio-module
+#ADC_DIR=${MK_KERNEL_DRIVER_FOLDER}/hm2adc_uio-module
+ADC_DIR=${MK_KERNEL_DRIVER_FOLDER}/adcreg
 
 # --- config ----------------------------------#
 #----- select mainline kernel -------#
@@ -105,14 +107,6 @@ KERNEL_DIR=${KERNEL_BUILD_DIR}/linux
 
 NCORES=`nproc`
 
-install_dep() {
-# install deps for kernel build
-sudo apt -y install bc u-boot-tools 
-# install linaro gcc 4.9 crosstoolchain dependency:
-sudo apt -y install lib32stdc++6
-
-}
-
 extract_toolchain() {
 #    if hash lbzip2 2>/dev/null; then
 #        echo "lbzip2 found"
@@ -134,16 +128,15 @@ if [ ! -d ${CC_DIR} ]; then
     fi
 # extract linaro cross compiler toolchain
 # uses multicore extract (lbzip2) if available
-    install_dep
-    echo "extracting toolchain" 
-    extract_toolchain	
+    echo "extracting toolchain"
+    extract_toolchain
 fi
 }
 
 uiomod_kernel() {
 cd ${KERNEL_DIR}
 #Uio Config additions:
-cat <<EOT >> arch/arm/configs/socfpga_defconfig 
+cat <<EOT >> arch/arm/configs/socfpga_defconfig
 CONFIG_UIO=y
 CONFIG_UIO_PDRV=y
 CONFIG_UIO_PDRV_GENIRQ=y
@@ -161,7 +154,7 @@ clone_kernel() {
     if [ -d ${KERNEL_BUILD_DIR} ]; then
         echo the kernel target directory ${KERNEL_BUILD_DIR} already exists.
         echo cleaning repo
-        cd ${KERNEL_BUILD_DIR}/linux 
+        cd ${KERNEL_BUILD_DIR}/linux
         git clean -d -f -x
         git fetch origin
         git reset --hard origin/${KERNEL_BRANCH}
@@ -170,24 +163,24 @@ clone_kernel() {
         mkdir -p ${KERNEL_BUILD_DIR}
         cd ${KERNEL_BUILD_DIR}
         git clone ${KERNEL_URL} linux
-        cd linux 
+        cd linux
         git remote add linux ${KERNEL_URL}
         git fetch linux
         git checkout -b linux-rt linux/${KERNEL_BRANCH}
 #        uiomod_kernel
-        patch_git_kernel
     fi
+patch_git_kernel
 #uiomod_kernel
-cd ..  
+cd ..
 }
 
 fetch_kernel() {
     if [ -d ${KERNEL_BUILD_DIR} ]; then
         echo the kernel target directory $KERNEL_BUILD_DIR already exists.
         echo reinstalling file
-        cd ${KERNEL_BUILD_DIR} 
+        cd ${KERNEL_BUILD_DIR}
         echo "deleting kernel folder"
-        rm -Rf linux 
+        rm -Rf linux
     else
         echo "creating ${KERNEL_BUILD_DIR}"
         mkdir -p ${KERNEL_BUILD_DIR}
@@ -208,7 +201,7 @@ cd ${KERNEL_DIR}
 xzcat ../${PATCH_FILE} | patch -p1
 echo "rt-Patch applied"
 #Uio Patch:
-cat <<EOT >> arch/arm/configs/socfpga_defconfig 
+cat <<EOT >> arch/arm/configs/socfpga_defconfig
 CONFIG_UIO=y
 CONFIG_UIO_PDRV=y
 CONFIG_UIO_PDRV_GENIRQ=y
@@ -227,6 +220,11 @@ CONFIG_FW_LOADER_USER_HELPER=n
 CONFIG_TIMERFD=y
 CONFIG_EPOLL=y
 CONFIG_NET_NS=y
+CONFIG_PREEMPT_RT=y
+CONFIG_PREEMPT_RT_FULL=y
+CONFIG_MARVELL_PHY=y
+CONFIG_FHANDLE=y
+CONFIG_LBDAF=y
 #CONFIG_CFS_BANDWIDTH=y
 #CONFIG_CGROUPS=y
 #CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
@@ -260,11 +258,11 @@ make -j${NCORES} ARCH=arm CROSS_COMPILE=${CC} 2>&1 | tee ../linux-make_rt-log_.t
 make -j${NCORES} ARCH=arm modules CROSS_COMPILE=${CC} 2>&1 | tee ../linux-modules_rt-log.txt
 #make -j${NCORES} modules 2>&1 | tee ../linux-modules_rt-log.txt
 
-# uio hm2_mksoc module:
-make -j${NCORES} ARCH=arm CROSS_COMPILE=${CC} -C ${KERNEL_DIR} M=${UIO_DIR}  modules 2>&1 | tee ../linux-uio-module_rt-log.txt
+# uio hm2_soc module:
+make -j${NCORES} ARCH=arm CROSS_COMPILE=${CC} -C ${KERNEL_DIR} M=${UIO_DIR}  modules 2>&1 | tee ../linux-uio-hm2_soc-module_rt-log.txt
 
-# uio adc module:
-#make -j${NCORES} ARCH=arm -C ${KERNEL_DIR} M=${ADC_DIR}  modules 2>&1 | tee ../linux-uio-module_rt-log.txt
+# adc module:
+make -j${NCORES} ARCH=arm -C ${KERNEL_DIR} M=${ADC_DIR}  modules 2>&1 | tee ../linux-adcreg-module_rt-log.txt
 
 }
 
@@ -272,13 +270,13 @@ echo "#-------------------------------------------------------------------------
 echo "#-------------------+++        build_kernel.sh Start        +++-------------------- "
 echo "#---------------------------------------------------------------------------------- "
 
-set -e -x
+set -e
 
 if [ ! -z "${WORK_DIR}" ]; then
-install_dep
-echo "fetching / extracting toolchain"
-get_toolchain
-echo "Downloading / extracting kernel"
+if [ ! -d ${CC_DIR} ]; then
+    echo "fetching / extracting toolchain"
+    get_toolchain
+fi
 
 if [ ! -z "${PATCH_FILE}" ]; then
     echo "MSG: building rt-Patched kernel"
@@ -288,7 +286,7 @@ if [ ! -z "${PATCH_FILE}" ]; then
 else
     echo "MSG: building git cloned kernel"
     echo "cloning kernel"
-#    clone_kernel
+    clone_kernel
 fi
 echo "building kernel"
 build_kernel

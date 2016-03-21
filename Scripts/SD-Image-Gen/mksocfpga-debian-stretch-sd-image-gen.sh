@@ -16,8 +16,8 @@ CURRENT_DIR=`pwd`
 WORK_DIR=${1}
 
 CURRENT_DATE=`date -I`
-#REL_DATE=${CURRENT_DATE}
-REL_DATE=2016-03-07
+REL_DATE=${CURRENT_DATE}
+#REL_DATE=2016-03-07
 
 ROOTFS_DIR=${CURRENT_DIR}/rootfs
 MK_KERNEL_DRIVER_FOLDER=${SCRIPT_ROOT_DIR}/../../SW/MK/kernel-drivers
@@ -92,7 +92,8 @@ URL_PATCH_LTSI="http://ltsi.linuxfoundation.org/sites/ltsi/files/"
 #-------------- all kernel ----------------------------------------------------------------#
 # mksoc uio kernel driver module filder:
 UIO_DIR=${MK_KERNEL_DRIVER_FOLDER}/hm2reg_uio-module
-ADC_DIR=${MK_KERNEL_DRIVER_FOLDER}/hm2adc_uio-module
+#ADC_DIR=${MK_KERNEL_DRIVER_FOLDER}/hm2adc_uio-module
+ADC_DIR=${MK_KERNEL_DRIVER_FOLDER}/adcreg
 
 # --- config ----------------------------------#
 KERNEL_FOLDER_NAME=${ALT_KERNEL_FOLDER_NAME}
@@ -148,6 +149,43 @@ NCORES=`nproc`
 #-----------------------------------------------------------------------------------
 # build files
 #-----------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------
+# build files
+#-----------------------------------------------------------------------------------
+
+install_uboot_dep() {
+# install deps for u-boot build
+sudo apt -y install lib32z1 device-tree-compiler bc u-boot-tools
+# install linaro gcc 4.9 crosstoolchain dependency:
+sudo apt -y install lib32stdc++6
+
+}
+
+install_kernel_dep() {
+# install deps for kernel build
+sudo apt -y install bc u-boot-tools
+# install linaro gcc 4.9 crosstoolchain dependency:
+sudo apt -y install lib32stdc++6
+
+}
+
+install_rootfs_dep() {
+    sudo apt-get -y install qemu binfmt-support qemu-user-static schroot debootstrap libc6
+#    sudo dpkg --add-architecture armhf
+    sudo apt update
+    sudo apt -y --force-yes upgrade
+    sudo update-binfmts --display | grep interpreter
+}
+
+
+install_deps() {
+#install_uboot_dep
+#install_kernel_dep
+#sudo apt install kpartx
+#install_rootfs_dep
+echo "deps installed"
+}
 
 function build_uboot {
 ${SCRIPT_ROOT_DIR}/build_uboot.sh ${CURRENT_DIR} ${SCRIPT_ROOT_DIR} ${UBOOT_VERSION}
@@ -221,7 +259,7 @@ if [ ! -d ${ROOTFS_DIR} ]; then
     fi
 # extract footfs-file
     tar xf ${ROOTFS_FILE}
-    echo "extracting rhn rootfs" 
+    echo "extracting rhn rootfs"
 fi
 }
 
@@ -272,7 +310,7 @@ set -x
 
 ln -s /proc/mounts /etc/mtab
 
-#ln -s /run /var/run 
+#ln -s /run /var/run
 
 export DEFGROUPS="sudo,kmem,adm,dialout,machinekit,video,plugdev"
 export LANG=C
@@ -320,7 +358,6 @@ rm -f /etc/resolv.conf
 # enable systemd-resolved
 ln -s /lib/systemd/system/systemd-resolved.service /etc/systemd/system/multi-user.target.wants/systemd-resolved.service
 
-
 exit
 EOF'
 
@@ -345,6 +382,9 @@ sudo chmod +x ${ROOTFS_MNT}/home/fix-profile.sh
 sudo chroot ${ROOTFS_MNT} chown machinekit:machinekit /home/fix-profile.sh
 sudo chroot ${ROOTFS_MNT} /bin/su -l machinekit /bin/sh -c /home/fix-profile.sh
 sudo chroot ${ROOTFS_MNT} /bin/su -l root /usr/sbin/locale-gen en_GB.UTF-8 en_US.UTF-8
+
+# fix user ping:
+sudo chmod u+s ${ROOTFS_MNT}/bin/ping ${ROOTFS_MNT}/bin/ping6
 }
 
 function run_initial_sh {
@@ -415,7 +455,7 @@ sudo cp ${KERNEL_DIR}/arch/arm/boot/zImage ${BOOT_MNT}
 ## Quartus files:
 # if [ -d ${BOOT_FILES_DIR} ]; then
 #     sudo cp -fv ${BOOT_FILES_DIR/socfpga* ${BOOT_MNT
-# else    
+# else
 #     echo "mksocfpga boot files missing"
 # fi
 
@@ -467,7 +507,7 @@ echo ""
 export CROSS_COMPILE=${CC}
 sudo make ARCH=arm CROSS_COMPILE=${CC} INSTALL_MOD_PATH=${ROOTFS_MNT} modules_install
 sudo make ARCH=arm CROSS_COMPILE=${CC} -C ${KERNEL_DIR} M=${UIO_DIR} INSTALL_MOD_PATH=${ROOTFS_MNT} modules_install
-#sudo make ARCH=arm CROSS_COMPILE=${CC} -C ${KERNEL_DIR} M=${ADC_DIR} INSTALL_MOD_PATH=${ROOTFS_MNT} modules_install
+sudo make ARCH=arm CROSS_COMPILE=${CC} -C ${KERNEL_DIR} M=${ADC_DIR} INSTALL_MOD_PATH=${ROOTFS_MNT} modules_install
 
 POLICY_FILE=${ROOTFS_MNT}/usr/sbin/policy-rc.d
 
@@ -497,7 +537,7 @@ set -e
 
 if [ ! -z "${WORK_DIR}" ]; then
 
-#sudo apt install kpartx
+#install_deps
 
 #build_uboot
 #build_kernel
@@ -506,15 +546,15 @@ if [ ! -z "${WORK_DIR}" ]; then
 
 ## build_rootfs_into_folder
 
-#create_image
+create_image
 
-#build_rootfs_in_image_and_compress
+build_rootfs_in_image_and_compress
 
 ## fetch_extract_rcn_rootfs
 
 create_image
 
-#run_initial_sh
+run_initial_sh
 
 install_files
 install_uboot
