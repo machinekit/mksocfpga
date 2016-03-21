@@ -39,6 +39,8 @@ ssh -X machinekit@mksocfpga.local
 
 sudo insmod adcreg.ko
 
+sudo modprobe adcreg
+
 #cat /sys/bus/platform/drivers/adcreg/adcreg > test.dat
 
 #---------- working command sequence example ---------------------------------------#
