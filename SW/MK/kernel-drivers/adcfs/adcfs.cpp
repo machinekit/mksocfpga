@@ -46,12 +46,25 @@ bool FPGAFS::Init()
 
 int FPGAFS::adcregSize( void ){
     int size = 0;
-    ifstream file( FILE_DEV, ios::binary | ios::ate);
-    
+//    ifstream file( FILE_DEV, ios::binary | ios::ate);
+    ifstream file( FILE_DEV, std::ios::binary);
+
+    // Stop eating new lines in binary mode!!!
+    file.unsetf(std::ios::skipws);
+
+    // get its size:
+    std::streampos fileSize;
+
+    file.seekg(0, std::ios::end);
+//    fileSize = file.tellg();
     size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    
+//    size = file.tellg();
     
     cout << "FPGAFS::adcregSize: page size = " << size << "\n";
     file.close();
+//    if(size > 22) {std::cout << "!!! Size error \n \n" << "!!! Size error \n \n"; size = 22;}
     return size;
 }
 
@@ -59,27 +72,19 @@ int FPGAFS::adcregReadall( char** buf){
     int insize = 0, size = 0, count = 0;
     insize = adcregSize();
     char* bufpoint = new char[insize];
-    char c;
+//    char c;
     
-    ifstream in( FILE_DEV, ios::binary);
+    ifstream in( FILE_DEV, ios::binary  | ios::ate);
+//    ifstream in( FILE_DEV, std::ios::binary);
+
+    // Stop eating new lines in binary mode!!!
+//    in.unsetf(std::ios::skipws);
+
     in.seekg(0);
-    size = 22;
-/*    
-    while (in.get(c)){	// loop getting single characters
-      cout << c;
-      *bufpoint << c;
-      size = in.tellg();
-    }
-    */
-//    
-//    ifstream in( FILE_DEV, ios::binary  | ios::ate);
-//    ifstream in( FILE_DEV, ios::binary);
+    size = insize;
 
 //    in.seekg(0);
     in.get(bufpoint,size);
-//    while(count < size){
-//        bufpoint[count++] = in.get();
-//    }
     *buf = bufpoint;
     cout << "FPGAFS::adcregReadall: bufsize = " << size << "\n";
     in.close();
