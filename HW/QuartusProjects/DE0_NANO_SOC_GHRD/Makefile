@@ -531,7 +531,7 @@ sd-update-preloader-uboot: sd-update-preloader sd-update-uboot
 DTS.SOPC2DTS := sopc2dts
 
 DTS.BOARDINFO ?= $(QSYS_BASE)_board_info.xml
-DTS.CLOCKINFO ?= hps_clock_info.xml
+#DTS.CLOCKINFO ?= hps_clock_info.xml
 DTS.COMMON ?= hps_common_board_info.xml
 
 DTS.EXTRA_DEPS += $(DTS.BOARDINFO) $(DTS.COMMON)

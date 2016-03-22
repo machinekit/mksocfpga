@@ -41,7 +41,7 @@ set_global_assignment -name DEVICE 5CSXFC6D6F31C8ES
 set_global_assignment -name TOP_LEVEL_ENTITY ghrd_top
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 13.0
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "15:03:48  MARCH 12, 2013"
-set_global_assignment -name LAST_QUARTUS_VERSION 15.1.1
+set_global_assignment -name LAST_QUARTUS_VERSION 15.1.2
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
@@ -570,23 +570,10 @@ set_location_assignment PIN_AD9 -to user_pb_fpga[2]
 set_location_assignment PIN_AD11 -to user_pb_fpga[3]
 
 
-set_global_assignment -name SEARCH_PATH "c:\\altera\\12.1sp1\\soc\\soc_system_lab_01_26_13_restored\\hssi"
-set_global_assignment -name SEARCH_PATH "c:\\altera\\12.1sp1\\soc\\soc_system_lab_01_26_13_restored\\hssi\\hssi_8channel"
-set_global_assignment -name SEARCH_PATH "c:\\altera\\12.1sp1\\soc\\soc_system_lab_01_26_13_restored\\clock_gen\\ref_pll"
-set_global_assignment -name SEARCH_PATH "c:\\altera\\12.1sp1\\soc\\soc_system_lab_01_26_13_restored\\clock_gen"
-set_global_assignment -name SEARCH_PATH "c:\\altera\\12.1sp1\\soc\\soc_system_lab_01_26_13_restored\\top"
-set_global_assignment -name SEARCH_PATH soc_system/synthesis/ -tag from_archive
-set_global_assignment -name SEARCH_PATH soc_system/synthesis/submodules/ -tag from_archive
-set_global_assignment -name SEARCH_PATH soc_system/synthesis/submodules/sequencer/ -tag from_archive
-set_global_assignment -name SEARCH_PATH ip/intr_capturer/ -tag from_archive
 set_global_assignment -name SYNTH_TIMING_DRIVEN_SYNTHESIS ON
 set_global_assignment -name AUTO_OPEN_DRAIN_PINS OFF
 set_global_assignment -name OPTIMIZE_HOLD_TIMING "ALL PATHS"
 set_global_assignment -name FITTER_EFFORT "STANDARD FIT"
-set_global_assignment -name SEARCH_PATH soc_system_lab_01_26_13_restored/top/ -tag from_archive
-set_global_assignment -name SEARCH_PATH top/ -tag from_archive
-set_global_assignment -name ENABLE_SIGNALTAP ON
-set_global_assignment -name USE_SIGNALTAP_FILE stp1.stp
 set_global_assignment -name USE_DLL_FREQUENCY_FOR_DQS_DELAY_CHAIN ON
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
@@ -997,65 +984,65 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to temp_cs_n
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to temp_sclk
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to temp_mosi
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to temp_miso
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_clkin_p[1]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_clkin_p[2]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_clkout_p[1]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_clkout_p[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_clkin_p[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_clkin_p[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_clkout_p[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_clkout_p[2]
 set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_clk_in0
 set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_clk_out0
-set_instance_assignment -name IO_STANDARD HCSL -to hsmc_ref_clk_p
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[0]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[1]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[2]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[3]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[4]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[5]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[6]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[7]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[8]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[9]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[10]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[11]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[12]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[13]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[14]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[15]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_rx_p[16]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_ref_clk_p
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[6]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[7]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[8]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[9]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[10]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[11]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[12]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[13]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[14]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[15]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_rx_p[16]
 set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_scl
 set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_sda
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[0]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[1]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[2]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[3]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[4]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[5]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[6]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[7]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[8]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[9]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[10]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[11]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[12]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[13]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[14]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[15]
-set_instance_assignment -name IO_STANDARD LVDS -to hsmc_tx_p[16]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_rx_p[0]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_rx_p[1]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_rx_p[2]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_rx_p[3]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_rx_p[4]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_rx_p[5]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_rx_p[6]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_rx_p[7]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_tx_p[0]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_tx_p[1]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_tx_p[2]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_tx_p[3]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_tx_p[4]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_tx_p[5]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_tx_p[6]
-set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to hsmc_gxb_tx_p[7]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[6]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[7]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[8]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[9]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[10]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[11]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[12]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[13]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[14]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[15]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_tx_p[16]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_rx_p[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_rx_p[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_rx_p[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_rx_p[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_rx_p[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_rx_p[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_rx_p[6]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_rx_p[7]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_tx_p[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_tx_p[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_tx_p[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_tx_p[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_tx_p[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_tx_p[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_tx_p[6]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to hsmc_gxb_tx_p[7]
 set_instance_assignment -name IO_STANDARD "2.5 V" -to user_dipsw_fpga[0]
 set_instance_assignment -name IO_STANDARD "2.5 V" -to user_dipsw_fpga[1]
 set_instance_assignment -name IO_STANDARD "2.5 V" -to user_dipsw_fpga[2]
@@ -1092,14 +1079,7 @@ set_location_assignment PIN_AE26 -to clk_i2c_sclk
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to clk_i2c_sdat
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to clk_i2c_sclk
 set_location_assignment PIN_AJ29 -to clk_i2c_sdat
-set_global_assignment -name IP_SEARCH_PATHS "/home/mib/Developer/the-snowwhite_git/mksoc/QuartusProjects/ip"
-set_global_assignment -name VERILOG_FILE ../../ip/debounce/debounce.v
-set_global_assignment -name VERILOG_FILE ../../ip/edge_detect/altera_edge_detector.v
-set_global_assignment -name QIP_FILE ../../ip/altsource_probe/hps_reset.qip
-set_global_assignment -name QIP_FILE soc_system/synthesis/soc_system.qip
-set_global_assignment -name VERILOG_FILE top/config_soc.v
-set_global_assignment -name SDC_FILE soc_system_timing.sdc
-set_global_assignment -name VERILOG_FILE top/ghrd_top.v
+set_global_assignment -name IP_SEARCH_PATHS "../../ip/**/*;./ip"
 set_global_assignment -name ENABLE_OCT_DONE OFF
 set_global_assignment -name USE_CONFIGURATION_DEVICE ON
 set_global_assignment -name GENERATE_RBF_FILE ON
@@ -1109,5 +1089,17 @@ set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
 set_global_assignment -name ACTIVE_SERIAL_CLOCK FREQ_100MHZ
+set_global_assignment -name VERILOG_FILE ../../ip/debounce/debounce.v
+set_global_assignment -name VERILOG_FILE ../../ip/edge_detect/altera_edge_detector.v
+set_global_assignment -name QIP_FILE ../../ip/altsource_probe/hps_reset.qip
+set_global_assignment -name QIP_FILE soc_system/synthesis/soc_system.qip
+set_global_assignment -name VERILOG_FILE top/config_soc.v
+set_global_assignment -name SDC_FILE soc_system_timing.sdc
+set_global_assignment -name VERILOG_FILE top/ghrd_top.v
 set_global_assignment -name CDF_FILE output_files/Chain1.cdf
+set_global_assignment -name QIP_FILE ../../hm2/hm2_soc.qip
+set_global_assignment -name PARTITION_NETLIST_TYPE POST_SYNTH -section_id "soc_system:u0"
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id "soc_system:u0"
+set_global_assignment -name PARTITION_COLOR 39423 -section_id "soc_system:u0"
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_instance_assignment -name PARTITION_HIERARCHY u0_ef7d1 -to "soc_system:u0" -section_id "soc_system:u0"

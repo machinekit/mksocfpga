@@ -119,7 +119,7 @@ PRELOADER_DIR := $(SOFTWARE_DIR)/preloader
 AR_REGEX += \
 	Makefile ip readme.txt ds5 \
 	altera_avalon* *.qpf *.qsf *.sdc *.v *.sv *.vhd *.qsys *.tcl *.terp *.stp \
-	*.sed quartus.ini *.sof *.rbf *.sopcinfo *.jdi output_files \
+	*.sed quartus.ini *.sof *.rbf *.sopcinfo *.jdi output_files *.sh *.ipx\
 	hps_isw_handoff */*.svd */synthesis/*.svd */synth/*.svd *.dts *.dtb *.xml \
 	$(SOFTWARE_DIR)
 
