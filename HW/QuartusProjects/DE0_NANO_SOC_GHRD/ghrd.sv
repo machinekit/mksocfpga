@@ -5,8 +5,8 @@
 // Permission:
 //
 //   Terasic grants permission to use and modify this code for use
-//   in synthesis for all Terasic Development Boards and Altera Development 
-//   Kits made by Terasic.  Other use of this code, including the selling 
+//   in synthesis for all Terasic Development Boards and Altera Development
+//   Kits made by Terasic.  Other use of this code, including the selling
 //   ,duplication, or modification of any portion is strictly prohibited.
 //
 // Disclaimer:
@@ -15,16 +15,16 @@
 //   which illustrates how these types of functions can be implemented.
 //   It is the user's responsibility to verify their design for
 //   consistency and functionality through the use of formal
-//   verification methods.  Terasic provides no warranty regarding the use 
+//   verification methods.  Terasic provides no warranty regarding the use
 //   or functionality of this code.
 //
 // ============================================================================
-//           
+//
 //  Terasic Technologies Inc
 //  9F., No.176, Sec.2, Gongdao 5th Rd, East Dist, Hsinchu City, 30070. Taiwan
-//  
-//  
-//                     web: http://www.terasic.com/  
+//
+//
+//                     web: http://www.terasic.com/
 //                     email: support@terasic.com
 //
 // ============================================================================
@@ -128,7 +128,7 @@ module ghrd(
 //=======================================================
 //  REG/WIRE declarations
 //=======================================================
-  
+
   parameter AddrWidth = 16;
   parameter IOWidth = 34;
   parameter LIOWidth = 6;
@@ -155,12 +155,12 @@ module ghrd(
   wire       	hm_read;
   wire 			hm_write;
   wire [3:0]	hm_chipsel;
-  wire			hm_clk_med;	
-  wire			hm_clk_high;	
+  wire			hm_clk_med;
+  wire			hm_clk_high;
   wire 			clklow_sig;
   wire 			clkhigh_sig;
-  
-  
+
+
 //  wire [8:0] 	out_oe;
 //  wire [8:0]	out_data;
 //  wire [1:0]	ar_out_oe;
@@ -175,7 +175,7 @@ module ghrd(
 
 //  assign out_oe = 9'b1;
 //  assign ar_out_oe = 2'b0;
-  
+
  soc_system u0 (
 		//Clock&Reset
 	  .clk_clk                               (FPGA_CLK1_50 ),                               //                            clk.clk
@@ -196,8 +196,8 @@ module ghrd(
 	  .memory_mem_dqs_n                      ( HPS_DDR3_DQS_N),                      //                .mem_dqs_n
 	  .memory_mem_odt                        ( HPS_DDR3_ODT),                        //                .mem_odt
 	  .memory_mem_dm                         ( HPS_DDR3_DM),                         //                .mem_dm
-	  .memory_oct_rzqin                      ( HPS_DDR3_RZQ),                        //                .oct_rzqin                                  
-	  //HPS ethernet		
+	  .memory_oct_rzqin                      ( HPS_DDR3_RZQ),                        //                .oct_rzqin
+	  //HPS ethernet
 	  .hps_0_hps_io_hps_io_emac1_inst_TX_CLK ( HPS_ENET_GTX_CLK),       //                             hps_0_hps_io.hps_io_emac1_inst_TX_CLK
 	  .hps_0_hps_io_hps_io_emac1_inst_TXD0   ( HPS_ENET_TX_DATA[0] ),   //                             .hps_io_emac1_inst_TXD0
 	  .hps_0_hps_io_hps_io_emac1_inst_TXD1   ( HPS_ENET_TX_DATA[1] ),   //                             .hps_io_emac1_inst_TXD1
@@ -211,15 +211,15 @@ module ghrd(
 	  .hps_0_hps_io_hps_io_emac1_inst_RX_CLK ( HPS_ENET_RX_CLK),        //                             .hps_io_emac1_inst_RX_CLK
 	  .hps_0_hps_io_hps_io_emac1_inst_RXD1   ( HPS_ENET_RX_DATA[1] ),   //                             .hps_io_emac1_inst_RXD1
 	  .hps_0_hps_io_hps_io_emac1_inst_RXD2   ( HPS_ENET_RX_DATA[2] ),   //                             .hps_io_emac1_inst_RXD2
-	  .hps_0_hps_io_hps_io_emac1_inst_RXD3   ( HPS_ENET_RX_DATA[3] ),   //                             .hps_io_emac1_inst_RXD3		  
-	  //HPS SD card 
+	  .hps_0_hps_io_hps_io_emac1_inst_RXD3   ( HPS_ENET_RX_DATA[3] ),   //                             .hps_io_emac1_inst_RXD3
+	  //HPS SD card
 	  .hps_0_hps_io_hps_io_sdio_inst_CMD     ( HPS_SD_CMD    ),           //                               .hps_io_sdio_inst_CMD
 	  .hps_0_hps_io_hps_io_sdio_inst_D0      ( HPS_SD_DATA[0]     ),      //                               .hps_io_sdio_inst_D0
 	  .hps_0_hps_io_hps_io_sdio_inst_D1      ( HPS_SD_DATA[1]     ),      //                               .hps_io_sdio_inst_D1
 	  .hps_0_hps_io_hps_io_sdio_inst_CLK     ( HPS_SD_CLK   ),            //                               .hps_io_sdio_inst_CLK
 	  .hps_0_hps_io_hps_io_sdio_inst_D2      ( HPS_SD_DATA[2]     ),      //                               .hps_io_sdio_inst_D2
 	  .hps_0_hps_io_hps_io_sdio_inst_D3      ( HPS_SD_DATA[3]     ),      //                               .hps_io_sdio_inst_D3
-	  //HPS USB 		  
+	  //HPS USB
 	  .hps_0_hps_io_hps_io_usb1_inst_D0      ( HPS_USB_DATA[0]    ),      //                               .hps_io_usb1_inst_D0
 	  .hps_0_hps_io_hps_io_usb1_inst_D1      ( HPS_USB_DATA[1]    ),      //                               .hps_io_usb1_inst_D1
 	  .hps_0_hps_io_hps_io_usb1_inst_D2      ( HPS_USB_DATA[2]    ),      //                               .hps_io_usb1_inst_D2
@@ -232,12 +232,12 @@ module ghrd(
 	  .hps_0_hps_io_hps_io_usb1_inst_STP     ( HPS_USB_STP    ),          //                               .hps_io_usb1_inst_STP
 	  .hps_0_hps_io_hps_io_usb1_inst_DIR     ( HPS_USB_DIR    ),          //                               .hps_io_usb1_inst_DIR
 	  .hps_0_hps_io_hps_io_usb1_inst_NXT     ( HPS_USB_NXT    ),          //                               .hps_io_usb1_inst_NXT
-		//HPS SPI 		  
+		//HPS SPI
 	  .hps_0_hps_io_hps_io_spim1_inst_CLK    ( HPS_SPIM_CLK  ),           //                               .hps_io_spim1_inst_CLK
 	  .hps_0_hps_io_hps_io_spim1_inst_MOSI   ( HPS_SPIM_MOSI ),           //                               .hps_io_spim1_inst_MOSI
 	  .hps_0_hps_io_hps_io_spim1_inst_MISO   ( HPS_SPIM_MISO ),           //                               .hps_io_spim1_inst_MISO
 	  .hps_0_hps_io_hps_io_spim1_inst_SS0    ( HPS_SPIM_SS   ),             //                               .hps_io_spim1_inst_SS0
-		//HPS UART		
+		//HPS UART
 	  .hps_0_hps_io_hps_io_uart0_inst_RX     ( HPS_UART_RX   ),          //                               .hps_io_uart0_inst_RX
 	  .hps_0_hps_io_hps_io_uart0_inst_TX     ( HPS_UART_TX   ),          //                               .hps_io_uart0_inst_TX
 		//HPS I2C1
@@ -246,7 +246,7 @@ module ghrd(
 		//HPS I2C2
 	  .hps_0_hps_io_hps_io_i2c1_inst_SDA     ( HPS_I2C1_SDAT  ),        //                               .hps_io_i2c1_inst_SDA
 	  .hps_0_hps_io_hps_io_i2c1_inst_SCL     ( HPS_I2C1_SCLK  ),        //                               .hps_io_i2c1_inst_SCL
-		//GPIO 
+		//GPIO
 	  .hps_0_hps_io_hps_io_gpio_inst_GPIO09  ( HPS_CONV_USB_N ),  //                               .hps_io_gpio_inst_GPIO09
 	  .hps_0_hps_io_hps_io_gpio_inst_GPIO35  ( HPS_ENET_INT_N ),  //                               .hps_io_gpio_inst_GPIO35
 	  .hps_0_hps_io_hps_io_gpio_inst_GPIO40  ( HPS_LTC_GPIO   ),  //                               .hps_io_gpio_inst_GPIO40
@@ -286,7 +286,7 @@ module ghrd(
 // Debounce logic to clean out glitches within 1ms
 debounce debounce_inst (
   .clk                                  (fpga_clk_50),
-  .reset_n                              (hps_fpga_reset_n),  
+  .reset_n                              (hps_fpga_reset_n),
   .data_in                              (KEY),
   .data_out                             (fpga_debounced_buttons)
 );
@@ -294,7 +294,7 @@ debounce debounce_inst (
   defparam debounce_inst.POLARITY = "LOW";
   defparam debounce_inst.TIMEOUT = 50000;               // at 50Mhz this is a debounce time of 1ms
   defparam debounce_inst.TIMEOUT_WIDTH = 16;            // ceil(log2(TIMEOUT))
-  
+
 // Source/Probe megawizard instance
 hps_reset hps_reset_inst (
   .source_clk (fpga_clk_50),
@@ -320,7 +320,7 @@ altera_edge_detector pulse_warm_reset (
   defparam pulse_warm_reset.PULSE_EXT = 2;
   defparam pulse_warm_reset.EDGE_TYPE = 1;
   defparam pulse_warm_reset.IGNORE_RST_WHILE_BUSY = 1;
-  
+
 altera_edge_detector pulse_debug_reset (
   .clk       (fpga_clk_50),
   .rst_n     (hps_fpga_reset_n),
@@ -331,7 +331,7 @@ altera_edge_detector pulse_debug_reset (
   defparam pulse_debug_reset.EDGE_TYPE = 1;
   defparam pulse_debug_reset.IGNORE_RST_WHILE_BUSY = 1;
 
-reg [25:0] counter; 
+reg [25:0] counter;
 reg  led_level;
 always @	(posedge fpga_clk_50 or negedge hps_fpga_reset_n)
 begin
@@ -382,9 +382,9 @@ HostMot2 HostMot2_inst
 	.clkmed(clkmed_sig) ,	// input  clkmed_sig  				-- Processor clock --> sserialwa, twiddle
 	.clkhigh(clkhigh_sig) ,	// input  clkhigh_sig				-- High speed clock --> most
 //	.int(int_sig) ,	// output  int_sig							--int => LINT, ---> PCI ?
-//	.dreq(dreq_sig) ,	// output  dreq_sig							
+//	.dreq(dreq_sig) ,	// output  dreq_sig
 //	.demandmode(demandmode_sig) ,	// output  demandmode_sig
-	.iobits(iobits_sig) ,	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits	
+	.iobits(iobits_sig) ,	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits
 	.liobits(liobits_sig) ,	// inout [lIOWidth-1:0] 			--liobits_sig
 //	.rates(rates_sig) ,	// output [4:0] rates_sig
 //	.leds(leds_sig) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
