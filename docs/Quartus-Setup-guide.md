@@ -23,7 +23,7 @@ Quartus prime 15.1.2  (on Debian.)(no license required for lite version)
  	4. Run the QuartusSetup-15.1.2.193-linux.run file.
 
 
-Soc EDS:
+Soc EDS: ( You do not have to install DS-5 )
 
    On download page click Soc Eds
    download:
@@ -39,11 +39,17 @@ Soc EDS:
  	Read and follow instructions.
 
  	Run afterwards the suggested script file a root.
- 	Install all suggested dependencies.
+ 	Install all suggested dependencies. (trick: install all the mentioned missing libraries apt-source packages in a separate konsole window)
+ 	(What I did was to search for the file on https://www.debian.org/distrib/packages#search_packages then put the apt package on my depedencylist linked below)
 
  	You do not have to install DS-5
 
-   Last not least if you want to use usb-blaster jtag you need to add a udev rule (ask) TODO:
+   Last not least if you want to use usb-blaster jtag you need to add a udev rule:
+
+
+
+ [Altera 15.1 depedencies and udev rules ](./Quartus-setup-notes/Altera-15.1-depedencies-and-udev-rules.txt)
+
 ----
 
 
