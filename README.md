@@ -1,6 +1,14 @@
 # mksocfpga
 Further development of the Machinekit SocFpga
 
+update (29-marts-2016)
+
+![Firsttime Quartus setup guide ](./docs/Quartus-Setup-guide.md)
+
+Due to intervention by @mhaberler we are very close to having rollout of the first images.
+
+---
+
 
 Update (4-marts-2016)
 
