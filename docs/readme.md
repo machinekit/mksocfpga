@@ -1,4 +1,23 @@
+About the jumpers on the de0-nano-soc / atlas soc board:
+
+ON = 0
+OFF = 1
+
+So the correct settings for this distribution 
+look like this on the circuit board:
+
+1=on = 0
+2=off = 1
+3=on = 0
+4=off = 1
+5=on = 0
+6=on = 0
+
+Visually
+
 ![Firsttime Quartus setup guide ](./Quartus-Setup-guide.md)
+
+
 
 Just a small overview of the path from software --> cpu to fpga hostmot2 --> I/O pins
 
