@@ -1,6 +1,6 @@
 <BoardInfo>
 
-<!-- 
+<!--
 Starting in the 3.11 kernel, the ethernet driver looks for alias
 in the device tree for a bus_id used to talk the phy.  Having
 these aliases allows seamless support of multiple emacs
@@ -28,8 +28,8 @@ these aliases allows seamless support of multiple emacs
 <DTAppend name="status" type="string" parentlabel="hps_0_wd_timer1" val="disabled" />
 <DTAppend name="phy-mode" type="string" parentlabel="hps_0_gmac1" val="rgmii"/>
 
-<DTAppend name="snps,phy-addr" type="hex" parentlabel="hps_0_gmac1" val="0xffffffff"/>
-<DTAppend name="phy-addr" type="hex" parentlabel="hps_0_gmac1" val="0xffffffff"/>
+<DTAppend name="snps,multicast-filter-bins" type="number" parentlabel="hps_0_gmac1" val="256"/>
+<DTAppend name="snps,perfect-filter-entries" type="number" parentlabel="hps_0_gmac1" val="128"/>
 <DTAppend name="txc-skew-ps" type="number" parentlabel="hps_0_gmac1" val="3000"/>
 <DTAppend name="rxc-skew-ps" type="number" parentlabel="hps_0_gmac1" val="3000"/>
 <DTAppend name="txen-skew-ps" type="number" parentlabel="hps_0_gmac1" val="0"/>
