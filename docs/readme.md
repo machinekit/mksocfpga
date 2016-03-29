@@ -68,10 +68,7 @@ https://github.com/the-snowwhite/mksocfpga/blob/master/HW/hm2/config/PIN_G540x2_
 
 
 
-
-
-
 In the near future kernel 4.4 with fpga manager driver framework wish list is to implement partial re-configuration partions with the lower level hm2 modules, giving a more modular (hal like) approach to custom configuring.
 
-Is done with a (mostly) solid unchanging interface structure giving "boxes / slots", block elements can be swapped in / out of....(think 4-8 partions at most)
+It's possible to do with a solid unchanging interface structure and static hps / hm2 partitions with added dynamic reconconfigurable partitions containing bloks of hm2 function cores. giving "boxes / slots", block elements that can be swapped in / out of....(think 4-8 partions at most).
 
