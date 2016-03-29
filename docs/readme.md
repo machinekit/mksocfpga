@@ -38,7 +38,7 @@ Would be an idea to build this hm2 top controller module into the qsys design as
 
 The link between the hm2 avalon interface ip (in qsys), the devicetree (dts-->dtb) entry, and link to getting memory mapped access in (linux) software is sketched out here:
 
-[Machinekit driver sketch](https://github.com/the-snowwhite/machinekit/blob/mksocfpga/src/hal/drivers/mesa-hostmot2/hm2_soc.c#L23)
+[Final hm2_soc Machinekit driver](https://github.com/the-snowwhite/machinekit/blob/master/src/hal/drivers/mesa-hostmot2/hm2_soc.c)
 
 
 [Avalon Interface IP config file](https://github.com/the-snowwhite/mksocfpga/blob/master/HW/ip/hm2reg_io/hm2reg_io_hw.tcl#L76)
