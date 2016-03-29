@@ -20,7 +20,7 @@ Quartus prime 15.1.2  (on Debian.)(no license required for lite version)
     extract
 
     3. Change the file permission for all the setup (.run) files by running the command: chmod +x *.run.
- 	 4. Run the QuartusSetup-15.1.2.193-linux.run file.
+ 	4. Run the QuartusSetup-15.1.2.193-linux.run file.
 
 
 Soc EDS:
