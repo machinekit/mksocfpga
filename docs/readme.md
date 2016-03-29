@@ -1,3 +1,5 @@
+![Firsttime Quartus setup guide ](./Quartus-Setup-guide.md)
+
 Just a small overview of the path from software --> cpu to fpga hostmot2 --> I/O pins
 
 Going straight for an axi Interface would mean redesigning the top hostmot2.vhd
@@ -17,7 +19,7 @@ Would be an idea to build this hm2 top controller module into the qsys design as
 
 The link between the hm2 avalon interface ip (in qsys), the devicetree (dts-->dtb) entry, and link to getting memory mapped access in (linux) software is sketched out here:
 
-[Machinekit driver sketch](https://github.com/the-snowwhite/machinekit/blob/mksocfpga/src/hal/drivers/mesa-hostmot2/hm2_soc.c#L23) 
+[Machinekit driver sketch](https://github.com/the-snowwhite/machinekit/blob/mksocfpga/src/hal/drivers/mesa-hostmot2/hm2_soc.c#L23)
 
 
 [Avalon Interface IP config file](https://github.com/the-snowwhite/mksocfpga/blob/master/HW/ip/hm2reg_io/hm2reg_io_hw.tcl#L76)
@@ -43,7 +45,7 @@ https://github.com/the-snowwhite/mksocfpga/blob/master/HW/QuartusProjects/DE0_NA
 https://github.com/the-snowwhite/mksocfpga/blob/master/HW/hm2/config/PIN_G540x2_34.vhd
 
 
-![Hostmot2 top instance](https://github.com/the-snowwhite/mksocfpga/blob/master/docs/pics/Hostmot2-vhd_inst-pinouts.png) 
+![Hostmot2 top instance](https://github.com/the-snowwhite/mksocfpga/blob/master/docs/pics/Hostmot2-vhd_inst-pinouts.png)
 
 
 
@@ -52,5 +54,5 @@ https://github.com/the-snowwhite/mksocfpga/blob/master/HW/hm2/config/PIN_G540x2_
 
 On the near future wish list is to implement partial re-configuration partions with the lower level hm2 modules, giving a more modular (hal like) approach to custom configuring.
 
-Is done with a (mostly) solid unchanging interface structure giving "boxes / slots", block elements can be swapped in / out of....(think 4-8 partions at most) 
+Is done with a (mostly) solid unchanging interface structure giving "boxes / slots", block elements can be swapped in / out of....(think 4-8 partions at most)
 
