@@ -57,10 +57,11 @@ Grab the source code:
 Build the bitfile:
 
   cd mksocfpga/HW/QuartusProjects/DE0_NAN0_SOC_GHRD
-  make sof
+  make rbf
   ...wait...
   ...wait...
   ...wait...
   <ding>  If all went well, your chip is ready!
-
+  FPGA programming file will be:
+    output_files/soc_system.rbf
 
