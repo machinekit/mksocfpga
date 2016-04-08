@@ -85,7 +85,7 @@
 <DTAppend name="phys" type="phandle" parentlabel="hps_0_usb1" val="usbphy0" />
 
 <Chosen>
-        <Bootargs val="console=ttyS0,115200 root=/dev/mmcblk0p3 rw rootwait"></Bootargs>
+        <Bootargs val="console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait"></Bootargs>
 </Chosen>
 
 </BoardInfo>
