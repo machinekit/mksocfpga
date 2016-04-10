@@ -2,12 +2,14 @@
 #
 # Makefile to Manage QuartusII/QSys Design
 #
-# Copyright Altera (c) 2013
+# Copyright Altera (c) 2014
 # All Rights Reserved
 #
 ################################################
 
 SHELL := /bin/bash
+
+.SUFFIXES: # Delete the default suffixes
 
 ################################################
 # Tools
@@ -18,6 +20,8 @@ CHMOD := chmod
 CP := cp -rf
 ECHO := echo
 DATE := date
+FIND := find
+GREP := grep
 HEAD := head
 MKDIR := mkdir -p
 MV := mv
@@ -25,12 +29,41 @@ RM := rm -rf
 SED := sed
 TAR := tar
 TOUCH := touch
+WHICH := which
 
 # Helpful Macros
 SPACE := $(empty) $(empty)
 
-################################################
+ifndef COMSPEC
+ifdef ComSpec
+COMSPEC = $(ComSpec)
+endif # ComSpec
+endif # COMSPEC
 
+ifdef COMSPEC # if Windows OS
+IS_WINDOWS_HOST := 1
+endif
+
+ifeq ($(IS_WINDOWS_HOST),1)
+ifneq ($(shell $(WHICH) cygwin1.dll 2>/dev/null),)
+IS_CYGWIN_HOST := 1
+endif
+endif
+
+ifneq ($(shell $(WHICH) quartus 2>/dev/null),)
+HAVE_QUARTUS := 1
+endif
+
+ifeq ($(HAVE_QUARTUS),1)
+HAVE_QSYS := 1
+endif
+
+#<unused>
+#ifneq ($(shell $(WHICH) quartus_pgm 2>/dev/null),)
+#HAVE_QUARTUS_PGM := 1
+#endif
+
+################################################
 
 ################################################
 .PHONY: default
@@ -39,16 +72,20 @@ default: help
 
 ################################################
 .PHONY: all
-all: sof rbf preloader uboot dtb
+all: dts dtb sof
+
+ifeq ($(HAVE_QUARTUS),1)
+all: sof rbf
+endif
 ################################################
 
 ################################################
 # Target Stamping
 
-ACDS_VERSION := $(shell quartus_cmd -version 2>/dev/null | grep Version | $(HEAD) -n1 | $(SED) -e 's,^Version[ \t]*\([0-9.]*\).*,\1,g' 2>/dev/null)
+SOCEDS_VERSION := $(if $(wildcard $(SOCEDS_DEST_ROOT)/version.txt),$(shell $(CAT) $(SOCEDS_DEST_ROOT)/version.txt 2>/dev/null | $(GREP) Version | $(HEAD) -n1 | $(SED) -e 's,^Version[: \t=]*\([0-9.]*\).*,\1,g' 2>/dev/null))
 
 define get_stamp_dir
-stamp$(if $(ACDS_VERSION),/$(ACDS_VERSION))
+stamp$(if $(SOCEDS_VERSION),/$(SOCEDS_VERSION))
 endef
 
 define get_stamp_target
@@ -71,56 +108,24 @@ clean:
 ################################################
 # Archiving & Cleaning your QuartusII/QSys Project
 
-AR_TIMESTAMP := $(if $(ACDS_VERSION),$(subst .,_,$(ACDS_VERSION))_)$(subst $(SPACE),,$(shell $(DATE) +%m%d%Y_%k%M%S))
+AR_TIMESTAMP := $(if $(SOCEDS_VERSION),$(subst .,_,$(SOCEDS_VERSION))_)$(subst $(SPACE),,$(shell $(DATE) +%m%d%Y_%k%M%S))
 
 AR_DIR := tgz
 AR_FILE := $(AR_DIR)/$(basename $(firstword $(wildcard *.qpf)))_$(AR_TIMESTAMP).tar.gz
 
-PRELOADER_DIR := software/preloader
+SOFTWARE_DIR := software
+PRELOADER_DIR := $(SOFTWARE_DIR)/preloader
 
-AR_REGEX := \
+AR_REGEX += \
 	Makefile ip readme.txt ds5 \
-	altera_avalon* *.qpf *.qsf *.sdc *.v *.sv *.vhd *.qsys *.tcl *.stp *.sed quartus.ini \
-	*.sof *.rbf *.sopcinfo *.jdi output_files \
-	hps_isw_handoff */*.svd */synthesis/*.svd *.dts *.dtb *.xml \
-	$(PRELOADER_DIR)/preloader-mkpimage.bin \
-	$(PRELOADER_DIR)/uboot-socfpga/u-boot.img \
-	$(PRELOADER_DIR)/uboot-socfpga/spl/u-boot-spl \
-	$(PRELOADER_DIR)/uboot-socfpga/u-boot \
-	$(PRELOADER_DIR)/preloader.ds \
-	$(PRELOADER_DIR)/uboot.ds
+	altera_avalon* *.qpf *.qsf *.sdc *.v *.sv *.vhd *.qsys *.tcl *.stp \
+	*.sed quartus.ini *.sof *.rbf *.sopcinfo *.jdi output_files \
+	hps_isw_handoff */*.svd */synthesis/*.svd *.dts *.dtb *.xml *.sh *.ipx\
+	$(SOFTWARE_DIR)
 
-AR_FILTER_OUT = %_tb.qsys
-AR_FILES = $(filter-out $(AR_FILTER_OUT),$(wildcard $(AR_REGEX)))
-
-CLEAN_FILES += $(filter-out $(AR_DIR) $(AR_FILES),$(wildcard *))
-CLEAN_FILES += $(wildcard .qsys_edit)
-
-HELP_TARGETS += tgz
-tgz.HELP := Create a tarball with the barebones source files that comprise this design
-
-.PHONY: tarball tgz
-tarball tgz: $(AR_FILE)
-
-$(AR_FILE):
-	@$(MKDIR) $(@D)
-	@$(if $(wildcard $(@D)/*.tar.gz),$(MKDIR) $(@D)/.archive;$(MV) $(@D)/*.tar.gz $(@D)/.archive)
-	@$(ECHO) "Generating $@..."
-	@$(TAR) -czf $@ $(AR_FILES)
-
-HELP_TARGETS += scrub_clean
-scrub_clean.HELP := Restore design to its barebones state
-
-.PHONY: scrub scrub_clean
-scrub scrub_clean:
-	$(if $(strip $(CLEAN_FILES)),$(RM) $(CLEAN_FILES),@$(ECHO) "You're already as clean as it gets!") 
-
-.PHONY: tgz_scrub_clean
-tgz_scrub_clean:
-	$(MAKE) tgz AR_FILE=$(AR_FILE)
-	$(MAKE) -s scrub_clean
-	$(TAR) -xzf $(AR_FILE)
+AR_FILTER_OUT += %_tb.qsys
 ################################################
+
 
 
 ################################################
@@ -129,8 +134,11 @@ tgz_scrub_clean:
 
 #############
 # QSys
-QSYS_FILE := $(firstword $(wildcard *top*.qsys) $(wildcard *main*.qsys) $(wildcard *.qsys))
-QSYS_DEPS := $(wildcard *.qsys)
+QSYS_FILE := $(firstword $(wildcard *top*.qsys) $(wildcard *main*.qsys) $(wildcard *soc*.qsys) $(wildcard *.qsys))
+ifeq ($(QSYS_FILE),)
+$(error ERROR: QSYS_FILE *.qsys file not set and could not be discovered)
+endif
+QSYS_DEPS += $(wildcard *.qsys)
 QSYS_BASE := $(basename $(QSYS_FILE))
 QSYS_QIP := $(QSYS_BASE)/synthesis/$(QSYS_BASE).qip
 QSYS_SOPCINFO := $(QSYS_BASE).sopcinfo
@@ -138,8 +146,8 @@ QSYS_STAMP := $(call get_stamp_target,qsys)
 
 # Under cygwin, ensure TMP env variable is not a cygwin style path
 # before calling ip-generate
-ifneq ($(shell which cygwin1.dll 2>/dev/null),)
-ifneq ($(shell which cygpath 2>/dev/null),)
+ifeq ($(IS_CYGWIN_HOST),1)
+ifneq ($(shell $(WHICH) cygpath 2>/dev/null),)
 SET_QSYS_GENERATE_ENV = TMP="$(shell cygpath -m "$(TMP)")"
 endif
 endif
@@ -147,54 +155,86 @@ endif
 .PHONY: qsys_compile
 qsys_compile: $(QSYS_STAMP)
 
-$(QSYS_QIP) : $(QSYS_STAMP)
+ifeq ($(HAVE_QSYS),1)
+$(QSYS_SOPCINFO) $(QSYS_QIP): $(QSYS_STAMP)
+endif
 
 $(QSYS_STAMP): $(QSYS_DEPS)
-	@$(RM) $(QSYS_QIP) $(QSYS_SOPCINFO) $(QSYS_BASE)
 	$(SET_QSYS_GENERATE_ENV) qsys-generate $(QSYS_FILE) --synthesis=VERILOG $(QSYS_GENERATE_ARGS)
 	$(stamp_target)
 
-
 HELP_TARGETS += qsys_edit
+
 qsys_edit.HELP := Launch QSys GUI
+ifneq ($(HAVE_QSYS),1)
+qsys_edit.HELP := $(qsys_edit.HELP) (Install Quartus II Software to enable)
+endif
 
 .PHONY: qsys_edit
 qsys_edit:
 	qsys-edit $(QSYS_FILE) &
 
 
+SCRUB_CLEAN_FILES += $(wildcard .qsys_edit)
+
+ifeq ($(HAVE_QSYS),1)
+SCRUB_CLEAN_FILES += $(QSYS_QIP) $(QSYS_SOPCINFO) $(QSYS_BASE)
+endif
 
 #############
 # Quartus II
 
 QUARTUS_QPF := $(firstword $(wildcard *.qpf))
+ifeq ($(QUARTUS_QPF),)
+$(error ERROR: QUARTUS_QPF *.qpf file not set and could not be discovered)
+endif
 QUARTUS_QSF := $(patsubst %.qpf,%.qsf,$(QUARTUS_QPF))
 QUARTUS_BASE := $(basename $(QUARTUS_QPF))
 QUARTUS_HDL_SOURCE := $(wildcard *.v *.sv *.vhd)
 QUARTUS_MISC_SOURCE := $(wildcard *.stp *.sdc)
 
 QUARTUS_PIN_ASSIGNMENTS_STAMP := $(call get_stamp_target,quartus_pin_assignments)
-QUARTUS_DEPS = $(QUARTUS_QPF) $(QUARTUS_QSF) $(QUARTUS_HDL_SOURCE) $(QUARTUS_MISC_SOURCE) $(QSYS_STAMP) $(QSYS_QIP) $(QUARTUS_PIN_ASSIGNMENTS_STAMP)
+QUARTUS_DEPS += $(QUARTUS_QPF) $(QUARTUS_QSF) $(QUARTUS_HDL_SOURCE) $(QUARTUS_MISC_SOURCE) $(QSYS_STAMP) $(QSYS_QIP) $(QUARTUS_PIN_ASSIGNMENTS_STAMP)
 
-QUARTUS_SOF := output_files/$(patsubst %.qpf,%.sof,$(QUARTUS_QPF))
+QUARTUS_SOF := output_files/$(QUARTUS_BASE).sof
 QUARTUS_STAMP := $(call get_stamp_target,quartus)
-
 
 .PHONY: quartus_compile
 quartus_compile: $(QUARTUS_STAMP)
 
+ifeq ($(HAVE_QUARTUS),1)
 $(QUARTUS_SOF): $(QUARTUS_STAMP)
+endif
 
 $(QUARTUS_PIN_ASSIGNMENTS_STAMP): $(QSYS_STAMP)
-	@for pin_assign_tcl_file in $$(find $(QSYS_BASE) -name '*_pin_assignments.tcl'); do \
-		quartus_map $(QUARTUS_QPF); \
-		echo "Applying $${pin_assign_tcl_file} to $(QUARTUS_QPF)..."; \
-		quartus_sta -t $${pin_assign_tcl_file} $(QUARTUS_QPF); \
-	done
+	quartus_map $(QUARTUS_QPF)
+	quartus_cdb --merge $(QUARTUS_QPF)
+	$(MAKE) quartus_apply_tcl_pin_assignments QUARTUS_ENABLE_PIN_ASSIGNMENTS_APPLY=1
 	$(stamp_target)
 
+#######
+# we need to recursively call this makefile to
+# apply *_pin_assignments.tcl script because the
+# pin_assignment.tcl files may not exist yet
+# when makefile was originally called
+
+ifeq ($(QUARTUS_ENABLE_PIN_ASSIGNMENTS_APPLY),1)
+
+QUARTUS_TCL_PIN_ASSIGNMENTS = $(wildcard $(QSYS_BASE)/synthesis/submodules/*_pin_assignments.tcl)
+QUARTUS_TCL_PIN_ASSIGNMENTS_APPLY_TARGETS = $(patsubst %,quartus_apply_tcl-%,$(QUARTUS_TCL_PIN_ASSIGNMENTS))
+
+.PHONY: quartus_apply_tcl_pin_assignments
+quartus_apply_tcl_pin_assignments: $(QUARTUS_TCL_PIN_ASSIGNMENTS_APPLY_TARGETS)
+
+.PHONY: $(QUARTUS_TCL_PIN_ASSIGNMENTS_APPLY_TARGETS)
+$(QUARTUS_TCL_PIN_ASSIGNMENTS_APPLY_TARGETS): quartus_apply_tcl-%: %
+	@$(ECHO) "Applying $<... to $(QUARTUS_QPF)..."
+	quartus_sh -t $< $(QUARTUS_QPF)
+
+endif # QUARTUS_ENABLE_PIN_ASSIGNMENTS_APPLY == 1
+######
+
 $(QUARTUS_STAMP): $(QUARTUS_DEPS)
-	$(RM) $(QUARTUS_SOF) *.sof output_files
 	quartus_stp $(QUARTUS_BASE)
 	quartus_sh --flow compile $(QUARTUS_QPF)
 	$(stamp_target)
@@ -202,12 +242,20 @@ $(QUARTUS_STAMP): $(QUARTUS_DEPS)
 HELP_TARGETS += quartus_edit
 quartus_edit.HELP := Launch Quartus II GUI
 
+ifneq ($(HAVE_QUARTUS),1)
+quartus_edit.HELP := $(quartus_edit.HELP) (Install Quartus II Software to enable)
+endif
+
+
 .PHONY: quartus_edit
 quartus_edit:
 	quartus $(QUARTUS_QPF) &
 
 HELP_TARGETS += sof
 sof.HELP := QSys generate & Quartus compile this design
+ifneq ($(HAVE_QUARTUS),1)
+sof.HELP := $(sof.HELP) (Install Quartus II Software to enable)
+endif
 
 BATCH_TARGETS += sof
 
@@ -217,32 +265,49 @@ sof: $(QUARTUS_SOF)
 
 QUARTUS_RBF := $(patsubst %.sof,%.rbf,$(QUARTUS_SOF))
 #
-# This converts the sof into compressed, unencrypted 
-# raw binary format corresponding to MSEL value of 8 
-# in the FPGAMGRREGS_STAT register. If you read the 
+# This converts the sof into compressed, unencrypted
+# raw binary format corresponding to MSEL value of 8
+# in the FPGAMGRREGS_STAT register. If you read the
 # the whole register, it should be 0x50.
 #
 # CVSoC DevBoard SW1 MSEL should be set to up,down,up,down,up,up
 #
+# SoCKit: SW6 MSEL[4:0] should be set to 0 1 0 1 0
+#		FPP x32, Fast, compressed bitstream
+#
+
+ifeq ($(HAVE_QUARTUS),1)
+$(QUARTUS_RBF): $(QUARTUS_STAMP)
+endif
+
+QUARTUS_CPF_ENABLE_COMPRESSION ?= 1
+ifeq ($(QUARTUS_CPF_ENABLE_COMPRESSION),1)
+QUARTUS_CPF_ARGS += bitstream_compression=on
+endif
 
 $(QUARTUS_RBF): %.rbf: %.sof
-	quartus_cpf -c -o bitstream_compression=on $< $@
+	quartus_cpf -c -o $(QUARTUS_CPF_ARGS) $< $@
 
 .PHONY: rbf
 rbf: $(QUARTUS_RBF)
 
 .PHONY: create_rbf
 create_rbf:
-	quartus_cpf -c -o bitstream_compression=on $(QUARTUS_SOF) $(QUARTUS_RBF)
+	quartus_cpf -c -o $(QUARTUS_CPF_ARGS) $(QUARTUS_SOF) $(QUARTUS_RBF)
+
+
+ifeq ($(HAVE_QUARTUS),1)
+SCRUB_CLEAN_FILES += $(QUARTUS_SOF) $(QUARTUS_RBF) output_files hps_isw_handoff
+endif
 
 ################################################
 
 
 ################################################
 # QSYS/Quartus Project Generation
-#  - we don't run this generation step automatically on purpose because they 
-#    it will destroy any changes/customizations that you've made to your qsys 
-#    or your quartus project
+#  - we don't run this generation step automatically because
+#    it will destroy any changes and/or customizations that
+#    you've made to your qsys or your quartus project
 #
 QSYS_QSYS_GEN := $(firstword $(wildcard create_*_qsys.tcl))
 QUARTUS_QSF_QPF_GEN := $(firstword $(wildcard create_*_quartus.tcl))
@@ -259,6 +324,13 @@ endif
 
 .PHONY: qsys_generate_qsys
 ifneq ($(QSYS_QSYS_GEN),)
+
+# Note that this target has a strange & known issue
+# that requires the Stratix V device family to be installed.
+# If the stratix V device family is not installed then the target
+# will hang. This issue will hopefully be resolved in a future
+# version of quartus/qsys.
+
 qsys_generate_qsys: $(QSYS_QSYS_GEN)
 	$(RM) $(QSYS_FILE)
 	qsys-script --script=$<
@@ -318,13 +390,24 @@ program_qspi.HELP := Flash program preloader into QSPI Flash
 program_qspi: $(PRELOADER_DIR)/preloader-mkpimage.bin
 	$(call quartus_hps_pgm_qspi,$<)
 
+
+# GHRD HPS Reset Targets
+ifneq ($(wildcard ghrd_reset.tcl),)
+# use the already programmed fpga to reset the hps
+HPS_RESET_TARGETS := hps_cold_reset hps_warm_reset hps_debug_reset
+
+.PHONY: $(HPS_RESET_TARGETS)
+$(HPS_RESET_TARGETS): hps_%_reset:
+	quartus_stp --script=ghrd_reset.tcl $(if $(BOARD_CABLE),--cable-name "$(BOARD_CABLE)") $(if $(BOARD_DEVICE_INDEX),--device-index "$(BOARD_DEVICE_INDEX)") --$*-reset
+endif
+
 ################################################
 
 
 ################################################
 # Preloader
 
-QSYS_HPS_INST_NAME := hps_0
+QSYS_HPS_INST_NAME ?= hps_0
 
 SBT.CREATE_SETTINGS := bsp-create-settings
 SBT.GENERATE := bsp-generate-files
@@ -333,10 +416,20 @@ HELP_TARGETS += preloader
 preloader.HELP := Build Preloader BSP for this design into $(PRELOADER_DIR) directory
 
 PRELOADER_ID := hps_isw_handoff/$(QSYS_BASE)_$(QSYS_HPS_INST_NAME)/id
-PRELOADER_DEPS := $(PRELOADER_ID)
-PRELOADER_STAMP := $(call get_stamp_target,preloader)
+PRELOADER_DEPS += $(PRELOADER_ID)
+
+ifeq ($(HAVE_QUARTUS),1)
+PRELOADER_DEPS += $(QUARTUS_STAMP)
 
 $(PRELOADER_ID): $(QUARTUS_STAMP)
+endif
+
+PRELOADER_STAMP := $(call get_stamp_target,preloader)
+
+PRELOADER_DISABLE_WATCHDOG ?= 1
+ifeq ($(PRELOADER_DISABLE_WATCHDOG),1)
+PRELOADER_EXTRA_ARGS += --set spl.boot.WATCHDOG_ENABLE false
+endif
 
 .PHONY: preloader
 preloader: $(PRELOADER_STAMP)
@@ -345,15 +438,14 @@ preloader: $(PRELOADER_STAMP)
 # This is useful for board bring up and troubleshooting.
 $(PRELOADER_STAMP): $(PRELOADER_DEPS)
 
-	$(RM) $(PRELOADER_DIR)
-	$(MKDIR) $(PRELOADER_DIR)
+	@$(MKDIR) $(PRELOADER_DIR)
 
 	$(SBT.CREATE_SETTINGS) \
 		--type spl \
 		--bsp-dir $(PRELOADER_DIR) \
-		--preloader-settings-dir "../../hps_isw_handoff/$(QSYS_BASE)_$(QSYS_HPS_INST_NAME)" \
+		--preloader-settings-dir "hps_isw_handoff/$(QSYS_BASE)_$(QSYS_HPS_INST_NAME)" \
 		--settings $(PRELOADER_DIR)/settings.bsp \
-		--set spl.boot.WATCHDOG_ENABLE false
+		$(PRELOADER_EXTRA_ARGS)
 
 	$(MAKE) -C $(PRELOADER_DIR)
 
@@ -362,9 +454,17 @@ $(PRELOADER_STAMP): $(PRELOADER_DEPS)
 
 UBOOT_STAMP := $(call get_stamp_target,uboot)
 
-$(UBOOT_STAMP):  $(PRELOADER_STAMP)
+$(UBOOT_STAMP): $(PRELOADER_STAMP)
 	$(MAKE) -C $(PRELOADER_DIR) uboot
 	$(stamp_target)
+
+
+ifeq ($(IS_WINDOWS_HOST),1)
+EXE_EXT := .exe
+endif
+UBOOT_MKIMAGE := $(PRELOADER_DIR)/uboot-socfpga/tools/mkimage$(EXE_EXT)
+AR_REGEX += $(UBOOT_MKIMAGE)
+
 
 HELP_TARGETS += uboot
 uboot.HELP := Build U-Boot into $(PRELOADER_DIR) directory
@@ -372,23 +472,84 @@ uboot.HELP := Build U-Boot into $(PRELOADER_DIR) directory
 .PHONY: uboot
 uboot: $(UBOOT_STAMP)
 
+
+SCRUB_CLEAN_FILES += $(PRELOADER_DIR)
+
 ################################################
 
 
 ################################################
-# Device Tree Source (dts)
-DEVICE_TREE_SOURCE := $(patsubst %.sopcinfo,%.dts,$(QSYS_SOPCINFO))
+# Preloader/Uboot SD Card Programming
+
+# Update the A2 Partition on your sd card with
+# the preloader and uboot that build with this design
+
+# These targets assume you have a pre-imaged sd card
+# or an sd card *.img file
+# An example sd image for the Altera SoC Development
+# Board can be found here:
+# <soceds_install>/embeddedsw/socfpga/prebuilt_images
+
+ALT_BOOT_DISK_UTIL := alt-boot-disk-util
+
+ifeq ($(IS_WINDOWS_HOST),1)
+
+ifeq ($(SDCARD),)
+ifeq ($(SD_DRIVE_LETTER),)
+GUESS_DRIVE_LETTER = $(firstword $(foreach drive_letter,d e f g h i j k l m n o p q r s t u v w x y z,$(if $(wildcard $(drive_letter):/zImage),$(drive_letter))))
+SD_DRIVE_LETTER = $(GUESS_DRIVE_LETTER)
+endif # SD_DRIVE_LETTER == <empty>
+SDCARD ?= $(if $(SD_DRIVE_LETTER),-d $(SD_DRIVE_LETTER),$(error ERROR: SD_DRIVE_LETTER not specified. Try "make $(MAKECMDGOALS) SD_DRIVE_LETTER=[sd_card_windows_drive_letter]))
+endif # SDCARD == <empty>
+
+else # if not a Windows Host
+
+SDCARD ?= $(error ERROR: SD Card not specified. Try "make $(MAKECMDGOALS) SDCARD=/dev/sdX", where X represents your target SD Card device)
+
+endif
+
+PRELOADER_BIN ?= $(PRELOADER_DIR)/preloader-mkpimage.bin
+
+.PHONY: sd-update-preloader
+sd-update-preloader: $(PRELOADER_BIN)
+	$(ALT_BOOT_DISK_UTIL) -p $< -a write $(SDCARD)
+
+NEXTSTAGE_BIN ?= $(PRELOADER_DIR)/uboot-socfpga/u-boot.img
+
+.PHONY: sd-update-uboot
+sd-update-uboot: $(NEXTSTAGE_BIN)
+	$(ALT_BOOT_DISK_UTIL) -b $< -a write $(SDCARD)
+
+sd-update-preloader-uboot: sd-update-preloader sd-update-uboot
+
+################################################
+
+
+################################################
+# Device Tree
 
 DTS.SOPC2DTS := sopc2dts
 
-DTS.BOARDINFO := $(wildcard $(QSYS_BASE)_board_info.xml)
-DTS.CLOCKINFO := hps_clock_info.xml
+DTS.BOARDINFO ?= $(QSYS_BASE)_board_info.xml
+#DTS.CLOCKINFO ?= hps_clock_info.xml
+DTS.COMMON ?= hps_common_board_info.xml
 
-$(DEVICE_TREE_SOURCE): %.dts: %.sopcinfo $(DTS.BOARDINFO) $(DTS.CLOCKINFO)
-ifeq ($(DTS.BOARDINFO),)
-	$(warning WARNING: DTS BoardInfo file was not specified or found)
-endif
-	$(DTS.SOPC2DTS) --input $< --output $@ $(if $(DTS.BOARDINFO),--board $(DTS.BOARDINFO)) $(if $(DTS.CLOCKINFO),--board $(DTS.CLOCKINFO)) --bridge-removal all
+DTS.EXTRA_DEPS += $(DTS.BOARDINFO) $(DTS.COMMON)
+DTS.EXTRA_DEPS += $(DTS.BOARDINFO)
+
+DTS.SOPC2DTS_ARGS += $(if $(DTS.BOARDINFO),--board $(DTS.BOARDINFO))
+DTS.SOPC2DTS_ARGS += $(if $(DTS.COMMON),--board $(DTS.COMMON))
+DTS.SOPC2DTS_ARGS += --bridge-removal all
+DTS.SOPC2DTS_ARGS += --clocks
+
+define dts.sopc2dts
+$(if $(DTS.BOARDINFO),,$(warning WARNING: DTS BoardInfo file was not specified or found))
+$(DTS.SOPC2DTS) --input $1 --output $2 $3 $(DTS.SOPC2DTS_ARGS)
+endef
+
+
+# Device Tree Source (dts)
+DEVICE_TREE_SOURCE := $(patsubst %.sopcinfo,%.dts,$(QSYS_SOPCINFO))
 
 HELP_TARGETS += dts
 dts.HELP := Generate a device tree for this qsys design
@@ -396,21 +557,119 @@ dts.HELP := Generate a device tree for this qsys design
 .PHONY: dts
 dts: $(DEVICE_TREE_SOURCE)
 
+ifeq ($(HAVE_QSYS),1)
+$(DEVICE_TREE_SOURCE): $(QSYS_STAMP)
+endif
+
+$(DEVICE_TREE_SOURCE): %.dts: %.sopcinfo $(DTS.EXTRA_DEPS)
+	$(call dts.sopc2dts,$<,$@)
+
 
 # Device Tree Blob (dtb)
-DEVICE_TREE_BLOB := $(patsubst %.dts,%.dtb,$(DEVICE_TREE_SOURCE))
-
-# device tree compiler
-DTS.DTC := dtc
-
-$(DEVICE_TREE_BLOB): %.dtb: %.dts
-	$(DTS.DTC) -I dts -O dtb -o $@ $<
+DEVICE_TREE_BLOB := $(patsubst %.sopcinfo,%.dtb,$(QSYS_SOPCINFO))
 
 HELP_TARGETS += dtb
 dtb.HELP := Generate a device tree blob for this qsys design
 
 .PHONY: dtb
 dtb: $(DEVICE_TREE_BLOB)
+
+ifeq ($(HAVE_QSYS),1)
+$(DEVICE_TREE_BLOB): $(QSYS_STAMP)
+endif
+
+$(DEVICE_TREE_BLOB): %.dtb: %.sopcinfo $(DTS.EXTRA_DEPS)
+	$(call dts.sopc2dts,$<,$@,--type dtb)
+
+SCRUB_CLEAN_FILES += $(DEVICE_TREE_SOURCE) $(DEVICE_TREE_BLOB)
+
+################################################
+
+fpgadata := 0x2000000
+fpgaimage := /boot/socfpga.rbf
+loadaddr := 0x01000000
+bootimage :=/boot/zImage
+fdt_addr :=100
+fdtimage :=/boot/socfpga.dtb
+
+################################################
+boot.script: Makefile
+	@$(RM) $@
+	@$(ECHO) "Generating $@"
+	@$(ECHO) "setenv bootimage /boot/zImage;" >>$@
+	@$(ECHO) "setenv fdtimage /boot/socfpga.dtb;" >>$@
+	@$(ECHO) "setenv fpgaimage /boot/socfpga.rbf;" >>$@
+	@$(ECHO) 'setenv mmcload mmc rescan; ext4load mmc 0:2 ${fpgadata} ${fpgaimage}; ext4load mmc 0:2 ${loadaddr} ${bootimage}; ext4load mmc 0:2 ${fdt_addr} ${fdtimage};' >>$@
+	@$(ECHO) "setenv ethaddr 82:3a:f0:75:4b:99;" >>$@
+#	@$(ECHO) "run fpgaload;" >>$@
+	@$(ECHO) "run mmcload;" >>$@
+	@$(ECHO) "run mmcboot;" >>$@
+
+ifeq ($(wildcard $(UBOOT_MKIMAGE)),)
+$(UBOOT_MKIMAGE): $(PRELOADER_STAMP)
+endif
+
+boot.scr: boot.script $(UBOOT_MKIMAGE)
+	$(UBOOT_MKIMAGE) -A arm -O linux -T script -C none -a 0 -e 0 -n "bootscript" -d $< $@
+
+SD_FAT_TGZ ?= sd_fat.tar.gz
+SD_FAT_TGZ_DEPS += boot.scr boot.script $(QUARTUS_RBF) $(DEVICE_TREE_BLOB)
+
+$(SD_FAT_TGZ): $(SD_FAT_TGZ_DEPS)
+	@$(RM) $@
+	@$(MKDIR) $(@D)
+	$(TAR) -czf $@ $^
+
+HELP_TARGETS += sd-boot
+sd-boot.HELP := Create a tarball with the uboot script, dtb and rbf files
+
+.PHONY: sd-boot
+sd-boot: $(SD_FAT_TGZ)
+
+AR_FILES += $(SD_FAT_TGZ)
+
+SCRUB_CLEAN_FILES += $(SD_FAT_TGZ)
+
+################################################
+
+
+################################################
+# Clean-up and Archive
+
+AR_FILES += $(filter-out $(AR_FILTER_OUT),$(wildcard $(AR_REGEX)))
+
+CLEAN_FILES += $(filter-out $(AR_DIR) $(AR_FILES),$(wildcard *))
+
+HELP_TARGETS += tgz
+tgz.HELP := Create a tarball with the barebones source files that comprise this design
+
+.PHONY: tarball tgz
+tarball tgz: $(AR_FILE)
+
+$(AR_FILE):
+	@$(MKDIR) $(@D)
+	@$(if $(wildcard $(@D)/*.tar.gz),$(MKDIR) $(@D)/.archive;$(MV) $(@D)/*.tar.gz $(@D)/.archive)
+	@$(ECHO) "Generating $@..."
+	@$(TAR) -czf $@ $(AR_FILES)
+
+SCRUB_CLEAN_FILES += $(CLEAN_FILES)
+
+HELP_TARGETS += scrub_clean
+scrub_clean.HELP := Restore design to its barebones state
+
+.PHONY: scrub scrub_clean
+scrub scrub_clean:
+	$(if $(strip $(wildcard $(SCRUB_CLEAN_FILES))),$(RM) $(wildcard $(SCRUB_CLEAN_FILES)),@$(ECHO) "You're already as clean as it gets!")
+
+.PHONY: tgz_scrub_clean
+tgz_scrub_clean:
+	$(FIND) $(SOFTWARE_DIR) \( -name '*.o' -o -name '.depend*' -o -name '*.d' -o -name '*.dep' \) -delete || true
+	$(MAKE) tgz AR_FILE=$(AR_FILE)
+	$(MAKE) -s scrub_clean
+	$(TAR) -xzf $(AR_FILE)
+
+################################################
+
 
 ################################################
 # Running Batch Jobs
@@ -422,9 +681,10 @@ BATCH_DIR := $(if $(TMP),$(TMP)/)batch/$(AR_TIMESTAMP)
 $(patsubst %,batch-%,$(BATCH_TARGETS)): batch-%: $(AR_FILE)
 	@$(RM) $(BATCH_DIR)
 	@$(MKDIR) $(BATCH_DIR)
-	$(CP) $< $(BATCH_DIR) 
+	$(CP) $< $(BATCH_DIR)
 	$(CD) $(BATCH_DIR) && $(TAR) -xzf $(notdir $<) && $(CHMOD) -R 755 *
 	$(MAKE) -C $(BATCH_DIR) $*
+
 endif # BATCH_TARGETS != <empty>
 ################################################
 
@@ -452,7 +712,7 @@ help-init:
 	@$(ECHO) "*                                       *"
 	@$(ECHO) "* Manage QuartusII/QSys design          *"
 	@$(ECHO) "*                                       *"
-	@$(ECHO) "*     Copyright (c) 2013                *"
+	@$(ECHO) "*     Copyright (c) 2014                *"
 	@$(ECHO) "*     All Rights Reserved               *"
 	@$(ECHO) "*                                       *"
 	@$(ECHO) "*****************************************"

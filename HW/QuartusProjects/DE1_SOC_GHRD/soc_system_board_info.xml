@@ -1,13 +1,13 @@
 <BoardInfo pov="hps_0_arm_a9_0">
 <!--
-This file is intended to be used when building device trees 
-for the Altera Cyclone5 SOC Development Kits. 
+This file is intended to be used when building device trees
+for the Altera Cyclone5 SOC Development Kits.
 This board info file and hps_clock_info.xml are required input
 to sopc2dts to create a device tree suitable for the 3.9 version
 of the Linux kernel.  One typically executes sopc2dts as follows:
 
 	sopc2dts -i soc_system.sopcinfo -b soc_system_board_info.xml
-		-b hps_clock_info.xml -o soc_system.dts 
+		-b hps_clock_info.xml -o soc_system.dts
 
 -->
 
@@ -19,7 +19,7 @@ of the Linux kernel.  One typically executes sopc2dts as follows:
 <IRQMasterIgnore className="intr_capturer"/>
 <IRQMasterIgnore className="d_irq"/>
 
-<DTAppend name="next-level-cache" type="phandle" parentlabel="hps_0_arm_a9_0" val="hps_0_L2"/>
+<!--<DTAppend name="next-level-cache" type="phandle" parentlabel="hps_0_arm_a9_0" val="hps_0_L2"/>
 <DTAppend name="next-level-cache" type="phandle" parentlabel="hps_0_arm_a9_1" val="hps_0_L2"/>
 
 <DTAppend name="cache-unified" type="bool" parentlabel="hps_0_L2" val="true"/>
@@ -32,7 +32,7 @@ of the Linux kernel.  One typically executes sopc2dts as follows:
 	<val type="number">2</val>
 	<val type="number">1</val>
 	<val type="number">1</val>
-</DTAppend>
+</DTAppend>-->
 
 <DTAppend name="interrupt-controller" parentlabel="hps_0_gpio0"/>
 <DTAppend name="#interrupt-cells" type="number" parentlabel="hps_0_gpio0" val="2"/>
@@ -52,7 +52,7 @@ of the Linux kernel.  One typically executes sopc2dts as follows:
 
 <DTAppend name="cpu1-start-addr" type="hex" parentlabel="hps_0_sysmgr" val="0xffd080c4"/>
 <DTAppend name="compatible" type="string" parentlabel="hps_0_sysmgr" val="syscon" action="add"/>
-<DTAppend name="compatible" type="string" parentlabel="hps_0_rstmgr" val="syscon" action="add"/>
+<!--<DTAppend name="compatible" type="string" parentlabel="hps_0_rstmgr" val="syscon" action="add"/>-->
 
 <DTAppend name="speed-mode" type="number" parentlabel="hps_0_i2c0" val="0"/>
 <DTAppend name="status" type="string" parentlabel="hps_0_i2c1" val="disabled"/>
@@ -72,7 +72,7 @@ of the Linux kernel.  One typically executes sopc2dts as follows:
 
 <DTAppend name="status" type="string" parentlabel="hps_0_gmac0" val="disabled"/>
 <DTAppend name="status" type="string" parentlabel="hps_0_uart1" val="disabled"/>
-<DTAppend name="status" type="string" parentlabel="hps_0_usb0" val="disabled"/>
+<!--<DTAppend name="status" type="string" parentlabel="hps_0_usb0" val="disabled"/>-->
 <DTAppend name="status" type="string" parentlabel="hps_0_nand0" val="disabled"/>
 <DTAppend name="clocks" type="phandle" parentlabel="hps_0_nand0" val="nand_clk"/>
 
@@ -137,7 +137,7 @@ of the Linux kernel.  One typically executes sopc2dts as follows:
 <val type="hex">0x800000</val>
 </DTAppend>
 
-<DTAppend name="status" type="string" parentlabel="hps_0_spi0" val="disabled"/>
+<!--<DTAppend name="status" type="string" parentlabel="hps_0_spi0" val="disabled"/>
 <DTAppend name="status" type="string" parentlabel="hps_0_spi1" val="disabled"/>
 
 <DTAppend name="spidev@0" type="node" parentlabel="hps_0_spi0" newlabel="spidev0"/>
@@ -150,7 +150,7 @@ of the Linux kernel.  One typically executes sopc2dts as follows:
 <DTAppend name="compatible" type="string" parentlabel="spidev1" val="spidev"/>
 <DTAppend name="reg" type="number" parentlabel="spidev1" val="0"/>
 <DTAppend name="spi-max-frequency" type="number" parentlabel="spidev1" val="100000000"/>
-<DTAppend name="enable-dma" type="number" parentlabel="spidev1" val="1"/>
+<DTAppend name="enable-dma" type="number" parentlabel="spidev1" val="1"/>-->
 
 <DTAppend name="leds" type="node" parentlabel="sopc0" newlabel="soc_leds"/>
 <DTAppend name="compatible" type="string" parentlabel="soc_leds" val="gpio-leds"/>
@@ -221,7 +221,7 @@ of the Linux kernel.  One typically executes sopc2dts as follows:
 <val type="number">1</val>
 </DTAppend>
 
-<DTAppend name="pmu0" type="node" parentlabel="sopc0" newlabel="pmu"/>
+<!--<DTAppend name="pmu0" type="node" parentlabel="sopc0" newlabel="pmu"/>
 <DTAppend name="#address-cells" type="number" parentlabel="pmu" val="1"/>
 <DTAppend name="#size-cells" type="number" parentlabel="pmu" val="1"/>
 <DTAppend name="compatible" type="string" parentlabel="pmu" val="arm,cortex-a9-pmu"/>
@@ -234,9 +234,9 @@ of the Linux kernel.  One typically executes sopc2dts as follows:
 <val type="number">177</val>
 <val type="number">4</val>
 </DTAppend>
-<DTAppend name="ranges" type="bool" parentlabel="pmu" val="true"/>
+<DTAppend name="ranges" type="bool" parentlabel="pmu" val="true"/>-->
 
-<DTAppend name="cti0@ff118000" type="node" parentlabel="pmu" newlabel="cti0"/>
+<!--<DTAppend name="cti0@ff118000" type="node" parentlabel="pmu" newlabel="cti0"/>
 <DTAppend name="compatible" type="string" parentlabel="cti0" val="arm,coresight-cti"/>
 <DTAppend name="reg" parentlabel="cti0">
 <val type="hex">0xff118000</val>
@@ -248,9 +248,9 @@ of the Linux kernel.  One typically executes sopc2dts as follows:
 <DTAppend name="reg" parentlabel="cti1">
 <val type="hex">0xff119000</val>
 <val type="hex">0x100</val>
-</DTAppend>
+</DTAppend>-->
 
-<DTAppend name="fpgabridge@0" type="node" parentlabel="sopc0" newlabel="fpgabridge0"/>
+<!--<DTAppend name="fpgabridge@0" type="node" parentlabel="sopc0" newlabel="fpgabridge0"/>
 <DTAppend name="compatible" type="string" parentlabel="fpgabridge0" val="altr,socfpga-hps2fpga-bridge"/>
 <DTAppend name="label" type="string" parentlabel="fpgabridge0" val="hps2fpga"/>
 <DTAppend name="clocks" type="phandle" parentlabel="fpgabridge0" val="l4_main_clk"/>
@@ -263,7 +263,7 @@ of the Linux kernel.  One typically executes sopc2dts as follows:
 <DTAppend name="fpgabridge@2" type="node" parentlabel="sopc0" newlabel="fpgabridge2"/>
 <DTAppend name="compatible" type="string" parentlabel="fpgabridge2" val="altr,socfpga-fpga2hps-bridge"/>
 <DTAppend name="label" type="string" parentlabel="fpgabridge2" val="fpga2hps"/>
-<DTAppend name="clocks" type="phandle" parentlabel="fpgabridge2" val="l4_main_clk"/>
+<DTAppend name="clocks" type="phandle" parentlabel="fpgabridge2" val="l4_main_clk"/>-->
 
 <DTAppend name="l3regs@0xff800000" type="node" parentlabel="sopc0" newlabel="l3regs"/>
 <DTAppend name="compatible"  parentlabel="l3regs" >
@@ -289,6 +289,6 @@ of the Linux kernel.  One typically executes sopc2dts as follows:
 
 
 <Chosen>
-        <Bootargs val="console=ttyS0,115200"></Bootargs>
+        <Bootargs val="console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait"></Bootargs>
 </Chosen>
 </BoardInfo>

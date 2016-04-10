@@ -5,8 +5,8 @@
 // Permission:
 //
 //   Terasic grants permission to use and modify this code for use
-//   in synthesis for all Terasic Development Boards and Altera Development 
-//   Kits made by Terasic.  Other use of this code, including the selling 
+//   in synthesis for all Terasic Development Boards and Altera Development
+//   Kits made by Terasic.  Other use of this code, including the selling
 //   ,duplication, or modification of any portion is strictly prohibited.
 //
 // Disclaimer:
@@ -15,16 +15,16 @@
 //   which illustrates how these types of functions can be implemented.
 //   It is the user's responsibility to verify their design for
 //   consistency and functionality through the use of formal
-//   verification methods.  Terasic provides no warranty regarding the use 
+//   verification methods.  Terasic provides no warranty regarding the use
 //   or functionality of this code.
 //
 // ============================================================================
-//           
+//
 //  Terasic Technologies Inc
 //  9F., No.176, Sec.2, Gongdao 5th Rd, East Dist, Hsinchu City, 30070. Taiwan
-//  
-//  
-//                     web: http://www.terasic.com/  
+//
+//
+//                     web: http://www.terasic.com/
 //                     email: support@terasic.com
 //
 // ============================================================================
@@ -33,9 +33,9 @@
 
 `define ENABLE_HPS
 
-module ghrd_top(
+module ghrd(
 
-      
+
       ///////// ADC /////////
       inout              ADC_CS_N,
       output             ADC_DIN,
@@ -85,7 +85,7 @@ module ghrd_top(
       ///////// GPIO /////////
       inout     [35:0]         GPIO_0,
       inout     [35:0]         GPIO_1,
- 
+
 
       ///////// HEX0 /////////
       output      [6:0]  HEX0,
@@ -213,7 +213,7 @@ module ghrd_top(
 
   wire fpga_clk_50;
   assign fpga_clk_50 = CLOCK2_50;
-  
+
 // connection of internal logics
   assign LED = fpga_led_internal;
   assign stm_hw_events    = {{4{1'b0}}, SW, fpga_led_internal, fpga_debounced_buttons};
@@ -226,16 +226,16 @@ module ghrd_top(
   wire 			hm_write;
   wire [3:0]	hm_chipsel;
   wire 			hm_clk_med;
-  wire			hm_clk_high;	
+  wire			hm_clk_high;
   wire 			clklow_sig;
   wire 			clkmed_sig;
   wire 			clkhigh_sig;
 
-  
+
 //=======================================================
 //  Structural coding
 //=======================================================
-soc_system u0 (      
+soc_system u0 (
 		  .clk_clk                               (CLOCK_50),                             //                clk.clk
 		  .reset_reset_n                         (1'b1),                                 //                reset.reset_n
 		  //HPS ddr3
@@ -255,7 +255,7 @@ soc_system u0 (
         .memory_mem_odt                        ( HPS_DDR3_ODT),                        //                .mem_odt
         .memory_mem_dm                         ( HPS_DDR3_DM),                         //                .mem_dm
         .memory_oct_rzqin                      ( HPS_DDR3_RZQ),                        //                .oct_rzqin
-       //HPS ethernet		
+       //HPS ethernet
 	     .hps_0_hps_io_hps_io_emac1_inst_TX_CLK ( HPS_ENET_GTX_CLK),       //                             hps_0_hps_io.hps_io_emac1_inst_TX_CLK
         .hps_0_hps_io_hps_io_emac1_inst_TXD0   ( HPS_ENET_TX_DATA[0] ),   //                             .hps_io_emac1_inst_TXD0
         .hps_0_hps_io_hps_io_emac1_inst_TXD1   ( HPS_ENET_TX_DATA[1] ),   //                             .hps_io_emac1_inst_TXD1
@@ -270,21 +270,21 @@ soc_system u0 (
         .hps_0_hps_io_hps_io_emac1_inst_RXD1   ( HPS_ENET_RX_DATA[1] ),   //                             .hps_io_emac1_inst_RXD1
         .hps_0_hps_io_hps_io_emac1_inst_RXD2   ( HPS_ENET_RX_DATA[2] ),   //                             .hps_io_emac1_inst_RXD2
         .hps_0_hps_io_hps_io_emac1_inst_RXD3   ( HPS_ENET_RX_DATA[3] ),   //                             .hps_io_emac1_inst_RXD3
-       //HPS QSPI  
+       //HPS QSPI
 		  .hps_0_hps_io_hps_io_qspi_inst_IO0     ( HPS_FLASH_DATA[0]    ),     //                               .hps_io_qspi_inst_IO0
         .hps_0_hps_io_hps_io_qspi_inst_IO1     ( HPS_FLASH_DATA[1]    ),     //                               .hps_io_qspi_inst_IO1
         .hps_0_hps_io_hps_io_qspi_inst_IO2     ( HPS_FLASH_DATA[2]    ),     //                               .hps_io_qspi_inst_IO2
         .hps_0_hps_io_hps_io_qspi_inst_IO3     ( HPS_FLASH_DATA[3]    ),     //                               .hps_io_qspi_inst_IO3
         .hps_0_hps_io_hps_io_qspi_inst_SS0     ( HPS_FLASH_NCSO    ),        //                               .hps_io_qspi_inst_SS0
         .hps_0_hps_io_hps_io_qspi_inst_CLK     ( HPS_FLASH_DCLK    ),        //                               .hps_io_qspi_inst_CLK
-       //HPS SD card 
+       //HPS SD card
 		  .hps_0_hps_io_hps_io_sdio_inst_CMD     ( HPS_SD_CMD    ),           //                               .hps_io_sdio_inst_CMD
         .hps_0_hps_io_hps_io_sdio_inst_D0      ( HPS_SD_DATA[0]     ),      //                               .hps_io_sdio_inst_D0
         .hps_0_hps_io_hps_io_sdio_inst_D1      ( HPS_SD_DATA[1]     ),      //                               .hps_io_sdio_inst_D1
         .hps_0_hps_io_hps_io_sdio_inst_CLK     ( HPS_SD_CLK   ),            //                               .hps_io_sdio_inst_CLK
         .hps_0_hps_io_hps_io_sdio_inst_D2      ( HPS_SD_DATA[2]     ),      //                               .hps_io_sdio_inst_D2
         .hps_0_hps_io_hps_io_sdio_inst_D3      ( HPS_SD_DATA[3]     ),      //                               .hps_io_sdio_inst_D3
-       //HPS USB 		  
+       //HPS USB
 		  .hps_0_hps_io_hps_io_usb1_inst_D0      ( HPS_USB_DATA[0]    ),      //                               .hps_io_usb1_inst_D0
         .hps_0_hps_io_hps_io_usb1_inst_D1      ( HPS_USB_DATA[1]    ),      //                               .hps_io_usb1_inst_D1
         .hps_0_hps_io_hps_io_usb1_inst_D2      ( HPS_USB_DATA[2]    ),      //                               .hps_io_usb1_inst_D2
@@ -297,12 +297,12 @@ soc_system u0 (
         .hps_0_hps_io_hps_io_usb1_inst_STP     ( HPS_USB_STP    ),          //                               .hps_io_usb1_inst_STP
         .hps_0_hps_io_hps_io_usb1_inst_DIR     ( HPS_USB_DIR    ),          //                               .hps_io_usb1_inst_DIR
         .hps_0_hps_io_hps_io_usb1_inst_NXT     ( HPS_USB_NXT    ),          //                               .hps_io_usb1_inst_NXT
-       //HPS SPI 		  
+       //HPS SPI
 		  .hps_0_hps_io_hps_io_spim1_inst_CLK    ( HPS_SPIM_CLK  ),           //                               .hps_io_spim1_inst_CLK
         .hps_0_hps_io_hps_io_spim1_inst_MOSI   ( HPS_SPIM_MOSI ),           //                               .hps_io_spim1_inst_MOSI
         .hps_0_hps_io_hps_io_spim1_inst_MISO   ( HPS_SPIM_MISO ),           //                               .hps_io_spim1_inst_MISO
         .hps_0_hps_io_hps_io_spim1_inst_SS0    ( HPS_SPIM_SS ),             //                               .hps_io_spim1_inst_SS0
-      //HPS UART		
+      //HPS UART
 		  .hps_0_hps_io_hps_io_uart0_inst_RX     ( HPS_UART_RX    ),          //                               .hps_io_uart0_inst_RX
         .hps_0_hps_io_hps_io_uart0_inst_TX     ( HPS_UART_TX    ),          //                               .hps_io_uart0_inst_TX
 		//HPS I2C1
@@ -311,7 +311,7 @@ soc_system u0 (
 		//HPS I2C2
 		  .hps_0_hps_io_hps_io_i2c1_inst_SDA     ( HPS_I2C2_SDAT    ),        //                               .hps_io_i2c1_inst_SDA
         .hps_0_hps_io_hps_io_i2c1_inst_SCL     ( HPS_I2C2_SCLK    ),        //                               .hps_io_i2c1_inst_SCL
-      //HPS GPIO  
+      //HPS GPIO
 		  .hps_0_hps_io_hps_io_gpio_inst_GPIO09  ( HPS_CONV_USB_N),           //                               .hps_io_gpio_inst_GPIO09
         .hps_0_hps_io_hps_io_gpio_inst_GPIO35  ( HPS_ENET_INT_N),           //                               .hps_io_gpio_inst_GPIO35
         .hps_0_hps_io_hps_io_gpio_inst_GPIO40  ( HPS_LTC_GPIO),              //                               .hps_io_gpio_inst_GPIO40
@@ -320,7 +320,7 @@ soc_system u0 (
         .hps_0_hps_io_hps_io_gpio_inst_GPIO53  ( HPS_LED),                  //                               .hps_io_gpio_inst_GPIO53
         .hps_0_hps_io_hps_io_gpio_inst_GPIO54  ( HPS_KEY),                  //                               .hps_io_gpio_inst_GPIO54
         .hps_0_hps_io_hps_io_gpio_inst_GPIO61  ( HPS_GSENSOR_INT),          //                               .hps_io_gpio_inst_GPIO61
-				//HPS reset output 
+				//HPS reset output
 	  .led_pio_external_connection_export    ( fpga_led_internal 	),    //    led_pio_external_connection.export
 	  .dipsw_pio_external_connection_export  ( SW	),  //  dipsw_pio_external_connection.export
 	  .button_pio_external_connection_export ( fpga_debounced_buttons	), // button_pio_external_connection.export
@@ -329,7 +329,7 @@ soc_system u0 (
      .hps_0_f2h_debug_reset_req_reset_n     (~hps_debug_reset ),     //      hps_0_f2h_debug_reset_req.reset_n
      .hps_0_f2h_stm_hw_events_stm_hwevents  (stm_hw_events ),  //        hps_0_f2h_stm_hw_events.stm_hwevents
      .hps_0_f2h_warm_reset_req_reset_n      (~hps_warm_reset ),      //       hps_0_f2h_warm_reset_req.reset_n
-			// Mesa HM2 
+			// Mesa HM2
      .mk_io_hm2_datain                  		(hm_datao),                     //                          .hm2_datain
      .mk_io_hm2_dataout                 	  	(hm_datai),                    //                    hm2reg.hm2_dataout
      .mk_io_hm2_address                 	  	(hm_address),                    //                          .hm2_address
@@ -342,11 +342,11 @@ soc_system u0 (
      .clk_100mhz_out_clk                    	(hm_clk_med),                    //            clk_100mhz_out.clk
      .clk_200mhz_out_clk                    	(hm_clk_high),                    //            clk_100mhz_out.clk
     );
-  
+
 // Debounce logic to clean out glitches within 1ms
 debounce debounce_inst (
   .clk                                  (fpga_clk_50),
-  .reset_n                              (hps_fpga_reset_n),  
+  .reset_n                              (hps_fpga_reset_n),
   .data_in                              (fpga_button_pio),
   .data_out                             (fpga_debounced_buttons)
 );
@@ -354,7 +354,7 @@ debounce debounce_inst (
   defparam debounce_inst.POLARITY = "LOW";
   defparam debounce_inst.TIMEOUT = 50000;               // at 50Mhz this is a debounce time of 1ms
   defparam debounce_inst.TIMEOUT_WIDTH = 16;            // ceil(log2(TIMEOUT))
-  
+
 // Source/Probe megawizard instance
 hps_reset hps_reset_inst (
   .source_clk (fpga_clk_50),
@@ -380,7 +380,7 @@ altera_edge_detector pulse_warm_reset (
   defparam pulse_warm_reset.PULSE_EXT = 2;
   defparam pulse_warm_reset.EDGE_TYPE = 1;
   defparam pulse_warm_reset.IGNORE_RST_WHILE_BUSY = 1;
-  
+
 altera_edge_detector pulse_debug_reset (
   .clk       (fpga_clk_50),
   .rst_n     (hps_fpga_reset_n),
@@ -391,15 +391,16 @@ altera_edge_detector pulse_debug_reset (
   defparam pulse_debug_reset.EDGE_TYPE = 1;
   defparam pulse_debug_reset.IGNORE_RST_WHILE_BUSY = 1;
 
-  
+
 // Mesa code ------------------------------------------------------//
 
-//use work.PIN_DRINGx2_34.all; 
+//use work.PIN_DRINGx2_34.all;
 //import PIN_DRINGx2_34::*;
 
 
 assign clklow_sig = fpga_clk_50;
 assign clkhigh_sig = hm_clk_high;
+assign clkmed_sig = hm_clk_med;
 
 //import work::*;
 
@@ -424,12 +425,12 @@ HostMot2 HostMot2_inst
 	.writestb(hm_write) ,	// input  writestb_sig
 
 	.clklow(clklow_sig) ,	// input  clklow_sig  				-- PCI clock --> all
-//	.clkmed(clkmed_sig) ,	// input  clkmed_sig  				-- Processor clock --> sserialwa, twiddle
+	.clkmed(clkmed_sig) ,	// input  clkmed_sig  				-- Processor clock --> sserialwa, twiddle
 	.clkhigh(clkhigh_sig) ,	// input  clkhigh_sig				-- High speed clock --> most
 //	.int(int_sig) ,	// output  int_sig							--int => LINT, ---> PCI ?
-//	.dreq(dreq_sig) ,	// output  dreq_sig							
+//	.dreq(dreq_sig) ,	// output  dreq_sig
 //	.demandmode(demandmode_sig) ,	// output  demandmode_sig
-	.iobits(iobits_sig) ,	// inout [iowidth-1:0] 				--iobits => IOBITS,-- external I/O bits	
+	.iobits(iobits_sig) ,	// inout [iowidth-1:0] 				--iobits => IOBITS,-- external I/O bits
 //	.liobits(liobits_sig) ,	// inout [liowidth-1:0] 			--liobits_sig
 //	.rates(rates_sig) ,	// output [4:0] rates_sig
 	.leds(GPIO_0[35:34]) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
@@ -463,8 +464,7 @@ defparam HostMot2_inst.RegStride0 = 256;
 defparam HostMot2_inst.RegStride1 = 256;
 defparam HostMot2_inst.LEDCount = 2;
 
-  
+
 
 endmodule
 
-  
