@@ -72,7 +72,7 @@ default: help
 
 ################################################
 .PHONY: all
-all: preloader uboot dts dtb sd-fat
+all: dts dtb rbf
 
 ifeq ($(HAVE_QUARTUS),1)
 all: sof rbf
@@ -178,7 +178,7 @@ qsys_edit:
 SCRUB_CLEAN_FILES += $(wildcard .qsys_edit)
 
 ifeq ($(HAVE_QSYS),1)
-SCRUB_CLEAN_FILES += $(QSYS_QIP) $(QSYS_SOPCINFO) $(QSYS_BASE) 
+SCRUB_CLEAN_FILES += $(QSYS_QIP) $(QSYS_SOPCINFO) $(QSYS_BASE)
 endif
 
 #############
@@ -213,9 +213,9 @@ $(QUARTUS_PIN_ASSIGNMENTS_STAMP): $(QSYS_STAMP)
 	$(stamp_target)
 
 #######
-# we need to recursively call this makefile to 
+# we need to recursively call this makefile to
 # apply *_pin_assignments.tcl script because the
-# pin_assignment.tcl files may not exist yet 
+# pin_assignment.tcl files may not exist yet
 # when makefile was originally called
 
 ifeq ($(QUARTUS_ENABLE_PIN_ASSIGNMENTS_APPLY),1)
@@ -265,9 +265,9 @@ sof: $(QUARTUS_SOF)
 
 QUARTUS_RBF := $(patsubst %.sof,%.rbf,$(QUARTUS_SOF))
 #
-# This converts the sof into compressed, unencrypted 
-# raw binary format corresponding to MSEL value of 8 
-# in the FPGAMGRREGS_STAT register. If you read the 
+# This converts the sof into compressed, unencrypted
+# raw binary format corresponding to MSEL value of 8
+# in the FPGAMGRREGS_STAT register. If you read the
 # the whole register, it should be 0x50.
 #
 # CVSoC DevBoard SW1 MSEL should be set to up,down,up,down,up,up
@@ -305,8 +305,8 @@ endif
 
 ################################################
 # QSYS/Quartus Project Generation
-#  - we don't run this generation step automatically because 
-#    it will destroy any changes and/or customizations that 
+#  - we don't run this generation step automatically because
+#    it will destroy any changes and/or customizations that
 #    you've made to your qsys or your quartus project
 #
 QSYS_QSYS_GEN := $(firstword $(wildcard create_*_qsys.tcl))
@@ -336,9 +336,9 @@ endif
 .PHONY: qsys_generate_qsys
 ifneq ($(QSYS_QSYS_GEN),)
 
-# Note that this target has a strange & known issue 
+# Note that this target has a strange & known issue
 # that requires the Stratix V device family to be installed.
-# If the stratix V device family is not installed then the target 
+# If the stratix V device family is not installed then the target
 # will hang. This issue will hopefully be resolved in a future
 # version of quartus/qsys.
 
@@ -407,7 +407,7 @@ ifneq ($(wildcard ghrd_reset.tcl),)
 # use the already programmed fpga to reset the hps
 HPS_RESET_TARGETS := hps_cold_reset hps_warm_reset hps_debug_reset
 
-.PHONY: $(HPS_RESET_TARGETS) 
+.PHONY: $(HPS_RESET_TARGETS)
 $(HPS_RESET_TARGETS): hps_%_reset:
 	quartus_stp --script=ghrd_reset.tcl $(if $(BOARD_CABLE),--cable-name "$(BOARD_CABLE)") $(if $(BOARD_DEVICE_INDEX),--device-index "$(BOARD_DEVICE_INDEX)") --$*-reset
 endif
@@ -432,7 +432,7 @@ PRELOADER_DEPS += $(PRELOADER_ID)
 ifeq ($(HAVE_QUARTUS),1)
 PRELOADER_DEPS += $(QUARTUS_STAMP)
 
-$(PRELOADER_ID): $(QUARTUS_STAMP) 
+$(PRELOADER_ID): $(QUARTUS_STAMP)
 endif
 
 PRELOADER_STAMP := $(call get_stamp_target,preloader)
@@ -504,7 +504,7 @@ SCRUB_CLEAN_FILES += $(PRELOADER_DIR)
 # the preloader and uboot that build with this design
 
 # These targets assume you have a pre-imaged sd card
-# or an sd card *.img file 
+# or an sd card *.img file
 # An example sd image for the Altera SoC Development
 # Board can be found here:
 # <soceds_install>/embeddedsw/socfpga/prebuilt_images
@@ -688,7 +688,7 @@ BATCH_DIR := $(if $(TMP),$(TMP)/)batch/$(AR_TIMESTAMP)
 $(patsubst %,batch-%,$(BATCH_TARGETS)): batch-%: $(AR_FILE)
 	@$(RM) $(BATCH_DIR)
 	@$(MKDIR) $(BATCH_DIR)
-	$(CP) $< $(BATCH_DIR) 
+	$(CP) $< $(BATCH_DIR)
 	$(CD) $(BATCH_DIR) && $(TAR) -xzf $(notdir $<) && $(CHMOD) -R 755 *
 	$(MAKE) -C $(BATCH_DIR) $*
 

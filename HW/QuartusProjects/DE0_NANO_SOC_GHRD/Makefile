@@ -72,7 +72,7 @@ default: help
 
 ################################################
 .PHONY: all
-all: dts dtb sof
+all: dts dtb rbf
 
 ifeq ($(HAVE_QUARTUS),1)
 all: sof rbf
