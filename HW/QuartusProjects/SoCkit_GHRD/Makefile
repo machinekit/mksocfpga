@@ -645,7 +645,9 @@ SCRUB_CLEAN_FILES += $(SD_FAT_TGZ)
 
 AR_FILES += $(filter-out $(AR_FILTER_OUT),$(wildcard $(AR_REGEX)))
 
-CLEAN_FILES += $(filter-out $(AR_DIR) $(AR_FILES),$(wildcard *))
+TOP_DIR=top
+
+CLEAN_FILES += $(filter-out $(TOP_DIR) $(AR_DIR) $(AR_FILES),$(wildcard *))
 
 HELP_TARGETS += tgz
 tgz.HELP := Create a tarball with the barebones source files that comprise this design
