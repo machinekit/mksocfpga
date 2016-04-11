@@ -306,6 +306,21 @@ module ghrd_top (
 	output                         [16:0]       hsmc_tx_p
  `endif
 
+`ifdef htg 
+	inout                         [35:0]       GPIO0,
+	inout                         [35:0]       GPIO1,
+	input                                      hsmc_rx_n8,
+	input                                      hsmc_rx_p8,
+	output                                     hsmc_tx_n8,
+	output                                     hsmc_tx_p8,
+	inout                         [3:0]        hsmc_d,
+	input                                      hsmc_clk_in0,
+	output                                     hsmc_clk_out0,
+	inout                                      hsmc_sda,
+	output                                     hsmc_scl
+
+`endif
+ 
  	//////////////////// QSPI Flash I/F 	///////////////////
 //   inout   wire  [3:0] fpga_epqc_data,     // Flash Data
 //   output  wire  fpga_epqc_dclk,           // Data Clock
@@ -447,54 +462,6 @@ module ghrd_top (
   wire 			clkhigh_sig;
 
   
-  wire [35:0] GPIO_0;
-  wire [5:0] GPIO_1;
-
-  assign GPIO_0[0] = hsmc_clkin_n[2];
-  assign GPIO_0[1] = hsmc_rx_n[16];
-  assign GPIO_0[2] = hsmc_clkin_p[2];
-  assign GPIO_0[3] = hsmc_rx_p[16];
-  assign GPIO_0[4] = hsmc_tx_n[16];
-  assign GPIO_0[5] = hsmc_rx_n[15];
-  assign GPIO_0[6] = hsmc_tx_p[16];
-  assign GPIO_0[7] = hsmc_rx_p[15];
-  assign GPIO_0[8] = hsmc_tx_n[15];
-  assign GPIO_0[9] = hsmc_rx_n[14];
-  assign GPIO_0[10] = hsmc_tx_p[15];
-  assign GPIO_0[11] = hsmc_rx_p[14];
-  assign GPIO_0[12] = hsmc_tx_n[14];
-  assign GPIO_0[13] = hsmc_rx_n[13];
-  assign GPIO_0[14] = hsmc_tx_p[14];
-  assign GPIO_0[15] = hsmc_rx_p[13];
-  assign GPIO_0[16] = hsmc_clkout_n[2];
-  assign GPIO_0[17] = hsmc_rx_n[12];
-  assign GPIO_0[18] = hsmc_clkout_p[2];
-  assign GPIO_0[19] = hsmc_rx_p[12];
-  assign GPIO_0[20] = hsmc_tx_n[13];
-  assign GPIO_0[21] = hsmc_rx_n[11];
-  assign GPIO_0[22] = hsmc_tx_p[13];
-  assign GPIO_0[23] = hsmc_rx_p[11];
-  assign GPIO_0[24] = hsmc_tx_n[12];
-  assign GPIO_0[25] = hsmc_rx_n[10];
-
-  assign GPIO_0[26] = hsmc_tx_p[12];
-  assign GPIO_0[27] = hsmc_rx_p[10];
-  assign GPIO_0[28] = hsmc_tx_n[11];
-  assign GPIO_0[29] = hsmc_rx_n[9];
-  assign GPIO_0[30] = hsmc_tx_p[11];
-  assign GPIO_0[31] = hsmc_rx_p[9];
-  assign GPIO_0[32] = hsmc_tx_n[10];
-  assign GPIO_0[33] = hsmc_tx_n[9];
-  assign GPIO_0[34] = hsmc_tx_p[10];
-  assign GPIO_0[35] = hsmc_tx_p[9];
-
-  assign GPIO_1[0] = hsmc_clkin_n[1];
-  assign GPIO_1[1] = hsmc_rx_n[7];
-  assign GPIO_1[2] = hsmc_clkin_p[1];
-  assign GPIO_1[3] = hsmc_rx_p[7];
-  assign GPIO_1[4] = hsmc_tx_n[7];
-  assign GPIO_1[5] = hsmc_rx_n[6];
-
 //  assign GPIO_1[] = ;
 
  //  assign GPIO_0[] = ;
@@ -509,12 +476,12 @@ assign clkmed_sig = hm_clk_med;
 //import work::*;
 
 wire [IOWidth-1:0] iobits_sig;
-assign GPIO_0[IOWidth-1:0] = iobits_sig;
+assign GPIO0[IOWidth-1:0] = iobits_sig;
 
 wire [LIOWidth-1:0] liobits_sig;
 //assign GPIO_1[LIOWidth-1:0] = liobits_sig;
 //assign ARDUINO_IO[LIOWidth-1:0] = liobits_sig;
-assign GPIO_1[LIOWidth-1:0] = liobits_sig;
+assign GPIO1[LIOWidth-1:0] = liobits_sig;
 
 
 //HostMot2 #(.IOWidth(IOWidth),.IOPorts(IOPorts)) HostMot2_inst
@@ -535,7 +502,7 @@ HostMot2 HostMot2_inst
 	.iobits(iobits_sig) ,	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits
 	.liobits(liobits_sig) ,	// inout [lIOWidth-1:0] 			--liobits_sig
 //	.rates(rates_sig) ,	// output [4:0] rates_sig
-	.leds(GPIO_0[35:34]) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
+	.leds(GPIO0[35:34]) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
 );
 
 

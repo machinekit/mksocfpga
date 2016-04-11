@@ -11,7 +11,8 @@
 //`define temp_sense true 
 //`define dvi_in_1 true
 //`define hdmi_out true
-`define hsma true
+//`define hsma true
+`define htg true
 //`define hsmb true
 //`define bitec_dvi true
 `define ddr3 true
