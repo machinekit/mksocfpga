@@ -11,6 +11,14 @@ set_global_assignment -name LAST_QUARTUS_VERSION 15.1.2
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "MON JUN 17 20:35:29 2013"
 set_global_assignment -name DEVICE_FILTER_PACKAGE FBGA
 
+#============================================================
+# common MESA Hostmot 2 Sources:
+set_global_assignment -name QIP_FILE ../../hm2/hm2_socfpga.qip
+
+# MESA board , pin and daughter card config options:
+set_global_assignment -name QIP_FILE ../../hm2/config/hm2_i25_G540x2_34_config.qip
+#============================================================
+
 
 #============================================================
 # ADC
@@ -727,15 +735,6 @@ set_location_assignment PIN_F13 -to VGA_R[7]
 set_location_assignment PIN_C10 -to VGA_SYNC_N
 set_location_assignment PIN_D11 -to VGA_VS
 
-set_global_assignment -name SEARCH_PATH "../../hm2/pins/lpm-ip"
-set_global_assignment -name SEARCH_PATH ../../hm2/pins
-set_global_assignment -name SEARCH_PATH ../../hm2
-set_global_assignment -name SEARCH_PATH "..\\..\\hm2\\pins\\lpm-ip"
-set_global_assignment -name SEARCH_PATH ..\\..\\hm2\\pins
-set_global_assignment -name SEARCH_PATH ..\\..\\hm2
-set_global_assignment -name IP_SEARCH_PATHS "..\\ip;..\\ip\\hm2reg_io;.\\ip"
-set_global_assignment -name PROJECT_IP_REGENERATION_POLICY ALWAYS_REGENERATE_IP
-
 set_instance_assignment -name D5_DELAY 2 -to HPS_DDR3_CK_P -tag __hps_sdram_p0
 set_instance_assignment -name D5_DELAY 2 -to HPS_DDR3_CK_N -tag __hps_sdram_p0
 set_global_assignment -name USE_DLL_FREQUENCY_FOR_DQS_DELAY_CHAIN ON
@@ -940,6 +939,7 @@ set_instance_assignment -name GLOBAL_SIGNAL OFF -to u0|hps_0|hps_io|border|hps_s
 set_instance_assignment -name GLOBAL_SIGNAL OFF -to u0|hps_0|hps_io|border|hps_sdram_inst|p0|umemphy|uread_datapath|reset_n_fifo_wraddress[3] -tag __hps_sdram_p0
 set_instance_assignment -name ENABLE_BENEFICIAL_SKEW_OPTIMIZATION_FOR_NON_GLOBAL_CLOCKS ON -to u0|hps_0|hps_io|border|hps_sdram_inst -tag __hps_sdram_p0
 set_instance_assignment -name PLL_COMPENSATION_MODE DIRECT -to u0|hps_0|hps_io|border|hps_sdram_inst|pll0|fbout -tag __hps_sdram_p0
+
 set_global_assignment -name UNIPHY_SEQUENCER_DQS_CONFIG_ENABLE ON
 set_global_assignment -name OPTIMIZE_MULTI_CORNER_TIMING ON
 set_global_assignment -name ECO_REGENERATE_REPORT ON
@@ -951,22 +951,22 @@ set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 
-set_global_assignment -name VHDL_INPUT_VERSION VHDL_2008
+set_global_assignment -name IP_SEARCH_PATHS "../../ip/**/*;./ip;../../ip/ADC_LTC2308_FIFO;../../ip/hm2reg_io;../../ip"
+set_global_assignment -name PROJECT_IP_REGENERATION_POLICY ALWAYS_REGENERATE_IP
 set_global_assignment -name VERILOG_INPUT_VERSION SYSTEMVERILOG_2005
+set_global_assignment -name VHDL_INPUT_VERSION VHDL_2008
 
+set_global_assignment -name SAVE_DISK_SPACE OFF
 set_global_assignment -name FLOW_ENABLE_RTL_VIEWER ON
 set_global_assignment -name TIMEQUEST_MULTICORNER_ANALYSIS ON
-set_global_assignment -name SAVE_DISK_SPACE OFF
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
-set_global_assignment -name QIP_FILE ../../ip/altsource_probe/hps_reset.qip
+set_global_assignment -name ENABLE_SIGNALTAP OFF
+
+set_global_assignment -name VERILOG_FILE ../../ip/edge_detect/altera_edge_detector.v
 set_global_assignment -name VERILOG_FILE ../../ip/altsource_probe/hps_reset.v
 set_global_assignment -name VERILOG_FILE ../../ip/debounce/debounce.v
-set_global_assignment -name VERILOG_FILE ../../ip/edge_detect/altera_edge_detector.v
+set_global_assignment -name QIP_FILE ../../ip/altsource_probe/hps_reset.qip
 set_global_assignment -name QIP_FILE soc_system/synthesis/soc_system.qip
 set_global_assignment -name SDC_FILE soc_system_timing.sdc
+
 set_global_assignment -name SYSTEMVERILOG_FILE ghrd.sv
-set_global_assignment -name VHDL_FILE ../../hm2/config/i25_x9card.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/config/PIN_G540x2_34.vhd
-set_global_assignment -name QIP_FILE ../../hm2/hm2_soc.qip
-set_global_assignment -name QIP_FILE "../../hm2/pins/lpm-ip/Mux16x1.qip"
-set_global_assignment -name QIP_FILE "../../hm2/pins/lpm-ip/Shiftreg16.qip"
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
