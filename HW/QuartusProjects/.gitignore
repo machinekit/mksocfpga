@@ -53,7 +53,7 @@
 *example*
 *~
 *.sdc
-*.tcl
+*.tar.gz
 *.pin
 *.mif
 *.hex
