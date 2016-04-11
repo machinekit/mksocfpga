@@ -23,13 +23,13 @@ The main script is right now split in 2 versions named after the host they are m
 
 Most of the script cofiguration is moved to the main script:
 
-Toolchain, dist, kernel version, sd-imagename 
+Toolchain, dist, kernel version, sd-imagename
 
 Kernel (git cloned, or file download & patched, url's)
 
 Networking on the 3.10 jessie beta3 image is ipv4 dhcp plug and play, all you would need to add would be to set your own static custom mac address in u-boot so your dhcp server dosn't keep generating new leases every time you reboot the soc.
 
-Pending MK PR commit now passes all checks and has been through lots of bug fixes and typo corrections. 
+Pending MK PR commit now passes all checks and has been through lots of bug fixes and typo corrections.
 
 Right now I will put focus once again onto the quartus project, to get the data write (read) to function properly.
 
@@ -61,7 +61,7 @@ rootfs has native armhf gcc 4.9
 
 No manual u-boot env changes needed
 
-SD-Cross-Build scripts split into Debian Jessie and Stretch edition 
+SD-Cross-Build scripts split into Debian Jessie and Stretch edition
 
 ---
 
@@ -76,7 +76,7 @@ https://github.com/the-snowwhite/mksocfpga/blob/master/docs/set-uboot-env.md
 
 Msel (SW10):
 
- 010101  
+ 010101
 
 (123456)
 
@@ -93,16 +93,16 @@ To set localtimezone:
 
     sudo dpkg-reconfigure tzdata
 
-    
+
 ---
-    
-    
+
+
 
 DE0-Nano Quartus project fully functional.
 
     Initial hal hostmot2 module drivers to be tested with custom uio driver module online:
 
-    
+
 https://github.com/the-snowwhite/machinekit/tree/mksoc/src
 
 Quickstart test quide:

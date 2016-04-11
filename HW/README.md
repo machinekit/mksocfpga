@@ -13,34 +13,33 @@ Start Quartus shell:
 
     '~/altera/15.1/embedded/embedded_command_shell.sh'
 
-cd to a quartus project folder:
+cd to one of the quartus project folders:
 
     cd /the-snowwhite_git/mksocfpga/HW/QuartusProjects/DE0_NANO_SOC_GHRD
 
-to start quartus loaded with project loaded:
+to start quartus gui with the project in current folder loaded:
 
     make quartus_edit
 
 
-To script compile all needed output files:
+To script compile all needed output files for Machinekit (via hm2_soc driver):
 
-    make dts dtb rbf
-
-
-(make sof may be needed instead of rbf to generate the .rbf fpga config file)
+    make all   (same as dts dtb rbf)
 
 Note:
 
 
-    Quartus config is in *.qsf files, there are (unclear)differences between linux / and windows \\ paths.
+    The projects Quartus config is in *.qsf file(be carefull when hand editing).
+    Beware There are (unclear when needed) differences between linux / and windows \\ Global paths.
 
 
 Note2:
 
    On my (older) SocKit boards the usb serial uart chip does not power on from the usb cable alone.
-   Forcing you to power on the SocKit board before dev/ttyUSB0 gets available.
+   Forcing you to power on the SocKit board before dev/ttyUSB0 gets available. And dropping the usb
+   connection when you power-off-reboot the board.
 
-   This is because the uart chips Reset signal gets pulled down to low (0.84V) to come out of reset
-   without powering up the whole board.
+   This is because the uart chips Reset signal is pulled down too much (0.84V) to be able to come out
+   of reset without powering up the whole board (caused by the chip connected to R301).
 
-   To fix this you can simply desolder R301. (On bottomside, middle about 3 cm abowe switches [H_SW0])
+   A simple fix for this is to simply desolder R301. (On pcb-bottomside, near middle about 3 cm abowe switches [H_SW0])

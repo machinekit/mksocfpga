@@ -25,7 +25,7 @@ Contents example:
 </library>
 
 
-Linux Quartus 15.1(Installed in standard location) Relocation Fix:
+Linux Quartus 15.1(Installed in standard location) Relocation Fix for addidn a path to a new global custom ip core:
 
 (path is relative to quartus project folder)
 
