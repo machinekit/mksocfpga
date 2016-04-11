@@ -1,0 +1,14 @@
+
+set_global_assignment -name VHDL_FILE ../../hm2/functions/PinExists.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/functions/oneofndecode.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/functions/NumberOfModules.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/functions/ModuleExists.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/functions/MaxPinsPerModule.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/functions/MaxOutputPinsPerModule.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/functions/MaxIOPinsPerModule.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/functions/MaxInputPinsPerModule.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/functions/log2.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/functions/InputPinsPerModule.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/functions/decodedstrobe.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/functions/CountPinsInRange.vhd
+

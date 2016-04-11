@@ -1,3 +1,4 @@
+#-------------------- Common HM2 MESA Hostmot 2 Sources --------------------------#
 set_global_assignment -name SEARCH_PATH "../../megawizard/lpm-ip"
 set_global_assignment -name SEARCH_PATH ../../megawizard
 set_global_assignment -name SEARCH_PATH ../../hm2
@@ -5,26 +6,15 @@ set_global_assignment -name SEARCH_PATH "..\\..\\megawizard\\lpm-ip"
 set_global_assignment -name SEARCH_PATH ..\\..\\megawizard
 set_global_assignment -name SEARCH_PATH ..\\..\\hm2
 
+# Altera version of Xilinx SLR16E (shiftreg)ip:
+set_global_assignment -name VHDL_FILE ../../megawizard/lpm_pack.vhd
 set_global_assignment -name QIP_FILE "../../megawizard/lpm-ip/lpm_mux16.qip"
 set_global_assignment -name QIP_FILE "../../megawizard/lpm-ip/lpm_shiftreg16.qip"
 
-set_global_assignment -name VHDL_FILE ../../megawizard/lpm_pack.vhd
-set_global_assignment -name VHDL_FILE ../../megawizard/SRL16E.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/config/i25_x9card.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/config/IDROMConst.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/config/PIN_G540x2_34.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/functions/PinExists.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/functions/oneofndecode.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/functions/NumberOfModules.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/functions/ModuleExists.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/functions/MaxPinsPerModule.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/functions/MaxOutputPinsPerModule.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/functions/MaxIOPinsPerModule.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/functions/MaxInputPinsPerModule.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/functions/log2.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/functions/InputPinsPerModule.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/functions/decodedstrobe.vhd
-set_global_assignment -name VHDL_FILE ../../hm2/functions/CountPinsInRange.vhd
+# HM2 VHDL Setup and config probe functions:
+set_global_assignment -name QIP_FILE ../../hm2/functions/hm2_functions.qip
+
+# HM2 cores:
 set_global_assignment -name VHDL_FILE ../../hm2/kubstepgenzi.vhd
 set_global_assignment -name VHDL_FILE ../../hm2/kubstepgenz.vhd
 set_global_assignment -name VHDL_FILE ../../hm2/hostmot2.vhd
