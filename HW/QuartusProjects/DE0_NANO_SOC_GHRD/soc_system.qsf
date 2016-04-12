@@ -634,7 +634,7 @@ set_instance_assignment -name GLOBAL_SIGNAL OFF -to u0|hps_0|hps_io|border|hps_s
 set_instance_assignment -name ENABLE_BENEFICIAL_SKEW_OPTIMIZATION_FOR_NON_GLOBAL_CLOCKS ON -to u0|hps_0|hps_io|border|hps_sdram_inst -tag __hps_sdram_p0
 set_instance_assignment -name PLL_COMPENSATION_MODE DIRECT -to u0|hps_0|hps_io|border|hps_sdram_inst|pll0|fbout -tag __hps_sdram_p0
 
-set_global_assignment -name IP_SEARCH_PATHS "../../ip/**/*;./ip;../../ip/ADC_LTC2308_FIFO;../../ip/hm2reg_io;../../ip"
+set_global_assignment -name IP_SEARCH_PATHS "../../cv-ip/**/*;./ip;../../cv-ip/ADC_LTC2308_FIFO;../../cv-ip/hm2reg_io;../../ip"
 set_global_assignment -name PROJECT_IP_REGENERATION_POLICY ALWAYS_REGENERATE_IP
 set_global_assignment -name VERILOG_INPUT_VERSION SYSTEMVERILOG_2005
 set_global_assignment -name VHDL_INPUT_VERSION VHDL_2008
@@ -645,10 +645,10 @@ set_global_assignment -name FLOW_ENABLE_RTL_VIEWER ON
 set_global_assignment -name TIMEQUEST_MULTICORNER_ANALYSIS ON
 set_global_assignment -name ENABLE_SIGNALTAP OFF
 set_global_assignment -name USE_SIGNALTAP_FILE adc4stp4.stp
-set_global_assignment -name VERILOG_FILE ../../ip/edge_detect/altera_edge_detector.v
-set_global_assignment -name VERILOG_FILE ../../ip/intr_capturer/intr_capturer.v
-set_global_assignment -name VERILOG_FILE ../../ip/debounce/debounce.v
-set_global_assignment -name VERILOG_FILE ../../ip/altsource_probe/hps_reset.v
+set_global_assignment -name VERILOG_FILE ../../cv-ip/edge_detect/altera_edge_detector.v
+set_global_assignment -name VERILOG_FILE ../../cv-ip/intr_capturer/intr_capturer.v
+set_global_assignment -name VERILOG_FILE ../../cv-ip/debounce/debounce.v
+set_global_assignment -name VERILOG_FILE ../../cv-ip/altsource_probe/hps_reset.v
 set_global_assignment -name QIP_FILE soc_system/synthesis/soc_system.qip
 
 set_global_assignment -name SYSTEMVERILOG_FILE ghrd.sv

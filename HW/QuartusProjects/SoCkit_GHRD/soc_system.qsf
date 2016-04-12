@@ -962,7 +962,7 @@ set_location_assignment PIN_AE26 -to clk_i2c_sclk
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to clk_i2c_sdat
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to clk_i2c_sclk
 set_location_assignment PIN_AJ29 -to clk_i2c_sdat
-set_global_assignment -name IP_SEARCH_PATHS "../../ip/**/*;./ip;../../ip/ADC_LTC2308_FIFO;../../ip/hm2reg_io;../../ip"
+set_global_assignment -name IP_SEARCH_PATHS "../../cv-ip/**/*;./ip;../../cv-ip/ADC_LTC2308_FIFO;../../cv-ip/hm2reg_io;../../ip"
 set_global_assignment -name ENABLE_OCT_DONE OFF
 set_global_assignment -name USE_CONFIGURATION_DEVICE ON
 set_global_assignment -name GENERATE_RBF_FILE ON
@@ -972,9 +972,9 @@ set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
 set_global_assignment -name ACTIVE_SERIAL_CLOCK FREQ_100MHZ
-set_global_assignment -name VERILOG_FILE ../../ip/debounce/debounce.v
-set_global_assignment -name VERILOG_FILE ../../ip/edge_detect/altera_edge_detector.v
-set_global_assignment -name QIP_FILE ../../ip/altsource_probe/hps_reset.qip
+set_global_assignment -name VERILOG_FILE ../../cv-ip/debounce/debounce.v
+set_global_assignment -name VERILOG_FILE ../../cv-ip/edge_detect/altera_edge_detector.v
+set_global_assignment -name QIP_FILE ../../cv-ip/altsource_probe/hps_reset.qip
 set_global_assignment -name QIP_FILE soc_system/synthesis/soc_system.qip
 set_global_assignment -name VERILOG_FILE top/config_soc.v
 set_global_assignment -name SDC_FILE soc_system_timing.sdc
