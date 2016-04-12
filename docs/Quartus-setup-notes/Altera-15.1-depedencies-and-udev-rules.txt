@@ -10,6 +10,10 @@ sudo apt install libncurses5:i386 tcl:i386 libx11-6:i386 libxau6:i386 libxdmcp6:
 # skip
 util-linux:i386
 
+----
+
+# Add eth0 named lan interface (fix detection of node based licenses for * mac hw address)
+
 # replace "xx:xx:xx:xx:xx:xx"  with the real mac address of the lan interface to rename.
 # AFAIK the interface renamed to eth0 does not need to be active or plugged in for the
 # node locked licening to work. Also you kan install a virtual software only "dummy" 
