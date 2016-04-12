@@ -1,15 +1,15 @@
 #-------------------- Common HM2 MESA Hostmot 2 Sources --------------------------#
-set_global_assignment -name SEARCH_PATH "../../megawizard/lpm-ip"
-set_global_assignment -name SEARCH_PATH ../../megawizard
+set_global_assignment -name SEARCH_PATH "../../cv-megawizard/lpm-ip"
+set_global_assignment -name SEARCH_PATH ../../cv-megawizard
 set_global_assignment -name SEARCH_PATH ../../hm2
-set_global_assignment -name SEARCH_PATH "..\\..\\megawizard\\lpm-ip"
-set_global_assignment -name SEARCH_PATH ..\\..\\megawizard
+set_global_assignment -name SEARCH_PATH "..\\..\\cv-megawizard\\lpm-ip"
+set_global_assignment -name SEARCH_PATH ..\\..\\cv-megawizard
 set_global_assignment -name SEARCH_PATH ..\\..\\hm2
 
 # Altera version of Xilinx SLR16E (shiftreg)ip:
-set_global_assignment -name VHDL_FILE ../../megawizard/lpm_pack.vhd
-set_global_assignment -name QIP_FILE "../../megawizard/lpm-ip/lpm_mux16.qip"
-set_global_assignment -name QIP_FILE "../../megawizard/lpm-ip/lpm_shiftreg16.qip"
+set_global_assignment -name VHDL_FILE ../../cv-megawizard/lpm_pack.vhd
+set_global_assignment -name QIP_FILE "../../cv-megawizard/lpm-ip/lpm_mux16.qip"
+set_global_assignment -name QIP_FILE "../../cv-megawizard/lpm-ip/lpm_shiftreg16.qip"
 
 # HM2 VHDL Setup and config probe functions:
 set_global_assignment -name QIP_FILE ../../hm2/functions/hm2_functions.qip
