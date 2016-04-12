@@ -1,4 +1,4 @@
-Install dependencies:
+#Install Quartus debian dependencies:
 
     sudo apt install expat fontconfig libfreetype6 xfonts-base xfonts-tipa libc6 libgtk2.0-0 libcanberra0 libpng3 libpng12.0 libice6 libsm6 util-linux libncurses5 tcl tcllib libx11-6 libxau6 libxdmcp6 libxext6 libxft2 libxrender1 libxt6 libxtst6
 
@@ -14,7 +14,9 @@ Install dependencies:
 
 ----
 
-Add eth0 named lan interface (fix detection of node based licenses for * mac hw address)
+#fix detection of node based licenses for * mac hw address
+
+Add eth0 named lan interface 
 
 replace "xx:xx:xx:xx:xx:xx"  with the real mac address of the lan interface to rename.
 AFAIK the interface renamed to eth0 does not need to be active or plugged in for the
