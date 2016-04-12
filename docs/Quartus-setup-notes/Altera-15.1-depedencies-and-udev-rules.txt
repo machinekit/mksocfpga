@@ -10,10 +10,13 @@ sudo apt install libncurses5:i386 tcl:i386 libx11-6:i386 libxau6:i386 libxdmcp6:
 # skip
 util-linux:i386
 
-
+# replace "xx:xx:xx:xx:xx:xx"  with the real mac address of the lan interface to rename.
+# AFAIK the interface renamed to eth0 does not need to be active or plugged in for the
+# node locked licening to work. Also you kan install a virtual software only "dummy" 
+# lan interface, and still get the licening to work.
 
 sudo nano /etc/udev/rules.d/10-network.rules
-SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="78:24:af:8f:a4:7c", NAME="eth0"
+SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="xx:xx:xx:xx:xx:xx", NAME="eth0"
 
 mib@debian9-ws:~/$ cat /etc/udev/rules.d/92-usbblaster.rules
 # USB-Blaster
