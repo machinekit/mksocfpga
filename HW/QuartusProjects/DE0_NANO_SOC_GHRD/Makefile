@@ -229,7 +229,7 @@ quartus_apply_tcl_pin_assignments: $(QUARTUS_TCL_PIN_ASSIGNMENTS_APPLY_TARGETS)
 .PHONY: $(QUARTUS_TCL_PIN_ASSIGNMENTS_APPLY_TARGETS)
 $(QUARTUS_TCL_PIN_ASSIGNMENTS_APPLY_TARGETS): quartus_apply_tcl-%: %
 	@$(ECHO) "Applying $<... to $(QUARTUS_QPF)..."
-	quartus_sh -t $< $(QUARTUS_QPF)
+	quartus_sta -t $< $(QUARTUS_QPF)
 
 endif # QUARTUS_ENABLE_PIN_ASSIGNMENTS_APPLY == 1
 ######
