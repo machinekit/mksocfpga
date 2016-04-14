@@ -1,0 +1,12 @@
+sudo: required
+
+language: bash
+
+services:
+  - docker
+
+before_script:
+  - travis_wait Scripts/docker_pull.sh
+
+script:
+  - docker run -v $(pwd):/work cdsteinkuehler/jessie-quartus-15.1.2 /work/Scripts/travis_build.sh
