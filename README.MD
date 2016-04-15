@@ -1,3 +1,6 @@
+[![Build Status](https://jenkins.machinekit.io/job/mksocfpga/badge/icon)](https://jenkins.machinekit.io/job/mksocfpga/)
+
+
 11-apr-2016
 
 The mksocfpga project is getting very near to handing off the final bits and pieces to Machinekit.
