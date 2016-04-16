@@ -1,5 +1,6 @@
-[![Build Status](https://jenkins.machinekit.io/job/mksocfpga/badge/icon)](https://jenkins.machinekit.io/job/mksocfpga/)
+Quartus Build Status: [![Quartus Build Status](https://jenkins.machinekit.io/job/mksocfpga/badge/icon)](https://jenkins.machinekit.io/job/mksocfpga/)
 
+Debian Packaging Status: [![Debian Packaging Status](https://jenkins.machinekit.io/job/mksocfpga-packaging/badge/icon)](https://jenkins.machinekit.io/job/mksocfpga-packaging)
 
 11-apr-2016
 
