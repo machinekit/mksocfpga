@@ -798,11 +798,11 @@
       <xilinx:displayName>hm2_axilite_int_v1_0</xilinx:displayName>
       <xilinx:vendorDisplayName>MachineKit</xilinx:vendorDisplayName>
       <xilinx:vendorURL>http://www.machinekit.io</xilinx:vendorURL>
-      <xilinx:coreRevision>1</xilinx:coreRevision>
+      <xilinx:coreRevision>4</xilinx:coreRevision>
       <xilinx:upgrades>
         <xilinx:canUpgradeFrom>user.org:user:hm2_axilite_int:1.0</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
-      <xilinx:coreCreationDateTime>2016-04-19T14:14:57Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2016-04-19T17:50:24Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="user.org:user:hm2_axilite_int:1.0_ARCHIVE_LOCATION">/home/developer/mksocfpga/HW/zynq-ip/hm2_axilite</xilinx:tag>
         <xilinx:tag xilinx:name="machinekit.io:user:hm2_axilite_int:1.0_ARCHIVE_LOCATION">/home/developer/mksocfpga/HW/zynq-ip/hm2_axilite</xilinx:tag>

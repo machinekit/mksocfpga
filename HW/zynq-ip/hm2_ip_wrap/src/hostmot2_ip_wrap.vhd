@@ -67,9 +67,11 @@
 -- the static configuration that is not GUI customizable to the HostMot2
 -- module without exposing it at the top level.
 
-library pins;
+library ieee;
+use IEEE.std_logic_1164.all; 
+--library pins;
 -- Select a pin file here
-use pins.PIN_G540x2_34.all;
+use work.PIN_G540x2_34.all;
 -- Need the IDROMConst for the board names
 use work.IDROMConst.all;
 
@@ -114,7 +116,7 @@ entity HostMot2_ip_wrap is
   clklow: in std_logic;
   clkmed: in std_logic;
   clkhigh: in std_logic;
-  int: out std_logic;
+  interrupt: out std_logic;
   dreq: out std_logic;
   demandmode: out std_logic;
   iobits: inout std_logic_vector (iowidth -1 downto 0);
@@ -167,7 +169,7 @@ begin
     	clklow => clklow,
     	clkmed => clkmed,
     	clkhigh => clkhigh,
-    	int => int,
+    	int => interrupt,
     	dreq => dreq,
     	demandmode => demandmode,
     	iobits => iobits,
