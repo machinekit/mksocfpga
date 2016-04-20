@@ -154,7 +154,7 @@ architecture arch_imp of hm2_axilite_int is
 	signal write_done : std_logic;
 
 	-- Latched address and strobe for hm2 interface
-	signal latched_addr	: std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
+	signal latched_addr	: std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 2);
 	signal read_enable : std_logic;
 	signal write_enable : std_logic;
 
@@ -204,10 +204,10 @@ begin
 			else
 				if(current_state = idle) then
 					if (axi_arready = '0' and S_AXI_ARVALID = '1') then
-						latched_addr <= S_AXI_ARADDR;	-- Latch the address from the read bus
+						latched_addr <= S_AXI_ARADDR(C_S_AXI_ADDR_WIDTH-1 downto 2); -- Latch the address from the read bus
 						axi_arready <= '1';  -- Indicate we have accepted the valid address
 					elsif (axi_awready = '0' and axi_wready = '0' and S_AXI_AWVALID = '1' and S_AXI_WVALID = '1') then
-						latched_addr <= S_AXI_AWADDR; -- Latch the address from the write bus
+						latched_addr <= S_AXI_AWADDR(C_S_AXI_ADDR_WIDTH-1 downto 2); -- Latch the address from the write bus
 						axi_awready <= '1'; -- Indicate we have accepted the valid address
 						axi_wready <= '1';	-- The wready signal is valid when the address and data are valid - PG155 Fig. 3-5 and template code
 					end if;
