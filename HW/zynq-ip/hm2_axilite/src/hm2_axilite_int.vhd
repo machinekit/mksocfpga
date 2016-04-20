@@ -72,7 +72,9 @@ entity hm2_axilite_int is
 	);
 	port (
 		-- Generic 32-bit bus signals --
-		ADDR : out std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
+		-- The addr signal takes the MSbs from the AXI addr bus and passes them on
+		-- clipping the bottom two lsbs.
+		ADDR : out std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 2);
 		-- These names are backwards from their logical direction so
 		-- we can have a 1:1 mapping with the hostmot2 component
 		IBUS : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
