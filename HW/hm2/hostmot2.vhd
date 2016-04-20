@@ -66,7 +66,6 @@ use IEEE.std_logic_UNSIGNED.ALL;
 --     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 --     POSSIBILITY OF SUCH DAMAGE.
 --
---library pins;
 use work.PIN_G540x2_34.all;
 use work.IDROMConst.all;
 --library UNISIM;
