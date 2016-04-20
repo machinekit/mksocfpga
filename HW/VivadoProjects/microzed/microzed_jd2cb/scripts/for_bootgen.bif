@@ -1,0 +1,7 @@
+all:
+
+{
+
+soc_system_wrapper.bit
+
+}
