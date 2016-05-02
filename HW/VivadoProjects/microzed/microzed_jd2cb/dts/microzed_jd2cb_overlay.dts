@@ -9,7 +9,7 @@
       #address-cells = <1>;
       #size-cells = <1>;
 
-	  firmware-name = "soc_system_wrapper.bit.bin";
+	  firmware-name = "zynq/microzed_jd2cb.bit.bin";
 
 	  hm2reg_io_0: hm2-socfpga@0x43C00000 {
 		compatible = "machkt,hm2reg-io-1.0";
