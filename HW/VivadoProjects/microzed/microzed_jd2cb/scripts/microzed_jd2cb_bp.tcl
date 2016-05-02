@@ -14,24 +14,6 @@
 #   original project, however they will not be launched automatically. To regenerate the
 #   run results please launch the synthesis/implementation runs as needed.
 #
-#*****************************************************************************************
-# NOTE: In order to use this script for source control purposes, please make sure that the
-#       following files are added to the source control system:-
-#
-# 1. This project restoration tcl script (microzed_jd2cb_bp.tcl) that was generated.
-#
-# 2. The following source(s) files that were local or imported into the original project.
-#    (Please see the '$orig_proj_dir' and '$origin_dir' variable setting below at the start of the script)
-#
-#    <none>
-#
-# 3. The following remote source files that were added to the original project:-
-#
-#    "/home/developer/mksocfpga/HW/VivadoProjects/microzed/microzed_jd2cb/microzed_jd2cb.srcs/sources_1/bd/src/soc_system.bd"
-#    "/home/developer/mksocfpga/HW/VivadoProjects/microzed/microzed_jd2cb/microzed_jd2cb.srcs/sources_1/bd/src/hdl/soc_system_wrapper.vhd"
-#    "/home/developer/mksocfpga/HW/VivadoProjects/microzed/microzed_jd2cb/microzed_jd2cb.srcs/constrs_1/imports/co/microzed_jd2cb_pinmap.xdc"
-#
-#*****************************************************************************************
 
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 set origin_dir [file dirname [info script]]
@@ -85,10 +67,10 @@ if { $::argc > 0 } {
 }
 
 # Set the directory path for the original project from where this script was exported
-set orig_proj_dir "[file normalize "$origin_dir/microzed_jd2cb_created"]"
+set orig_proj_dir "[file normalize "$origin_dir/../microzed_jd2cb_created"]"
 
 # Create project
-create_project microzed_jd2cb $origin_dir/microzed_jd2cb_created
+create_project microzed_jd2cb $origin_dir/../microzed_jd2cb_created
 
 # Set the directory path for the new project
 set proj_dir [get_property directory [current_project]]
@@ -108,13 +90,13 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Set IP repository paths
 set obj [get_filesets sources_1]
-set_property "ip_repo_paths" "[file normalize "$origin_dir/../../../zynq-ip"]" $obj
+set_property "ip_repo_paths" "[file normalize "$origin_dir/../../../../zynq-ip"]" $obj
 
 # Rebuild user ip_repo's index before adding any source files
 update_ip_catalog -rebuild
 
 # Build the bd
-source $origin_dir/scripts/soc_system.tcl
+source $origin_dir/soc_system.tcl
 # Create the hdl wrapper file
 make_wrapper -files [get_files $proj_dir/src/soc_system/soc_system.bd] -top
 add_files -norecurse $proj_dir/src/soc_system/hdl/soc_system_wrapper.vhd
@@ -144,9 +126,9 @@ if {[string equal [get_filesets -quiet constrs_1] ""]} {
 set obj [get_filesets constrs_1]
 
 # Add/Import constrs file and set constrs file properties
-set file "[file normalize "$origin_dir/const/microzed_jd2cb_pinmap.xdc"]"
+set file "[file normalize "$origin_dir/../const/microzed_jd2cb_pinmap.xdc"]"
 set file_added [add_files -norecurse -fileset $obj $file]
-set file "$origin_dir/const/microzed_jd2cb_pinmap.xdc"
+set file "$origin_dir/../const/microzed_jd2cb_pinmap.xdc"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets constrs_1] [list "*$file"]]
 set_property "file_type" "XDC" $file_obj
@@ -196,3 +178,16 @@ set_property "steps.write_bitstream.args.verbose" "0" $obj
 current_run -implementation [get_runs impl_1]
 
 puts "INFO: Project created:microzed_jd2cb"
+
+# reset the runs just in case
+reset_run synth_1
+reset_run impl_1
+
+# Launch the runs
+launch_runs impl_1
+wait_on_run impl_1
+
+open_run impl_1
+
+# Write the bitstream
+write_bitstream "$origin_dir/../microzed_jd2cb"

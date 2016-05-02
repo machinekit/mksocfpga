@@ -57,7 +57,7 @@ begin
       C_S_AXI_DATA_WIDTH => TB_DATA_WIDTH,
       C_S_AXI_ADDR_WIDTH => TB_ADDR_WIDTH)
     port map (
-      ADDR => addr,
+      ADDR => addr(15 downto 2),
       IBUS => ibus,
       OBUS => obus,
       READSTB => readstb,
@@ -98,6 +98,8 @@ begin
       READSTB => readstb,
       WRITESTB => writestb
     );
+
+    addr(1 downto 0) <= (others => '0');
 
   -- Generate the reference clock @ 50% duty cycle
   clock_gen : process
@@ -168,7 +170,7 @@ begin
       write_data <= '0'; --Clear Start Send Flag
     wait until axi_bvalid = '1';
     wait until axi_bvalid = '0';  --AXI Write finished
-      axi_awaddr <= x"0001";
+      axi_awaddr <= x"0004";
       axi_wdata <= x"22222222";
       axi_wstrb <= b"1111";
       write_data <= '1';                --Start AXI Write to Slave
@@ -176,7 +178,7 @@ begin
       write_data <= '0'; --Clear Start Send Flag
     wait until axi_bvalid = '1';
     wait until axi_bvalid = '0';  --AXI Write finished
-      axi_awaddr <= x"0002";
+      axi_awaddr <= x"0008";
       axi_wdata <= x"33333333";
       axi_wstrb <= b"1111";
       write_data <= '1';                --Start AXI Write to Slave
@@ -184,7 +186,7 @@ begin
       write_data <= '0'; --Clear Start Send Flag
     wait until axi_bvalid = '1';
     wait until axi_bvalid = '0';  --AXI Write finished
-      axi_awaddr <= x"0003";
+      axi_awaddr <= x"000C";
       axi_wdata <= x"A5A5A5A5";
       axi_wstrb <= b"1111";
       write_data <= '1';                --Start AXI Write to Slave
@@ -198,19 +200,19 @@ begin
       read_data <= '0'; --Clear "Start Read" Flag
     wait until axi_rvalid = '1';
     wait until axi_rvalid = '0';
-      axi_araddr <= x"0001";
+      axi_araddr <= x"0004";
       read_data <= '1';                --Start AXI Read from Slave
     wait for 1 ns;
       read_data <= '0'; --Clear "Start Read" Flag
     wait until axi_rvalid = '1';
     wait until axi_rvalid = '0';
-      axi_araddr <= x"0002";
+      axi_araddr <= x"0008";
       read_data <= '1';                --Start AXI Read from Slave
     wait for 1 ns;
       read_data <= '0'; --Clear "Start Read" Flag
     wait until axi_rvalid = '1';
     wait until axi_rvalid = '0';
-      axi_araddr <= x"0003";
+      axi_araddr <= x"000C";
       read_data <= '1';                --Start AXI Read from Slave
     wait for 1 ns;
       read_data <= '0'; --Clear "Start Read" Flag

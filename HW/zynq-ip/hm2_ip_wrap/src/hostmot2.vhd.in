@@ -66,8 +66,7 @@ use IEEE.std_logic_UNSIGNED.ALL;
 --     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 --     POSSIBILITY OF SUCH DAMAGE.
 --
--- use work.@PIN_NAME@.all;
-use work.PIN_G540x2_34.vhd;
+use work.@PIN_NAME@.all;
 use work.IDROMConst.all;
 use work.log2.all;
 use work.decodedstrobe.all;

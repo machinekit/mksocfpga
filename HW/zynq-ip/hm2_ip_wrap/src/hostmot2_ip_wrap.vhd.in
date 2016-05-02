@@ -70,7 +70,7 @@
 library ieee;
 use IEEE.std_logic_1164.all;
 -- Select pin package here
-use work.PIN_JD2CB_34.all;
+use work.@PIN_NAME@.all;
 -- Need the IDROMConst for the board names
 use work.IDROMConst.all;
 
@@ -144,7 +144,7 @@ begin
       ClockMed => ClockMed,
       ClockLow => ClockLow,
       BoardNameLow => BoardNameMesa,
-      BoardNameHigh => x"4A444342",
+      BoardNameHigh => x"@BOARD_NAME_HEX@",
       FPGASize => FPGASize,
       FPGAPins => FPGAPins,
       IOPorts => IOPorts,

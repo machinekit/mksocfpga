@@ -73,7 +73,7 @@ use ieee.numeric_std.all;
 entity hm2_axilite_gen32_simreg is
 	generic (
 		C_S_AXI_DATA_WIDTH	: integer	:= 32;		-- Width of S_AXI data bus
-		C_S_AXI_ADDR_WIDTH	: integer	:= 16 		-- Width of S_AXI address bus
+		C_S_AXI_ADDR_WIDTH	: integer	:= 14 		-- Width of S_AXI address bus
 	);
 	port (
 		-- Generic 32-bit bus signals --
@@ -98,7 +98,15 @@ architecture arch_imp of hm2_axilite_gen32_simreg is
   signal slv_reg6 : std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
   signal slv_reg7 : std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
 
+  signal A : std_logic_vector(C_S_AXI_ADDR_WIDTH - 1 downto 0);
 begin
+
+  process(CLK, addr)
+  begin
+    if (rising_edge(CLK)) then
+        A <= addr;
+    end if;
+  end process;
 
   write_mux : process (CLK)
   variable loc_addr : std_logic_vector(2 downto 0);
@@ -114,7 +122,7 @@ begin
         slv_reg6 <= (others => '0');
         slv_reg7 <= (others => '0');
       else
-        loc_addr := ADDR(2 downto 0);
+        loc_addr := A(4 downto 2);
         if (WRITESTB = '1') then
           case (loc_addr) is
             when b"000" => slv_reg0 <= IBUS;
@@ -143,7 +151,7 @@ begin
   read_mux : process (ADDR, READSTB, slv_reg0, slv_reg1, slv_reg2, slv_reg3, slv_reg4, slv_reg5, slv_reg6, slv_reg7)
   variable loc_addr : std_logic_vector(2 downto 0);
   begin
-    loc_addr := ADDR(2 downto 0);
+    loc_addr := A(4 downto 2);
     if (READSTB = '1') then
       case (loc_addr) is
         when b"000" => OBUS <= slv_reg0;

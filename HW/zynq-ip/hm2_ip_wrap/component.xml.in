@@ -828,7 +828,7 @@
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../VivadoProjects/microzed/microzed_jd2cb/const/PIN_JD2CB_34.vhd</spirit:name>
+        <spirit:name>../../@PIN_FILE@</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>CHECKSUM_5a4c570a</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
@@ -1329,7 +1329,7 @@
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../VivadoProjects/microzed/microzed_jd2cb/const/PIN_JD2CB_34.vhd</spirit:name>
+        <spirit:name>../../@PIN_FILE@</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>

@@ -81,7 +81,7 @@ entity hm2_axilite_int is
 		OBUS : in std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
 		READSTB : out std_logic;
 		WRITESTB : out std_logic;
-
+        
 		-- AXI Signals --
 		-- Global Clock Signal
 		S_AXI_ACLK : in std_logic;
@@ -148,13 +148,16 @@ end hm2_axilite_int;
 
 architecture arch_imp of hm2_axilite_int is
 	-- Internal state signals
-	type sm_type is (idle, reading, writing);
+	type sm_type is (idle, buf_read, reading, buf_write, writing);
 	signal current_state, next_state : sm_type;
 	signal read_done : std_logic;
 	signal write_done : std_logic;
+	signal buffering : std_logic;
+	signal write_go : std_logic;
+	signal read_go : std_logic;
 
 	-- Latched address and strobe for hm2 interface
-	signal latched_addr	: std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
+	signal latched_addr	: std_logic_vector(C_S_AXI_ADDR_WIDTH-3 downto 0);
 	signal read_enable : std_logic;
 	signal write_enable : std_logic;
 
@@ -172,8 +175,14 @@ begin
 	-- The generic bus interface has two data busses. Just link them
 	-- with the AXI counterparts
 	IBUS <= S_AXI_WDATA;	-- The AXI write bus is the input bus for the hm2
-	ADDR <= latched_addr;			-- Pass out the latched address to the hm2
+	ADDR <= latched_addr;	-- Pass out the latched address to the hm2
 
+    -- hm2 has it's own address latch also. This signal burns a clock to sync
+    buffering <= '1' when (current_state = buf_read or current_state = buf_write) else '0';
+
+    write_go <= '1' when (axi_awready = '0' and axi_wready = '0' and S_AXI_AWVALID = '1' and S_AXI_WVALID = '1') else '0';
+	read_go <= '1' when (axi_arready = '0' and S_AXI_ARVALID = '1') else '0';
+	
 	-- Slave register read enable is asserted when valid address is available
 	-- and the slave is ready to accept the read address.
 	READSTB <= read_enable;
@@ -193,38 +202,57 @@ begin
 	-- Slave is ready to latch address when it's in the idle state and
 	-- there is valid data on both address and data bus for read or write
 	-- The address ready strobe is only asserted for one clock
-	latch_address : process (S_AXI_ACLK, current_state, axi_arready, S_AXI_ARVALID, axi_awready, axi_wready, S_AXI_AWVALID, S_AXI_WVALID)
+	latch_address : process (S_AXI_ACLK, current_state, read_go, write_go)
 	begin
 		if (rising_edge(S_AXI_ACLK)) then
 			if (S_AXI_ARESETN = '0') then
 				latched_addr <= (others => '0');
-				axi_arready <= '0';
-				axi_awready <= '0';
-				axi_wready <= '0';
 			else
 				if(current_state = idle) then
-					if (axi_arready = '0' and S_AXI_ARVALID = '1') then
-						latched_addr <= S_AXI_ARADDR;	-- Latch the address from the read bus
-						axi_arready <= '1';  -- Indicate we have accepted the valid address
-					elsif (axi_awready = '0' and axi_wready = '0' and S_AXI_AWVALID = '1' and S_AXI_WVALID = '1') then
-						latched_addr <= S_AXI_AWADDR; -- Latch the address from the write bus
-						axi_awready <= '1'; -- Indicate we have accepted the valid address
-						axi_wready <= '1';	-- The wready signal is valid when the address and data are valid - PG155 Fig. 3-5 and template code
+					if (read_go = '1') then
+						latched_addr <= S_AXI_ARADDR(15 downto 2);	-- Latch the address from the read bus
+					elsif (write_go = '1') then
+						latched_addr <= S_AXI_AWADDR(15 downto 2); -- Latch the address from the write bus
 					end if;
-				else
-					axi_arready <= '0';
-					axi_awready <= '0';
-					axi_wready <= '0';
 				end if;
 			end if;
 		end if;
+	end process;
+	
+	rcont : process( S_AXI_ACLK, S_AXI_ARESETN, read_go, buffering)
+	begin
+	   if (rising_edge(S_AXI_ACLK)) then
+	       if(S_AXI_ARESETN = '0') then
+                axi_arready <= '0';
+           elsif(read_go = '1' and buffering = '1') then
+                axi_arready <= '1';  -- Indicate we have accepted the valid address
+	       else
+	           axi_arready <= '0';
+	       end if;
+	   end if;
+	end process;
+	
+	wcont : process( S_AXI_ACLK, S_AXI_ARESETN, write_go, buffering)
+	begin
+	   if (rising_edge(S_AXI_ACLK)) then
+	       if(S_AXI_ARESETN = '0') then
+                axi_wready <= '0';
+                axi_awready <= '0';
+	       elsif(write_go = '1' and buffering = '1') then
+	           axi_wready <= '1';
+	           axi_awready <= '1';
+	       else
+	           axi_wready <= '0';
+               axi_awready <= '0';
+           end if;
+	   end if;
 	end process;
 
 	-- Latch the read data from the hm2 device before presenting it to the
 	-- AXI layer, and generate the correct response data. Doesn't seem to be an
 	-- error indicator from hm2, so all response codes are 'OKAY'. Reading an invalid
 	-- register should mimic the behavior of an unwrapped hm2
-	read_enable <= axi_arready and S_AXI_ARVALID and (not axi_rvalid);
+	read_enable <= axi_arready and S_AXI_ARVALID and (not axi_rvalid) and (not buffering);
 	read_done <= axi_rvalid and S_AXI_RREADY;
 	process( S_AXI_ACLK, read_enable, read_done ) is
 	begin
@@ -252,9 +280,9 @@ begin
 	-- write transaction. Doesn't seem to be an
 	-- error indicator from hm2, so all response codes are 'OKAY'. Reading an invalid
 	-- register should mimic the behavior of an unwrapped hm2
-	write_enable <= axi_awready and S_AXI_AWVALID and axi_wready and S_AXI_WVALID;
+	write_enable <= axi_awready and S_AXI_AWVALID and axi_wready and S_AXI_WVALID and (not buffering);
 	write_done <= S_AXI_BREADY and axi_bvalid;
-	process (S_AXI_ACLK, S_AXI_ARESETN)
+	process (S_AXI_ACLK, S_AXI_ARESETN, write_enable, write_done)
 	begin
 		if rising_edge(S_AXI_ACLK) then
 			if (S_AXI_ARESETN = '0') then
@@ -287,21 +315,25 @@ begin
 	-- first-come-first-served manner. If a read/write is
 	-- in process and a write/read is requested, the write/read
 	-- will be processed after the running read/write is completed.
-	calc_state : process(current_state, S_AXI_ARVALID, S_AXI_AWVALID, write_done, read_done)
+	calc_state : process(current_state, S_AXI_ARVALID, S_AXI_AWVALID, write_done, read_done, write_go, read_go)
 	begin
 		case current_state is
 			when idle =>
 				next_state <= idle; 	-- Default back to idle state
-				if (S_AXI_ARVALID = '1') then	-- Read has precedence over write
-					next_state <= reading;
-				elsif (S_AXI_AWVALID = '1') then
-					next_state <= writing;
+				if (read_go = '1') then	-- Read has precedence over write
+					next_state <= buf_read;
+				elsif (write_go = '1') then
+					next_state <= buf_write;
 				end if;
+			when buf_read =>
+			     next_state <= reading;	
 			when reading =>
 				next_state <= reading;
 				if (read_done = '1') then
 					next_state <= idle;
 				end if;
+			when buf_write =>
+			     next_state <= writing;
 			when writing =>
 				next_state <= writing;
 				if (write_done = '1') then
