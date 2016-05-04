@@ -7,7 +7,7 @@ BUILD_TCL=scripts/microzed_jd2cb_bp.tcl
 BIT_FILE=microzed_jd2cb.bit
 
 # The name of the board to compile into the IP. Matches board name in hal files
-BOARD_NAME_HEX=4A444342     #JDCB 
+BOARD_NAME_HEX=4243444A     #JDCB 
 
 ## HostMot2 Pin constraints - these update the IP. Physical pin constraints
 #  belong in an xdc file referenced by the tcl scripts.
