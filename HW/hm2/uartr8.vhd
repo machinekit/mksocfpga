@@ -285,7 +285,7 @@ begin
 			obus(7) <= not lfifoempty;
 			
 		end if;
-		fifohasdata <= not lfifoempty;
+--		fifohasdata <= not lfifoempty;
 			
 	end process asimpleuartrx;
 	
