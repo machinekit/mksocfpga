@@ -1,0 +1,91 @@
+<BoardInfo pov="hps_0_arm_a9_0">
+
+<DTAppend name="model" type="string" parentlabel="" val="DE0 NANO SOC"/>
+<DTAppend name="compatible" parentlabel="" >
+	<val type="string">altr,socfpga-cyclone5</val>
+	<val type="string">altr,socfpga</val>
+</DTAppend>
+
+<alias name="ethernet0" value="/sopc/ethernet@0xff702000"/>
+
+<DTAppend name="#address-cells" type="number" parentlabel="hps_0_sdmmc" val="1"/>
+<DTAppend name="#size-cells" type="number" parentlabel="hps_0_sdmmc" val="0"/>
+<DTAppend name="supports-highspeed"  parentlabel="hps_0_sdmmc" />
+<DTAppend name="broken-cd" type="bool" parentlabel="hps_0_sdmmc" val="true"/>
+<DTAppend name="compatible" type="string" parentlabel="hps_0_sdmmc" val="altr,socfpga-dw-mshc" action="replace"/>
+<DTAppend name="altr,dw-mshc-ciu-div" type="number" parentlabel="hps_0_sdmmc" val="3"/>
+<DTAppend name="altr,dw-mshc-sdr-timing"  parentlabel="hps_0_sdmmc" >
+<val type="number">0</val>
+<val type="number">3</val>
+</DTAppend>
+<DTAppend name="slot@0" type="node" parentlabel="hps_0_sdmmc" newlabel="slot_0"/>
+<DTAppend name="reg" type="number" parentlabel="slot_0" val="0"/>
+<DTAppend name="bus-width" type="number" parentlabel="slot_0" val="4"/>
+
+<!--
+<DTAppend name="#address-cells" type="number" parentlabel="hps_0_qspi" val="1"/>
+<DTAppend name="#size-cells" type="number" parentlabel="hps_0_qspi" val="0"/>
+<DTAppend name="master-ref-clk" type="number" parentlabel="hps_0_qspi" val="400000000"/>
+<DTAppend name="ext-decoder" type="number" parentlabel="hps_0_qspi" val="0"/>
+-->
+
+<!--
+<DTAppend name="n25q00@0" type="node" parentlabel="hps_0_qspi" newlabel="flash0"/>
+<DTAppend name="compatible" type="string" parentlabel="flash0" val="n25q00"/>
+<DTAppend name="#address-cells" type="number" parentlabel="flash0" val="1"/>
+<DTAppend name="#size-cells" type="number" parentlabel="flash0" val="1"/>
+<DTAppend name="reg" type="number" parentlabel="flash0" val="0"/>
+<DTAppend name="spi-max-frequency" type="number" parentlabel="flash0" val="100000000"/>
+<DTAppend name="page-size" type="number" parentlabel="flash0" val="256"/>
+<DTAppend name="block-size" type="number" parentlabel="flash0" val="16"/>
+<DTAppend name="m25p,fast-read" type="bool" parentlabel="flash0" val="true"/>
+<DTAppend name="read-delay" type="number" parentlabel="flash0" val="4"/>
+<DTAppend name="tshsl-ns" type="number" parentlabel="flash0" val="50"/>
+<DTAppend name="tsd2d-ns" type="number" parentlabel="flash0" val="50"/>
+<DTAppend name="tchsh-ns" type="number" parentlabel="flash0" val="4"/>
+<DTAppend name="tslch-ns" type="number" parentlabel="flash0" val="4"/>
+
+<DTAppend name="partition@0" type="node" parentlabel="flash0" newlabel="part0"/>
+<DTAppend name="label" type="string" parentlabel="part0" val="Flash 0 Raw Data"/>
+<DTAppend name="reg" parentlabel="part0" >
+<val type="hex">0x0</val>
+<val type="hex">0x800000</val>
+</DTAppend>
+<DTAppend name="partition@800000" type="node" parentlabel="flash0" newlabel="part1"/>
+<DTAppend name="label" type="string" parentlabel="part1" val="Flash 1 jffs2 Filesystem"/>
+<DTAppend name="reg" parentlabel="part1">
+<val type="hex">0x800000</val>
+<val type="hex">0x7800000</val>
+</DTAppend>
+-->
+
+<DTAppend name="phy-mode" type="string" parentlabel="hps_0_gmac1" val="rgmii"/>
+
+<DTAppend name="snps,phy-addr" type="hex" parentlabel="hps_0_gmac1" val="0xffffffff"/>
+<DTAppend name="phy-addr" type="hex" parentlabel="hps_0_gmac1" val="0xffffffff"/>
+<DTAppend name="txc-skew-ps" type="number" parentlabel="hps_0_gmac1" val="0xa28"/>
+<DTAppend name="rxc-skew-ps" type="number" parentlabel="hps_0_gmac1" val="0x7d0"/>
+<DTAppend name="txen-skew-ps" type="number" parentlabel="hps_0_gmac1" val="0"/>
+<DTAppend name="rxdv-skew-ps" type="number" parentlabel="hps_0_gmac1" val="0"/>
+<DTAppend name="rxd0-skew-ps" type="number" parentlabel="hps_0_gmac1" val="0"/>
+<DTAppend name="rxd1-skew-ps" type="number" parentlabel="hps_0_gmac1" val="0"/>
+<DTAppend name="rxd2-skew-ps" type="number" parentlabel="hps_0_gmac1" val="0"/>
+<DTAppend name="rxd3-skew-ps" type="number" parentlabel="hps_0_gmac1" val="0"/>
+<DTAppend name="txd0-skew-ps" type="number" parentlabel="hps_0_gmac1" val="0"/>
+<DTAppend name="txd1-skew-ps" type="number" parentlabel="hps_0_gmac1" val="0"/>
+<DTAppend name="txd2-skew-ps" type="number" parentlabel="hps_0_gmac1" val="0"/>
+<DTAppend name="txd3-skew-ps" type="number" parentlabel="hps_0_gmac1" val="0"/>
+<DTAppend name="max-frame-size" type="number" parentlabel="hps_0_gmac1" val="3800"/>
+
+<DTAppend name="usbphy@0" type="node" parentlabel="sopc0" newlabel="usbphy0" />
+<DTAppend name="#phy-cells" type="number" val="0" parentlabel="usbphy0" />
+<DTAppend name="compatible" type="string" val="usb-nop-xceiv" parentlabel="usbphy0" />
+<DTAppend name="status" type="string" val="okay" parentlabel="usbphy0" />
+
+<DTAppend name="phys" type="phandle" parentlabel="hps_0_usb1" val="usbphy0" />
+
+<Chosen>
+        <Bootargs val="console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait"></Bootargs>
+</Chosen>
+
+</BoardInfo>
