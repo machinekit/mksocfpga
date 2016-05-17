@@ -58,7 +58,7 @@ and set period to roughly 1ms (1kHz)
 dec 211812352 = 0xCB00000 hex
 
 
-![waveform on dpll pin (red)](pics/HM-Soc-DPLL_wave.png)
+![waveform on dpll pin (red)](pics/irq/HM-Soc-DPLL_wave.png)
 
 ---
 
@@ -66,11 +66,11 @@ reset interrupt:
 
 	sudo ./mksocmemio -w b00 0
 
-![waveform on intirq pin (blue)](pics/HM-Soc-IRQ_wave1.png)
+![waveform on intirq pin (blue)](pics/irq/HM-Soc-IRQ_wave1.png)
 
 note:  int start at random time, and ends on dpll signal low
 
-![waveform on intirq pin (blue)](pics/HM-Soc-IRQ_wave2.png)
+![waveform on intirq pin (blue)](pics/irq/HM-Soc-IRQ_wave2.png)
 
 
 ---
