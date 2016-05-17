@@ -335,6 +335,14 @@
          type = "String";
       }
    }
+   element soc_system
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
    element sysid_qsys
    {
       datum _sortIndex
@@ -493,6 +501,8 @@
  <module name="hm2reg_io_0" kind="hm2reg_io" version="1.0" enabled="1">
   <parameter name="ADDRESS_WIDTH" value="14" />
   <parameter name="DATA_WIDTH" value="32" />
+  <parameter name="IRQ_EN" value="1" />
+  <parameter name="MODE_0" value="2" />
  </module>
  <module name="hps_0" kind="altera_hps" version="15.1" enabled="1">
   <parameter name="ABSTRACT_REAL_COMPARE_TEST" value="false" />
@@ -1041,7 +1051,7 @@
    kind="intr_capturer"
    version="100.99.98.97"
    enabled="1">
-  <parameter name="AUTO_INTERRUPT_RECEIVER_INTERRUPTS_USED" value="7" />
+  <parameter name="AUTO_INTERRUPT_RECEIVER_INTERRUPTS_USED" value="15" />
   <parameter name="NUM_INTR" value="32" />
  </module>
  <module
@@ -1351,6 +1361,13 @@
  <connection
    kind="interrupt"
    version="15.1"
+   start="hps_0.f2h_irq0"
+   end="hm2reg_io_0.slv_irq">
+  <parameter name="irqNumber" value="3" />
+ </connection>
+ <connection
+   kind="interrupt"
+   version="15.1"
    start="intr_capturer_0.interrupt_receiver"
    end="jtag_uart.irq">
   <parameter name="irqNumber" value="0" />
@@ -1368,6 +1385,13 @@
    start="intr_capturer_0.interrupt_receiver"
    end="dipsw_pio.irq">
   <parameter name="irqNumber" value="2" />
+ </connection>
+ <connection
+   kind="interrupt"
+   version="15.1"
+   start="intr_capturer_0.interrupt_receiver"
+   end="hm2reg_io_0.slv_irq">
+  <parameter name="irqNumber" value="3" />
  </connection>
  <connection
    kind="reset"
