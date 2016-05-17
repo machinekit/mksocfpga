@@ -1,5 +1,10 @@
+---
+enable mksocfpga uio_irq
 
-#-------------------------------------------------------------------------------------#
+
+
+---
+
 mksocmemio can read or write the mksoc hostmot2 registers
 Here:
 [HostMot2 Register map](http://freeby.mesanet.com/regmap)
@@ -9,7 +14,8 @@ Here:
 	write: 	mksocmemio -w [ address in hex] [value in decimal]
 
 
-#-------------------------------------------------------------------------------------#
+---
+
 uio_test outputs number of uio0 interrupts
 
 	sudo ./uio_test &
@@ -18,7 +24,7 @@ to remove:
 
 	sudo pkill uio_test
 
-#-------------------------------------------------------------------------------------#
+---
 
 to set uio_pdrv_genirq parameter manually:
 
@@ -29,7 +35,7 @@ use this to set permantly instead:
 
 	machinekit@mksocfpga:~$ sudo sh -c 'echo options uio_pdrv_genirq of_id="hm2reg_io,generic-uio,ui_pdrv" > /etc/modprobe.d/uiohm2.conf'
 
-#-------------------------------------------------------------------------------------#
+---
 
 hm2_soc mk config with:
 
@@ -42,7 +48,7 @@ to run:
 
 	machinekit ~/machinekit/configs/hm2-soc-stepper2/5i25-soc.ini
 
-#-------------------------------------------------------------------------------------#
+---
 
 enable timer 1 interrupt:
 and set period to roughly 1ms (1kHz)
@@ -54,7 +60,7 @@ dec 211812352 = 0xCB00000 hex
 
 ![waveform on dpll pin (red)](pics/HM-Soc-DPLL_wave.png)
 
-#-------------------------------------------------------------------------------------#
+---
 
 reset interrupt:
 
@@ -67,9 +73,9 @@ note:  int start at random time, and ends on dpll signal low
 ![waveform on intirq pin (blue)](pics/HM-Soc-IRQ_wave2.png)
 
 
-#-------------------------------------------------------------------------------------#
+---
 
-#----> references:
+----> references:
 
 Generating clock interrupts from Mesanet cards:
 https://github.com/mhaberler/asciidoc-sandbox/wiki/Generating-clock-interrupts-from-Mesanet-cards
