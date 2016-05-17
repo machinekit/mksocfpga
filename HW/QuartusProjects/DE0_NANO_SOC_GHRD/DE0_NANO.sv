@@ -34,7 +34,7 @@
 `define ENABLE_HPS
 //`define ENABLE_CLK
 
-module ghrd(
+module DE0_NANO(
 
       ///////// ADC /////////
       output             ADC_CONVST,
