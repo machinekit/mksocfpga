@@ -51,12 +51,15 @@ to run:
 ---
 
 enable timer 1 interrupt:
+
 and set period to roughly 1ms (1kHz)
+
 	sudo ./mksocmemio -w a00 2
 	sudo ./mksocmemio -w 7200 211812352
 
 dec 211812352 = 0xCB00000 hex
 
+waveform on dpll pin (red)
 
 ![waveform on dpll pin (red)](pics/irq/HM-Soc-DPLL_wave.png)
 
@@ -66,9 +69,11 @@ reset interrupt:
 
 	sudo ./mksocmemio -w b00 0
 
+2 waveform examples on intirq pin (blue)
+
 ![waveform on intirq pin (blue)](pics/irq/HM-Soc-IRQ_wave1.png)
 
-note:  int start at random time, and ends on dpll signal low
+note:  int signal goes high(inactive) at random time (press enter), and goes low (irq trigger) when dpll signal falls low.
 
 ![waveform on intirq pin (blue)](pics/irq/HM-Soc-IRQ_wave2.png)
 
