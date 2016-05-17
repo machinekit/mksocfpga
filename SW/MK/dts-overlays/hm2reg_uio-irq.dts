@@ -1,11 +1,12 @@
 /dts-v1/ /plugin/;
 
 / {
-   fragment@0 {
-      target-path = "/soc/base_fpga_region";
+	compatible = "generic-uio";
+	fragment@0 {
+		target-path = "/soc/base_fpga_region";
 		#address-cells = <1>;
 		#size-cells = <1>;
-      __overlay__ {
+		__overlay__ {
 			#address-cells = <1>;
 			#size-cells = <1>;
 
