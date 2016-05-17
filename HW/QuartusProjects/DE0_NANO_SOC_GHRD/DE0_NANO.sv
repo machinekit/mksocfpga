@@ -163,7 +163,7 @@ module DE0_NANO(
 //irq:
   wire int_sig;
 
-//  assign ARDUINO_IO[15] = int_sig;
+  assign ARDUINO_IO[15] = int_sig;
 
 //  wire [8:0] 	out_oe;
 //  wire [8:0]	out_data;

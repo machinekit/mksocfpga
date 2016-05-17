@@ -134,7 +134,7 @@ package PIN_G540x2_34_irq is
 		IOPortTag & x"05" & StepGenTag & StepGenDirPin,		-- I/O 21	PIN 5	PIN 3	X Dir
 		IOPortTag & x"09" & StepGenTag & StepGenStepPin,	-- I/O 22	PIN 6	PIN 16	Charge Pump (16 KHz)
 		IOPortTag & x"06" & StepGenTag & StepGenStepPin,	-- I/O 23	PIN 7	PIN 4	Y Step
-		IOPortTag & x"00" & NullTag & NullPin,				-- I/O 24	PIN 8	PIN 17	Output 1 just GPIO
+		IOPortTag & x"00" & HM2DPLLTag & HM2DPLLRefOutPin,	-- I/O 24	PIN 8	PIN 17	Output 1 just GPIO
 		IOPortTag & x"06" & StepGenTag & StepGenDirPin,		-- I/O 25	PIN 9	PIN 5	Y Dir
 		IOPortTag & x"07" & StepGenTag & StepGenStepPin,	-- I/O 26	PIN 11	PIN 6	Z Step
 		IOPortTag & x"07" & StepGenTag & StepGenDirPin,		-- I/O 27	PIN 13	PIN 7	Z Dir
@@ -143,7 +143,7 @@ package PIN_G540x2_34_irq is
 		IOPortTag & x"01" & QCountTag & QCountQAPin,  		-- I/O 30	PIN 19	PIN 10	Input 1 (Quad A)
 		IOPortTag & x"01" & QCountTag & QCountQBPin,  		-- I/O 31	PIN 21	PIN 11	Input 2 (Quad B)
 		IOPortTag & x"01" & QCountTag & QCountIdxPin,    	-- I/O 32	PIN 23	PIN 12	Input 3 (Quad Idx)
-		IOPortTag & x"00" & NullTag & NullPin,	 	   		-- I/O 33	PIN 25	PIN 13	Input 4 just GPIO
+		IOPortTag & x"00" & HM2DPLLTag & HM2DPLLTimer1Pin,	-- I/O 33	PIN 25	PIN 13	Input 4 just GPIO
 
 
 		emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin, -- added for 34 pin 5I25
