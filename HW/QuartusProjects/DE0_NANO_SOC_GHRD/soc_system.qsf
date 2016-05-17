@@ -15,7 +15,7 @@ set_global_assignment -name PROJECT_CREATION_TIME_DATE "TUE DEC  2 09:28:38 2014
 set_global_assignment -name QIP_FILE ../../hm2/hm2_socfpga.qip
 
 # MESA board , pin and daughter card config options:
-set_global_assignment -name QIP_FILE ../../hm2/config/hm2_i25_G540x2_34_config.qip
+set_global_assignment -name QIP_FILE ../../hm2/config/hm2_i25_G540x2_34_irq_config.qip
 #============================================================
 
 

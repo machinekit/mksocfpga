@@ -66,7 +66,7 @@ use IEEE.std_logic_UNSIGNED.ALL;
 --     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 --     POSSIBILITY OF SUCH DAMAGE.
 --
-use work.PIN_G540x2_34.all;
+use work.PIN_G540x2_34_irq.all;
 use work.IDROMConst.all;
 use work.log2.all;
 use work.decodedstrobe.all;
@@ -127,7 +127,7 @@ entity HostMot2 is
 	clklow: in std_logic;
 	clkmed: in std_logic;
 	clkhigh: in std_logic;
-	int: out std_logic;
+	intirq: out std_logic;
 	dreq: out std_logic;
 	demandmode: out std_logic;
 	iobits: inout std_logic_vector (iowidth -1 downto 0);
@@ -373,7 +373,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
          readstatus => ReadIRqStatus,
          clear =>  ClearIRQ,
          ratesource => RateSources, -- DPLL timer channels, channel 4 is refout
-         int => INT);
+         int => INTIRQ);
 
 		IRQDecodePRocess: process(A,readstb,writestb)
 		begin
@@ -3371,7 +3371,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 	dotieupint: if not UseIRQLogic generate
 		tieupint : process(clklow)
 		begin
-			INT <= '1';
+			INTIRQ <= '1';
 		end process;
 	end generate;
 
