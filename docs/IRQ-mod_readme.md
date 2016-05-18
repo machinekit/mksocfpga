@@ -26,11 +26,21 @@ to remove:
 
 ---
 
-to set uio_pdrv_genirq parameter manually:
+Making hm2reg-uio-dkms driver obsolete:
 
 Inspired from here:
 
 [Handling GPIO interrupts in userspace on Linux with UIO](https://yurovsky.github.io/2014/10/10/linux-uio-gpio-interrupt/)
+
+First remove all custom hm2 soc uio driver instances:
+
+	sudo dkms remove sudo dkms remove hm2reg_uio/0.0.2 --all
+	sudo apt purge hm2reg-uio-dkms
+
+reboot
+
+to set uio_pdrv_genirq parameter manually:
+
 
 	sudo modprobe -r uio_pdrv_genirq
 	sudo modprobe uio_pdrv_genirq of_id="hm2reg_io,generic-uio,ui_pdrv"
@@ -41,7 +51,33 @@ use this to set permantly instead:
 
 ---
 
-hm2_soc mk config with:
+Dts:
+
+Remember to recompile the new changed device tree overlay fragment:
+
+compatible string is replaced with:
+
+	compatible = "hm2reg_io,generic-uio,ui_pdrv";
+
+compile with dtc v1.4:
+
+install newest device-tree-tools:
+
+	./device-tree-tools-install.sh
+
+compile:
+
+	dtc -I dts -O dtb -o hm2reg_uio.dtbo hm2reg_uio-irq.dts
+
+copy:
+
+	sudo cp hm2reg_uio.dtbo /lib/firmware/socfpga/dtbo/hm2reg_uio.dtbo
+
+---
+
+Run machinekit:
+
+use hm2_soc mk config with:
 
 	[HOSTMOT2]
 	DRIVER=hm2_soc_ol
@@ -51,6 +87,16 @@ hm2_soc mk config with:
 to run:
 
 	machinekit ~/machinekit/configs/hm2-soc-stepper2/5i25-soc.ini
+
+---
+
+start uio interrupt count readout:
+
+	sudo ./uio_test &
+
+To end afterwards:
+
+	sudo pkill uio_test
 
 ---
 
