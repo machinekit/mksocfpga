@@ -69,15 +69,15 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 use work.IDROMConst.all;
 
-package PIN_G540x2_34 is
+package PIN_G540x2_34_irq is
 	constant ModuleID : ModuleIDType :=(
-		(WatchDogTag,	x"00",	ClockLowTag,	x"01",	WatchDogTimeAddr&PadT,		WatchDogNumRegs,		x"00",	WatchDogMPBitMask),
-		(IOPortTag,		x"00",	ClockLowTag,	x"02",	PortAddr&PadT,					IOPortNumRegs,			x"00",	IOPortMPBitMask),
-		(QcountTag,		x"02",	ClockLowTag,	x"02",	QcounterAddr&PadT,			QCounterNumRegs,		x"00",	QCounterMPBitMask),
-		(StepGenTag,	x"02",	ClockLowTag,	x"0A",	StepGenRateAddr&PadT,		StepGenNumRegs,		x"00",	StepGenMPBitMask),
-		(PWMTag,			x"00",	ClockHighTag,	x"02",	PWMValAddr&PadT,				PWMNumRegs,				x"00",	PWMMPBitMask),
-		(LEDTag,			x"00",	ClockLowTag,	x"01",	LEDAddr&PadT,					LEDNumRegs,				x"00",	LEDMPBitMask),
-		(NullTag,		x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
+		(HM2DPLLTag,	x"00",	ClockLowTag,		x"01",	HM2DPLLBaseRateAddr&PadT,		HM2DPLLNumRegs,			x"00",	HM2DPLLMPBitMask),
+		(WatchDogTag,	x"00",	ClockLowTag,		x"01",	WatchDogTimeAddr&PadT,			WatchDogNumRegs,		x"00",	WatchDogMPBitMask),
+		(IOPortTag,		x"00",	ClockLowTag,		x"02",	PortAddr&PadT,					IOPortNumRegs,			x"00",	IOPortMPBitMask),
+		(QcountTag,		x"02",	ClockLowTag,		x"02",	QcounterAddr&PadT,				QCounterNumRegs,		x"00",	QCounterMPBitMask),
+		(StepGenTag,	x"02",	ClockLowTag,		x"0A",	StepGenRateAddr&PadT,			StepGenNumRegs,			x"00",	StepGenMPBitMask),
+		(PWMTag,		x"00",	ClockHighTag,		x"02",	PWMValAddr&PadT,				PWMNumRegs,				x"00",	PWMMPBitMask),
+		(LEDTag,		x"00",	ClockLowTag,		x"01",	LEDAddr&PadT,					LEDNumRegs,				x"00",	LEDMPBitMask),
 		(NullTag,		x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
 		(NullTag,		x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
 		(NullTag,		x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
@@ -127,23 +127,23 @@ package PIN_G540x2_34 is
 		IOPortTag & x"00" & NullTag & NullPin,	 	   		-- I/O 16	PIN 13	Input 4 just GPIO
 
 																	-- 26 HDR	-- IDC DB25
-		IOPortTag & x"00" & NullTag & NullPin,				-- I/O 17	PIN 1	PIN 1 	Output 2 just GPIO
+		IOPortTag & x"00" & NullTag & NullPin,				-- I/O 17	PIN 1	PIN 1	Output 2 just GPIO
 		IOPortTag & x"01" & PWMTag & PWMAOutPin,			-- I/O 18   PIN 2	PIN 14	Spindle DAC PWM
 		IOPortTag & x"05" & StepGenTag & StepGenStepPin,	-- I/O 19   PIN 3	PIN 2	X Step
 		IOPortTag & x"00" & NullTag & NullPin,				-- I/O 20	PIN 4	PIN 15	Fault in just GPIO
 		IOPortTag & x"05" & StepGenTag & StepGenDirPin,		-- I/O 21	PIN 5	PIN 3	X Dir
 		IOPortTag & x"09" & StepGenTag & StepGenStepPin,	-- I/O 22	PIN 6	PIN 16	Charge Pump (16 KHz)
 		IOPortTag & x"06" & StepGenTag & StepGenStepPin,	-- I/O 23	PIN 7	PIN 4	Y Step
-		IOPortTag & x"00" & NullTag & NullPin,				-- I/O 24	PIN 8	PIN 17	Output 1 just GPIO
+		IOPortTag & x"00" & HM2DPLLTag & HM2DPLLRefOutPin,	-- I/O 24	PIN 8	PIN 17	Output 1 just GPIO
 		IOPortTag & x"06" & StepGenTag & StepGenDirPin,		-- I/O 25	PIN 9	PIN 5	Y Dir
 		IOPortTag & x"07" & StepGenTag & StepGenStepPin,	-- I/O 26	PIN 11	PIN 6	Z Step
 		IOPortTag & x"07" & StepGenTag & StepGenDirPin,		-- I/O 27	PIN 13	PIN 7	Z Dir
 		IOPortTag & x"08" & StepGenTag & StepGenStepPin,	-- I/O 28	PIN 15	PIN 8	A Step
 		IOPortTag & x"08" & StepGenTag & StepGenDirPin,		-- I/O 29	PIN 17	PIN 9	A Dir
 		IOPortTag & x"01" & QCountTag & QCountQAPin,  		-- I/O 30	PIN 19	PIN 10	Input 1 (Quad A)
-		IOPortTag & x"01" & QCountTag & QCountQBPin,  		-- I/O 31	PIN 21	PIN 11  Input 2 (Quad B)
+		IOPortTag & x"01" & QCountTag & QCountQBPin,  		-- I/O 31	PIN 21	PIN 11	Input 2 (Quad B)
 		IOPortTag & x"01" & QCountTag & QCountIdxPin,    	-- I/O 32	PIN 23	PIN 12	Input 3 (Quad Idx)
-		IOPortTag & x"00" & NullTag & NullPin,	 	   		-- I/O 33	PIN 25	PIN 13	Input 4 just GPIO
+		IOPortTag & x"00" & HM2DPLLTag & HM2DPLLTimer1Pin,	-- I/O 33	PIN 25	PIN 13	Input 4 just GPIO
 
 
 		emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin, -- added for 34 pin 5I25
@@ -164,4 +164,4 @@ package PIN_G540x2_34 is
 		emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,
 		emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin);
 
-end package PIN_G540x2_34;
+end package PIN_G540x2_34_irq;
