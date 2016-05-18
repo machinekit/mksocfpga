@@ -36,8 +36,7 @@ loadrt tp
 loadrt hostmot2
 
 # load low-level driver
-loadrt [HOSTMOT2](DRIVER)
-#config=[HOSTMOT2](CONFIG)
+loadrt [HOSTMOT2](DRIVER) config=[HOSTMOT2](CONFIG)
 
 loadrt [EMCMOT]EMCMOT servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[TRAJ]AXES  #tp=tp kins=trivkins
 
@@ -76,6 +75,8 @@ sets emcmot.00.enable FALSE
 net emcmot.00.enable <= axis.0.amp-enable-out
 net emcmot.00.enable => hm2_[HOSTMOT2](BOARD).0.stepgen.00.enable
 
+# added some signals to control a led (pin 39 or 40 on gpio0 port)
+# and control power on a cramps-cape (pin 1 or 2 on gpio0 port)
 setp hm2_[HOSTMOT2](BOARD).0.gpio.000.is_output TRUE
 setp hm2_[HOSTMOT2](BOARD).0.gpio.000.invert_output TRUE
 
