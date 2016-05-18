@@ -28,6 +28,10 @@ to remove:
 
 to set uio_pdrv_genirq parameter manually:
 
+Inspired from here:
+
+[Handling GPIO interrupts in userspace on Linux with UIO](https://yurovsky.github.io/2014/10/10/linux-uio-gpio-interrupt/)
+
 	sudo modprobe -r uio_pdrv_genirq
 	sudo modprobe uio_pdrv_genirq of_id="hm2reg_io,generic-uio,ui_pdrv"
 
