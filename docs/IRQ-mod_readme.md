@@ -2,21 +2,29 @@
 enable mksocfpga uio_irq
 
 
-
 ---
 
-mksocmemio can read or write the mksoc hostmot2 registers
-Here:
+Added mini version of mesaflash tool called:
+
+mksocmemio
+
+[this utility can read or write the mksocfpga hostmot2 registers](../SW/MK/mksocmemio/)
+
+Memory layout Here:
+
 [HostMot2 Register map](http://freeby.mesanet.com/regmap)
 
 	usage:
 	read: 	mksocmemio -r [address in hex]
 	write: 	mksocmemio -w [ address in hex] [value in decimal]
 
-
 ---
 
-uio_test outputs number of uio0 interrupts
+Added utility to count and display number of uio0 interrupts:
+
+uio_test
+
+[this utility counts and displays the number of uio0 interrupts occured](../SW/MK/uio_irq_test/)
 
 	sudo ./uio_test &
 
@@ -53,15 +61,16 @@ use this to set permantly instead:
 
 Dts:
 
-Remember to recompile the new changed device tree overlay fragment:
+[Remember to recompile the new changed device tree overlay fragment:](../SW/MK/dts-overlays/hm2reg_uio-irq.dts)
 
-compatible string is replaced with:
+
+note: compatible string is replaced with:
 
 	compatible = "hm2reg_io,generic-uio,ui_pdrv";
 
 compile with dtc v1.4:
 
-install newest device-tree-tools:
+[install newest device-tree-tools:](../SW/MK/dts-overlays/device-tree-tools-install.sh)
 
 	./device-tree-tools-install.sh
 
@@ -77,22 +86,41 @@ copy:
 
 Run machinekit:
 
-use hm2_soc mk config with:
+[use hm2_soc mk config with the hm2_soc_ol driver like in this example config:](./test-configs/hm2-soc-stepper-cramps)
 
 	[HOSTMOT2]
 	DRIVER=hm2_soc_ol
 	BOARD=5i25
 	CONFIG="firmware=socfpga/dtbo/hm2reg_uio.dtbo num_encoders=2 num_pwmgens=2 num_stepgens=10"
 
+---
+
+To download test hal config:
+
+	sudo apt install subversion
+	cd machinekit/configs
+	svn checkout https://github.com/the-snowwhite/mksocfpga/trunk/docs/test-configs/hm2-soc-stepper-cramps
+
+or
+
+	svn checkout https://github.com/machinekit/mksocfpga/trunk/docs/test-configs/hm2-soc-stepper-cramps
+
 to run:
 
-	machinekit ~/machinekit/configs/hm2-soc-stepper2/5i25-soc.ini
+	machinekit ~/machinekit/configs/hm2-soc-stepper-cramps/5i25-soc.ini
 
 ---
+
+in separate console:
 
 start uio interrupt count readout:
 
 	sudo ./uio_test &
+
+
+		machinekit@mksocfpga:~$ sudo ./uio_test &
+	[1] 3177
+
 
 To end afterwards:
 
@@ -100,12 +128,38 @@ To end afterwards:
 
 ---
 
-enable timer 1 interrupt:
+set period to roughly 1ms (1kHz)
 
-and set period to roughly 1ms (1kHz)
+and enable timer 1 interrupt:
 
-	sudo ./mksocmemio -w a00 2
 	sudo ./mksocmemio -w 7200 211812352
+	sudo ./mksocmemio -w a00 2
+
+
+shows:
+
+	machinekit@mksocfpga:~$ sudo ./mksocmemio -w 7200 211812352
+		mksocfpgamemio: read write hm2 memory locatons by cmmandline arguments
+		/dev/uio0 opened fine OK
+		region mmap'ed  OK
+		mem pointer created OK
+	Program name: ./mksocmemio    input option = w
+	read Write read
+	Address 29184   value = 436175482
+	Address 29184   former val = 0x19FF827A          wrote: --> 0x0CA00000   read: = 0x0CFA0000
+
+
+	machinekit@mksocfpga:~$ sudo ./mksocmemio -w a00 2
+		mksocfpgamemio: read write hm2 memory locatons by cmmandline arguments
+		/dev/uio0 opened fine OK
+		region mmap'ed  OK
+		mem pointer created OK
+	Program name: ./mksocmemio    input option = w
+	read Write read
+	Address 2560    value = 1
+	Address 2560    former val = 0x00000001          wrote: --> 0x00000002   read: = 0x00000002
+	Interrupt #2!
+
 
 dec 211812352 = 0xCB00000 hex
 
@@ -118,6 +172,20 @@ waveform on dpll pin (red)
 reset interrupt:
 
 	sudo ./mksocmemio -w b00 0
+
+shows:
+
+	machinekit@mksocfpga:~$ sudo ./mksocmemio -w b00 0
+		mksocfpgamemio: read write hm2 memory locatons by cmmandline arguments
+		/dev/uio0 opened fine OK
+		region mmap'ed  OK
+		mem pointer created OK
+	Program name: ./mksocmemio    input option = w
+	read Write read
+	Address 2816    value = 131071
+	Address 2816    former val = 0x0001FFFF          wrote: --> 0x00000000   read: = 0x0001FFFF
+	Interrupt #3!
+
 
 2 waveform examples on intirq pin (blue)
 
