@@ -135,7 +135,6 @@ module DE0_NANO(
   parameter LIOWidth = 6;
   parameter IOPorts = 2;
 
-
   wire  hps_fpga_reset_n;
   wire [1:0] fpga_debounced_buttons;
   wire [6:0]  fpga_led_internal;
@@ -351,26 +350,14 @@ altera_edge_detector pulse_debug_reset (
   defparam pulse_debug_reset.EDGE_TYPE = 1;
   defparam pulse_debug_reset.IGNORE_RST_WHILE_BUSY = 1;
 
-reg [25:0] counter;
-reg  led_level;
-always @	(posedge fpga_clk_50 or negedge hps_fpga_reset_n)
-begin
-if(~hps_fpga_reset_n)
-begin
-		counter<=0;
-		led_level<=0;
-end
+led_blinker led_blinker_inst
+(
+	.fpga_clk_50(fpga_clk_50) ,	// input  fpga_clk_50_sig
+	.hps_fpga_reset_n(hps_fpga_reset_n) ,	// input  hps_fpga_reset_n_sig
+	.LED(LED[0]) 	// output  LED_sig
+);
 
-else if(counter==24999999)
-	begin
-		counter<=0;
-		led_level<=~led_level;
-	end
-else
-		counter<=counter+1'b1;
-end
-
-assign LED[0]=led_level;
+defparam led_blinker_inst.COUNT_MAX = 24999999;
 
 // Mesa code ------------------------------------------------------//
 
@@ -384,7 +371,6 @@ HostMot2 HostMot2_inst
 (
 	.ibus(hm_datai) ,	// input [buswidth-1:0] ibus_sig
 	.obus(hm_datao) ,	// output [buswidth-1:0] obus_sig
-//	.addr(hm_address) ,	// input [addrwidth-1:2] addr_sig	-- addr => A(AddrWidth-1 downto 2),
 	.addr(hm_address) ,	// input [addrwidth-1:2] addr_sig	-- addr => A(AddrWidth-1 downto 2),
 	.readstb(hm_read ) ,	// input  readstb_sig
 	.writestb(hm_write) ,	// input  writestb_sig
@@ -398,7 +384,6 @@ HostMot2 HostMot2_inst
 	.iobits(hm2_iobits_sig) ,	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits
 	.liobits(hm2_liobits_sig) ,	// inout [lIOWidth-1:0] 			--liobits_sig
 //	.rates(rates_sig) ,	// output [4:0] rates_sig
-//	.leds(leds_sig) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
 	.leds(hm2_leds_sig) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
 );
 /*
@@ -429,7 +414,7 @@ defparam HostMot2_inst.InstStride0 = 4;
 defparam HostMot2_inst.InstStride1 = 64;
 defparam HostMot2_inst.RegStride0 = 256;
 defparam HostMot2_inst.RegStride1 = 256;
-defparam HostMot2_inst.LEDCount = 0;
+defparam HostMot2_inst.LEDCount = 2;
 */
 
 endmodule
