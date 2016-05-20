@@ -4,3 +4,4 @@ webtalk*
 *.log
 all.bif
 *.bit
+*.bit.bin
