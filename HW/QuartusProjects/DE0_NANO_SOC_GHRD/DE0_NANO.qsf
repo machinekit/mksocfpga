@@ -650,9 +650,9 @@ set_global_assignment -name VERILOG_FILE ../../cv-ip/debounce/debounce.v
 set_global_assignment -name VERILOG_FILE ../../cv-ip/altsource_probe/hps_reset.v
 set_global_assignment -name QIP_FILE soc_system/synthesis/soc_system.qip
 
-set_global_assignment -name SYSTEMVERILOG_FILE DE0_NANO.sv
 set_global_assignment -name SYSTEMVERILOG_FILE gpio_mux.sv
 set_global_assignment -name SYSTEMVERILOG_FILE led_blinker.sv
+set_global_assignment -name SYSTEMVERILOG_FILE DE0_NANO.sv
 
 
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
