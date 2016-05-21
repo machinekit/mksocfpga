@@ -124,16 +124,16 @@ module DE0_NANO(
       input       [3:0]  SW
 );
 
-`define GPIO_STRAIGHT
-
 //=======================================================
 //  REG/WIRE declarations
 //=======================================================
+`include "../../hm2/config/DE0_Nano/DE0_Nano_Dev_Kit.svh"
 
-  parameter AddrWidth = 16;
-  parameter IOWidth = 34;
-  parameter LIOWidth = 6;
-  parameter IOPorts = 2;
+//--------- moved to include file -----------//
+//  parameter GPIOWidth 		= 36;
+//  parameter NumGPIO 			= 2;
+//  parameter MuxGPIOIOWidth 	= IOWidth/NumGPIO;
+//-------------------------------------------//
 
   wire  hps_fpga_reset_n;
   wire [1:0] fpga_debounced_buttons;
@@ -159,23 +159,59 @@ module DE0_NANO(
   wire			hm_clk_high;
   wire 			clklow_sig;
   wire 			clkhigh_sig;
+/*
+  wire [MuxGPIOIOWidth-1:0]	  hm2_iobits_sig[NumGPIO-1:0];
+  wire [(LEDCount/NumGPIO)-1:0]	hm2_leds_sig[NumGPIO-1:0];
+*/
+  wire [MuxGPIOIOWidth-1:0]	  hm2_iobits_sig0;
+  wire [(LEDCount/NumGPIO)-1:0]	hm2_leds_sig0;
+  wire [MuxGPIOIOWidth-1:0]	  hm2_iobits_sig1;
+  wire [(LEDCount/NumGPIO)-1:0]	hm2_leds_sig1;
 
-  wire [1:0]	hm2_leds_sig;
-
-  wire [IOWidth-1:0] hm2_iobits_sig;
-  wire [LIOWidth-1:0] hm2_liobits_sig;
+  wire [LIOWidth-1:0] 		hm2_liobits_sig;
 
 // GPIO mux
 
-  gpio_mux gpio_mux_inst
+// wire [GPIOWidth-1:0] GPIO[NumGPIO-1:0];
+//
+// assign GPIO[0] = GPIO_0;
+// assign GPIO[1] = GPIO_1;
+
+`define GPIO_STRAIGHT
+// if not defined mux --> DE0_Nano_SoC_DB25 adaptor
+
+// gpio_mux gpio_mux_inst[NumGPIO-1:0]
+// (
+// 	.GPIO(GPIO) ,					// inout [GPIOWidth-1:0] GPIO_sig
+// 	.hm2_iobits(hm2_iobits_sig) ,	// inout [IOWidth-1:0] hm2_iobits_sig
+// 	.hm2_leds(hm2_leds_sig) 		// inout [1:0] hm2_leds_sig
+// );
+
+gpio_mux gpio_mux_inst0
 (
 	.GPIO(GPIO_0) ,					// inout [GPIOWidth-1:0] GPIO_sig
-	.hm2_iobits(hm2_iobits_sig) ,	// inout [IOWidth-1:0] hm2_iobits_sig
-	.hm2_leds(hm2_leds_sig) 		// inout [1:0] hm2_leds_sig
+	.hm2_iobits(hm2_iobits_sig0) ,	// inout [IOWidth-1:0] hm2_iobits_sig
+	.hm2_leds(hm2_leds_sig0) 		// inout [1:0] hm2_leds_sig
 );
+defparam gpio_mux_inst0.GPIOWidth = GPIOWidth;
+defparam gpio_mux_inst0.IOWidth = MuxGPIOIOWidth;
 
-defparam gpio_mux_inst.GPIOWidth = 36;
-defparam gpio_mux_inst.IOWidth = IOWidth;
+gpio_mux gpio_mux_inst1
+(
+	.GPIO(GPIO_1) ,					// inout [GPIOWidth-1:0] GPIO_sig
+	.hm2_iobits(hm2_iobits_sig1) ,	// inout [IOWidth-1:0] hm2_iobits_sig
+	.hm2_leds(hm2_leds_sig1) 		// inout [1:0] hm2_leds_sig
+);
+defparam gpio_mux_inst1.GPIOWidth = GPIOWidth;
+defparam gpio_mux_inst1.IOWidth = MuxGPIOIOWidth;
+
+/*
+defparam gpio_mux_inst[0].GPIOWidth = GPIOWidth;
+defparam gpio_mux_inst[0].IOWidth = MuxGPIOIOWidth;
+
+defparam gpio_mux_inst[1].GPIOWidth = GPIOWidth;
+defparam gpio_mux_inst[1].IOWidth = MuxGPIOIOWidth;*/
+
 
 //irq:
   wire int_sig;
@@ -367,7 +403,7 @@ assign clkmed_sig = hm_clk_med;
 
 assign ARDUINO_IO[LIOWidth-1:0] = hm2_liobits_sig;
 
-HostMot2 HostMot2_inst
+HostMot2_cfg HostMot2_inst
 (
 	.ibus(hm_datai) ,	// input [buswidth-1:0] ibus_sig
 	.obus(hm_datao) ,	// output [buswidth-1:0] obus_sig
@@ -381,40 +417,41 @@ HostMot2 HostMot2_inst
 	.intirq(int_sig) ,	// output  int_sig							--int => LINT, ---> PCI ?
 //	.dreq(dreq_sig) ,	// output  dreq_sig
 //	.demandmode(demandmode_sig) ,	// output  demandmode_sig
-	.iobits(hm2_iobits_sig) ,	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits
+//	.iobits({hm2_iobits_sig[1],hm2_iobits_sig[0]}) ,	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits
+	.iobits({hm2_iobits_sig1,hm2_iobits_sig0}) ,	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits
 	.liobits(hm2_liobits_sig) ,	// inout [lIOWidth-1:0] 			--liobits_sig
 //	.rates(rates_sig) ,	// output [4:0] rates_sig
-	.leds(hm2_leds_sig) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
+//	.leds({hm2_leds_sig[1],hm2_leds_sig[0]}) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
+	.leds({hm2_leds_sig1,hm2_leds_sig0}) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
 );
-/*
-defparam HostMot2_inst.ThePinDesc = PinDesc;
-defparam HostMot2_inst.TheModuleID =  "ModuleID";
-defparam HostMot2_inst.IDROMType = 3;
-defparam HostMot2_inst.SepClocks = "true";
-defparam HostMot2_inst.OneWS = "true";
-defparam HostMot2_inst.UseIRQLogic = "true";
-defparam HostMot2_inst.PWMRefWidth = 13;
-defparam HostMot2_inst.UseWatchDog = "true";
-defparam HostMot2_inst.OffsetToModules = 64;
-defparam HostMot2_inst.OffsetToPinDesc = 448;
-defparam HostMot2_inst.ClockHigh = "ClockHigh25";
-defparam HostMot2_inst.ClockMed = "ClockMed25";
-defparam HostMot2_inst.ClockLow = "ClockLow25";
-defparam HostMot2_inst.BoardNameLow = BoardNameMESA;
-defparam HostMot2_inst.BoardNameHigh = "BoardName5i25";
-defparam HostMot2_inst.FPGASize = 9;
-defparam HostMot2_inst.FPGAPins = 144;
-defparam HostMot2_inst.IOPorts = 2;
-defparam HostMot2_inst.IOWidth = 34;
-defparam HostMot2_inst.LIOWidth = 6;
-defparam HostMot2_inst.PortWidth = 17;
-defparam HostMot2_inst.BusWidth = 32;
-defparam HostMot2_inst.AddrWidth = 16;
-defparam HostMot2_inst.InstStride0 = 4;
-defparam HostMot2_inst.InstStride1 = 64;
-defparam HostMot2_inst.RegStride0 = 256;
-defparam HostMot2_inst.RegStride1 = 256;
-defparam HostMot2_inst.LEDCount = 2;
-*/
+
+// defparam HostMot2_inst.ThePinDesc = PinDesc;
+// defparam HostMot2_inst.TheModuleID =  "ModuleID";
+// defparam HostMot2_inst.IDROMType = 3;
+// defparam HostMot2_inst.UseIRQLogic = "true";
+// defparam HostMot2_inst.PWMRefWidth = 13;
+// defparam HostMot2_inst.UseWatchDog = "true";
+// defparam HostMot2_inst.OffsetToModules = 64;
+// defparam HostMot2_inst.OffsetToPinDesc = 448;
+defparam HostMot2_inst.ClockHigh = ClockHigh;
+defparam HostMot2_inst.ClockMed = ClockMed;
+defparam HostMot2_inst.ClockLow = ClockLow;
+defparam HostMot2_inst.BoardNameLow = BoardNameLow;
+defparam HostMot2_inst.BoardNameHigh = BoardNameHigh;
+defparam HostMot2_inst.FPGASize = FPGASize;
+defparam HostMot2_inst.FPGAPins = FPGAPins;
+defparam HostMot2_inst.IOPorts = IOPorts;
+defparam HostMot2_inst.IOWidth = IOWidth;
+defparam HostMot2_inst.PortWidth = PortWidth;
+defparam HostMot2_inst.LIOWidth = LIOWidth;
+defparam HostMot2_inst.LEDCount = LEDCount;
+defparam HostMot2_inst.SepClocks = SepClocks;
+defparam HostMot2_inst.OneWS = OneWS;
+defparam HostMot2_inst.BusWidth = BusWidth;
+defparam HostMot2_inst.AddrWidth = AddrWidth;
+// defparam HostMot2_inst.InstStride0 = 4;
+// defparam HostMot2_inst.InstStride1 = 64;
+// defparam HostMot2_inst.RegStride0 = 256;
+// defparam HostMot2_inst.RegStride1 = 256;
 
 endmodule

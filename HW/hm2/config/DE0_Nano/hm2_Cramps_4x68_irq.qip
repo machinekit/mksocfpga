@@ -1,0 +1,7 @@
+# Dev kit specific:
+set_global_assignment -name VHDL_FILE ../../hm2/config/IDROMConst.vhd
+set_global_assignment -name VERILOG_INCLUDE_FILE  ../../hm2/config/DE0_Nano/DE0_Nano_Dev_Kit.svh
+
+# I/O Daughterboard adaptor specific:
+set_global_assignment -name VHDL_FILE ../../hm2/config/DE0_Nano/hostmot2_cfg.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/config/PIN_Cramps_4x68_irq.vhd

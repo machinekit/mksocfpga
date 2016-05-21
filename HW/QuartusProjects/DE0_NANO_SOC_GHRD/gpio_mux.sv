@@ -13,7 +13,7 @@ assign GPIO[IOWidth-1:0] = hm2_iobits;
 assign GPIO[GPIOWidth-1:IOWidth] = hm2_leds;
 
 `else
-
+// DE0_Nano_SoC_DB25 adaptor
 assign GPIO[16] = hm2_iobits[00]; // PIN 1
 assign GPIO[17] = hm2_iobits[01]; // PIN 14
 assign GPIO[14] = hm2_iobits[02]; // PIN 2

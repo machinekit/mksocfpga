@@ -66,7 +66,7 @@ use IEEE.std_logic_UNSIGNED.ALL;
 --     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 --     POSSIBILITY OF SUCH DAMAGE.
 --
-use work.PIN_G540x2_34_irq.all;
+-- use work.PIN_G540x2_34_irq.all;
 use work.IDROMConst.all;
 use work.log2.all;
 use work.decodedstrobe.all;
@@ -85,55 +85,55 @@ use work.ModuleExists.all;
 entity HostMot2 is
   	generic
 	(
-		ThePinDesc: PinDescType := PinDesc;
-		TheModuleID: ModuleIDType := ModuleID;
-		IDROMType: integer := 3;
-	   SepClocks: boolean := true;
-		OneWS: boolean := true;
-		UseStepGenPrescaler : boolean := true;
-		UseIRQLogic: boolean := true;
-		PWMRefWidth: integer := 13;
-		UseWatchDog: boolean := true;
-		OffsetToModules: integer := 64;
-		OffsetToPinDesc: integer := 448;
-		ClockHigh: integer := ClockHigh25;
-		ClockMed: integer := ClockMed25;
-		ClockLow: integer := ClockMed20;
-		BoardNameLow : std_Logic_Vector(31 downto 0) := BoardNameMESA;
-		BoardNameHigh : std_Logic_Vector(31 downto 0) := BoardName5i25;
-		FPGASize: integer := 9;
-		FPGAPins: integer := 144;
-		IOPorts: integer := 2;
-		IOWidth: integer := 34;
-		LIOWidth: integer := 6;
-		PortWidth: integer := 17;
-		BusWidth: integer := 32;
-		AddrWidth: integer := 16;
-		InstStride0: integer := 4;
-		InstStride1: integer := 64;
-		RegStride0: integer := 256;
-		RegStride1: integer := 256;
-		LEDCount: integer := 2
+		ThePinDesc: PinDescType;
+		TheModuleID: ModuleIDType;
+		IDROMType: integer;
+		SepClocks: boolean;
+		OneWS: boolean;
+		UseStepGenPrescaler : boolean;
+		UseIRQLogic: boolean;
+		PWMRefWidth: integer;
+		UseWatchDog: boolean;
+		OffsetToModules: integer;
+		OffsetToPinDesc: integer;
+		ClockHigh: integer;
+		ClockMed: integer;
+		ClockLow: integer;
+		BoardNameLow : std_Logic_Vector(31 downto 0);
+		BoardNameHigh : std_Logic_Vector(31 downto 0);
+		FPGASize: integer;
+		FPGAPins: integer;
+		IOPorts: integer;
+		IOWidth: integer;
+		LIOWidth: integer;
+		PortWidth: integer;
+		BusWidth: integer;
+		AddrWidth: integer;
+		InstStride0: integer;
+		InstStride1: integer;
+		RegStride0: integer;
+		RegStride1: integer;
+		LEDCount: integer
 		);
 	port
    (
      -- Generic 32  bit bus interface signals --
 
-	ibus: in std_logic_vector(buswidth -1 downto 0);
-	obus: out std_logic_vector(buswidth -1 downto 0);
-	addr: in std_logic_vector(addrwidth -1 downto 2);
+	ibus: in std_logic_vector(BusWidth -1 downto 0);
+	obus: out std_logic_vector(BusWidth -1 downto 0);
+	addr: in std_logic_vector(AddrWidth -1 downto 2);
 	readstb: in std_logic;
 	writestb: in std_logic;
 	clklow: in std_logic;
 	clkmed: in std_logic;
 	clkhigh: in std_logic;
-	intirq: out std_logic;
+	int: out std_logic;
 	dreq: out std_logic;
 	demandmode: out std_logic;
-	iobits: inout std_logic_vector (iowidth -1 downto 0);
-	liobits: inout std_logic_vector (liowidth -1 downto 0);
+	iobits: inout std_logic_vector (IOWidth -1 downto 0);
+	liobits: inout std_logic_vector (LIOWidth -1 downto 0);
 	rates: out std_logic_vector (4 downto 0);
-	leds: out std_logic_vector(ledcount-1 downto 0)
+	leds: out std_logic_vector(LEDCount-1 downto 0)
 	);
 end HostMot2;
 
@@ -199,7 +199,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 -- all these signals should be put in per module components
 -- to reduce clutter
 
-	signal A: std_logic_vector(addrwidth -1 downto 2);
+	signal A: std_logic_vector(AddrWidth -1 downto 2);
 	signal LoadIDROM: std_logic;
 	signal ReadIDROM: std_logic;
 
@@ -373,7 +373,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
          readstatus => ReadIRqStatus,
          clear =>  ClearIRQ,
          ratesource => RateSources, -- DPLL timer channels, channel 4 is refout
-         int => INTIRQ);
+         int => INT);
 
 		IRQDecodePRocess: process(A,readstb,writestb)
 		begin
@@ -3371,7 +3371,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 	dotieupint: if not UseIRQLogic generate
 		tieupint : process(clklow)
 		begin
-			INTIRQ <= '1';
+			INT <= '1';
 		end process;
 	end generate;
 

@@ -12,8 +12,8 @@ set_global_assignment -name QIP_FILE "../../cv-megawizard/lpm-ip/lpm_mux16.qip"
 set_global_assignment -name QIP_FILE "../../cv-megawizard/lpm-ip/lpm_shiftreg16.qip"
 set_global_assignment -name VHDL_FILE ../../cv-megawizard/SRL16E.vhd
 
-# Default PIN configuration
-set_global_assignment -name VHDL_FILE ../../hm2/config/PIN_G540x2_34.vhd
+# Default
+set_global_assignment -name VHDL_FILE ../../hm2/config/IDROMConst.vhd
 
 # HM2 VHDL Setup and config probe functions:
 set_global_assignment -name QIP_FILE ../../hm2/functions/hm2_functions.qip
