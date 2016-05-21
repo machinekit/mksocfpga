@@ -34,6 +34,9 @@ to remove:
 
 ---
 
+Partly Unresolved for debian-8.4-machinekit-de0-armhf-2016-04-27-4gb.img: (due to u-boot variable issues)
+(current fix is to install my own u-boot 2016.03, reset env variables to default rename Vmlinux-4.xxx to zImage(after installing the 4.1 kernel .debs), and copy kernel built .dtb to /boot/socfpga.dtb)
+
 Making hm2reg-uio-dkms driver obsolete:
 
 Inspired from here:
@@ -42,20 +45,41 @@ Inspired from here:
 
 First remove all custom hm2 soc uio driver instances:
 
-	sudo dkms remove sudo dkms remove hm2reg_uio/0.0.2 --all
+	sudo dkms remove hm2reg_uio/0.0.2 --all
 	sudo apt purge hm2reg-uio-dkms
 
-reboot
+Then install 4.1 kernel:
 
-to set uio_pdrv_genirq parameter manually:
+	sudo sh -c 'echo "deb [arch=armhf] https://deb.mah.priv.at/ jessie socfpga" > /etc/apt/sources.list.d/debmah.list'
+	sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 4FD9D713
+	sudo apt update
+	sudo apt upgrade -y
+
+
+Enable Devicetree overlay functionality:
+
+	sudo sh -c 'echo "/sys/kernel/config /config         none    bind                      0 0" >> /etc/fstab'
+
+
+reboot by shutdown logout and powercycling.(to be sure the fpga is unconfigured on boot)
+
+	sudo shutdown now & logout
+
+wait 15 sek or so or until usb serival console reads:
+
+	[  OK  ] Reached target Shutdown.
+	System halted.
+
+
+test by setting uio_pdrv_genirq parameter manually:
 
 
 	sudo modprobe -r uio_pdrv_genirq
 	sudo modprobe uio_pdrv_genirq of_id="hm2reg_io,generic-uio,ui_pdrv"
 
-use this to set permantly instead:
+Use this to set permantly on boot:
 
-	machinekit@mksocfpga:~$ sudo sh -c 'echo options uio_pdrv_genirq of_id="hm2reg_io,generic-uio,ui_pdrv" > /etc/modprobe.d/uiohm2.conf'
+	sudo sh -c 'echo options uio_pdrv_genirq of_id="hm2reg_io,generic-uio,ui_pdrv" > /etc/modprobe.d/uiohm2.conf'
 
 ---
 
@@ -68,11 +92,10 @@ note: compatible string is replaced with:
 
 	compatible = "hm2reg_io,generic-uio,ui_pdrv";
 
-compile with dtc v1.4:
+make sure you have dtc v1.4.1+:
 
-[install newest device-tree-tools:](../SW/MK/dts-overlays/device-tree-tools-install.sh)
 
-	./device-tree-tools-install.sh
+	dtc --version
 
 compile:
 
@@ -85,6 +108,20 @@ copy:
 ---
 
 Run machinekit:
+(First I need to update the Machinekit sources and rebuild machinekit)
+
+	cd machinekit
+	git pull
+	make clean
+	sh autogen.sh
+	./configure --with-rt-preempt --with-platform-socfpga
+	make
+
+if this message appears --> virtual memory exhausted: Cannot allocate memory
+
+	make OPT=-O0 -j1
+
+	sudo make setuid
 
 [use hm2_soc mk config with the hm2_soc_ol driver like in this example config:](./test-configs/hm2-soc-stepper-cramps)
 
@@ -95,7 +132,11 @@ Run machinekit:
 
 ---
 
-To download test hal config:
+Note: this config will be move to Machinekit/Machinekit repo shortly...
+
+To download hm2-soc-stepper-cramps hal config for testing:
+
+You can download a folder form a github repo by using subversion, and replacing the tree/master/ part in the url with /trunk
 
 	sudo apt install subversion
 	cd machinekit/configs

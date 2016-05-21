@@ -124,6 +124,7 @@ module DE0_NANO(
       input       [3:0]  SW
 );
 
+`define GPIO_STRAIGHT
 
 //=======================================================
 //  REG/WIRE declarations
@@ -133,7 +134,6 @@ module DE0_NANO(
   parameter IOWidth = 34;
   parameter LIOWidth = 6;
   parameter IOPorts = 2;
-
 
   wire  hps_fpga_reset_n;
   wire [1:0] fpga_debounced_buttons;
@@ -160,6 +160,23 @@ module DE0_NANO(
   wire 			clklow_sig;
   wire 			clkhigh_sig;
 
+  wire [1:0]	hm2_leds_sig;
+
+  wire [IOWidth-1:0] hm2_iobits_sig;
+  wire [LIOWidth-1:0] hm2_liobits_sig;
+
+// GPIO mux
+
+  gpio_mux gpio_mux_inst
+(
+	.GPIO(GPIO_0) ,					// inout [GPIOWidth-1:0] GPIO_sig
+	.hm2_iobits(hm2_iobits_sig) ,	// inout [IOWidth-1:0] hm2_iobits_sig
+	.hm2_leds(hm2_leds_sig) 		// inout [1:0] hm2_leds_sig
+);
+
+defparam gpio_mux_inst.GPIOWidth = 36;
+defparam gpio_mux_inst.IOWidth = IOWidth;
+
 //irq:
   wire int_sig;
 
@@ -180,7 +197,7 @@ module DE0_NANO(
 //  assign out_oe = 9'b1;
 //  assign ar_out_oe = 2'b0;
 
- soc_system u0 (
+soc_system u0 (
 	//Clock&Reset
 	.clk_clk                               (FPGA_CLK1_50 ),                               //                            clk.clk
 	.reset_reset_n                         (hps_fpga_reset_n ),                         //                          reset.reset_n
@@ -333,26 +350,14 @@ altera_edge_detector pulse_debug_reset (
   defparam pulse_debug_reset.EDGE_TYPE = 1;
   defparam pulse_debug_reset.IGNORE_RST_WHILE_BUSY = 1;
 
-reg [25:0] counter;
-reg  led_level;
-always @	(posedge fpga_clk_50 or negedge hps_fpga_reset_n)
-begin
-if(~hps_fpga_reset_n)
-begin
-		counter<=0;
-		led_level<=0;
-end
+led_blinker led_blinker_inst
+(
+	.fpga_clk_50(fpga_clk_50) ,	// input  fpga_clk_50_sig
+	.hps_fpga_reset_n(hps_fpga_reset_n) ,	// input  hps_fpga_reset_n_sig
+	.LED(LED[0]) 	// output  LED_sig
+);
 
-else if(counter==24999999)
-	begin
-		counter<=0;
-		led_level<=~led_level;
-	end
-else
-		counter<=counter+1'b1;
-end
-
-assign LED[0]=led_level;
+defparam led_blinker_inst.COUNT_MAX = 24999999;
 
 // Mesa code ------------------------------------------------------//
 
@@ -360,22 +365,12 @@ assign clklow_sig = fpga_clk_50;
 assign clkhigh_sig = hm_clk_high;
 assign clkmed_sig = hm_clk_med;
 
-//import work::*;
+assign ARDUINO_IO[LIOWidth-1:0] = hm2_liobits_sig;
 
-wire [IOWidth-1:0] iobits_sig;
-assign GPIO_0[IOWidth-1:0] = iobits_sig;
-
-wire [LIOWidth-1:0] liobits_sig;
-//assign GPIO_1[LIOWidth-1:0] = liobits_sig;
-assign ARDUINO_IO[LIOWidth-1:0] = liobits_sig;
-
-
-//HostMot2 #(.IOWidth(IOWidth),.IOPorts(IOPorts)) HostMot2_inst
 HostMot2 HostMot2_inst
 (
 	.ibus(hm_datai) ,	// input [buswidth-1:0] ibus_sig
 	.obus(hm_datao) ,	// output [buswidth-1:0] obus_sig
-//	.addr(hm_address) ,	// input [addrwidth-1:2] addr_sig	-- addr => A(AddrWidth-1 downto 2),
 	.addr(hm_address) ,	// input [addrwidth-1:2] addr_sig	-- addr => A(AddrWidth-1 downto 2),
 	.readstb(hm_read ) ,	// input  readstb_sig
 	.writestb(hm_write) ,	// input  writestb_sig
@@ -386,11 +381,10 @@ HostMot2 HostMot2_inst
 	.intirq(int_sig) ,	// output  int_sig							--int => LINT, ---> PCI ?
 //	.dreq(dreq_sig) ,	// output  dreq_sig
 //	.demandmode(demandmode_sig) ,	// output  demandmode_sig
-	.iobits(iobits_sig) ,	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits
-	.liobits(liobits_sig) ,	// inout [lIOWidth-1:0] 			--liobits_sig
+	.iobits(hm2_iobits_sig) ,	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits
+	.liobits(hm2_liobits_sig) ,	// inout [lIOWidth-1:0] 			--liobits_sig
 //	.rates(rates_sig) ,	// output [4:0] rates_sig
-//	.leds(leds_sig) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
-	.leds(GPIO_0[35:34]) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
+	.leds(hm2_leds_sig) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
 );
 /*
 defparam HostMot2_inst.ThePinDesc = PinDesc;
@@ -420,7 +414,7 @@ defparam HostMot2_inst.InstStride0 = 4;
 defparam HostMot2_inst.InstStride1 = 64;
 defparam HostMot2_inst.RegStride0 = 256;
 defparam HostMot2_inst.RegStride1 = 256;
-defparam HostMot2_inst.LEDCount = 0;
+defparam HostMot2_inst.LEDCount = 2;
 */
 
 endmodule

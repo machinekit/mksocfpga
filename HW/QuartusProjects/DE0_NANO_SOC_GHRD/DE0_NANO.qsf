@@ -644,18 +644,15 @@ set_global_assignment -name SAVE_DISK_SPACE OFF
 set_global_assignment -name FLOW_ENABLE_RTL_VIEWER ON
 set_global_assignment -name TIMEQUEST_MULTICORNER_ANALYSIS ON
 set_global_assignment -name ENABLE_SIGNALTAP OFF
-set_global_assignment -name USE_SIGNALTAP_FILE adc4stp4.stp
 set_global_assignment -name VERILOG_FILE ../../cv-ip/edge_detect/altera_edge_detector.v
 set_global_assignment -name VERILOG_FILE ../../cv-ip/intr_capturer/intr_capturer.v
 set_global_assignment -name VERILOG_FILE ../../cv-ip/debounce/debounce.v
 set_global_assignment -name VERILOG_FILE ../../cv-ip/altsource_probe/hps_reset.v
 set_global_assignment -name QIP_FILE soc_system/synthesis/soc_system.qip
 
+set_global_assignment -name SYSTEMVERILOG_FILE gpio_mux.sv
+set_global_assignment -name SYSTEMVERILOG_FILE led_blinker.sv
 set_global_assignment -name SYSTEMVERILOG_FILE DE0_NANO.sv
 
-set_global_assignment -name CDF_FILE Chain1.cdf
-set_global_assignment -name SIGNALTAP_FILE adc1stp1.stp
-set_global_assignment -name SIGNALTAP_FILE adc2stp2.stp
-set_global_assignment -name SIGNALTAP_FILE adc3stp3.stp
-set_global_assignment -name SIGNALTAP_FILE adc4stp4.stp
+
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
