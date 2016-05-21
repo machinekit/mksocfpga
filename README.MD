@@ -14,4 +14,3 @@ There is very soon a Mksocfpga Omap Builder based Sd-Image for the Nano online.
 The DE1-Soc board only needs to have the 3 Quartus output files replaced in the /boot folder to work.
 
 The SoCKit board also needs replacement of the u-boot binary.
-
