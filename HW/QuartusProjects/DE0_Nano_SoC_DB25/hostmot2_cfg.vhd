@@ -68,7 +68,9 @@ use IEEE.std_logic_UNSIGNED.ALL;
 --
 
 use work.DE0_Nano_DB25_card.all;
-use work.PIN_7I76_7I85S_GPIO_GPIO.all;
+-- Uncomment one of the following
+--use work.PIN_7I76_7I85S_GPIO_GPIO.all;
+use work.PIN_7I76_7I76_7I76_7I76.all;
 
 entity HostMot2_cfg is
     port (
@@ -81,7 +83,7 @@ entity HostMot2_cfg is
     clklow      : in std_logic;
     clkmed      : in std_logic;
     clkhigh     : in std_logic;
-    int         : out std_logic;
+    intirq      : out std_logic;
     dreq        : out std_logic;
     demandmode  : out std_logic;
     iobits      : inout std_logic_vector (iowidth -1 downto 0);
@@ -133,7 +135,7 @@ begin
         clklow                  => clklow,
         clkmed                  => clkmed,
         clkhigh                 => clkhigh,
-        int                     => int,
+        intirq                  => intirq,
         dreq                    => dreq,
         demandmode              => demandmode,
         iobits                  => iobits,
