@@ -67,7 +67,7 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 --
 
 use work.IDROMConst.all;
-package DE0_Nano_DB25_card is
+package DE0_Nano_SoC_DB25_card is
     -- DE0-Nano card specific info
     constant ClockHigh      : integer := 200000000;                             -- 200 MHz
     constant ClockMed       : integer := 100000000;                             -- 100 MHz
@@ -87,4 +87,4 @@ package DE0_Nano_DB25_card is
     constant OneWS          : boolean := true;                                  -- Deprecated
     constant buswidth       : integer := 32;
     constant addrwidth      : integer := 16;
-end package DE0_Nano_DB25_card;
+end package DE0_Nano_SoC_DB25_card;
