@@ -11,7 +11,7 @@
 
 	  firmware-name = "zynq/microzed_jd2cb.bit.bin";
 
-	  hm2reg_io_0: hm2-socfpga@0x43C00000 {
+	  hm2reg_io_0: hm2-socfpga0@0x43C00000 {
 		compatible = "hm2reg_io,generic-uio,ui_pdrv";
 		reg = < 0x43C00000 0x00010000 >;
 		interrupt-parent = <&intc>;
