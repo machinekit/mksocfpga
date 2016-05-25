@@ -1,0 +1,4 @@
+set_global_assignment -name VHDL_FILE ../../hm2/config/IDROMConst.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/config/DE0_Nano_SoC_DB25/DE0_Nano_SoC_DB25_card.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/config/DE0_Nano_SoC_DB25/PIN_7I76_7I85S_GPIO_GPIO.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/config/DE0_Nano_SoC_DB25/PIN_7I76_7I76_7I76_7I76.vhd

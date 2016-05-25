@@ -34,7 +34,7 @@
 `define ENABLE_HPS
 //`define ENABLE_CLK
 
-module DE0_Nano_DB25(
+module DE0_Nano_SoC_DB25(
 
       ///////// ADC /////////
       output             ADC_CONVST,

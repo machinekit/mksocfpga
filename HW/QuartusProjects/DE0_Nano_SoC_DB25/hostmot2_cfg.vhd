@@ -67,7 +67,7 @@ use IEEE.std_logic_UNSIGNED.ALL;
 --     POSSIBILITY OF SUCH DAMAGE.
 --
 
-use work.DE0_Nano_DB25_card.all;
+use work.DE0_Nano_SoC_DB25_card.all;
 -- Uncomment one of the following
 --use work.PIN_7I76_7I85S_GPIO_GPIO.all;
 use work.PIN_7I76_7I76_7I76_7I76.all;
