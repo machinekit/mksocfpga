@@ -2,7 +2,7 @@ package boardtype;
 // DE0-Nano Dev kit and I/O adaptors specific info
 //   {STRAIGHT=0,DB25=1} BoardAdaptor;
 
-   parameter BoardAdaptor     = 0;
+   parameter BoardAdaptor     = 1;
 	parameter ClockHigh			= 200000000;	// 200 MHz
 	parameter ClockMed			= 100000000;	// 100 MHz
 	parameter ClockLow			=  50000000;	//  50 MHz
