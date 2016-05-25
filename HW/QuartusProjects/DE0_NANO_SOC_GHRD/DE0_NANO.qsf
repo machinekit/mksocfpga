@@ -19,7 +19,8 @@ set_global_assignment -name QIP_FILE ../../hm2/hm2_socfpga.qip
 
 #set_global_assignment -name QIP_FILE ../../hm2/config/DE0_Nano/hm2_Cramps_4x68_dpll_irq_config.qip
 #set_global_assignment -name QIP_FILE ../../hm2/config/DE0_Nano/hm2_i25_G540x2_34_dpll_irq_config.qip
-set_global_assignment -name QIP_FILE ../../hm2/config/DE0_Nano/hm2_Testx2_34_dpll_irq_config.qip
+#set_global_assignment -name QIP_FILE ../../hm2/config/DE0_Nano/hm2_Testx2_34_dpll_irq_config.qip
+set_global_assignment -name QIP_FILE ../../hm2/config/DE0_Nano/hm2_7I76_7I76_7I76_7I76_no_irq_config.qip
 
 #============================================================
 
