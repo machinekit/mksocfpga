@@ -189,7 +189,5 @@ wait_on_run impl_1
 
 open_run impl_1
 
-set_property "bitstream.config.unusedpin" "pullup" [current_design]
-
 # Write the bitstream
 write_bitstream "$origin_dir/../microzed_jd2cb"
