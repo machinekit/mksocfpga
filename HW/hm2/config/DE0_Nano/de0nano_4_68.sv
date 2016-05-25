@@ -1,8 +1,8 @@
 package boardtype;
 // DE0-Nano Dev kit and I/O adaptors specific info
-//`define DB25
-// if defined mux --> DE0_Nano_SoC_DB25 adaptor
+//   {STRAIGHT=0,DB25=1} BoardAdaptor;
 
+   parameter BoardAdaptor     = 0;
 	parameter ClockHigh			= 200000000;	// 200 MHz
 	parameter ClockMed			= 100000000;	// 100 MHz
 	parameter ClockLow			=  50000000;	//  50 MHz
