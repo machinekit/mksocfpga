@@ -69,17 +69,17 @@ int main ( int argc, char *argv[] )
 	{
 		case 'r':
 			printf("Read only \n");
-			printf("Address %u \tvalue = 0x%08X \n", index, value);
+			printf("Address %u \tvalue = 0x%08X \tdecimal = %u \n", index, value, value);
 			break;
 
 		case 'w':
 			printf("read Write read  \n");
-			printf("Address %u \tvalue = %u \n", index, value);
+			printf("Address %u will be set to \tvalue = 0x%08X \tdecimal = %u \n", index, value, value);
 			uint32_t inval = (uint32_t) atoi(argv[3]);
 			uint32_t oldval = *((uint32_t *)(h2p_lw_axi_mem_addr + index));
 			*((uint32_t *)(h2p_lw_axi_mem_addr + index)) = inval;
 			value = *((uint32_t *)(h2p_lw_axi_mem_addr + index));
-			printf("Address %u \tformer val = 0x%08X \t wrote: --> 0x%08X \t read: = 0x%08X \n", index, oldval, inval, value);
+			printf("Address %u \tformer val = 0x%08X \t wrote: --> 0x%08X \tdecimal = %u \t read: = 0x%08X \tdecimal = %u \n", index, oldval, inval, inval, value, value);
 			break;
 
 		default:

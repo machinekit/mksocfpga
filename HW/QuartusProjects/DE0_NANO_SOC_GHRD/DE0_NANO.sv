@@ -124,16 +124,17 @@ module DE0_NANO(
       input       [3:0]  SW
 );
 
-
 //=======================================================
 //  REG/WIRE declarations
 //=======================================================
+// DE0-Nano Dev kit and I/O adaptors specific info
+import boardtype::*;
 
-  parameter AddrWidth = 16;
-  parameter IOWidth = 34;
-  parameter LIOWidth = 6;
-  parameter IOPorts = 2;
-
+//--------- moved to include file -----------//
+//  parameter GPIOWidth 		= 36;
+//  parameter NumGPIO 			= 2;
+//  parameter MuxGPIOIOWidth 	= IOWidth/NumGPIO;
+//-------------------------------------------//
 
   wire  hps_fpga_reset_n;
   wire [1:0] fpga_debounced_buttons;
@@ -150,19 +151,145 @@ module DE0_NANO(
   assign stm_hw_events    = {{15{1'b0}}, SW, fpga_led_internal, fpga_debounced_buttons};
 // hm2
   wire [AddrWidth-3:0] 	hm_address;
-  wire [31:0] 	hm_datao;
-  wire [31:0] 	hm_datai;
-  wire       	hm_read;
-  wire 			hm_write;
-  wire [3:0]	hm_chipsel;
-  wire			hm_clk_med;
-  wire			hm_clk_high;
-  wire 			clklow_sig;
-  wire 			clkhigh_sig;
+  wire [31:0] 				hm_datao;
+  wire [31:0] 				hm_datai;
+  wire       				hm_read;
+  wire 						hm_write;
+  wire [3:0]				hm_chipsel;
+  wire						hm_clk_med;
+  wire						hm_clk_high;
+  wire 						clklow_sig;
+  wire 						clkhigh_sig;
+
+  tri [IOWidth-1:0] 		hm2_iobits_sig;
+  tri [LEDCount-1:0]		hm2_leds_sig;
+
+//  assign GPIO_0[IOWidth-1:0] = hm2_iobits_sig;
+
+// GPIO mux
+
+//`define DB25
+// if defined mux --> DE0_Nano_SoC_DB25 adaptor
+// this can be done ion the include file
+
+  generate
+	if(NumGPIO == 1) begin
+		wire [GPIOWidth-1:0]				GPIO;
+		wire [MuxGPIOIOWidth-1:0]		hm2_iobits;
+		wire [(LEDCount/NumGPIO)-1:0]	hm2_leds;
+		assign GPIO_0 						= GPIO;
+		assign hm2_iobits 				= hm2_iobits_sig;
+		assign hm2_leds 					= hm2_leds_sig;
+
+`ifdef DB25
+
+		// DE0_Nano_SoC_DB25 adaptor
+		assign GPIO[16] = hm2_iobits[00]; // PIN 1
+		assign GPIO[17] = hm2_iobits[01]; // PIN 14
+		assign GPIO[14] = hm2_iobits[02]; // PIN 2
+		assign GPIO[15] = hm2_iobits[03]; // PIN 15
+		assign GPIO[12] = hm2_iobits[04]; // PIN 3
+		assign GPIO[13] = hm2_iobits[05]; // PIN 16
+		assign GPIO[10] = hm2_iobits[06]; // PIN 4
+		assign GPIO[11] = hm2_iobits[07]; // PIN 17
+		assign GPIO[08] = hm2_iobits[08]; // PIN 5
+		assign GPIO[09] = hm2_iobits[09]; // PIN 6
+		assign GPIO[06] = hm2_iobits[10]; // PIN 7
+		assign GPIO[07] = hm2_iobits[11]; // PIN 8
+		assign GPIO[04] = hm2_iobits[12]; // PIN 9
+		assign GPIO[05] = hm2_iobits[13]; // PIN 10
+		assign GPIO[02] = hm2_iobits[14]; // PIN 11
+		assign GPIO[03] = hm2_iobits[15]; // PIN 12
+		assign GPIO[00] = hm2_iobits[16]; // PIN 13
+		assign GPIO[01] = hm2_leds[0];
+
+		// DB25-P3
+		assign GPIO[34] = hm2_iobits[17]; // PIN 1
+		assign GPIO[35] = hm2_iobits[18]; // PIN 14
+		assign GPIO[32] = hm2_iobits[19]; // PIN 2
+		assign GPIO[33] = hm2_iobits[20]; // PIN 15
+		assign GPIO[30] = hm2_iobits[21]; // PIN 3
+		assign GPIO[31] = hm2_iobits[22]; // PIN 16
+		assign GPIO[28] = hm2_iobits[23]; // PIN 4
+		assign GPIO[29] = hm2_iobits[24]; // PIN 17
+		assign GPIO[26] = hm2_iobits[25]; // PIN 5
+		assign GPIO[27] = hm2_iobits[26]; // PIN 6
+		assign GPIO[24] = hm2_iobits[27]; // PIN 7
+		assign GPIO[25] = hm2_iobits[28]; // PIN 8
+		assign GPIO[22] = hm2_iobits[29]; // PIN 9
+		assign GPIO[23] = hm2_iobits[30]; // PIN 10
+		assign GPIO[20] = hm2_iobits[31]; // PIN 11
+		assign GPIO[21] = hm2_iobits[32]; // PIN 12
+		assign GPIO[18] = hm2_iobits[33]; // PIN 13
+		assign GPIO[19] = hm2_leds[1];
+ `else
+		assign GPIO		= {hm2_leds,hm2_iobits};
+ `endif
+	end
+	else if(NumGPIO == 2) begin
+// DE0_Nano_SoC_DB25 adaptor
+		wire [MuxGPIOIOWidth-1:0]	hm2_iobits[NumGPIO-1:0];
+		wire [MuxLedWidth-1:0]		hm2_leds[NumGPIO-1:0];
+		wire [GPIOWidth-1:0]			GPIO[NumGPIO-1:0];
+
+		assign hm2_iobits[0] 		= hm2_iobits_sig[MuxGPIOIOWidth-1:0];
+		assign hm2_iobits[1] 		= hm2_iobits_sig[IOWidth-1:MuxGPIOIOWidth];
+		assign GPIO_0					= GPIO[0];
+		assign GPIO_1					= GPIO[1];
+		assign hm2_leds[0] 			= hm2_leds_sig[MuxLedWidth-1:0];
+		assign hm2_leds[1] 			= hm2_leds_sig[LEDCount-1:MuxLedWidth];
+		genvar i1;
+		for (i1=0;i1<NumGPIO;i1=i1+1)begin : gpioloop
+`ifdef DB25
+			assign GPIO[16][i1] = hm2_iobits[00][i1]; // PIN 1
+			assign GPIO[17][i1] = hm2_iobits[01][i1]; // PIN 14
+			assign GPIO[14][i1] = hm2_iobits[02][i1]; // PIN 2
+			assign GPIO[15][i1] = hm2_iobits[03][i1]; // PIN 15
+			assign GPIO[12][i1] = hm2_iobits[04][i1]; // PIN 3
+			assign GPIO[13][i1] = hm2_iobits[05][i1]; // PIN 16
+			assign GPIO[10][i1] = hm2_iobits[06][i1]; // PIN 4
+			assign GPIO[11][i1] = hm2_iobits[07][i1]; // PIN 17
+			assign GPIO[08][i1] = hm2_iobits[08][i1]; // PIN 5
+			assign GPIO[09][i1] = hm2_iobits[09][i1]; // PIN 6
+			assign GPIO[06][i1] = hm2_iobits[10][i1]; // PIN 7
+			assign GPIO[07][i1] = hm2_iobits[11][i1]; // PIN 8
+			assign GPIO[04][i1] = hm2_iobits[12][i1]; // PIN 9
+			assign GPIO[05][i1] = hm2_iobits[13][i1]; // PIN 10
+			assign GPIO[02][i1] = hm2_iobits[14][i1]; // PIN 11
+			assign GPIO[03][i1] = hm2_iobits[15][i1]; // PIN 12
+			assign GPIO[00][i1] = hm2_iobits[16][i1]; // PIN 13
+			assign GPIO[01][i1] = hm2_leds[0][i1];
+
+	// DB25-P3
+			assign GPIO[34][i1] = hm2_iobits[17][i1]; // PIN 1
+			assign GPIO[35][i1] = hm2_iobits[18][i1]; // PIN 14
+			assign GPIO[32][i1] = hm2_iobits[19][i1]; // PIN 2
+			assign GPIO[33][i1] = hm2_iobits[20][i1]; // PIN 15
+			assign GPIO[30][i1] = hm2_iobits[21][i1]; // PIN 3
+			assign GPIO[31][i1] = hm2_iobits[22][i1]; // PIN 16
+			assign GPIO[28][i1] = hm2_iobits[23][i1]; // PIN 4
+			assign GPIO[29][i1] = hm2_iobits[24][i1]; // PIN 17
+			assign GPIO[26][i1] = hm2_iobits[25][i1]; // PIN 5
+			assign GPIO[27][i1] = hm2_iobits[26][i1]; // PIN 6
+			assign GPIO[24][i1] = hm2_iobits[27][i1]; // PIN 7
+			assign GPIO[25][i1] = hm2_iobits[28][i1]; // PIN 8
+			assign GPIO[22][i1] = hm2_iobits[29][i1]; // PIN 9
+			assign GPIO[23][i1] = hm2_iobits[30][i1]; // PIN 10
+			assign GPIO[20][i1] = hm2_iobits[31][i1]; // PIN 11
+			assign GPIO[21][i1] = hm2_iobits[32][i1]; // PIN 12
+			assign GPIO[18][i1] = hm2_iobits[33][i1]; // PIN 13
+			assign GPIO[19][i1] = hm2_leds[1][i1];
+ `else
+			assign GPIO[i1]		= {hm2_leds[i1],hm2_iobits[i1]};
+ `endif
+		end
+	end
+  endgenerate
+
+  wire [LIOWidth-1:0]	hm2_liobits_sig;
 
 //irq:
   wire int_sig;
-
   assign ARDUINO_IO[15] = int_sig;
 
 //  wire [8:0] 	out_oe;
@@ -180,7 +307,7 @@ module DE0_NANO(
 //  assign out_oe = 9'b1;
 //  assign ar_out_oe = 2'b0;
 
- soc_system u0 (
+soc_system u0 (
 	//Clock&Reset
 	.clk_clk                               (FPGA_CLK1_50 ),                               //                            clk.clk
 	.reset_reset_n                         (hps_fpga_reset_n ),                         //                          reset.reset_n
@@ -333,26 +460,14 @@ altera_edge_detector pulse_debug_reset (
   defparam pulse_debug_reset.EDGE_TYPE = 1;
   defparam pulse_debug_reset.IGNORE_RST_WHILE_BUSY = 1;
 
-reg [25:0] counter;
-reg  led_level;
-always @	(posedge fpga_clk_50 or negedge hps_fpga_reset_n)
-begin
-if(~hps_fpga_reset_n)
-begin
-		counter<=0;
-		led_level<=0;
-end
+led_blinker led_blinker_inst
+(
+	.fpga_clk_50(fpga_clk_50) ,	// input  fpga_clk_50_sig
+	.hps_fpga_reset_n(hps_fpga_reset_n) ,	// input  hps_fpga_reset_n_sig
+	.LED(LED[0]) 	// output  LED_sig
+);
 
-else if(counter==24999999)
-	begin
-		counter<=0;
-		led_level<=~led_level;
-	end
-else
-		counter<=counter+1'b1;
-end
-
-assign LED[0]=led_level;
+defparam led_blinker_inst.COUNT_MAX = 24999999;
 
 // Mesa code ------------------------------------------------------//
 
@@ -360,22 +475,12 @@ assign clklow_sig = fpga_clk_50;
 assign clkhigh_sig = hm_clk_high;
 assign clkmed_sig = hm_clk_med;
 
-//import work::*;
+assign ARDUINO_IO[LIOWidth-1:0] = hm2_liobits_sig;
 
-wire [IOWidth-1:0] iobits_sig;
-assign GPIO_0[IOWidth-1:0] = iobits_sig;
-
-wire [LIOWidth-1:0] liobits_sig;
-//assign GPIO_1[LIOWidth-1:0] = liobits_sig;
-assign ARDUINO_IO[LIOWidth-1:0] = liobits_sig;
-
-
-//HostMot2 #(.IOWidth(IOWidth),.IOPorts(IOPorts)) HostMot2_inst
-HostMot2 HostMot2_inst
+HostMot2_cfg HostMot2_inst
 (
 	.ibus(hm_datai) ,	// input [buswidth-1:0] ibus_sig
 	.obus(hm_datao) ,	// output [buswidth-1:0] obus_sig
-//	.addr(hm_address) ,	// input [addrwidth-1:2] addr_sig	-- addr => A(AddrWidth-1 downto 2),
 	.addr(hm_address) ,	// input [addrwidth-1:2] addr_sig	-- addr => A(AddrWidth-1 downto 2),
 	.readstb(hm_read ) ,	// input  readstb_sig
 	.writestb(hm_write) ,	// input  writestb_sig
@@ -386,41 +491,40 @@ HostMot2 HostMot2_inst
 	.intirq(int_sig) ,	// output  int_sig							--int => LINT, ---> PCI ?
 //	.dreq(dreq_sig) ,	// output  dreq_sig
 //	.demandmode(demandmode_sig) ,	// output  demandmode_sig
-	.iobits(iobits_sig) ,	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits
-	.liobits(liobits_sig) ,	// inout [lIOWidth-1:0] 			--liobits_sig
+	.iobits(hm2_iobits_sig) ,	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits
+	.liobits(hm2_liobits_sig) ,	// inout [lIOWidth-1:0] 			--liobits_sig
 //	.rates(rates_sig) ,	// output [4:0] rates_sig
-//	.leds(leds_sig) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
-	.leds(GPIO_0[35:34]) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
+	.leds(hm2_leds_sig) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
+//	.leds(GPIO_0[35:34]) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
 );
-/*
-defparam HostMot2_inst.ThePinDesc = PinDesc;
-defparam HostMot2_inst.TheModuleID =  "ModuleID";
-defparam HostMot2_inst.IDROMType = 3;
-defparam HostMot2_inst.SepClocks = "true";
-defparam HostMot2_inst.OneWS = "true";
-defparam HostMot2_inst.UseIRQLogic = "true";
-defparam HostMot2_inst.PWMRefWidth = 13;
-defparam HostMot2_inst.UseWatchDog = "true";
-defparam HostMot2_inst.OffsetToModules = 64;
-defparam HostMot2_inst.OffsetToPinDesc = 448;
-defparam HostMot2_inst.ClockHigh = "ClockHigh25";
-defparam HostMot2_inst.ClockMed = "ClockMed25";
-defparam HostMot2_inst.ClockLow = "ClockLow25";
-defparam HostMot2_inst.BoardNameLow = BoardNameMESA;
-defparam HostMot2_inst.BoardNameHigh = "BoardName5i25";
-defparam HostMot2_inst.FPGASize = 9;
-defparam HostMot2_inst.FPGAPins = 144;
-defparam HostMot2_inst.IOPorts = 2;
-defparam HostMot2_inst.IOWidth = 34;
-defparam HostMot2_inst.LIOWidth = 6;
-defparam HostMot2_inst.PortWidth = 17;
-defparam HostMot2_inst.BusWidth = 32;
-defparam HostMot2_inst.AddrWidth = 16;
-defparam HostMot2_inst.InstStride0 = 4;
-defparam HostMot2_inst.InstStride1 = 64;
-defparam HostMot2_inst.RegStride0 = 256;
-defparam HostMot2_inst.RegStride1 = 256;
-defparam HostMot2_inst.LEDCount = 0;
-*/
+
+// defparam HostMot2_inst.ThePinDesc = PinDesc;
+// defparam HostMot2_inst.TheModuleID =  "ModuleID";
+// defparam HostMot2_inst.IDROMType = 3;
+defparam HostMot2_inst.SepClocks = SepClocks;
+defparam HostMot2_inst.OneWS = OneWS;
+// defparam HostMot2_inst.UseIRQLogic = "true";
+// defparam HostMot2_inst.PWMRefWidth = 13;
+// defparam HostMot2_inst.UseWatchDog = "true";
+// defparam HostMot2_inst.OffsetToModules = 64;
+// defparam HostMot2_inst.OffsetToPinDesc = 448;
+defparam HostMot2_inst.ClockHigh = ClockHigh;
+defparam HostMot2_inst.ClockMed = ClockMed;
+defparam HostMot2_inst.ClockLow = ClockLow;
+defparam HostMot2_inst.BoardNameLow = BoardNameLow;
+defparam HostMot2_inst.BoardNameHigh = BoardNameHigh;
+defparam HostMot2_inst.FPGASize = FPGASize;
+defparam HostMot2_inst.FPGAPins = FPGAPins;
+defparam HostMot2_inst.IOPorts = IOPorts;
+defparam HostMot2_inst.IOWidth = IOWidth;
+defparam HostMot2_inst.PortWidth = PortWidth;
+defparam HostMot2_inst.LIOWidth = LIOWidth;
+defparam HostMot2_inst.LEDCount = LEDCount;
+defparam HostMot2_inst.BusWidth = BusWidth;
+defparam HostMot2_inst.AddrWidth = AddrWidth;
+// defparam HostMot2_inst.InstStride0 = 4;
+// defparam HostMot2_inst.InstStride1 = 64;
+// defparam HostMot2_inst.RegStride0 = 256;
+// defparam HostMot2_inst.RegStride1 = 256;
 
 endmodule
