@@ -17,8 +17,9 @@ set_global_assignment -name QIP_FILE ../../hm2/hm2_socfpga.qip
 
 # MESA board , pin and daughter card config options:
 
-set_global_assignment -name QIP_FILE ../../hm2/config/DE0_Nano/hm2_Cramps_4x68_dpll_irq_config.qip
+#set_global_assignment -name QIP_FILE ../../hm2/config/DE0_Nano/hm2_Cramps_4x68_dpll_irq_config.qip
 #set_global_assignment -name QIP_FILE ../../hm2/config/DE0_Nano/hm2_i25_G540x2_34_dpll_irq_config.qip
+set_global_assignment -name QIP_FILE ../../hm2/config/DE0_Nano/hm2_Testx2_34_dpll_irq_config.qip
 
 #============================================================
 
