@@ -109,9 +109,9 @@ begin
   begin
     if rising_edge(clk) then
       if timeren = '1' then
-        if prescale_cnt = x"01" then
+        if prescale_cnt <= x"01" then
           prescale_cnt <= unsigned(prescale);
-          if timer_cnt = x"000001" then
+          if timer_cnt <= x"000001" then
             timer_cnt <= unsigned(period);
           else
             timer_cnt <= timer_cnt - 1;
@@ -119,9 +119,6 @@ begin
         else
           prescale_cnt <= prescale_cnt - 1;
         end if; -- prescale
-      else
-        timer_cnt <= (others => '0');
-        prescale_cnt <= (others => '0');
       end if; -- timer_cnt
     end if; -- (clk)
   end process;
