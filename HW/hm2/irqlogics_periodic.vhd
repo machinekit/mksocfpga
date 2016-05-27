@@ -123,28 +123,28 @@ begin
     end if; -- (clk)
   end process;
 
-	regupdate : process (clk,statusreg,irqff,readstatus)
-	begin
-		if rising_edge(clk) then
-			if loadstatus = '1' then
-				statusreg <= ibus(2 downto 0);
-      elsif loadcontrol = '1' then
-        controlreg <= ibus(31 downto 0);
+  regupdate : process (clk,statusreg,irqff,readstatus,loadstatus,readcontrol,loadcontrol,newint)
+  begin
+      if rising_edge(clk) then
+	if loadstatus = '1' then
+          statusreg <= ibus(2 downto 0);
+        elsif loadcontrol = '1' then
+          controlreg <= ibus(31 downto 0);
+        end if;
+        if newint = '1' then
+          irqff <= '1';
+        end if;
+        if clear = '1' then
+          irqff <= '0';
+        end if;
+      end if; -- (clk)
+      obus <= (others => 'Z');
+      if readstatus = '1' then
+	obus(2 downto 0) <= statusreg;
+	obus(31 downto 3) <= (others => '0');
+      elsif readcontrol = '1' then
+        obus(31 downto 0) <= controlreg;
       end if;
-      if newint = '1' then
-        irqff <= '1';
-      end if;
-      if clear = '1' then
-        irqff <= '0';
-      end if;
-		end if; -- (clk)
-		obus <= (others => 'Z');
-		if readstatus = '1' then
-			obus(2 downto 0) <= statusreg;
-			obus(31 downto 5) <= (others => '0');
-    elsif readcontrol = '1' then
-      obus(31 downto 0) <= controlreg;
-    end if;
-	end process;
+  end process;
 
 end Behavioral;
