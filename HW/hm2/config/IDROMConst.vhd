@@ -113,8 +113,7 @@ package IDROMConst is
 	constant IDROMWEnAddr : std_logic_vector(7 downto 0) := x"08";
 
 	constant IRQDivAddr  : std_logic_vector(7 downto 0) := x"09";
-	constant IRQStatusAddr : std_logic_vector(8 downto 0) := x"0A"&'0';
-	constant IRQControlAddr : std_logic_vector(8 downto 0) := x"0A"&'1';
+	constant IRQStatusAddr : std_logic_vector(7 downto 0) := x"0A";
 	constant ClearIRQAddr : std_logic_vector(7 downto 0) := x"0B";
 	constant IRQNumRegs : std_logic_vector(7 downto 0) := x"03";
 	constant IRQMPBitMask : std_logic_vector(31 downto 0) := x"00000000";

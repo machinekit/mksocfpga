@@ -358,12 +358,10 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 
 	makeirqlogic: if UseIRQlogic generate
 	signal LoadIRQStatus : std_logic;
-	signal ReadIrQStatus : std_logic;
-  signal LoadIRQControl : std_logic;
-  signal ReadIRQControl: std_logic;
+	signal ReadIrqStatus : std_logic;
 	signal ClearIRQ : std_logic;
 	begin
-	somoldirqlogic: entity work.irqlogics_periodic
+	somoldirqlogic: entity work.irqlogics
 		generic map(
 			buswidth =>  BusWidth
 				)
@@ -371,35 +369,24 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 			clk => clklow,
 			ibus => ibus,
          obus =>  obus,
-         loadstatus => LoadIRQStatus,
-         readstatus => ReadIRQStatus,
-         loadcontrol => LoadIRQControl,
-         readcontrol => ReadIRQControl,
+         loadstatus => LoadIRqStatus,
+         readstatus => ReadIRqStatus,
          clear =>  ClearIRQ,
+         ratesource => RateSources, -- DPLL timer channels, channel 4 is refout
          int => INT);
 
 		IRQDecodePRocess: process(A,readstb,writestb)
 		begin
-			if A(15 downto 7) = IRQStatusAddr and writestb = '1' then	 --
+			if A(15 downto 8) = IRQStatusAddr and writestb = '1' then	 --
 				LoadIRQStatus <= '1';
 			else
 				LoadIRQStatus <= '0';
 			end if;
-			if A(15 downto 7) = IRQStatusAddr and readstb = '1' then	 --
+			if A(15 downto 8) = IRQStatusAddr and readstb = '1' then	 --
 				ReadIrqStatus <= '1';
 			else
 				ReadIrqStatus <= '0';
 			end if;
-      if A(15 downto 7) = IRQControlAddr and writestb = '1' then	 --
-        LoadIRQControl <= '1';
-      else
-        LoadIRQControl <= '0';
-      end if;
-      if A(15 downto 7) = IRQControlAddr and readstb = '1' then	 --
-        ReadIRQControl <= '1';
-      else
-        ReadIRQControl <= '0';
-      end if;
 			if A(15 downto 8) = ClearIRQAddr and writestb = '1' then	 --
 				ClearIRQ <= '1';
 			else
