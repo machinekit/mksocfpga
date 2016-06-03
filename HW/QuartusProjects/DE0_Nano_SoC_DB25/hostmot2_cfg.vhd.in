@@ -70,7 +70,8 @@ use IEEE.std_logic_UNSIGNED.ALL;
 use work.DE0_Nano_SoC_DB25_card.all;
 -- Uncomment one of the following
 --use work.PIN_7I76_7I85S_GPIO_GPIO.all;
-use work.PIN_7I76_7I76_7I76_7I76.all;
+--use work.PIN_7I76_7I76_7I76_7I76.all;
+use work.PIN_%CONFIG%.all;
 
 entity HostMot2_cfg is
     port (
