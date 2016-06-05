@@ -45,10 +45,13 @@ build_config() {
     sed "s/%CONFIG%/${1}/g" <hostmot2_cfg.vhd.in > hostmot2_cfg.vhd
 
     # Actually build the FPGA bit file
-    echo make rbf
+    make rbf
 
     # Rename the resulting bit file to <board>.<config>.rbf
-    echo mv "${OUTPUTDIR}/${BOARDNAME}.rbf" "${OUTPUTDIR}/${BOARDNAME}.${1}.rbf"
+    mv "${OUTPUTDIR}/${BOARDNAME}.rbf" "${OUTPUTDIR}/${BOARDNAME}.${1}.rbf"
+
+    # Move the *.sof file as well
+    mv "${OUTPUTDIR}/${BOARDNAME}.sof" "${OUTPUTDIR}/${BOARDNAME}.${1}.sof"
 
 }
 
@@ -88,6 +91,13 @@ for CONFIG in ${CONFIG_FILES} ; do
 done
 
 # Now we have a space separated list of configs, time to start building
+
+# Build each configuration, one at a time
 for CONFIG in ${CONFIG_NAMES} ; do
+    # Cleanup stamp files to trigger a build
+    make clean
+
+    # Build the current configuration
     build_config ${CONFIG}
 done
+
