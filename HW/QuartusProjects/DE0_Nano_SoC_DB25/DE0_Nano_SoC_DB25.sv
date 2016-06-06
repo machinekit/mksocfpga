@@ -453,7 +453,7 @@ HostMot2_cfg HostMot2_inst
     .clklow(clklow_sig) ,   // input  clklow_sig                -- PCI clock --> all
     .clkmed(clkmed_sig) ,   // input  clkmed_sig                -- Processor clock --> sserialwa, twiddle
     .clkhigh(clkhigh_sig) , // input  clkhigh_sig               -- High speed clock --> most
-//  .intirq(int_sig) ,      // output  int_sig                          --int => LINT, ---> PCI ?
+//  .int(int_sig) ,         // output  int_sig                          --int => LINT, ---> PCI ?
 //  .dreq(dreq_sig) ,       // output  dreq_sig
 //  .demandmode(demandmode_sig) ,   // output  demandmode_sig
     .iobits(hm2_iobits) ,   // inout [IOWidth-1:0]              --iobits => IOBITS,-- external I/O bits
