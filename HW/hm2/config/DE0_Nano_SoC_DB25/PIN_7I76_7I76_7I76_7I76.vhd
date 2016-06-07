@@ -72,13 +72,13 @@ use work.IDROMConst.all;
 package PIN_7I76_7I76_7I76_7I76 is
     constant ModuleID : ModuleIDType :=(
         -- GTag             Version Clock           NumInst BaseAddr                    NumRegisters            Strides MultiRegs
+        (HM2DPLLTag,        x"00",  ClockLowTag,    x"01",  HM2DPLLBaseRateAddr&PadT,   HM2DPLLNumRegs,         x"00",  HM2DPLLMPBitMask),
         (WatchDogTag,       x"00",  ClockLowTag,    x"01",  WatchDogTimeAddr&PadT,      WatchDogNumRegs,        x"00",  WatchDogMPBitMask),
         (IOPortTag,         x"00",  ClockLowTag,    x"04",  PortAddr&PadT,              IOPortNumRegs,          x"00",  IOPortMPBitMask),
         (QcountTag,         x"02",  ClockLowTag,    x"04",  QcounterAddr&PadT,          QCounterNumRegs,        x"00",  QCounterMPBitMask),
         (StepGenTag,        x"02",  ClockLowTag,    x"14",  StepGenRateAddr&PadT,       StepGenNumRegs,         x"00",  StepGenMPBitMask),
         (SSerialTag,        x"00",  ClockLowTag,    x"04",  SSerialCommandAddr&PadT,    SSerialNumRegs,         x"10",  SSerialMPBitMask),
         (LEDTag,            x"00",  ClockLowTag,    x"01",  LEDAddr&PadT,               LEDNumRegs,             x"00",  LEDMPBitMask),
-        (NullTag,           x"00",  NullTag,        x"00",  NullAddr&PadT,              x"00",                  x"00",  x"00000000"),
         (NullTag,           x"00",  NullTag,        x"00",  NullAddr&PadT,              x"00",                  x"00",  x"00000000"),
         (NullTag,           x"00",  NullTag,        x"00",  NullAddr&PadT,              x"00",                  x"00",  x"00000000"),
         (NullTag,           x"00",  NullTag,        x"00",  NullAddr&PadT,              x"00",                  x"00",  x"00000000"),
