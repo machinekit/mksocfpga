@@ -92,10 +92,16 @@ done
 
 # Now we have a space separated list of configs, time to start building
 
+# Cleanup all stamp files to trigger a full rebuild
+# Including processing the qsys files into synthesizable code
+make clean
+
 # Build each configuration, one at a time
 for CONFIG in ${CONFIG_NAMES} ; do
-    # Cleanup stamp files to trigger a build
-    make clean
+    # Cleanup Quartus stamp file to trigger a build of the bitfile
+    # Leave the other stamp files (for qsys and pin assignments) since
+    # those only need to be built once per board, not for each PIN config
+    rm stamp/quartus.stamp || true
 
     # Build the current configuration
     build_config ${CONFIG}
