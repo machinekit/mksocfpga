@@ -52,43 +52,32 @@ build_config() {
 
     # Move the *.sof file as well
     mv "${OUTPUTDIR}/${BOARDNAME}.sof" "${OUTPUTDIR}/${BOARDNAME}.${1}.sof"
-
 }
 
 
 # If we were passed specific configurations to build, just build those
 if [ -n "$1" ] ; then
-    while [ -n "$1" ] ; do
-	FILE="${CONFIG_DIR}/PIN_${1}.vhd"
-        if [ -r "${FILE}" ] ; then
-            build_config $1
-        else
-            echo "Cannot file configuration file ${FILE}!"
-            exit 1
-        fi
-        shift
-    done
-    exit 0
-fi
+    CONFIG_NAMES="$*"
 
 # No configuration(s) specified, so let's find and build them all...
+else
+    # List of all configuration vhd files for this board
+    CONFIG_VHD="${CONFIG_DIR}/PIN_*.vhd"
 
-# List of all configuration vhd files for this board
-CONFIG_VHD="${CONFIG_DIR}/PIN_*.vhd"
+    # Strip off the directory portion, leaving just the filename
+    CONFIG_FILES=""
+    for CONFIG in ${CONFIG_VHD} ; do
+        CONFIG_FILES="${CONFIG_FILES} $(basename ${CONFIG})"
+    done
 
-# Strip off the directory portion, leaving just the filename
-CONFIG_FILES=""
-for CONFIG in ${CONFIG_VHD} ; do
-    CONFIG_FILES="${CONFIG_FILES} $(basename ${CONFIG})"
-done
-
-# Remove PIN_ and .vhd, leaving just the configuration name
-CONFIG_NAMES=""
-for CONFIG in ${CONFIG_FILES} ; do
-    CONFIG=${CONFIG%.vhd}
-    CONFIG=${CONFIG#PIN_}
-    CONFIG_NAMES="${CONFIG_NAMES} ${CONFIG}"
-done
+    # Remove PIN_ and .vhd, leaving just the configuration name
+    CONFIG_NAMES=""
+    for CONFIG in ${CONFIG_FILES} ; do
+        CONFIG=${CONFIG%.vhd}
+        CONFIG=${CONFIG#PIN_}
+        CONFIG_NAMES="${CONFIG_NAMES} ${CONFIG}"
+    done
+fi
 
 # Now we have a space separated list of configs, time to start building
 
@@ -104,6 +93,14 @@ for CONFIG in ${CONFIG_NAMES} ; do
     rm stamp/quartus.stamp || true
 
     # Build the current configuration
-    build_config ${CONFIG}
+    FILE="${CONFIG_DIR}/PIN_${CONFIG}.vhd"
+    if [ -r "${FILE}" ] ; then
+        build_config ${CONFIG}
+    else
+        echo "Unknown configuration ${CONFIG}!"
+        echo "Try one of:"
+        ls -1 ${CONFIG_DIR}/PIN_*.vhd | sed 's/^.*PIN_//;s/\.vhd//'
+        exit 1
+    fi
 done
 

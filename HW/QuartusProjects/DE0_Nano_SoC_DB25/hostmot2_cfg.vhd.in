@@ -84,7 +84,7 @@ entity HostMot2_cfg is
     clklow      : in std_logic;
     clkmed      : in std_logic;
     clkhigh     : in std_logic;
-    intirq      : out std_logic;
+    irq         : out std_logic;
     dreq        : out std_logic;
     demandmode  : out std_logic;
     iobits      : inout std_logic_vector (iowidth -1 downto 0);
@@ -136,7 +136,7 @@ begin
         clklow                  => clklow,
         clkmed                  => clkmed,
         clkhigh                 => clkhigh,
-        int                     => intirq,
+        int                     => irq,
         dreq                    => dreq,
         demandmode              => demandmode,
         iobits                  => iobits,
