@@ -159,6 +159,9 @@ module DE0_Nano_SoC_DB25(
   wire          clklow_sig;
   wire          clkhigh_sig;
 
+//irq:
+  wire int_sig;
+  assign ARDUINO_IO[15] = int_sig;
 
 //  wire [8:0]  out_oe;
 //  wire [8:0]  out_data;
@@ -271,6 +274,7 @@ module DE0_Nano_SoC_DB25(
      .mk_io_hm2_read                            (hm_read),                       //                          .hm2_read
      .mk_io_hm2_chipsel                         (hm_chipsel),                    //                          .hm2_chipsel
 //     .mk_io_hm2_we                                (hm_chipsel),                    //                          .hm2_chipsel
+     .mk_io_hm2_int_in                          (int_sig),                     //           .hm2_int_in
      .clk_100mhz_out_clk                        (hm_clk_med),                    //            clk_100mhz_out.clk
      .clk_200mhz_out_clk                        (hm_clk_high),                    //            clk_100mhz_out.clk
       .adc_io_convst                            (ADC_CONVST),                            //                       adc.CONVST
@@ -453,7 +457,7 @@ HostMot2_cfg HostMot2_inst
     .clklow(clklow_sig) ,   // input  clklow_sig                -- PCI clock --> all
     .clkmed(clkmed_sig) ,   // input  clkmed_sig                -- Processor clock --> sserialwa, twiddle
     .clkhigh(clkhigh_sig) , // input  clkhigh_sig               -- High speed clock --> most
-//  .int(int_sig) ,         // output  int_sig                          --int => LINT, ---> PCI ?
+    .intirq(int_sig) ,         // output  int_sig                          --int => LINT, ---> PCI ?
 //  .dreq(dreq_sig) ,       // output  dreq_sig
 //  .demandmode(demandmode_sig) ,   // output  demandmode_sig
     .iobits(hm2_iobits) ,   // inout [IOWidth-1:0]              --iobits => IOBITS,-- external I/O bits
