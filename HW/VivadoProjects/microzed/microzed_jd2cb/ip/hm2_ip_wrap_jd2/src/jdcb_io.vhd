@@ -109,8 +109,8 @@ begin
     IO_OUT(27) <= NOT(IO_IN(27));  -- E-Stop input is not debounced, but inverted
     IO_OUT(28) <= NOT(IO_IN(28));  -- Torch Break input is not debounced, but inverted
     IO_OUT(29) <= (NOT(IO_IN(27)) OR (NOT(IO_IN(28)) AND NOT(IO_IN(30))));  -- Logical E-Stop
-    IO_OUT(30) <= (NOT(IO_IN(24)) OR NOT(sw_probe_deb)); -- combined z-probe signal
-    IO_OUT(31) <= IO_IN(31);
+    IO_OUT(31) <= (NOT(IO_IN(24)) OR NOT(sw_probe_deb)); -- combined z-probe signal
+    IO_OUT(30) <= IO_IN(30); -- Torch break override
 
     gen_lim : for i in 0 to 3 generate
         limx: inp_deb 
