@@ -1,0 +1,12 @@
+# Build all Quartus projects that have a build.sh script
+
+BUILD_SCRIPTS	:= $(wildcard HW/QuartusProjects/*/build.sh)
+
+.PHONY: all $(BUILD_SCRIPTS)
+
+all: $(BUILD_SCRIPTS)
+
+$(BUILD_SCRIPTS):
+	cd $(dir $@) ; ./$(notdir $@)
+
+

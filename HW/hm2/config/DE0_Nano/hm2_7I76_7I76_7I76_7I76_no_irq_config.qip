@@ -1,0 +1,12 @@
+# sv to vhdl hostmot2 config settings import wrapper imports:
+# library pin;
+# use pin.Pintypes.all;
+
+set_global_assignment -name VHDL_FILE ../../hm2/config/DE0_Nano/hostmot2_cfg.vhd
+
+# change the names of the 2 files below to recompile a new bitfile --->
+# Dev kit board specific:
+set_global_assignment -name SYSTEMVERILOG_FILE ../../hm2/config/DE0_Nano/de0nano_4_68_DB25.sv
+
+# I/O Daughterboard adaptor specific:
+set_global_assignment -name VHDL_FILE ../../hm2/config/PIN_7I76_7I76_7I76_7I76_no_irq.vhd -library pin

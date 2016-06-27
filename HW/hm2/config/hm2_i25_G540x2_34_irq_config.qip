@@ -1,0 +1,4 @@
+
+set_global_assignment -name VHDL_FILE ../../hm2/config/i25_x9card.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/config/IDROMConst.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/config/PIN_G540x2_34_irq.vhd
