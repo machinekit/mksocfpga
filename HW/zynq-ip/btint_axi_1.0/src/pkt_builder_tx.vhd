@@ -31,13 +31,11 @@ entity pkt_builder_tx is
 end entity;
 
 architecture beh of pkt_builder_tx is
-	type sm_type is (idle, start_flag, send_data, send_esc_fl, send_esc_data, stop_flag);
+	type sm_type is (idle, start_flag, send_data, send_esc_flag, send_esc_data, chk_burn, stop_flag);
 	signal current_state, next_state : sm_type;
-    signal chksum1, chksum2 : std_logic_vector(7 downto 0) := (others => '0');
-    signal byte_buffer : std_logic_vector(47 downto 0) := (others => '0');
-    alias pkt_reg : std_logic_vector(31 downto 0) is byte_buffer(47 downto 16);
-    alias chksum1 : std_logic_vector(7 downto 0) is byte_buffer(15 downto 8);
-    alias chksum2 : std_logic_vector(7 downto 0) is byte_buffer(7 downto 0);
+    signal pkt_reg : std_logic_vector(31 downto 0) := (others => '0');
+    signal chksum1 : std_logic_vector(7 downto 0) := (others => '0');
+    signal chksum2 : std_logic_vector(7 downto 0) := (others => '0');
     signal busy_s : std_logic := '0';
     signal byte_cnt : unsigned(2 downto 0) := (others => '0');
     signal data_byte : std_logic_vector(7 downto 0);
@@ -50,7 +48,7 @@ begin
                            (current_state = stop_flag and uart_busy = '0')  or
                            (current_state = send_data and uart_busy = '0')  or
                            (current_state = send_esc_data and uart_busy = '0') or
-                           (current_state = send_esc_fl and uart_busy = '0'))
+                           (current_state = send_esc_flag and uart_busy = '0'))
                      else '0';
                      
      latch_packet : process(rst_n, clk, busy_s, packet, we)
@@ -82,7 +80,7 @@ begin
         end if;
     end process upd_byte_cnt;
         
-    buf_addr_mux : process(byte_cnt)
+    buf_addr_mux : process(byte_cnt, pkt_reg, chksum1, chksum2)
     begin
         case byte_cnt is
         when b"000" =>
@@ -98,24 +96,24 @@ begin
         when b"101" =>
             data_byte <= chksum2;
         when others => 
-            data_byte <= (others => '0');    
+            data_byte <= (others => '0');
         end case;
     end process buf_addr_mux;
     
-    dataout_calc : process(current_state, byte_cntr)
+    dataout_calc : process(current_state, data_byte)
     begin
         if(current_state = start_flag or current_state = stop_flag) then
             uart_data <= PKT_FLAG;
-        elsif(current_state = send_esc_fl) then
+        elsif(current_state = send_esc_flag) then
             uart_data <= PKT_ESC_FLAG;
-        elsif(current_state = send_data) then
-            uart_data <= data_byte;
         elsif(current_state = send_esc_data) then
             uart_data <= ESC_XOR_FLAG xor data_byte;
+        else
+            uart_data <= data_byte;
         end if;
     end process dataout_calc;
     
-    update_chksum : process(rst_n, clk, current_state)
+    update_chksum : process(rst_n, clk, current_state, byte_cnt)
     begin
         if(rst_n = '0') then
             chksum1 <= (others => '0');
@@ -126,12 +124,13 @@ begin
                     chksum1 <= (others => '0');
                     chksum2 <= (others => '0');
                 when send_data | send_esc_data =>
-                    if(utx_load = '1') then
-                        chksum1 <= chksum1 + data_byte;
-                        chksum2 <= chksum2 + chksum1 + data_byte;
+                    if(utx_load = '1' and byte_cnt <= b"011") then
+                        chksum1 <= std_logic_vector(unsigned(chksum1) + unsigned(data_byte));
+                        chksum2 <= std_logic_vector(unsigned(chksum2) + unsigned(chksum1) + unsigned(data_byte));
                     end if;
                 when others =>
-                    byte_cnt <= byte_cnt;
+                    chksum1 <= chksum1;
+                    chksum2 <= chksum2;
             end case;
         end if;
     end process update_chksum;
@@ -158,17 +157,20 @@ begin
                 next_state <= current_state; -- default back to the current state
                 if(uart_busy = '0') then -- Wait for any old transmission to finish
                 -- data to be sent is latched to uart here
-                    if(byte_cnt = b"101") then -- if we are sending the 6th byte (chksum2) we're done
-                        next_state <= stop_flag;
-                    else
-                        case data_byte is
-                            when PKT_FLAG | PKT_ESC_FLAG | PKT_BL_FLAG =>
-                                next_state <= send_esc_flag;
-                            when others =>
-                                next_state <= send_data;
-                        end case;
-                    end if;
+                    next_state <= chk_burn;
                 end if;
+            when chk_burn =>
+                next_state <= chk_burn; -- We have to give one clock to allow the checksums to update before
+                                          -- deciding where to go next. The byte counter is already updated to the new value
+                if(byte_cnt = b"110") then -- if we are sending the 6th byte (chksum2) we're done
+                    next_state <= stop_flag;
+                else
+                    if(data_byte = PKT_FLAG or data_byte = PKT_ESC_FLAG or data_byte = PKT_BL_FLAG) then
+                        next_state <= send_esc_flag;
+                    else
+                        next_state <= send_data;
+                    end if;
+                end if;                
             when send_esc_flag => -- Send the escape flag over uart
                 next_state <= send_esc_flag;
                 if(uart_busy = '0') then

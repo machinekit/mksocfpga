@@ -181,6 +181,7 @@ begin
             elsif(data_read = '1') then
                 data_rdy <= '0';
                 of_err <= '0';
+                fr_err <= '0';
             end if;
         end if;
     end process update_outs;
