@@ -48,15 +48,15 @@ architecture beh of btint_controller is
     signal sync_prev, sync_pulse, clear_sync : std_logic;
 
     -- Registers
-    signal reg_control_upper : std_logic_vector(15 downto 0) := (others => '0'); -- Combined these make the control register at 0
+    signal reg_control_upper : std_logic_vector(15 downto 0) := (others => '0');
     signal reg_control_lower : std_logic_vector(15 downto 0) := (others => '0');
-    signal reg_gain_10 : std_logic_vector(31 downto 0) := (others => '0');  -- 1
-    signal reg_gain_20 : std_logic_vector(31 downto 0) := (others => '0');  -- 2
-    signal reg_gain_300 : std_logic_vector(31 downto 0) := (others => '0'); -- 3
-    signal reg_outs : std_logic_vector(31 downto 0) := (others => '0');      -- 4
-    signal reg_ins : std_logic_vector(31 downto 0) := (others => '0');       -- 5
-    signal reg_adc_value : std_logic_vector(31 downto 0) := (others => '0'); -- 6
-    signal reg_err_cnt : std_logic_vector(31 downto 0) := (others => '0');          -- 7
+    signal reg_gain_10 : std_logic_vector(31 downto 0) := (others => '0');
+    signal reg_gain_20 : std_logic_vector(31 downto 0) := (others => '0');
+    signal reg_gain_300 : std_logic_vector(31 downto 0) := (others => '0');
+    signal reg_outs : std_logic_vector(31 downto 0) := (others => '0');
+    signal reg_ins : std_logic_vector(31 downto 0) := (others => '0');
+    signal reg_adc_value : std_logic_vector(31 downto 0) := (others => '0');
+    signal reg_err_cnt : std_logic_vector(31 downto 0) := (others => '0');
     signal byte_index : integer;
 
     -- Constants
@@ -67,6 +67,19 @@ architecture beh of btint_controller is
     constant PKT_QRY_CAL_G300 : std_logic_vector(31 downto 0) := x"08030000";
     constant PKT_SETQRY_DATA : std_logic_vector(31 downto 0) := x"03000000";
     constant PKT_QRY_DATA_CMD : std_logic_vector(7 downto 0) := x"02";
+    constant MAGIC_NUM_VAL : std_logic_vector(31 downto 0) := x"12345678";
+
+    -- addresses
+    constant REG_MAGIC_ADD : std_logic_vector(15 downto 0) := x"0000";
+    constant REG_CONTROL_ADD : std_logic_vector(15 downto 0) := x"0001";
+    constant REG_GAIN10_ADD : std_logic_vector(15 downto 0) := x"0002";
+    constant REG_GAIN20_ADD : std_logic_vector(15 downto 0) := x"0003";
+    constant REG_GAIN300_ADD : std_logic_vector(15 downto 0) := x"0004";
+    constant REG_OUTS_ADD : std_logic_vector(15 downto 0) := x"0005";
+    constant REG_INS_ADD : std_logic_vector(15 downto 0) := x"0006";
+    constant REG_ADCVAL_ADD : std_logic_vector(15 downto 0) := x"0007";
+    constant REG_ERRCNT_ADD : std_logic_vector(15 downto 0) := x"0008";
+
 begin
     int_rst_n <= '0' when (rst_n = '0' or current_state = start) else '1';
     pkt_tx_we <= pkt_tx_we_s;
@@ -95,21 +108,23 @@ begin
     reg_read : process(addr_rd, reg_control_lower, reg_control_upper, reg_gain_10, reg_gain_20, reg_gain_300, reg_outs, reg_ins, reg_adc_value, reg_err_cnt)
     begin
         case addr_rd is
-            when x"0000" =>
+            when REG_MAGIC_ADD =>
+              odata <= MAGIC_NUM_VAL;
+            when REG_CONTROL_ADD =>
                 odata <= reg_control_upper & reg_control_lower;
-            when x"0001" =>
+            when REG_GAIN10_ADD =>
                 odata <= reg_gain_10;
-            when x"0002" =>
+            when REG_GAIN20_ADD =>
                 odata <= reg_gain_20;
-            when x"0003" =>
+            when REG_GAIN300_ADD =>
                 odata <= reg_gain_300;
-            when x"0004" =>
+            when REG_OUTS_ADD =>
                 odata <= reg_outs;
-            when x"0005" =>
+            when REG_INS_ADD =>
                 odata <= reg_ins;
-            when x"0006" =>
+            when REG_ADCVAL_ADD =>
                 odata <= reg_adc_value;
-            when x"0007" =>
+            when REG_ERRCNT_ADD =>
                 odata <= reg_err_cnt;
             when others =>
                 odata <= (others => '0');
@@ -125,7 +140,7 @@ begin
         elsif(rising_edge(clk)) then
             if(wr = '1') then
                 case addr_wr is
-                    when x"0000" =>
+                    when REG_CONTROL_ADD =>
                         for byte_index in 0 to 1 loop
                           if (wr_strobe(byte_index) = '1') then
                             -- Respective byte enables are asserted as per write strobes
@@ -133,7 +148,7 @@ begin
                             reg_control_lower(byte_index*8+7 downto byte_index*8) <= idata(byte_index*8+7 downto byte_index*8);
                           end if;
                         end loop;
-                    when x"0004" =>
+                    when REG_OUTS_ADD =>
                         for byte_index in 0 to 3 loop
                             if ( wr_strobe(byte_index) = '1' ) then
                                 -- Respective byte enables are asserted as per write strobes
