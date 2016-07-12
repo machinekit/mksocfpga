@@ -6,7 +6,7 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 -- Copyright (C) 2007, Peter C. Wallace, Mesa Electronics
 -- http://www.mesanet.com
 --
--- Ported to JD2CB board: Copyright (C) 2016, Devin Hughes, JD Squared
+-- Ported to MicroZED JD2CB board: Copyright (C) 2016, Devin Hughes, JD Squared
 --
 -- This program is is licensed under a disjunctive dual license giving you
 -- the choice of one of the two following sets of free software/open source
