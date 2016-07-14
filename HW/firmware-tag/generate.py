@@ -67,5 +67,7 @@ width = 32
 blob = struct.pack(format,  fw.ByteSize()) + buffer
 
 assert len(blob) <= limit
+#format = '>L'  # BigEndian
+format = '<L'  # LittleEndian
 
-mif.create(sys.stdout, width, len(blob), blob)
+mif.create(sys.stdout, width, len(blob), blob, format=format)
