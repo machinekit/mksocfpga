@@ -26,8 +26,9 @@ entity pkt_receiver_rx is
         uart_data_rdy: in std_logic;
         uart_rd : out std_logic;
         uart_fr_err : in std_logic;
-        uart_of_err : in std_logic
-        --data : out std_logic_vector(31 downto 0)
+        uart_of_err : in std_logic;
+        addr_rd : in std_logic_vector(15 downto 0);
+        odata : out std_logic_vector(31 downto 0)
 	);
 end entity;
 
@@ -44,9 +45,32 @@ architecture beh of pkt_receiver_rx is
     signal pp_wr_s : std_logic := '0';
     signal pkt_fifo : std_logic_vector(15 downto 0);
     signal pp_buf_lock_s : std_logic;
-    signal rx_err_cnt : unsigned (31 downto 0) := (others => '0');
+
+    -- Registers
+    signal rx_fr_err_cnt : std_logic_vector(31 downto 0) := (others => '0');
+    signal rx_of_err_cnt : std_logic_vector(31 downto 0) := (others => '0');
+    signal reg_byte_cnt : std_logic_vector(31 downto 0) := (others => '0');
+
+    -- addresses
+    constant REG_OF_ERR_ADDR : std_logic_vector(15 downto 0) := x"0600";
+    constant REG_FR_ERR_ADDR : std_logic_vector(15 downto 0) := x"0604";
+    constant REG_BYTE_CNT_ADDR : std_logic_vector(15 downto 0) := x"0608";
 begin
-    --data <= std_logic_vector(rx_err_cnt); -- only register for this module is error counter
+
+    -- Reading registers mux
+    reg_read : process(addr_rd, rx_of_err_cnt, rx_fr_err_cnt)
+    begin
+        case addr_rd is
+            when REG_OF_ERR_ADDR =>
+                odata <= rx_of_err_cnt;
+            when REG_FR_ERR_ADDR =>
+                odata <= rx_fr_err_cnt;
+            when REG_BYTE_CNT_ADDR =>
+                odata <= reg_byte_cnt;
+            when others =>
+                odata <= (others => '0');
+        end case;
+    end process reg_read;
 
     pp_data <= pkt_fifo(15 downto 8);
     pp_addr <= std_logic_vector(byte_cnt) when (byte_cnt >= 0) else (others => '0');
@@ -84,10 +108,11 @@ begin
         end if;
     end process upd_pp;
 
-    upd_byte_cnt : process(rst_n, clk, current_state, pkt_state, pp_wr_s)
+    upd_byte_cnt : process(rst_n, clk, current_state, pkt_state, pp_wr_s, reg_byte_cnt)
     begin
         if(rst_n = '0') then
             byte_cnt <= to_signed(-2, PP_BUF_ADDR_WIDTH);
+            reg_byte_cnt <= (others => '0');
         elsif (rising_edge(clk)) then
             case current_state is
                 when idle =>
@@ -95,9 +120,11 @@ begin
                         byte_cnt <= to_signed(-2, PP_BUF_ADDR_WIDTH);
                     end if;
                 when latch_byte | latch_esc_byte =>
-                        byte_cnt <= byte_cnt + 1;
+                    byte_cnt <= byte_cnt + 1;
+                    reg_byte_cnt <= std_logic_vector(unsigned(reg_byte_cnt) + 1);
                 when others =>
                     byte_cnt <= byte_cnt;
+                    reg_byte_cnt <= reg_byte_cnt;
             end case;
         end if;
     end process upd_byte_cnt;
@@ -138,14 +165,17 @@ begin
         end if;
     end process update_chksum;
 
-    update_err_cnt : process(rst_n, clk)
+    update_err_cnt : process(rst_n, clk, uart_rd_s, uart_fr_err, uart_of_err, rx_fr_err_cnt, rx_of_err_cnt)
     begin
         if(rst_n = '0') then
-            rx_err_cnt <= (others => '0');
+            rx_fr_err_cnt <= (others => '0');
+            rx_of_err_cnt <= (others => '0');
         elsif(rising_edge(clk)) then
-            if(uart_data_rdy = '1') then
-                if(uart_fr_err /= '0' or uart_of_err /= '0') then
-                    rx_err_cnt <= rx_err_cnt + 1;
+            if(uart_rd_s = '1') then
+                if(uart_fr_err /= '0') then
+                    rx_fr_err_cnt <= std_logic_vector(unsigned(rx_fr_err_cnt) + 1);
+                elsif(uart_of_err /= '0') then
+                    rx_of_err_cnt <= std_logic_vector(unsigned(rx_of_err_cnt) + 1);
                 end if;
             end if;
         end if;
@@ -169,12 +199,12 @@ begin
         case current_state is
             when idle =>
                 if(uart_data_rdy = '1') then
-                    if(uart_fr_err /= '0' or uart_of_err /= '0') then
-                        next_state <= idle; -- Oops, error, nothing to look at
-                        next_pkt_state <= pkt_search_hdr;
-                    else
+                    --if(uart_fr_err /= '0' or uart_of_err /= '0') then
+                    --    next_state <= idle; -- Oops, error, nothing to look at
+                    --    next_pkt_state <= pkt_search_hdr;
+                  --  else
                         next_state <= byte_dec;
-                    end if;
+                  --  end if;
                 end if;
             when byte_dec =>    -- byte is latched now in the buffer
                 if(pkt_state = pkt_escaped) then

@@ -62,7 +62,7 @@
 --     POSSIBILITY OF SUCH DAMAGE.
 --
 -- This is a module specifically created to remove some debounce and OR/AND
--- logic from a HAL configuration file. 
+-- logic from a HAL configuration file.
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -75,8 +75,8 @@ entity jdcb_io is
 	);
 	port (
 	    clk : in std_logic; -- Expect 100MHz clock here
-	    IO_IN : in std_logic_vector(NUM_IO_BITS - 1 downto 0); -- from pins 
-        IO_OUT : out std_logic_vector(NUM_IO_BITS - 1 downto 0) -- to io port
+	    IO_IN : in std_logic_vector(NUM_IO_BITS - 1 downto 0); -- from pins
+      IO_OUT : out std_logic_vector(NUM_IO_BITS - 1 downto 0) -- to io port
 	);
 end jdcb_io;
 
@@ -87,7 +87,7 @@ architecture arch_imp of jdcb_io is
     signal deb_clk : std_logic := '0';
     signal half_period : unsigned(15 downto 0) := x"30D4"; -- 4 kHz debounce clock
     signal timer_cnt: unsigned(15 downto 0) := (others => '0');
-    signal faults_valid : std_logic;    -- When motors are turned off, ignore amp faults    
+    signal faults_valid : std_logic;    -- When motors are turned off, ignore amp faults
     signal mtr_pwr_del : std_logic;
 begin
     IO_OUT(3 downto 1) <= IO_IN(3 downto 1); -- motor 1 output pins no extra logic
@@ -108,12 +108,12 @@ begin
     IO_OUT(28) <= NOT(IO_IN(28));  -- Torch Break input is not debounced, but inverted
     IO_OUT(29) <= (NOT(IO_IN(27)) OR (NOT(IO_IN(28)) AND NOT(IO_IN(30))));  -- Logical E-Stop
     IO_OUT(31) <= (NOT(IO_IN(24)) OR NOT(sw_probe_deb)); -- combined z-probe signal
-    IO_OUT(30) <= IO_IN(30); -- Torch break override    
+    IO_OUT(30) <= IO_IN(30); -- Torch break override
 
     faults_valid <= mtr_pwr_del AND IO_IN(22); -- don't delay when turning off power
 
     gen_lim : for i in 0 to 3 generate
-        limx: entity work.inp_deb 
+        limx: entity work.inp_deb
         generic map (NUM_STAGES => NUM_DEB_STAGES)
         port map (
             clk => deb_clk,
@@ -122,22 +122,22 @@ begin
         );
     end generate gen_lim;
 
-    sw_pr: entity work.inp_deb 
+    sw_pr: entity work.inp_deb
         generic map (NUM_STAGES => NUM_DEB_STAGES)
         port map (
             clk => deb_clk,
             input => IO_IN(26),
             output => sw_probe_deb
         );
-        
-    ax2_deb: entity work.inp_deb 
+
+    ax2_deb: entity work.inp_deb
         generic map (NUM_STAGES => NUM_DEB_STAGES)
         port map (
             clk => deb_clk,
             input => IO_IN(25),
             output => aux2_in_deb
         );
-        
+
     motor_pwr_del : entity work.sig_Delay
         generic map(
 		    CLOCK_RATE => 100000000,
@@ -149,7 +149,7 @@ begin
             input => IO_IN(22),
             output => mtr_pwr_del
         );
-        
+
     clkdiv : process (clk, timer_cnt)
     begin
         if rising_edge(clk) then
@@ -161,6 +161,5 @@ begin
             end if;
         end if; -- (clk)
     end process;
-      
-end arch_imp;
 
+end arch_imp;

@@ -50,11 +50,15 @@ architecture imp of btint_top is
     signal pp_lock : std_logic;
     signal pp_wr_data : std_logic_vector(7 downto 0);
     signal pp_wr_addr : std_logic_vector(PP_BUF_ADDR_WIDTH - 1 downto 0);
+    signal odata_rx : std_logic_vector(31 downto 0);
 
     -- Master controller, reads from pp buffer
     signal pp_rd_addr : std_logic_vector(PP_BUF_ADDR_WIDTH - 1 downto 0);
     signal pp_rd_data : std_logic_vector(7 downto 0);
     signal pp_rd_sel : std_logic;
+    signal odata_ctrl : std_logic_vector(31 downto 0);
+
+    signal baud_reg_s : unsigned(15 downto 0) := BAUD_REG;
 begin
     -- ------------------------------------------
     -- Ping-Pong Buffer
@@ -85,7 +89,7 @@ begin
         port map (
             rst_n => rst_n,
             clk => clk,
-            baudreg => BAUD_REG,
+            baudreg => baud_reg_s,
             load => utx_load,
             data_in => utx_data,
             uart_tx => uart_tx,
@@ -123,7 +127,7 @@ begin
         port map (
             rst_n => rst_n,
             clk => clk,
-            baudreg => BAUD_REG,
+            baudreg => baud_reg_s,
             uart_rx => uart_rx,
             data_read => urx_rd,
             data_ready => urx_data_rdy,
@@ -151,7 +155,9 @@ begin
             uart_data_rdy => urx_data_rdy,
             uart_rd => urx_rd,
             uart_fr_err => urx_fr_err,
-            uart_of_err => urx_of_err
+            uart_of_err => urx_of_err,
+            addr_rd => addr_rd,
+            odata => odata_rx
         );
 
     -- ------------------------------------------
@@ -177,7 +183,17 @@ begin
             wr => wr,
             wr_strobe => wr_strobe,
             addr_rd => addr_rd,
-            odata => odata,
+            odata => odata_ctrl,
             sync => sync
         );
+
+   rd_addr_mux : process(addr_rd, odata_ctrl, odata_rx)
+   begin
+     case(addr_rd) is
+       when x"0600" | x"0604" | x"0608" =>
+          odata <= odata_rx;
+       when others =>
+          odata <= odata_ctrl;
+     end case;
+   end process rd_addr_mux;
 end imp;

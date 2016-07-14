@@ -31,7 +31,8 @@ architecture beh of pkt_receiver_rx_tb is
     signal uart_rx_rd : std_logic;
     signal uart_rx_fr_err : std_logic;
     signal uart_rx_of_err : std_logic;
-    signal data : std_logic_vector(31 downto 0);
+    signal addr_rd : std_logic_vector(15 downto 0);
+    signal odata : std_logic_vector(31 downto 0);
 
     -- Simulation timing
     constant clockperiod : TIME := 10 ns;
@@ -49,8 +50,9 @@ begin
             uart_data_rdy => uart_rx_data_rdy,
             uart_rd => uart_rx_rd,
             uart_fr_err => uart_rx_fr_err,
-            uart_of_err => uart_rx_of_err
-            --data => data
+            uart_of_err => uart_rx_of_err,
+            addr_rd => addr_rd,
+            odata => odata
         );
 
     tx_pkt_builder : entity work.pkt_builder_tx

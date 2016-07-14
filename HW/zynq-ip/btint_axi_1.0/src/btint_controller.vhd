@@ -41,7 +41,7 @@ architecture beh of btint_controller is
     signal int_rst_n : std_logic := '1';
     signal timed_out : std_logic := '0';
     signal timeout_cnt : unsigned(2 downto 0) := (others => '0');
-    signal timeout_tmr : unsigned(23 downto 0) := (others => '0');
+    signal timeout_tmr : unsigned(31 downto 0) := (others => '0');
     signal reg_add : std_logic_vector(2 downto 0) := (others => '0');
     signal reg_32_tmp : std_logic_vector(31 downto 0) := (others => '0');
     signal pkt_tx_we_s : std_logic;
@@ -61,7 +61,8 @@ architecture beh of btint_controller is
 
     -- Constants
     constant TIMEOUT_RETRIES : unsigned(2 downto 0) := to_unsigned(2,3);
-    constant TIMEOUT_COUNT_VAL : unsigned(23 downto 0) := to_unsigned(100000, 24); -- 400000
+    constant TIMEOUT_COUNT_VAL_DATA : unsigned(31 downto 0) := to_unsigned(400000, 32);
+    constant TIMEOUT_COUNT_VAL_ST : unsigned (31 downto 0) := to_unsigned(200000000, 32);
     constant PKT_QRY_CAL_G10 : std_logic_vector(31 downto 0) := x"08010000";
     constant PKT_QRY_CAL_G20 : std_logic_vector(31 downto 0) := x"08020000";
     constant PKT_QRY_CAL_G300 : std_logic_vector(31 downto 0) := x"08030000";
@@ -71,14 +72,14 @@ architecture beh of btint_controller is
 
     -- addresses
     constant REG_MAGIC_ADD : std_logic_vector(15 downto 0) := x"0000";
-    constant REG_CONTROL_ADD : std_logic_vector(15 downto 0) := x"0001";
-    constant REG_GAIN10_ADD : std_logic_vector(15 downto 0) := x"0002";
-    constant REG_GAIN20_ADD : std_logic_vector(15 downto 0) := x"0003";
-    constant REG_GAIN300_ADD : std_logic_vector(15 downto 0) := x"0004";
-    constant REG_OUTS_ADD : std_logic_vector(15 downto 0) := x"0005";
-    constant REG_INS_ADD : std_logic_vector(15 downto 0) := x"0006";
-    constant REG_ADCVAL_ADD : std_logic_vector(15 downto 0) := x"0007";
-    constant REG_ERRCNT_ADD : std_logic_vector(15 downto 0) := x"0008";
+    constant REG_CONTROL_ADD : std_logic_vector(15 downto 0) := x"0010";
+    constant REG_GAIN10_ADD : std_logic_vector(15 downto 0) := x"0100";
+    constant REG_GAIN20_ADD : std_logic_vector(15 downto 0) := x"0104";
+    constant REG_GAIN300_ADD : std_logic_vector(15 downto 0) := x"0108";
+    constant REG_OUTS_ADD : std_logic_vector(15 downto 0) := x"0200";
+    constant REG_INS_ADD : std_logic_vector(15 downto 0) := x"0300";
+    constant REG_ADCVAL_ADD : std_logic_vector(15 downto 0) := x"0400";
+    constant REG_ERRCNT_ADD : std_logic_vector(15 downto 0) := x"0500";
 
 begin
     int_rst_n <= '0' when (rst_n = '0' or current_state = start) else '1';
@@ -215,6 +216,7 @@ begin
             reg_adc_value <= (others => '0');
             reg_control_upper <= (others => '0');
             reg_err_cnt <= (others => '0');
+            reg_add <= (others => '0');
         elsif (rising_edge(clk)) then
             reg_control_upper <= reg_control_upper; -- Hold by default
             reg_gain_10 <= reg_gain_10;
@@ -222,6 +224,8 @@ begin
             reg_gain_300 <= reg_gain_300;
             reg_adc_value <= reg_adc_value;
             reg_err_cnt <= reg_err_cnt;
+            reg_ins <= reg_ins;
+            reg_add <= reg_add;
 
             case current_state is
                 when wait_for_resp =>
@@ -233,7 +237,7 @@ begin
                         reg_err_cnt <= std_logic_vector(unsigned(reg_err_cnt) + 1);
                     end if;
                 when parse_data1 =>
-                    reg_ins(7 downto 0) <= pp_data;
+                    reg_ins <= x"000000" & pp_data;
                     reg_add <= b"110";
                 when parse_cal1 =>
                     if(pp_data = PKT_QRY_CAL_G10(23 downto 16)) then
@@ -290,13 +294,16 @@ begin
     upd_timeout : process(int_rst_n, clk, current_state, timeout_cnt, timeout_tmr, timed_out)
     begin
         if(int_rst_n = '0') then
-            timeout_tmr <= TIMEOUT_COUNT_VAL;
+            timeout_tmr <= TIMEOUT_COUNT_VAL_ST;
             timed_out <= '0';
             timeout_cnt <= (others => '0');
         elsif (rising_edge(clk)) then
             case current_state is
-                when send_qry_data | send_qry_g10 | send_qry_g20 | send_qry_g300 =>
-                    timeout_tmr <= TIMEOUT_COUNT_VAL;
+                when send_qry_g10 | send_qry_g20 | send_qry_g300 =>
+                    timeout_tmr <= TIMEOUT_COUNT_VAL_ST;
+                    timed_out <= '0';
+                when send_qry_data =>
+                    timeout_tmr <= TIMEOUT_COUNT_VAL_DATA;
                     timed_out <= '0';
                 when wait_for_resp =>
                     if(timeout_tmr > to_unsigned(0,24)) then
@@ -308,8 +315,8 @@ begin
                         end if;
                     end if;
                 when others =>
-                    timeout_tmr <= TIMEOUT_COUNT_VAL;
-                    timed_out <= timed_out;
+                    timeout_tmr <= TIMEOUT_COUNT_VAL_ST;
+                    timed_out <= '0';
             end case;
         end if;
     end process upd_timeout;
@@ -373,11 +380,11 @@ begin
                     if(pp_buf_lock_s /= pp_buf_lock) then
                         next_state <= parse_resp_cmd;
                     elsif(timed_out = '1') then
-                        if(timeout_cnt >= TIMEOUT_RETRIES) then   -- Completely lost coms
-                            next_state <= start;
-                        else                        -- Missed a packet
+                      --  if(timeout_cnt >= TIMEOUT_RETRIES) then   -- Completely lost coms
+                      --      next_state <= start;
+                      --  else                        -- Missed a packet
                             next_state <= prev_state;
-                        end if;
+                      --  end if;
                     end if;
                 when parse_resp_cmd =>
                     if(pp_data = PKT_QRY_CAL_G10(31 downto 24)) then
