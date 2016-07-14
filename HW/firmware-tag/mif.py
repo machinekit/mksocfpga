@@ -5,19 +5,19 @@ __all__ = ['create']
 
 import struct
 
-def emit_mif_internal(fd, data, width = 4):
+def emit_mif_internal(fd, data, width = 4, format='>L'):
     addr = 0
     while data:
         word = data[:4]
         data = data[4:]
         if len(word) < 4:
             word = word + "\x00"*(4-len(word))
-        wval, = struct.unpack('>L', word)
+        wval, = struct.unpack(format, word)
         print >> fd, '  %04x : %08x;'%( addr, wval )
         addr += 1
     return addr
 
-def create(fd, width, depth, data):
+def create(fd, width, depth, data, format='>L'):
     assert width%8 == 0, ValueError("width must be *8")
     print >> fd, "WIDTH=%d;" % width
     print >> fd, "DEPTH=%d;" % ( depth / (width / 8) )
@@ -26,7 +26,7 @@ def create(fd, width, depth, data):
     print >> fd, "DATA_RADIX=HEX;"
     print >> fd
     print >> fd, "CONTENT BEGIN"
-    end_addr = emit_mif_internal(fd, data)
+    end_addr = emit_mif_internal(fd, data, format=format)
     if end_addr < depth/(width/8)-1:
         print >> fd, "  [%04x .. %04x] : %08x;" % (end_addr, depth/(width/8)-1, 0)
     print >> fd, "END;"
