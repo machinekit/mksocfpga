@@ -345,11 +345,13 @@ begin
         if hps_fpga_reset_n='0' then
             counter     <= (others=>'0');
             led_level   <= '0';
-        elsif counter = 24999999 then
-            counter     <= (others=>'0');
-            led_level   <= not led_level;
-        else
-            counter     <= counter + 1;
+        elsif rising_edge(fpga_clk_50) then
+            if counter = 24999999 then
+                counter     <= (others=>'0');
+                led_level   <= not led_level;
+            else
+                counter     <= counter + 1;
+            end if;
         end if;
     end process;
 

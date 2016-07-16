@@ -144,6 +144,7 @@ architecture dataflow of HostMot2 is
 -- decodes --
 --	IDROM related signals
 	-- Extract the number of modules of each type from the ModuleID
+constant FWIDs: integer := NumberOfModules(TheModuleID,FWIDTag);
 constant StepGens: integer := NumberOfModules(TheModuleID,StepGenTag);
 constant QCounters: integer := NumberOfModules(TheModuleID,QCountTag);
 constant MuxedQCounters: integer := NumberOfModules(TheModuleID,MuxedQCountTag);			-- non-muxed index mask
@@ -207,6 +208,8 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 
 	signal IDROMWEn: std_logic_vector(0 downto 0);
 	signal ROMAdd: std_logic_vector(7 downto 0);
+
+	signal ReadFWID: std_logic;
 
 -- I/O port related signals
 
@@ -3205,6 +3208,17 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 			dout => obus
 		);
 
+	makeFWID : if FWIDs > 0 generate
+	begin
+		FirmwareID : entity work.firmware_id
+			port map (
+				clk  => clklow,
+				re   => ReadFWID,
+				radd => addr(10 downto 2),
+				dout => obus
+			);
+	end generate;
+
    LooseEnds: process(A,clklow)
 	begin
 		if rising_edge(clklow) then
@@ -3349,6 +3363,13 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 			LoadLEDs <= '1';
 		else
 			LoadLEDs <= '0';
+		end if;
+
+		--  Firmware ID ProtoBuf Message : 2K Bytes
+		if A(15 downto 11) = FWIDAddr(7 downto 3) and readstb = '1' then
+			ReadFWID <= '1';
+		else
+			ReadFWID <= '0';
 		end if;
 
 	end process;

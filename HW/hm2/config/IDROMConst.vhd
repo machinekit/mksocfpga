@@ -334,6 +334,11 @@ package IDROMConst is
 	constant TranslateNumRegs : std_logic_vector(7 downto 0) := x"04";
 	constant TranslateMPBitMask : std_logic_vector(31 downto 0) := x"00000000";
 
+	-- Firmware ID ProtoBuf Message : 2K Bytes at the end of the address space
+	constant FWIDAddr : std_logic_vector(7 downto 0) := x"F8";
+	constant FWIDNumRegs : std_logic_vector(7 downto 0) := x"01";
+	constant FWIDMPBitMask : std_logic_vector(31 downto 0) := x"00000000";
+
 	constant ClockLow20: integer :=  33333333;  		-- 5I20/4I65 low speed clock
 	constant ClockLow22: integer :=  48000000;		-- 5I22/5I23 low speed clock
 	constant ClockLow23: integer :=  48000000;		-- 5I22/5I23 low speed clock
@@ -784,6 +789,8 @@ package IDROMConst is
 
 
 	constant LEDTag : std_logic_vector(7 downto 0) := x"80";
+
+	constant FWIDTag : std_logic_vector(7 downto 0) := x"F8";
 
 	constant GlobalChan: std_logic_vector(7 downto 0) := x"80";	
 	
