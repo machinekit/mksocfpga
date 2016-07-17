@@ -1,24 +1,37 @@
-
-limit = 2048
-
 import sys
 import os
 import binascii
 import struct
-import google.protobuf.text_format
-from   intelhex import IntelHex
 import mif
-
+import google.protobuf.text_format
 from machinetalk.protobuf.firmware_pb2 import Firmware, Connector
+import subprocess
+
+def get_git_revision_short_hash():
+    return subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).strip()
+
+maxsize = 2048
+cookie = 0xFEEDBABE
+width = 32  # of MIF file
+format = '<L'  # LittleEndian
+#format = '>L'  # BigEndian
 
 # construct the descriptor object
 fw  = Firmware()
 
-fw.build_sha = "e6a72edd67601b36cf7c6b2a31ba4cc9e9324b43"
-fw.fpga_part_number = "altera socfpga whatever"
+try:
+    fw.build_sha = get_git_revision_short_hash()
+except Exception:
+    fw.build_sha = "not a git repo"
+
+try:
+    fw.comment = os.getenv("BUILD_URL") # jenkins job id
+except Exception:
+    fw.comment = "$BUILD_URL unset"
+
+fw.fpga_part_number = "altera socfpga"
 fw.num_leds = 2
 fw.board_name = "Terasic DE0-Nano"
-fw.comment = "mystery firmware"
 
 c = fw.connector.add()
 c.name = "GPIO0.P2"
@@ -28,46 +41,30 @@ c = fw.connector.add()
 c.name = "GPIO0.P3"
 c.pins = 17
 
+c = fw.connector.add()
+c.name = "GPIO1.P2"
+c.pins = 17
 
-print "size of encoded blob: %d 0x%x" % (fw.ByteSize(),fw.ByteSize())
-print "text format representation:\n---\n", str(fw), "---\n"
+c = fw.connector.add()
+c.name = "GPIO1.P3"
+c.pins = 17
+
 
 # serialize it to a blob
 buffer = fw.SerializeToString()
+
+print "%%\nsize of encoded message: %d 0x%x" % (fw.ByteSize(),fw.ByteSize())
+print "text format representation:\n---\n", str(fw), "---\n"
 print "wire format length=%d %s" % (len(buffer), binascii.hexlify(buffer))
 
+# generate an Altera MIF file
 
-# place the blob size as uint32 at loadaddr
-# place the actual blob at loadaddr + 4
+# prepend with cookie and length field
+blob = struct.pack(format, cookie) + struct.pack(format,  fw.ByteSize()) + buffer
 
-ih = IntelHex()
-loadaddr = 0x400  # I'm making something up
-format = '<I'     # uint32 little endian blob size
+assert len(blob) <= maxsize, ValueError("encoded message size too large: %d (max %d)" % (len(blob), maxsize))
 
-# place the blob length
-ih.puts(loadaddr, struct.pack(format,  fw.ByteSize()))
-
-# followed by actual blob
-ih.puts(loadaddr + 4, buffer)
-
-print "blob ranges from 0x%x to 0x%x" % (ih.minaddr(), ih.maxaddr())
-print "addresses:", ih.addresses()
-print "segments:", ih.segments()
-
-ih.tofile("foo.hex", format='hex')
-ih.tofile("foo.bin", format='bin')
-
-# read back from the hex file
-rb = IntelHex("foo.hex")
-rb.dump()
-
-# generate an Altera MIF file, width 32
-width = 32
-# prepend length field
-blob = struct.pack(format,  fw.ByteSize()) + buffer
-
-assert len(blob) <= limit
-#format = '>L'  # BigEndian
-format = '<L'  # LittleEndian
+print "\nsize of MIF struct including cookie and length field: %d" % (len(blob))
+print "%\n\n"
 
 mif.create(sys.stdout, width, len(blob), blob, format=format)
