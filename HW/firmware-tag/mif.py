@@ -19,8 +19,11 @@ def emit_mif_internal(fd, data, width = 4, format='>L'):
 
 def create(fd, width, depth, data, format='>L'):
     assert width%8 == 0, ValueError("width must be *8")
+    wdepth = depth / (width / 8)
+    if wdepth*(width / 8) < depth:
+        wdepth += 1
     print >> fd, "WIDTH=%d;" % width
-    print >> fd, "DEPTH=%d;" % ( depth / (width / 8) )
+    print >> fd, "DEPTH=%d;" % wdepth
     print >> fd
     print >> fd, "ADDRESS_RADIX=HEX;"
     print >> fd, "DATA_RADIX=HEX;"
