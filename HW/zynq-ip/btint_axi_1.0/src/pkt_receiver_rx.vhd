@@ -33,12 +33,16 @@ entity pkt_receiver_rx is
 end entity;
 
 architecture beh of pkt_receiver_rx is
-	type sm_type is (idle, byte_dec, latch_byte, latch_esc_byte, val_chk);
+  	type sm_type is (idle, byte_dec, latch_byte, latch_esc_byte, val_chk);
     type pkt_sm_type is (pkt_search_hdr, pkt_in_msg, pkt_escaped);
-	signal current_state, next_state : sm_type := idle;
-	signal pkt_state, next_pkt_state : pkt_sm_type := pkt_search_hdr;
+  	signal current_state, next_state : sm_type := idle;
+  	signal pkt_state, next_pkt_state : pkt_sm_type := pkt_search_hdr;
     signal chksum1 : std_logic_vector(7 downto 0) := (others => '0');
+    signal chksum1_add : unsigned(15 downto 0) := (others => '0');
+    signal chksum1_mod : std_logic_vector(7 downto 0) := (others => '0');
     signal chksum2 : std_logic_vector(7 downto 0) := (others => '0');
+    signal chksum2_add : unsigned(15 downto 0) := (others => '0');
+    signal chksum2_mod : std_logic_vector(7 downto 0) := (others => '0');
     signal byte_cnt : signed(PP_BUF_ADDR_WIDTH - 1 downto 0) := (others => '0');
     signal rx_data_byte : std_logic_vector(7 downto 0);
     signal uart_rd_s : std_logic := '0';
@@ -50,11 +54,13 @@ architecture beh of pkt_receiver_rx is
     signal rx_fr_err_cnt : std_logic_vector(31 downto 0) := (others => '0');
     signal rx_of_err_cnt : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_byte_cnt : std_logic_vector(31 downto 0) := (others => '0');
+    signal reg_chkerr_cnt : std_logic_vector(31 downto 0) := (others => '0');
 
     -- addresses
     constant REG_OF_ERR_ADDR : std_logic_vector(15 downto 0) := x"0600";
     constant REG_FR_ERR_ADDR : std_logic_vector(15 downto 0) := x"0604";
     constant REG_BYTE_CNT_ADDR : std_logic_vector(15 downto 0) := x"0608";
+    constant REG_CHKERR_CNT_ADDR : std_logic_vector(15 downto 0) := x"060C";
 begin
 
     -- Reading registers mux
@@ -67,6 +73,8 @@ begin
                 odata <= rx_fr_err_cnt;
             when REG_BYTE_CNT_ADDR =>
                 odata <= reg_byte_cnt;
+            when REG_CHKERR_CNT_ADDR =>
+                odata <= reg_chkerr_cnt;
             when others =>
                 odata <= (others => '0');
         end case;
@@ -99,10 +107,13 @@ begin
     begin
         if(rst_n = '0') then
             pp_buf_lock_s <= '0';
+            reg_chkerr_cnt <= (others => '0');
         elsif (rising_edge(clk)) then
             if(current_state = val_chk) then
                 if(pkt_fifo = (chksum1 & chksum2)) then
                     pp_buf_lock_s <= not pp_buf_lock_s; -- good checksum switch buffer
+                else
+                    reg_chkerr_cnt <= std_logic_vector(unsigned(reg_chkerr_cnt) + 1);
                 end if;
             end if;
         end if;
@@ -144,6 +155,30 @@ begin
         end if;
     end process update_fifo;
 
+    mod_calc : process(chksum1, chksum1_add, chksum1_mod, chksum2, chksum2_add, chksum2_mod, pkt_fifo) -- The fletcher checksum is mod 255
+    begin
+        chksum1_add <= unsigned(x"00" & chksum1) + unsigned(x"00" & pkt_fifo(15 downto 8));
+        chksum2_add <= unsigned(x"00" & chksum2) + unsigned(x"00" & chksum1) + unsigned(x"00" & pkt_fifo(15 downto 8));
+
+        if(chksum1_add > to_unsigned(510, 16)) then
+            chksum1_mod <= std_logic_vector(resize(chksum1_add - to_unsigned(510, 16), chksum1_mod'length));
+        elsif(chksum1_add > to_unsigned(255, 16)) then
+            chksum1_mod <= std_logic_vector(resize(chksum1_add - to_unsigned(255, 16), chksum1_mod'length));
+        else
+            chksum1_mod <= std_logic_vector(chksum1_add(7 downto 0));
+        end if;
+
+        if(chksum2_add > to_unsigned(765, 16)) then
+            chksum2_mod <= std_logic_vector(resize(chksum2_add - to_unsigned(765, 16), chksum2_mod'length));
+        elsif(chksum2_add > to_unsigned(510, 16)) then
+              chksum2_mod <= std_logic_vector(resize(chksum2_add - to_unsigned(510, 16), chksum2_mod'length));
+        elsif(chksum2_add > to_unsigned(255, 16)) then
+            chksum2_mod <= std_logic_vector(resize(chksum2_add - to_unsigned(255, 16), chksum2_mod'length));
+        else
+            chksum2_mod <= std_logic_vector(chksum2_add(7 downto 0));
+        end if;
+    end process;
+
     -- checksum needs to look at bytes - 2 and bytes - 3
     update_chksum : process(rst_n, clk, current_state, byte_cnt)
     begin
@@ -158,8 +193,8 @@ begin
                 end if;
             elsif(current_state = latch_byte or current_state = latch_esc_byte) then
                 if(byte_cnt >= to_signed(0, PP_BUF_ADDR_WIDTH)) then
-                    chksum1 <= std_logic_vector(unsigned(chksum1) + unsigned(pkt_fifo(15 downto 8)));
-                    chksum2 <= std_logic_vector(unsigned(chksum2) + unsigned(chksum1) + unsigned(pkt_fifo(15 downto 8)));
+                    chksum1 <= chksum1_mod;
+                    chksum2 <= chksum2_mod;
                 end if;
             end if;
         end if;

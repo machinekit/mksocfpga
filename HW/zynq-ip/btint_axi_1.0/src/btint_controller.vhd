@@ -61,12 +61,13 @@ architecture beh of btint_controller is
 
     -- Constants
     constant TIMEOUT_RETRIES : unsigned(2 downto 0) := to_unsigned(2,3);
-    constant TIMEOUT_COUNT_VAL_DATA : unsigned(31 downto 0) := to_unsigned(40000000, 32);
+    constant TIMEOUT_COUNT_VAL_DATA : unsigned(31 downto 0) := to_unsigned(400000, 32);
     constant TIMEOUT_COUNT_VAL_ST : unsigned (31 downto 0) := to_unsigned(200000000, 32);
+    constant TIMEOUT_COUNT_VAL_SYNC : unsigned (31 downto 0) := to_unsigned(200000, 32);
     constant PKT_QRY_CAL_G10 : std_logic_vector(31 downto 0) := x"08010000";
     constant PKT_QRY_CAL_G20 : std_logic_vector(31 downto 0) := x"08020000";
     constant PKT_QRY_CAL_G300 : std_logic_vector(31 downto 0) := x"08030000";
-    constant PKT_SETQRY_DATA : std_logic_vector(31 downto 0) := x"03000000";
+    constant PKT_SETQRY_DATA_CMD : std_logic_vector(7 downto 0) := x"03";
     constant PKT_QRY_DATA_CMD : std_logic_vector(7 downto 0) := x"02";
     constant MAGIC_NUM_VAL : std_logic_vector(31 downto 0) := x"12345678";
 
@@ -181,7 +182,7 @@ begin
             when send_qry_g300 =>
                 pkt_tx_data <= PKT_QRY_CAL_G300;
             when send_qry_data =>
-                pkt_tx_data <= x"03" & reg_outs(7 downto 0) & x"0000";
+                pkt_tx_data <= PKT_SETQRY_DATA_CMD & reg_outs(7 downto 0) & x"0000";
             when others =>
                 pkt_tx_data <= (others => '0');
         end case;
@@ -308,7 +309,9 @@ begin
                     timeout_tmr <= TIMEOUT_COUNT_VAL_ST;
                 when send_qry_data =>
                     timeout_tmr <= TIMEOUT_COUNT_VAL_DATA;
-                when wait_for_resp =>
+                when latch_reg =>
+                    timeout_tmr <= TIMEOUT_COUNT_VAL_SYNC;
+                when wait_for_resp | wait_for_sync =>
                     if(timeout_tmr > to_unsigned(0,32)) then
                         timeout_tmr <= timeout_tmr - 1;
                     else -- we timed out
@@ -379,11 +382,11 @@ begin
                     if(pp_buf_lock_s /= pp_buf_lock) then
                         next_state <= parse_resp_cmd;
                     elsif(timed_out = '1') then
-                    --    if(reg_timerr_cnt > TIMEOUT_RETRIES) then   -- Completely lost coms
-                    --        next_state <= start;
-                    --    else                        -- Missed a packet
+                        if(unsigned(reg_timerr_cnt) > TIMEOUT_RETRIES) then   -- Completely lost coms
+                            next_state <= start;
+                        else                        -- Missed a packet
                             next_state <= prev_state;
-                    --    end if;
+                        end if;
                     end if;
                 when parse_resp_cmd =>
                     if(pp_data = PKT_QRY_CAL_G10(31 downto 24)) then
@@ -417,9 +420,9 @@ begin
                             next_state <= wait_for_sync;
                     end case;
                 when wait_for_sync =>
---                    if(sync_pulse = '1') then
+                    if(sync_pulse = '1' or timed_out = '1') then
                         next_state <= send_qry_data;
---                    end if;
+                    end if;
                 when others =>
                     next_state <= start;
             end case;
