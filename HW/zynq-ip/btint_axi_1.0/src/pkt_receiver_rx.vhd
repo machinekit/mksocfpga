@@ -199,12 +199,12 @@ begin
         case current_state is
             when idle =>
                 if(uart_data_rdy = '1') then
-                    --if(uart_fr_err /= '0' or uart_of_err /= '0') then
-                    --    next_state <= idle; -- Oops, error, nothing to look at
-                    --    next_pkt_state <= pkt_search_hdr;
-                  --  else
+                    if(uart_fr_err /= '0' or uart_of_err /= '0') then
+                        next_state <= idle; -- Oops, error, nothing to look at
+                        next_pkt_state <= pkt_search_hdr;
+                    else
                         next_state <= byte_dec;
-                  --  end if;
+                    end if;
                 end if;
             when byte_dec =>    -- byte is latched now in the buffer
                 if(pkt_state = pkt_escaped) then

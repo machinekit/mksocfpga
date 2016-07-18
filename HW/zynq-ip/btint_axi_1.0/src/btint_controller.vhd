@@ -40,7 +40,6 @@ architecture beh of btint_controller is
     signal pp_buf_lock_s : std_logic := '0';
     signal int_rst_n : std_logic := '1';
     signal timed_out : std_logic := '0';
-    signal timeout_cnt : unsigned(2 downto 0) := (others => '0');
     signal timeout_tmr : unsigned(31 downto 0) := (others => '0');
     signal reg_add : std_logic_vector(2 downto 0) := (others => '0');
     signal reg_32_tmp : std_logic_vector(31 downto 0) := (others => '0');
@@ -57,11 +56,12 @@ architecture beh of btint_controller is
     signal reg_ins : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_adc_value : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_err_cnt : std_logic_vector(31 downto 0) := (others => '0');
+    signal reg_timerr_cnt : std_logic_vector(31 downto 0) := (others => '0');
     signal byte_index : integer;
 
     -- Constants
     constant TIMEOUT_RETRIES : unsigned(2 downto 0) := to_unsigned(2,3);
-    constant TIMEOUT_COUNT_VAL_DATA : unsigned(31 downto 0) := to_unsigned(400000, 32);
+    constant TIMEOUT_COUNT_VAL_DATA : unsigned(31 downto 0) := to_unsigned(40000000, 32);
     constant TIMEOUT_COUNT_VAL_ST : unsigned (31 downto 0) := to_unsigned(200000000, 32);
     constant PKT_QRY_CAL_G10 : std_logic_vector(31 downto 0) := x"08010000";
     constant PKT_QRY_CAL_G20 : std_logic_vector(31 downto 0) := x"08020000";
@@ -80,6 +80,7 @@ architecture beh of btint_controller is
     constant REG_INS_ADD : std_logic_vector(15 downto 0) := x"0300";
     constant REG_ADCVAL_ADD : std_logic_vector(15 downto 0) := x"0400";
     constant REG_ERRCNT_ADD : std_logic_vector(15 downto 0) := x"0500";
+    constant REG_TIMERRCNT_ADD : std_logic_vector(15 downto 0) := x"0504";
 
 begin
     int_rst_n <= '0' when (rst_n = '0' or current_state = start) else '1';
@@ -106,7 +107,7 @@ begin
     end process sync_edge_det;
 
     -- Reading registers mux
-    reg_read : process(addr_rd, reg_control_lower, reg_control_upper, reg_gain_10, reg_gain_20, reg_gain_300, reg_outs, reg_ins, reg_adc_value, reg_err_cnt)
+    reg_read : process(addr_rd, reg_control_lower, reg_control_upper, reg_gain_10, reg_gain_20, reg_gain_300, reg_outs, reg_ins, reg_adc_value, reg_err_cnt, reg_timerr_cnt)
     begin
         case addr_rd is
             when REG_MAGIC_ADD =>
@@ -127,6 +128,8 @@ begin
                 odata <= reg_adc_value;
             when REG_ERRCNT_ADD =>
                 odata <= reg_err_cnt;
+            when REG_TIMERRCNT_ADD =>
+                odata <= reg_timerr_cnt;
             when others =>
                 odata <= (others => '0');
         end case;
@@ -178,7 +181,7 @@ begin
             when send_qry_g300 =>
                 pkt_tx_data <= PKT_QRY_CAL_G300;
             when send_qry_data =>
-                pkt_tx_data <= PKT_SETQRY_DATA or (x"00" & reg_outs(7 downto 0) & x"0000");
+                pkt_tx_data <= x"03" & reg_outs(7 downto 0) & x"0000";
             when others =>
                 pkt_tx_data <= (others => '0');
         end case;
@@ -216,6 +219,7 @@ begin
             reg_adc_value <= (others => '0');
             reg_control_upper <= (others => '0');
             reg_err_cnt <= (others => '0');
+            reg_timerr_cnt <= (others => '0');
             reg_add <= (others => '0');
         elsif (rising_edge(clk)) then
             reg_control_upper <= reg_control_upper; -- Hold by default
@@ -224,13 +228,14 @@ begin
             reg_gain_300 <= reg_gain_300;
             reg_adc_value <= reg_adc_value;
             reg_err_cnt <= reg_err_cnt;
+            reg_timerr_cnt <= reg_timerr_cnt;
             reg_ins <= reg_ins;
             reg_add <= reg_add;
 
             case current_state is
                 when wait_for_resp =>
                     if(timed_out = '1') then
-                        reg_err_cnt <= std_logic_vector(unsigned(reg_err_cnt) + 1);
+                        reg_timerr_cnt <= std_logic_vector(unsigned(reg_timerr_cnt) + 1);
                     end if;
                 when parse_resp_cmd =>
                     if(pp_data /= PKT_QRY_CAL_G10(31 downto 24) and pp_data /= PKT_QRY_DATA_CMD) then
@@ -291,32 +296,26 @@ begin
         end case;
     end process calc_pp_addr;
 
-    upd_timeout : process(int_rst_n, clk, current_state, timeout_cnt, timeout_tmr, timed_out)
+    upd_timeout : process(int_rst_n, clk, current_state, timeout_tmr, timed_out)
     begin
         if(int_rst_n = '0') then
             timeout_tmr <= TIMEOUT_COUNT_VAL_ST;
             timed_out <= '0';
-            timeout_cnt <= (others => '0');
         elsif (rising_edge(clk)) then
+            timed_out <= '0';
             case current_state is
                 when send_qry_g10 | send_qry_g20 | send_qry_g300 =>
                     timeout_tmr <= TIMEOUT_COUNT_VAL_ST;
-                    timed_out <= '0';
                 when send_qry_data =>
                     timeout_tmr <= TIMEOUT_COUNT_VAL_DATA;
-                    timed_out <= '0';
                 when wait_for_resp =>
-                    if(timeout_tmr > to_unsigned(0,24)) then
+                    if(timeout_tmr > to_unsigned(0,32)) then
                         timeout_tmr <= timeout_tmr - 1;
                     else -- we timed out
-                        if(timed_out = '0') then
-                            timed_out <= '1';
-                            timeout_cnt <= timeout_cnt + 1;
-                        end if;
+                        timed_out <= '1';
                     end if;
                 when others =>
                     timeout_tmr <= TIMEOUT_COUNT_VAL_ST;
-                    timed_out <= '0';
             end case;
         end if;
     end process upd_timeout;
@@ -345,7 +344,7 @@ begin
         end if;
     end process update_state;
 
-    calc_state : process(current_state, prev_state, pp_buf_lock_s, pp_buf_lock, timed_out, timeout_cnt, reg_control_lower, pkt_tx_we_s, pp_data, sync_pulse)
+    calc_state : process(current_state, prev_state, pp_buf_lock_s, pp_buf_lock, timed_out, reg_timerr_cnt, reg_control_lower, pkt_tx_we_s, pp_data, sync_pulse)
     begin
         next_state <= current_state; -- Hold state by default
         new_prev_state <= prev_state;
@@ -380,11 +379,11 @@ begin
                     if(pp_buf_lock_s /= pp_buf_lock) then
                         next_state <= parse_resp_cmd;
                     elsif(timed_out = '1') then
-                      --  if(timeout_cnt >= TIMEOUT_RETRIES) then   -- Completely lost coms
-                      --      next_state <= start;
-                      --  else                        -- Missed a packet
+                    --    if(reg_timerr_cnt > TIMEOUT_RETRIES) then   -- Completely lost coms
+                    --        next_state <= start;
+                    --    else                        -- Missed a packet
                             next_state <= prev_state;
-                      --  end if;
+                    --    end if;
                     end if;
                 when parse_resp_cmd =>
                     if(pp_data = PKT_QRY_CAL_G10(31 downto 24)) then
@@ -418,9 +417,9 @@ begin
                             next_state <= wait_for_sync;
                     end case;
                 when wait_for_sync =>
-                    if(sync_pulse = '1') then
+--                    if(sync_pulse = '1') then
                         next_state <= send_qry_data;
-                    end if;
+--                    end if;
                 when others =>
                     next_state <= start;
             end case;

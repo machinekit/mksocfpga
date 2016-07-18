@@ -32,7 +32,9 @@ architecture beh of uart_rx_tb is
 --    signal current_state_deb : 	unsigned(1 downto 0);
 --    signal next_state_deb : unsigned(1 downto 0);
 --    signal tx_shift_reg_deb : std_logic_vector(9 downto 0);
-    
+        signal maj_voting_deb : std_logic;
+
+
     -- Simulation timing
     constant clockperiod : TIME := 10 ns;
 begin
@@ -94,7 +96,7 @@ begin
 
         wait for 15 ns;
             rst_n <= '1';
-            tx_data <= x"00";   -- first data to send is binary 0
+            tx_data <= x"01";   -- first data to send is 1
             load <= '0'; 
         wait until busy = '0';  
             load <= '1'; -- kickoff write
@@ -128,12 +130,16 @@ begin
         wait until busy = '1';
             load <= '0';
             tx_data <= x"4C";  -- L
-        wait until busy = '0';  
+        wait until rx_data_ready = '1';
+            rx_read <= '1';
+        wait for 25 ns;
+            rx_read <= '0';
+        wait for 25 ns;  
             load <= '1';
         wait until busy = '1';
             load <= '0';
             tx_data <= x"4C";  -- L
-        wait until rx_overflow_err = '1';
+        wait until rx_data_ready = '1';
             rx_read <= '1';
         wait for 25 ns;
             rx_read <= '0';

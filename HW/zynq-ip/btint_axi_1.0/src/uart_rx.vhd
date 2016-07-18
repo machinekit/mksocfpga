@@ -44,8 +44,8 @@ architecture beh of uart_rx is
 	signal current_state, next_state : sm_type := idle;
 	signal rx_shift_reg : std_logic_vector(7 downto 0) := (others => '1');
 	signal bit_pulse : std_logic := '0';
-	signal rx_bit_cnt : unsigned(3 downto 0) := (others => '1');
-	signal rx_bitclk_cnt : unsigned(3 downto 0) := (others => '1');
+	signal rx_bit_cnt : unsigned(3 downto 0) := (others => '0');
+	signal rx_bitclk_cnt : unsigned(3 downto 0) := (others => '0');
 	signal rx_clk_reset : std_logic := '0';
 	signal clk16_timer : unsigned(TIMER_WIDTH - 1 downto 0) := (others => '1');
     signal clk16 : std_logic;
@@ -70,12 +70,15 @@ begin
 --                      to_unsigned(0, 2);
 --    tx_shift_reg_deb <= tx_shift_reg;
 
+--    maj_voting_deb <= '1' when (rx_bitclk_cnt = to_unsigned(6, 4) or rx_bitclk_cnt = to_unsigned(7, 4) or rx_bitclk_cnt = to_unsigned(8, 4)) else '0';
+
     -- Module begin
-    rx_clk_reset <= '1' when (current_state = idle and uart_rx = '0') else '0';
+    rx_clk_reset <= '1' when (current_state = idle) else '0';
     maj_vote <= '1' when ((maj_voters(1) = '1' and maj_voters(0) = '1') or
                           (maj_voters(2) = '1' and maj_voters(0) = '1') or
                           (maj_voters(2) = '1' and maj_voters(1) = '1'))
                 else '0';
+    bit_pulse <= '1' when (rx_bitclk_cnt >= to_unsigned(15, 4) and clk16 = '1') else '0';
     overflow_err <= of_err;
     frame_err <= fr_err;
     data_ready <= data_rdy;
@@ -102,15 +105,12 @@ begin
     begin
         if(rst_n = '0') then
             rx_bitclk_cnt <= (others => '0');  -- default the count to 0
-            bit_pulse <= '0';
         elsif(rising_edge(clk)) then
-            bit_pulse <= '0';
             if(rx_clk_reset = '1') then
                 rx_bitclk_cnt <= (others => '0');
             elsif(clk16 = '1') then
-                if(rx_bitclk_cnt = to_unsigned(15, 4)) then
+                if(rx_bitclk_cnt >= to_unsigned(15, 4)) then
                     rx_bitclk_cnt <= (others => '0');
-                    bit_pulse <= '1';
                 else
                     rx_bitclk_cnt <= rx_bitclk_cnt + 1;
                 end if;
@@ -131,11 +131,12 @@ begin
         end if;
     end process update_bit_cnt;
 
-    update_maj_voters : process(rst_n, clk, uart_rx, rx_bitclk_cnt, clk16)
+    update_maj_voters : process(rst_n, clk, uart_rx, rx_bitclk_cnt, clk16, maj_voters)
     begin
         if(rst_n = '0') then
             maj_voters <= (others => '1');
         elsif(rising_edge(clk)) then
+            maj_voters <= maj_voters;
             if(clk16 = '1') then
                 if(rx_bitclk_cnt = to_unsigned(6, 4)) then
                     maj_voters(0) <= uart_rx;
@@ -148,12 +149,12 @@ begin
         end if;
     end process update_maj_voters;
 
-    update_shift : process(rst_n, clk, current_state, maj_vote, bit_pulse, rx_shift_reg)
+    update_shift : process(rst_n, clk, clk16, current_state, maj_vote, bit_pulse, rx_shift_reg, rx_bitclk_cnt)
     begin
         if(rst_n = '0') then
             rx_shift_reg <= (others => '0');
         elsif(rising_edge(clk)) then
-            if (current_state = shifting and bit_pulse = '1') then
+            if (current_state = shifting and rx_bitclk_cnt = to_unsigned(9, 4) and clk16 = '1') then
                 rx_shift_reg <= maj_vote & rx_shift_reg(rx_shift_reg'high downto 1);
             end if;
         end if;
@@ -166,7 +167,7 @@ begin
             fr_err <= '0';
             data_out <= (others => '0');
         elsif(rising_edge(clk)) then
-            if(current_state = stop and bit_pulse = '1') then
+            if(current_state = stop and rx_bitclk_cnt = to_unsigned(9, 4)) then
                 -- Update overflow error
                 if(data_rdy = '1') then
                     of_err <= '1';
@@ -215,7 +216,7 @@ begin
                 end if;
             when stop =>
                 next_state <= stop;
-                if(bit_pulse = '1') then
+                if(rx_bitclk_cnt >= to_unsigned(9, 4)) then
                     next_state <= idle;
                 end if;
             when others => next_state <= idle;
