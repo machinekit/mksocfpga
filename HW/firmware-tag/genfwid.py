@@ -7,7 +7,7 @@ import argparse
 import google.protobuf.text_format
 
 # path to generated protobuf imports
-sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.abspath(__file__)) + "machinetalk-protobuf/build/python"))
+sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.abspath(__file__)) + "../../machinetalk-protobuf/build/python"))
 
 
 maxsize = 2048
