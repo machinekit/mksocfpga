@@ -25,8 +25,8 @@ architecture beh of btint_controller_tb is
     signal pp_wr_addr : std_logic_vector(PP_BUF_ADDR_WIDTH - 1 downto 0);
     signal pp_rd_data : std_logic_vector(7 downto 0);
     signal pp_wr_data : std_logic_vector(7 downto 0);
-    signal pp_lock : std_logic := '0';
-    signal pp_rd_sel : std_logic;
+    signal pp_lock : std_logic_vector(1 downto 0) := (others => '0');
+    signal pp_rd_sel : std_logic_vector(1 downto 0);
     signal pp_wr : std_logic := '0';
     signal addr_rd : std_logic_vector(15 downto 0) := x"0000";
     signal addr_wr : std_logic_vector(15 downto 0) := x"0000";
@@ -151,7 +151,7 @@ begin
         pp_wr_addr <= b"000101";
         wait until clk = '1';
         pp_wr <= '0';
-        pp_lock <= '1';          -- switch buffer
+        pp_lock <= b"10";          -- switch buffer
 
         wait until pkt_busy = '1';
         wait until pkt_busy = '0'; -- let retry packet send
@@ -177,7 +177,7 @@ begin
         pp_wr_addr <= b"000101";
         wait until clk = '1';
         pp_wr <= '0';
-        pp_lock <= '0';          -- switch buffer
+        pp_lock <= b"01";          -- switch buffer
 
         wait until pkt_busy = '1';
         wait until pkt_busy = '0'; -- let request next gain packet send
@@ -203,7 +203,7 @@ begin
         pp_wr_addr <= b"000101";
         wait until clk = '1';
         pp_wr <= '0';
-        pp_lock <= '1';          -- switch buffer
+        pp_lock <= b"10";          -- switch buffer
 
         wait until pkt_busy = '1';
         wait until pkt_busy = '0'; -- let request next gain packet send
@@ -229,7 +229,7 @@ begin
         pp_wr_addr <= b"000101";
         wait until clk = '1';
         pp_wr <= '0';
-        pp_lock <= '0';          -- switch buffer
+        pp_lock <= b"01";          -- switch buffer
 
         wait until pkt_busy = '1';
         wait until pkt_busy = '0'; -- let request next gain packet send
@@ -255,7 +255,7 @@ begin
         pp_wr_addr <= b"000101";
         wait until clk = '1';
         pp_wr <= '0';
-        pp_lock <= '1';          -- switch buffer
+        pp_lock <= b"10";          -- switch buffer
 
         wait until pkt_busy = '1';
         wait until pkt_busy = '0'; -- let request next gain packet send
@@ -281,7 +281,7 @@ begin
         pp_wr_addr <= b"000101";
         wait until clk = '1';
         pp_wr <= '0';
-        pp_lock <= '0';          -- switch buffer
+        pp_lock <= b"01";          -- switch buffer
 
        wait for 100 us;
        -- Cycle through the registers
@@ -334,7 +334,7 @@ begin
         pp_wr_addr <= b"000101";
         wait until clk = '1';
         pp_wr <= '0';
-        pp_lock <= '1';          -- switch buffer
+        pp_lock <= b"10";          -- switch buffer
 
         addr_rd <= x"0006";
 

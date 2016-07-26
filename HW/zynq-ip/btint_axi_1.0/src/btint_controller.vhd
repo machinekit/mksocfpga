@@ -16,9 +16,10 @@ entity btint_controller is
 	port
 	(
 	    rst_n   : in std_logic;
+      cnt_rst_n : out std_logic;
         clk     : in std_logic;
-        pp_buf_lock : in std_logic; -- Identifies which buffer is being written to by rx component
-        pp_buf_sel : out std_logic; -- The buffer we are reading from
+        pp_buf_lock : in std_logic_vector(1 downto 0); -- Identifies which buffer is being written to by rx component
+        pp_buf_sel : out std_logic_vector(1 downto 0); -- The address of the buffer we are reading from, one hot
         pp_addr : out std_logic_vector(PP_BUF_ADDR_WIDTH - 1 downto 0); -- PP Buffer address bus
         pp_data : in std_logic_vector(7 downto 0); -- PP Buffer data bus
         pkt_tx_data : out std_logic_vector(31 downto 0);
@@ -45,7 +46,7 @@ architecture beh of btint_controller is
                    latch_reg,
                    wait_for_sync);
 	signal current_state, next_state, prev_state, new_prev_state : sm_type := start;
-    signal pp_buf_lock_s : std_logic := '0';
+    signal pp_buf_lock_s : std_logic_vector(1 downto 0) := (others => '0');
     signal int_rst_n : std_logic := '1';
     signal timed_out : std_logic := '0';
     signal timeout_tmr : unsigned(31 downto 0) := (others => '0');
@@ -113,6 +114,7 @@ architecture beh of btint_controller is
     constant REG_TIMERRCNT_ADD : std_logic_vector(15 downto 0) := x"0504";
 
 begin
+  cnt_rst_n <= int_rst_n;
     int_rst_n <= '0' when (rst_n = '0' or current_state = start) else '1';
     pkt_tx_we <= pkt_tx_we_s;
     pkt_tx_we_s <= '1' when (((current_state = send_qry_g10x) or
@@ -253,7 +255,7 @@ begin
     end process tx_pack_sel;
 
     -- Temp data latching
-    latch_32 : process(int_rst_n, clk, current_state, pp_data)
+    latch_32 : process(int_rst_n, clk, current_state, pp_data, reg_32_tmp)
     begin
         if(int_rst_n = '0') then
             reg_32_tmp <= (others => '0');
@@ -274,7 +276,7 @@ begin
     end process latch_32;
 
     -- Internal register writing from packet parsing, etc.
-    upd_int_reg : process(int_rst_n, clk, current_state, reg_add, pp_data, timed_out, prev_state, reg_32_tmp, reg_err_cnt, reg_control_upper)
+    upd_int_reg : process(int_rst_n, clk, current_state, reg_add, pp_data, timed_out, prev_state, reg_timerr_cnt, reg_32_tmp, reg_err_cnt, reg_control_upper)
     begin
         if(int_rst_n = '0') then
             reg_gain_10x <= (others => '0');
@@ -293,22 +295,6 @@ begin
             reg_timerr_cnt <= (others => '0');
             reg_add <= (others => '0');
         elsif (rising_edge(clk)) then
-            reg_control_upper <= reg_control_upper; -- Hold by default
-            reg_gain_10x <= reg_gain_10x;
-            reg_gain_10x2 <= reg_gain_10x2;
-            reg_gain_10x3 <= reg_gain_10x3;
-            reg_gain_20x <= reg_gain_20x;
-            reg_gain_20x2 <= reg_gain_20x2;
-            reg_gain_20x3 <= reg_gain_20x3;
-            reg_gain_300x <= reg_gain_300x;
-            reg_gain_300x2 <= reg_gain_300x2;
-            reg_gain_300x3 <= reg_gain_300x3;
-            reg_adc_value <= reg_adc_value;
-            reg_err_cnt <= reg_err_cnt;
-            reg_timerr_cnt <= reg_timerr_cnt;
-            reg_ins <= reg_ins;
-            reg_add <= reg_add;
-
             case current_state is
                 when wait_for_resp =>
                     if(timed_out = '1') then
@@ -361,17 +347,17 @@ begin
     begin
         case current_state is
             when parse_resp_cmd =>
-                pp_addr <= (others => '0');
-            when parse_data1 | parse_cal1 =>
                 pp_addr <= b"000001";
-            when parse_32_1 =>
+            when parse_data1 | parse_cal1 =>
                 pp_addr <= b"000010";
-            when parse_32_2 =>
+            when parse_32_1 =>
                 pp_addr <= b"000011";
-            when parse_32_3 =>
+            when parse_32_2 =>
                 pp_addr <= b"000100";
-            when parse_32_4 =>
+            when parse_32_3 =>
                 pp_addr <= b"000101";
+            when parse_32_4 =>
+                pp_addr <= b"000110";
             when others =>
                 pp_addr <= (others => '0');
         end case;
@@ -408,12 +394,16 @@ begin
     update_pp_buf_sig : process(int_rst_n, clk, pp_buf_lock, pp_buf_lock_s)
     begin
         if(int_rst_n = '0') then
-            pp_buf_lock_s <= pp_buf_lock;
-            pp_buf_sel <= pp_buf_lock;
+            pp_buf_lock_s <= (others => '0');
+            pp_buf_sel <= (others => '0');
         elsif(rising_edge(clk)) then
             pp_buf_lock_s <= pp_buf_lock;
             if(current_state = wait_for_resp) then
-                pp_buf_sel <= not pp_buf_lock;
+              if(pp_buf_lock = b"10" and pp_buf_lock_s = b"01") then
+                pp_buf_sel <= b"01";
+              elsif(pp_buf_lock = b"01" and pp_buf_lock_s = b"10")then
+                pp_buf_sel <= b"10";
+              end if;
             end if;
         end if;
     end process update_pp_buf_sig;

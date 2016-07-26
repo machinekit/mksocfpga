@@ -47,7 +47,7 @@ architecture imp of btint_top is
 
     -- Packet Validator, writes to pp buffer
     signal pp_wr : std_logic;
-    signal pp_lock : std_logic;
+    signal pp_lock : std_logic_vector(1 downto 0);
     signal pp_wr_data : std_logic_vector(7 downto 0);
     signal pp_wr_addr : std_logic_vector(PP_BUF_ADDR_WIDTH - 1 downto 0);
     signal odata_rx : std_logic_vector(31 downto 0);
@@ -55,8 +55,9 @@ architecture imp of btint_top is
     -- Master controller, reads from pp buffer
     signal pp_rd_addr : std_logic_vector(PP_BUF_ADDR_WIDTH - 1 downto 0);
     signal pp_rd_data : std_logic_vector(7 downto 0);
-    signal pp_rd_sel : std_logic;
+    signal pp_rd_sel : std_logic_vector(1 downto 0);
     signal odata_ctrl : std_logic_vector(31 downto 0);
+    signal cnt_rst_n : std_logic;
 
     signal baud_reg_s : unsigned(15 downto 0) := BAUD_REG;
 begin
@@ -87,7 +88,7 @@ begin
         generic map (
             TIMER_WIDTH => BAUD_TIMER_WIDTH)
         port map (
-            rst_n => rst_n,
+            rst_n => cnt_rst_n,
             clk => clk,
             baudreg => baud_reg_s,
             load => utx_load,
@@ -105,7 +106,7 @@ begin
             ESC_XOR_FLAG => ESC_XOR_FLAG
         )
         port map (
-            rst_n => rst_n,
+            rst_n => cnt_rst_n,
             clk => clk,
             packet => pkttx_packet,
             we => pkttx_we,
@@ -125,7 +126,7 @@ begin
             TIMER_WIDTH => BAUD_TIMER_WIDTH
         )
         port map (
-            rst_n => rst_n,
+            rst_n => cnt_rst_n,
             clk => clk,
             baudreg => baud_reg_s,
             uart_rx => uart_rx,
@@ -145,7 +146,7 @@ begin
             PP_BUF_ADDR_WIDTH => PP_BUF_ADDR_WIDTH
         )
         port map (
-            rst_n => rst_n,
+            rst_n => cnt_rst_n,
             clk => clk,
             pp_buf_lock => pp_lock,
             pp_addr => pp_wr_addr,
@@ -170,6 +171,7 @@ begin
         )
         port map (
             rst_n => rst_n,
+            cnt_rst_n => cnt_rst_n,
             clk => clk,
             pp_buf_lock => pp_lock,
             pp_buf_sel => pp_rd_sel,
