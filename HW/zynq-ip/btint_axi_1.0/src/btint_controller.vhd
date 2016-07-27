@@ -19,9 +19,9 @@ entity btint_controller is
       cnt_rst_n : out std_logic;
         clk     : in std_logic;
         pp_buf_lock : in std_logic_vector(1 downto 0); -- Identifies which buffer is being written to by rx component
-        pp_buf_sel : out std_logic_vector(1 downto 0); -- The address of the buffer we are reading from, one hot
         pp_addr : out std_logic_vector(PP_BUF_ADDR_WIDTH - 1 downto 0); -- PP Buffer address bus
-        pp_data : in std_logic_vector(7 downto 0); -- PP Buffer data bus
+        pp_data1 : in std_logic_vector(7 downto 0); -- PP Buffer data bus 1
+        pp_data2 : in std_logic_vector(7 downto 0); -- PP Buffer data bus 2
         pkt_tx_data : out std_logic_vector(31 downto 0);
         pkt_tx_we : out std_logic;
         pkt_tx_busy : in std_logic;
@@ -47,8 +47,12 @@ architecture beh of btint_controller is
                    wait_for_sync);
 	signal current_state, next_state, prev_state, new_prev_state : sm_type := start;
     signal pp_buf_lock_s : std_logic_vector(1 downto 0) := (others => '0');
+    signal pp_buf_change : std_logic := '0';
+    signal pp_buf_sel_s : std_logic := '0';
+    signal pp_data : std_logic_vector(7 downto 0);
     signal int_rst_n : std_logic := '1';
     signal timed_out : std_logic := '0';
+    signal cons_timeouts : unsigned(2 downto 0) := (others => '0');
     signal timeout_tmr : unsigned(31 downto 0) := (others => '0');
     signal reg_add : std_logic_vector(7 downto 0) := (others => '0');
     signal reg_32_tmp : std_logic_vector(31 downto 0) := (others => '0');
@@ -128,6 +132,8 @@ begin
                            (current_state = send_qry_g300x3) or
                            (current_state = send_qry_data)) and (pkt_tx_busy = '0')) else '0';
     clear_sync <= '1' when (current_state = wait_for_sync and sync_pulse = '1') else '0';
+    pp_data <= pp_data2 when (pp_buf_sel_s = '1') else pp_data1;
+    
 
     -- Update sync edge detect
     sync_edge_det : process(int_rst_n, clk, sync, sync_prev)
@@ -276,7 +282,7 @@ begin
     end process latch_32;
 
     -- Internal register writing from packet parsing, etc.
-    upd_int_reg : process(int_rst_n, clk, current_state, reg_add, pp_data, timed_out, prev_state, reg_timerr_cnt, reg_32_tmp, reg_err_cnt, reg_control_upper)
+    upd_int_reg : process(int_rst_n, clk, current_state, reg_add, pp_data, timed_out, prev_state, reg_timerr_cnt, reg_32_tmp, reg_err_cnt, reg_control_upper, cons_timeouts)
     begin
         if(int_rst_n = '0') then
             reg_gain_10x <= (others => '0');
@@ -293,14 +299,17 @@ begin
             reg_control_upper <= (others => '0');
             reg_err_cnt <= (others => '0');
             reg_timerr_cnt <= (others => '0');
+            cons_timeouts <= (others => '0');
             reg_add <= (others => '0');
         elsif (rising_edge(clk)) then
             case current_state is
                 when wait_for_resp =>
                     if(timed_out = '1') then
                         reg_timerr_cnt <= std_logic_vector(unsigned(reg_timerr_cnt) + 1);
+                        cons_timeouts <= cons_timeouts  + 1;
                     end if;
                 when parse_resp_cmd =>
+                    cons_timeouts <= (others => '0');
                     if(pp_data /= PKT_QRY_CAL_CMD and pp_data /= PKT_QRY_DATA_CMD) then
                         reg_err_cnt <= std_logic_vector(unsigned(reg_err_cnt) + 1);
                     end if;
@@ -356,8 +365,6 @@ begin
                 pp_addr <= b"000100";
             when parse_32_3 =>
                 pp_addr <= b"000101";
-            when parse_32_4 =>
-                pp_addr <= b"000110";
             when others =>
                 pp_addr <= (others => '0');
         end case;
@@ -394,15 +401,18 @@ begin
     update_pp_buf_sig : process(int_rst_n, clk, pp_buf_lock, pp_buf_lock_s)
     begin
         if(int_rst_n = '0') then
-            pp_buf_lock_s <= (others => '0');
-            pp_buf_sel <= (others => '0');
+            pp_buf_lock_s <= pp_buf_lock;
+            pp_buf_sel_s <= '0';
         elsif(rising_edge(clk)) then
             pp_buf_lock_s <= pp_buf_lock;
+            pp_buf_change <= '0';
             if(current_state = wait_for_resp) then
               if(pp_buf_lock = b"10" and pp_buf_lock_s = b"01") then
-                pp_buf_sel <= b"01";
+                pp_buf_sel_s <= '0';
+                pp_buf_change <= '1';
               elsif(pp_buf_lock = b"01" and pp_buf_lock_s = b"10")then
-                pp_buf_sel <= b"10";
+                pp_buf_sel_s <= '1';
+                pp_buf_change <= '1';
               end if;
             end if;
         end if;
@@ -419,7 +429,7 @@ begin
         end if;
     end process update_state;
 
-    calc_state : process(current_state, prev_state, pp_buf_lock_s, pp_buf_lock, timed_out, reg_timerr_cnt, reg_control_lower, pkt_tx_we_s, pp_data, sync_pulse)
+    calc_state : process(current_state, prev_state, pp_buf_change, timed_out, cons_timeouts, reg_control_lower, pkt_tx_we_s, pp_data, pp_data, sync_pulse)
     begin
         next_state <= current_state; -- Hold state by default
         new_prev_state <= prev_state;
@@ -481,10 +491,10 @@ begin
                         new_prev_state <= send_qry_data;
                     end if;
                 when wait_for_resp =>
-                    if(pp_buf_lock_s /= pp_buf_lock) then
+                    if(pp_buf_change = '1') then   -- Change is registered with the select, so the pp delay is built in
                         next_state <= parse_resp_cmd;
                     elsif(timed_out = '1') then
-                        if(unsigned(reg_timerr_cnt) > TIMEOUT_RETRIES) then   -- Completely lost coms
+                        if(cons_timeouts  > TIMEOUT_RETRIES) then   -- Completely lost coms
                             next_state <= start;
                         else                        -- Missed a packet
                             next_state <= prev_state;

@@ -54,8 +54,8 @@ architecture imp of btint_top is
 
     -- Master controller, reads from pp buffer
     signal pp_rd_addr : std_logic_vector(PP_BUF_ADDR_WIDTH - 1 downto 0);
-    signal pp_rd_data : std_logic_vector(7 downto 0);
-    signal pp_rd_sel : std_logic_vector(1 downto 0);
+    signal pp_rd_data1 : std_logic_vector(7 downto 0);
+    signal pp_rd_data2 : std_logic_vector(7 downto 0);
     signal odata_ctrl : std_logic_vector(31 downto 0);
     signal cnt_rst_n : std_logic;
 
@@ -70,11 +70,22 @@ begin
         )
         port map (
             clk => clk,
-            lock => pp_lock,
-            rd_sel => pp_rd_sel,
             rd_addr => pp_rd_addr,
-            rd_data => pp_rd_data,
-            wr => pp_wr,
+            rd_data => pp_rd_data1,
+            we => (pp_wr and pp_lock(0)),
+            wr_addr => pp_wr_addr,
+            wr_data => pp_wr_data
+        );
+        
+    pp_buf2 : entity work.ram_dualp
+        generic map(
+            PP_BUF_ADDR_WIDTH => PP_BUF_ADDR_WIDTH
+        )
+        port map (
+            clk => clk,
+            rd_addr => pp_rd_addr,
+            rd_data => pp_rd_data2,
+            we => (pp_wr and pp_lock(1)),
             wr_addr => pp_wr_addr,
             wr_data => pp_wr_data
         );
@@ -174,9 +185,9 @@ begin
             cnt_rst_n => cnt_rst_n,
             clk => clk,
             pp_buf_lock => pp_lock,
-            pp_buf_sel => pp_rd_sel,
             pp_addr => pp_rd_addr,
-            pp_data => pp_rd_data,
+            pp_data1 => pp_rd_data1,
+            pp_data2 => pp_rd_data2,
             pkt_tx_data => pkttx_packet,
             pkt_tx_we => pkttx_we,
             pkt_tx_busy => pkttx_busy,

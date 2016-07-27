@@ -81,7 +81,7 @@ begin
     end process reg_read;
 
     pp_data <= pkt_fifo(15 downto 8);
-    pp_addr <= std_logic_vector(byte_cnt) when (byte_cnt >= 0) else (others => '0');
+    pp_addr <= std_logic_vector(byte_cnt) when (byte_cnt >= to_signed(0, PP_BUF_ADDR_WIDTH - 1)) else (others => '0');
     uart_rd <= uart_rd_s;
     -- Don't write the last two bytes that arrive in the packet, they are the checksum. 2 byte fifo handles this
     pp_wr <= '1' when (pp_wr_s = '1' and (byte_cnt >= to_signed(0, PP_BUF_ADDR_WIDTH - 1))) else '0';
@@ -123,24 +123,20 @@ begin
         end if;
     end process upd_pp;
 
-    upd_byte_cnt : process(rst_n, clk, current_state, pkt_state, pp_wr_s, reg_byte_cnt, byte_cnt)
+    upd_byte_cnt : process(rst_n, clk, current_state, pkt_state, reg_byte_cnt, byte_cnt)
     begin
         if(rst_n = '0') then
             byte_cnt <= to_signed(-2, PP_BUF_ADDR_WIDTH);
             reg_byte_cnt <= (others => '0');
         elsif (rising_edge(clk)) then
-            case current_state is
-                when idle =>
-                    if(pkt_state = pkt_search_hdr) then
-                        byte_cnt <= to_signed(-2, PP_BUF_ADDR_WIDTH);
-                    end if;
-                when latch_byte | latch_esc_byte =>
-                    byte_cnt <= byte_cnt + 1;
-                    reg_byte_cnt <= std_logic_vector(unsigned(reg_byte_cnt) + 1);
-                when others =>
-                    byte_cnt <= byte_cnt;
-                    reg_byte_cnt <= reg_byte_cnt;
-            end case;
+            byte_cnt <= byte_cnt;
+            reg_byte_cnt <= reg_byte_cnt;
+            if(pkt_state = pkt_search_hdr) then
+                byte_cnt <= to_signed(-2, PP_BUF_ADDR_WIDTH);
+            elsif(current_state = latch_byte or current_state = latch_esc_byte)then
+                byte_cnt <= byte_cnt + 1;
+                reg_byte_cnt <= std_logic_vector(unsigned(reg_byte_cnt) + 1);
+            end if;
         end if;
     end process upd_byte_cnt;
 
@@ -183,7 +179,6 @@ begin
         end if;
     end process;
 
-    -- checksum needs to look at bytes - 2 and bytes - 3
     update_chksum : process(rst_n, clk, current_state, byte_cnt)
     begin
         if(rst_n = '0') then
@@ -245,7 +240,7 @@ begin
                         next_state <= byte_dec;
                     end if;
                 end if;
-            when byte_dec =>    -- byte is latched now in the buffer
+            when byte_dec =>    -- rx byte is latched now in the buffer
                 if(pkt_state = pkt_escaped) then
                     next_state <= latch_esc_byte;
                     next_pkt_state <= pkt_in_msg;

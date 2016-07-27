@@ -23,7 +23,8 @@ architecture beh of btint_controller_tb is
     signal pkt_busy : std_logic;
     signal pp_rd_addr : std_logic_vector(PP_BUF_ADDR_WIDTH - 1 downto 0);
     signal pp_wr_addr : std_logic_vector(PP_BUF_ADDR_WIDTH - 1 downto 0);
-    signal pp_rd_data : std_logic_vector(7 downto 0);
+    signal pp_rd_data1 : std_logic_vector(7 downto 0);
+    signal pp_rd_data2 : std_logic_vector(7 downto 0);
     signal pp_wr_data : std_logic_vector(7 downto 0);
     signal pp_lock : std_logic_vector(1 downto 0) := (others => '0');
     signal pp_rd_sel : std_logic_vector(1 downto 0);
@@ -48,9 +49,9 @@ begin
             rst_n => rst_n,
             clk => clk,
             pp_buf_lock => pp_lock,
-            pp_buf_sel => pp_rd_sel,
             pp_addr => pp_rd_addr,
-            pp_data => pp_rd_data,
+            pp_data1 => pp_rd_data1,
+            pp_data2 => pp_rd_data2,
             pkt_tx_data => pkt_packet,
             pkt_tx_we => pkt_we,
             pkt_tx_busy => pkt_busy,
@@ -88,20 +89,32 @@ begin
         busy => uart_busy
       );
 
-      pp_buf : entity work.ram_dualp
+      pp_buf1 : entity work.ram_dualp
        generic map(
         PP_BUF_ADDR_WIDTH => PP_BUF_ADDR_WIDTH
        )
        port map (
         clk => clk,
-        lock => pp_lock,
-        rd_sel => pp_rd_sel,
+        we => (pp_lock(0) and pp_wr),
         rd_addr => pp_rd_addr,
-        rd_data => pp_rd_data,
-        wr => pp_wr,
+        rd_data => pp_rd_data1,
         wr_addr => pp_wr_addr,
         wr_data => pp_wr_data
        );
+
+       pp_buf2 : entity work.ram_dualp
+       generic map(
+        PP_BUF_ADDR_WIDTH => PP_BUF_ADDR_WIDTH
+       )
+       port map (
+        clk => clk,
+        we => (pp_lock(1) and pp_wr),
+        rd_addr => pp_rd_addr,
+        rd_data => pp_rd_data2,
+        wr_addr => pp_wr_addr,
+        wr_data => pp_wr_data
+       );
+
 
       -- Generate the reference clock @ 50% duty cycle
       clock_gen : process
