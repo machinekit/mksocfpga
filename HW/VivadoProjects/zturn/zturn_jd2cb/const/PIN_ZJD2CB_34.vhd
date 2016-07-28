@@ -6,7 +6,7 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 -- Copyright (C) 2007, Peter C. Wallace, Mesa Electronics
 -- http://www.mesanet.com
 --
--- Ported to JD2CB board: Copyright (C) 2016, Devin Hughes, JD Squared
+-- Ported to MicroZED JD2CB board: Copyright (C) 2016, Devin Hughes, JD Squared
 --
 -- This program is is licensed under a disjunctive dual license giving you
 -- the choice of one of the two following sets of free software/open source
@@ -71,15 +71,15 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 use work.IDROMConst.all;
 
-package PIN_ZTURNIOCAPE_34 is
+package PIN_ZJD2CB_34 is
 	constant ModuleID : ModuleIDType :=(
-	  (HM2DPLLTag,	x"00",	ClockLowTag,	x"01",	HM2DPLLBaseRateAddr&PadT,	HM2DPLLNumRegs,		x"00",	HM2DPLLMPBitMask),
+                (HM2DPLLTag,	x"00",	ClockLowTag,	x"01",	HM2DPLLBaseRateAddr&PadT,	HM2DPLLNumRegs,		x"00",	HM2DPLLMPBitMask),
 		(WatchDogTag,	x"00",	ClockLowTag,	x"01",	WatchDogTimeAddr&PadT,		WatchDogNumRegs,		x"00",	WatchDogMPBitMask),
-		(IOPortTag,		x"00",	ClockLowTag,	x"02",	PortAddr&PadT,					IOPortNumRegs,			x"00",	IOPortMPBitMask),
-		(QcountTag,		x"02",	ClockLowTag,	x"02",	QcounterAddr&PadT,			QCounterNumRegs,		x"00",	QCounterMPBitMask),
+		(IOPortTag,		x"00",	ClockLowTag,	x"01",	PortAddr&PadT,					IOPortNumRegs,			x"00",	IOPortMPBitMask),
 		(StepGenTag,	x"02",	ClockLowTag,	x"0A",	StepGenRateAddr&PadT,		StepGenNumRegs,		x"00",	StepGenMPBitMask),
 		(PWMTag,			x"00",	ClockHighTag,	x"02",	PWMValAddr&PadT,				PWMNumRegs,				x"00",	PWMMPBitMask),
 		(LEDTag,			x"00",	ClockLowTag,	x"01",	LEDAddr&PadT,					LEDNumRegs,				x"00",	LEDMPBitMask),
+		(NullTag,		x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
 		(NullTag,		x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
 		(NullTag,		x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
 		(NullTag,		x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
@@ -115,42 +115,41 @@ package PIN_ZTURNIOCAPE_34 is
 	IOPortTag & x"00" & StepGenTag & StepGenDirPin,       	-- I/O 02   PIN 42 M1-DIR
 	IOPortTag & x"00" & NullTag & NullPin,			-- I/O 03   PIN 44 M1-EN GPIO
 
-  IOPortTag & x"00" & NullTag & NullPin,			-- I/O 04   PIN 48 M2-FB GPIO
-  IOPortTag & x"01" & StepGenTag & StepGenStepPin,        -- I/O 05   PIN 50 M2-STP
-  IOPortTag & x"01" & StepGenTag & StepGenDirPin,         -- I/O 06   PIN 54 M2-DIR
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 07   PIN 56 M2-EN GPIO
+        IOPortTag & x"00" & NullTag & NullPin,			-- I/O 04   PIN 48 M2-FB GPIO
+        IOPortTag & x"01" & StepGenTag & StepGenStepPin,        -- I/O 05   PIN 50 M2-STP
+        IOPortTag & x"01" & StepGenTag & StepGenDirPin,         -- I/O 06   PIN 54 M2-DIR
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 07   PIN 56 M2-EN GPIO
 
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 08   PIN 62 M3-FB GPIO
-  IOPortTag & x"02" & StepGenTag & StepGenStepPin,        -- I/O 09   PIN 64 M3-STP
-  IOPortTag & x"02" & StepGenTag & StepGenDirPin,         -- I/O 10   PIN 68 M3-DIR
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 11   PIN 70 M3-EN GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 08   PIN 62 M3-FB GPIO
+        IOPortTag & x"02" & StepGenTag & StepGenStepPin,        -- I/O 09   PIN 64 M3-STP
+        IOPortTag & x"02" & StepGenTag & StepGenDirPin,         -- I/O 10   PIN 68 M3-DIR
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 11   PIN 70 M3-EN GPIO
 
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 12   PIN 74 M4-FB GPIO
-  IOPortTag & x"03" & StepGenTag & StepGenStepPin,        -- I/O 13   PIN 76 M4-STP
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 14   PIN 82 M4-EN GPIO
-  IOPortTag & x"03" & StepGenTag & StepGenDirPin,         -- I/O 15   PIN 84 M4-DIR
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 12   PIN 74 M4-FB GPIO
+        IOPortTag & x"03" & StepGenTag & StepGenStepPin,        -- I/O 13   PIN 76 M4-STP
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 14   PIN 82 M4-EN GPIO
+        IOPortTag & x"03" & StepGenTag & StepGenDirPin,         -- I/O 15   PIN 84 M4-DIR
 
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 16   PIN 35 GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 16   PIN 35 GPIO
 
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 17   PIN 82-2 LIM1 GPIO
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 18   PIN 84-2 LIM2 GPIO
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 19   PIN 88-2 LIM3 GPIO
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 20   PIN 90-2 LIM4 GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 17   PIN 82-2 LIM1 GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 18   PIN 84-2 LIM2 GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 19   PIN 88-2 LIM3 GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 20   PIN 90-2 LIM4 GPIO
 
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 21   PIN 55-2 Z-PROBE-MC GPIO
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 22   PIN 61-2 MOT-POWER GPIO
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 23   PIN 63-2 AUXOUT1 GPIO
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 24   PIN 67-2 Z-PROBE GPIO
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 25   PIN 69-2 AUXIN2 GPIO
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 26   PIN 73-2 AUXIN1 GPIO
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 27   PIN 75-2 ESTOP GPIO
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 28   PIN 83-2 TORCH-BREAK GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 21   PIN 55-2 Z-PROBE-MC GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 22   PIN 61-2 MOT-POWER GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 23   PIN 63-2 AUXOUT1 GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 24   PIN 67-2 Z-PROBE GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 25   PIN 69-2 AUXIN2 GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 26   PIN 73-2 AUXIN1 GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 27   PIN 75-2 ESTOP GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 28   PIN 83-2 TORCH-BREAK GPIO
 
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 29   PIN 36-2 GPIO
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 30   PIN 38-2 GPIO
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 31   PIN 42-2 GPIO
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 32   PIN 44-2 GPIO
-  IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 33   PIN 48-2 GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 29   PIN 36-2 GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 30   PIN 38-2 GPIO
+        IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 31   PIN 42-2 GPIO
+        emptypin, emptypin,
 
 		emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin, -- added for 34 pin 5I25
 		emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,
@@ -170,4 +169,4 @@ package PIN_ZTURNIOCAPE_34 is
 		emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,
 		emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin);
 
-end package PIN_ZTURNIOCAPE_34;
+end package PIN_JD2CB_34;
