@@ -18,9 +18,9 @@ entity uart_rx is
 	(
 	    rst_n   : in std_logic;
         clk     : in std_logic;
-        baudreg : in unsigned(TIMER_WIDTH - 1 downto 0); -- The baud rate timer count
         uart_rx : in std_logic; -- The asynchronous rx input
         data_read : in std_logic; -- Assert when reading data from buffer
+        baudreg : in unsigned(TIMER_WIDTH - 1 downto 0);
         data_ready : out std_logic; -- Asserted when new data ready to load
         data_out : out std_logic_vector(7 downto 0); -- The byte deserialized
         overflow_err : out std_logic; -- data arrived before old data read from buffer. new data discarded
@@ -47,16 +47,16 @@ begin
     frame_err <= fr_err;
     data_ready <= data_rdy;
 
-    update_rx_clk16 : process(rst_n, clk, rx_clk_reset, baudreg)
+    update_rx_clk16 : process(rst_n, clk, rx_clk_reset, baudreg, clk16_timer)
     begin
         if(rst_n = '0') then
             clk16_timer <= baudreg;
             clk16 <= '0';
-        elsif(rx_clk_reset = '1') then -- Asynchronously set the baud timer
-            clk16_timer <= baudreg;
         elsif(rising_edge(clk)) then
             clk16 <= '0';
-            if(clk16_timer = to_unsigned(0, TIMER_WIDTH)) then
+            if(rx_clk_reset = '1') then
+              clk16_timer <= baudreg;
+            elsif(clk16_timer = to_unsigned(0, TIMER_WIDTH)) then
                 clk16_timer <= baudreg;
             else
                 clk16_timer <= clk16_timer - 1;
@@ -107,7 +107,7 @@ begin
             rx_shift_reg <= (others => '0');
         elsif(rising_edge(clk)) then
           if(clk16 = '1')then
-            if (current_state = shifting and rx_bitclk_cnt = to_unsigned(7, 4) and clk16 = '1') then
+            if (current_state = shifting and rx_bitclk_cnt = to_unsigned(9, 4) and clk16 = '1') then
                 rx_shift_reg <= uart_rx & rx_shift_reg(rx_shift_reg'high downto 1);
             end if;
           end if;
@@ -122,7 +122,7 @@ begin
             data_out <= (others => '0');
         elsif(rising_edge(clk)) then
             if(clk16 = '1') then
-              if(current_state = stop and rx_bitclk_cnt = to_unsigned(7, 4)) then
+              if(current_state = stop and rx_bitclk_cnt = to_unsigned(9, 4)) then
                   -- Update overflow error
                   if(data_rdy = '1') then
                       of_err <= '1';
@@ -152,7 +152,7 @@ begin
         end if;
     end process update_state;
 
-    calc_state : process(current_state, rx_bit_cnt, uart_rx, clk16)
+    calc_state : process(current_state, rx_bit_cnt, uart_rx, clk16, rx_bitclk_cnt)
     begin
         case current_state is
             when idle =>
@@ -177,7 +177,7 @@ begin
             when stop =>
                 next_state <= stop;
                 if(clk16 = '1') then
-                  if(rx_bitclk_cnt = to_unsigned(6, 4)) then
+                  if(rx_bitclk_cnt = to_unsigned(8, 4)) then
                     next_state <= idle;
                   end if;
                 end if;

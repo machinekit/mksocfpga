@@ -108,7 +108,7 @@ begin
     IO_OUT(28) <= NOT(IO_IN(28));  -- Torch Break input is not debounced, but inverted
     IO_OUT(29) <= (NOT(IO_IN(27)) OR (NOT(IO_IN(28)) AND NOT(IO_IN(30))));  -- Logical E-Stop
     IO_OUT(31) <= (NOT(IO_IN(24)) OR NOT(sw_probe_deb)); -- combined z-probe signal
-    IO_OUT(30) <= IO_IN(30); -- Torch break override
+    IO_OUT(30) <= IO_IN(30) and IO_IN(16) and IO_IN(29) and IO_IN(31); -- hide warnings of incomplete buffers by using the signals in a junk signal
 
     faults_valid <= mtr_pwr_del AND IO_IN(22); -- don't delay when turning off power
 

@@ -12,7 +12,6 @@ end uart_rx_tb;
 architecture beh of uart_rx_tb is
     signal clk : std_logic := '0';
     signal load : std_logic := '0';
-    signal baudreg : unsigned(BAUD_TIMER_WIDTH - 1 downto 0);
     signal rst_n : std_logic := '1';
     signal busy : std_logic;
     signal tx_data : std_logic_vector(7 downto 0) := (others => '0');
@@ -34,7 +33,6 @@ begin
       port map (
         rst_n => rst_n,
         clk => clk,
-        baudreg => baudreg,
         uart_rx => uart_tx,
         data_read => rx_read,
         data_ready => rx_data_ready,
@@ -50,7 +48,6 @@ begin
       port map (
         rst_n => rst_n,
         clk => clk,
-        baudreg => baudreg,
         load => load,
         data_in => tx_data,
         uart_tx => uart_tx,
@@ -70,7 +67,6 @@ begin
       stim : process
       begin
         rst_n <= '0';
-        baudreg <= x"0018";  -- 24 to generate 250000 bps baud
         rx_read <= '0';
 
         wait for 15 ns;

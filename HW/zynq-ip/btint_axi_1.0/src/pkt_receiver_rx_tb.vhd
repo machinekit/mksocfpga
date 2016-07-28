@@ -13,8 +13,6 @@ architecture beh of pkt_receiver_rx_tb is
     signal clktx : std_logic := '0';
     signal clkrx : std_logic := '1';
     signal rst_n : std_logic := '1';
-    signal baudreg_rx : unsigned(BAUD_TIMER_WIDTH - 1 downto 0);
-    signal baudreg_tx : unsigned(BAUD_TIMER_WIDTH - 1 downto 0);
     signal uart_busy : std_logic;
     signal uart_data : std_logic_vector(7 downto 0) := (others => '0');
     signal uart_load : std_logic := '0';
@@ -74,7 +72,6 @@ begin
       port map (
         rst_n => rst_n,
         clk => clktx,
-        baudreg => baudreg_tx,
         load => uart_load,
         data_in => uart_data,
         uart_tx => uart_tx,
@@ -88,7 +85,6 @@ begin
         port map (
             rst_n => rst_n,
             clk => clkrx,
-            baudreg => baudreg_rx,
             uart_rx => uart_tx, -- loop back the packet sent from tx
             data_read => uart_rx_rd,
             data_ready => uart_rx_data_rdy,
@@ -118,8 +114,6 @@ begin
       stim : process
       begin
         rst_n <= '0';
-        baudreg_rx <= x"0018";  -- 24 to generate 250000 bps baud
-        baudreg_tx <= x"0018";
         addr_rd <= x"0608";
 
         wait for 15 ns;                 -- Basic packet
@@ -140,15 +134,11 @@ begin
                 pkt_we <= '0';
         wait until pkt_busy = '0';      -- Framing error packet
         wait for 100 us;
-                baudreg_tx <= x"0030";
-        wait for 100 us;
                 pkt_packet <= x"04030201";
                 pkt_we <= '1';
         wait until pkt_busy = '1';
                 pkt_we <= '0';
         wait until pkt_busy = '0';      -- Framing error fixed packet
-        wait for 100 us;
-            baudreg_tx <= x"0018";
         wait for 100 us;
             pkt_packet <= x"05040302";
             pkt_we <= '1';

@@ -13,7 +13,6 @@ end entity;
 architecture beh of btint_controller_tb is
     signal clk : std_logic := '0';
     signal rst_n : std_logic := '1';
-    signal baudreg : unsigned(BAUD_TIMER_WIDTH - 1 downto 0);
     signal uart_busy : std_logic;
     signal uart_data : std_logic_vector(7 downto 0) := (others => '0');
     signal uart_load : std_logic := '0';
@@ -82,7 +81,6 @@ begin
       port map (
         rst_n => rst_n,
         clk => clk,
-        baudreg => baudreg,
         load => uart_load,
         data_in => uart_data,
         uart_tx => uart_tx,
@@ -137,7 +135,6 @@ begin
       -- The stimulus
       stim : process
       begin
-        baudreg <= x"0018";  -- 24 to generate 250000 bps baud
         pp_wr_addr <= b"000000";
         pp_wr_data <= x"00";
         rst_n <= '0';

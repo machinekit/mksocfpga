@@ -109,6 +109,7 @@ begin
             pp_buf_lock_s <= b"01";
             reg_chkerr_cnt <= (others => '0');
         elsif (rising_edge(clk)) then
+            pp_buf_lock_s <= pp_buf_lock_s;
             if(current_state = val_chk) then
                 if(pkt_fifo = (chksum1 & chksum2)) then
                   if(pp_buf_lock_s = b"01") then -- good checksum switch buffer

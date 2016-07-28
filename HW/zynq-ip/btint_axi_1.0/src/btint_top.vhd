@@ -6,7 +6,6 @@ entity btint_top is
     generic (
         PP_BUF_ADDR_WIDTH : natural := 6;
         BAUD_TIMER_WIDTH : natural := 16;
-        BAUD_REG : unsigned(15 downto 0) := x"0018";
         PKT_FLAG : std_logic_vector(7 downto 0) := x"FE";
         PKT_ESC_FLAG : std_logic_vector(7 downto 0) := x"FD";
         PKT_BL_FLAG : std_logic_vector(7 downto 0) := x"FC";
@@ -51,6 +50,8 @@ architecture imp of btint_top is
     signal pp_wr_data : std_logic_vector(7 downto 0);
     signal pp_wr_addr : std_logic_vector(PP_BUF_ADDR_WIDTH - 1 downto 0);
     signal odata_rx : std_logic_vector(31 downto 0);
+    signal pp_we1 : std_logic;
+    signal pp_we2 : std_logic;
 
     -- Master controller, reads from pp buffer
     signal pp_rd_addr : std_logic_vector(PP_BUF_ADDR_WIDTH - 1 downto 0);
@@ -59,8 +60,10 @@ architecture imp of btint_top is
     signal odata_ctrl : std_logic_vector(31 downto 0);
     signal cnt_rst_n : std_logic;
 
-    signal baud_reg_s : unsigned(15 downto 0) := BAUD_REG;
+    constant BAUDREG : unsigned(BAUD_TIMER_WIDTH - 1 downto 0) := x"001A";
 begin
+  pp_we1 <= (pp_wr and pp_lock(0));
+  pp_we2 <= (pp_wr and pp_lock(1));
     -- ------------------------------------------
     -- Ping-Pong Buffer
     -- ------------------------------------------
@@ -72,11 +75,11 @@ begin
             clk => clk,
             rd_addr => pp_rd_addr,
             rd_data => pp_rd_data1,
-            we => (pp_wr and pp_lock(0)),
+            we => pp_we1,
             wr_addr => pp_wr_addr,
             wr_data => pp_wr_data
         );
-        
+
     pp_buf2 : entity work.ram_dualp
         generic map(
             PP_BUF_ADDR_WIDTH => PP_BUF_ADDR_WIDTH
@@ -85,7 +88,7 @@ begin
             clk => clk,
             rd_addr => pp_rd_addr,
             rd_data => pp_rd_data2,
-            we => (pp_wr and pp_lock(1)),
+            we => pp_we2,
             wr_addr => pp_wr_addr,
             wr_data => pp_wr_data
         );
@@ -101,9 +104,9 @@ begin
         port map (
             rst_n => cnt_rst_n,
             clk => clk,
-            baudreg => baud_reg_s,
             load => utx_load,
             data_in => utx_data,
+            baudreg => BAUDREG,
             uart_tx => uart_tx,
             busy => utx_busy
         );
@@ -139,9 +142,9 @@ begin
         port map (
             rst_n => cnt_rst_n,
             clk => clk,
-            baudreg => baud_reg_s,
             uart_rx => uart_rx,
             data_read => urx_rd,
+            baudreg => BAUDREG,
             data_ready => urx_data_rdy,
             data_out => urx_data,
             overflow_err => urx_of_err,

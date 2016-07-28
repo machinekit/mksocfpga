@@ -5,7 +5,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity uart_test_app is
-    generic ( 
+    generic (
         BAUD_TIMER_WIDTH : natural := 16
     );
     port (
@@ -17,7 +17,6 @@ end uart_test_app;
 
 architecture arch of uart_test_app is
     signal tx_load : std_logic := '0';
-    constant baudreg : unsigned(BAUD_TIMER_WIDTH - 1 downto 0) := x"0018";
     signal rst_n : std_logic := '1';
     signal tx_busy : std_logic;
     signal tx_data : std_logic_vector(7 downto 0) := (others => '0');
@@ -26,8 +25,8 @@ architecture arch of uart_test_app is
 	signal rx_data : std_logic_vector(7 downto 0);
 	signal rx_overflow_err : std_logic;
 	signal rx_frame_err : std_logic;
-	
-begin    
+
+begin
     rxUUT : entity work.uart_rx
       generic map (
         TIMER_WIDTH => BAUD_TIMER_WIDTH
@@ -35,7 +34,6 @@ begin
       port map (
         rst_n => rst_n,
         clk => clk,
-        baudreg => baudreg,
         uart_rx => uart_rx,
         data_read => rx_read,
         data_ready => rx_data_ready,
@@ -43,7 +41,7 @@ begin
         overflow_err => rx_overflow_err,
         frame_err => rx_frame_err
       );
-      
+
     txUUT : entity work.uart_tx
       generic map (
         TIMER_WIDTH => BAUD_TIMER_WIDTH
@@ -51,13 +49,12 @@ begin
       port map (
         rst_n => rst_n,
         clk => clk,
-        baudreg => baudreg,
         load => tx_load,
         data_in => tx_data,
         uart_tx => uart_tx,
         busy => tx_busy
       );
-      
+
     uartCont : entity work.uart_test_app_control
         port map(
             mast_rst_n => rst_n,

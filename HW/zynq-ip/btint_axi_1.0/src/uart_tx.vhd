@@ -14,13 +14,13 @@ entity uart_tx is
     generic(
         TIMER_WIDTH : natural := 16
     );
-	port 
+	port
 	(
 	    rst_n   : in std_logic;
         clk     : in std_logic;
-        baudreg : in unsigned(TIMER_WIDTH - 1 downto 0); -- The baud rate timer count
         load    : in std_logic; -- Assert when new data ready to load
         data_in : in std_logic_vector(7 downto 0); -- The byte to serialize
+        baudreg : in unsigned(TIMER_WIDTH - 1 downto 0);
         uart_tx   : out std_logic; -- The asynchronous tx output
         busy    : out std_logic -- false when ready for new data
         -- debug outputs
@@ -29,7 +29,7 @@ entity uart_tx is
 --        bit_pulse_deb : out std_logic;
 --        tx_bit_cnt_deb : out unsigned(3 downto 0);
 --        tx_bitclk_cnt_deb : out unsigned(3 downto 0);
---        tx_clk_reset_deb : out std_logic; 
+--        tx_clk_reset_deb : out std_logic;
 --        current_state_deb : out unsigned(1 downto 0);
 --        next_state_deb : out unsigned(1 downto 0);
 --        tx_shift_reg_deb : out std_logic_vector(9 downto 0)
@@ -45,7 +45,7 @@ architecture beh of uart_tx is
 	signal tx_bitclk_cnt : unsigned(3 downto 0) := (others => '1');
 	signal tx_clk_reset : std_logic := '0';
 	signal clk16_timer : unsigned(TIMER_WIDTH - 1 downto 0) := (others => '0');
-    signal clk16 : std_logic;
+  signal clk16 : std_logic;
 begin
     -- debug outputs
 --    clk16_deb <= clk16;
@@ -67,7 +67,7 @@ begin
     busy <= '1' when (current_state /= idle) else '0';
     tx_clk_reset <= '1' when (current_state = idle and load = '1') else '0';
 
-    update_tx_clk16 : process(rst_n, clk, tx_clk_reset, baudreg)
+    update_tx_clk16 : process(rst_n, clk, tx_clk_reset, clk16_timer, baudreg)
     begin
         if(rst_n = '0') then
             clk16_timer <= baudreg;
@@ -78,9 +78,11 @@ begin
                 clk16_timer <= baudreg;
             elsif(clk16_timer = to_unsigned(0, TIMER_WIDTH)) then
                 clk16_timer <= baudreg;
-                clk16 <= '1';
             else
                 clk16_timer <= clk16_timer - 1;
+            end if;
+            if(clk16_timer = to_unsigned(1, TIMER_WIDTH)) then
+                clk16 <= '1';
             end if;
         end if;
     end process update_tx_clk16;
@@ -97,14 +99,16 @@ begin
             elsif(clk16 = '1') then
                 if(tx_bitclk_cnt = to_unsigned(0, 4)) then
                     tx_bitclk_cnt <= (others => '1');
-                    bit_pulse <= '1';
                 else
                     tx_bitclk_cnt <= tx_bitclk_cnt - 1;
+                end if;
+                if(tx_bitclk_cnt = to_unsigned(1, 4)) then
+                  bit_pulse <= '1';
                 end if;
             end if;
         end if;
     end process update_tx_bitclk;
-    
+
     update_bit_cnt : process(rst_n, clk, current_state, bit_pulse, tx_bit_cnt)
     begin
         if(rst_n = '0') then
@@ -117,7 +121,7 @@ begin
             end if;
         end if;
     end process update_bit_cnt;
-    
+
     update_shift : process(rst_n, clk, current_state, load, bit_pulse)
     begin
         if(rst_n = '0') then
@@ -130,7 +134,7 @@ begin
             end if;
         end if;
     end process update_shift;
-    
+
     update_state : process(rst_n, clk, next_state)
     begin
         if(rst_n = '0') then
@@ -138,7 +142,7 @@ begin
         elsif (rising_edge(clk)) then
             current_state <= next_state;
         end if;
-    end process update_state;   
+    end process update_state;
 
     calc_state : process(current_state, load, bit_pulse, tx_bit_cnt)
     begin
@@ -147,7 +151,7 @@ begin
                 next_state <= idle;
                 if(load = '1') then
                     next_state <= shifting;
-                end if; 
+                end if;
             when shifting =>
                 next_state <= shifting;
                 if(tx_bit_cnt = to_unsigned(0, 3) and bit_pulse = '1') then
@@ -160,6 +164,5 @@ begin
                 end if;
             when others => next_state <= idle;
         end case;
-    end process calc_state;        
+    end process calc_state;
 end beh;
-

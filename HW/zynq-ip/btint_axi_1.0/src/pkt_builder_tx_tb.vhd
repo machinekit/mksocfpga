@@ -4,7 +4,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity pkt_builder_tx_tb is
-    generic ( 
+    generic (
         BAUD_TIMER_WIDTH : natural := 16
     );
 end pkt_builder_tx_tb;
@@ -35,20 +35,19 @@ begin
             uart_busy => uart_busy,
             uart_load => uart_load
         );
-        
+
     uart_tx_comp : entity work.uart_tx
       generic map (
         TIMER_WIDTH => BAUD_TIMER_WIDTH)
       port map (
         rst_n => rst_n,
         clk => clk,
-        baudreg => baudreg,
         load => uart_load,
         data_in => uart_data,
         uart_tx => uart_tx,
         busy => uart_busy
       );
-      
+
       -- Generate the reference clock @ 50% duty cycle
       clock_gen : process
       begin
@@ -57,30 +56,27 @@ begin
         wait for (clockperiod / 2);
         clk <= '0';
       end process clock_gen;
-      
+
       -- The stimulus
       stim : process
       begin
         rst_n <= '0';
-        baudreg <= x"0018";  -- 24 to generate 250000 bps baud
-
         wait for 15 ns;                 -- Basic packet
             rst_n <= '1';
-            pkt_packet <= x"01020304";        
+            pkt_packet <= x"01020304";
             pkt_we <= '1';
         wait until pkt_busy = '1';
-            pkt_we <= '0';    
+            pkt_we <= '0';
         wait until pkt_busy = '0';      -- Flag escaped packet
             pkt_packet <= x"01FEFCFD";
-            pkt_we <= '1';              
+            pkt_we <= '1';
         wait until pkt_busy = '1';
             pkt_we <= '0';
         wait until pkt_busy = '0';      -- Checksum gets escaped packet
                 pkt_packet <= x"01FC0001";
-                pkt_we <= '1';              
+                pkt_we <= '1';
         wait until pkt_busy = '1';
                 pkt_we <= '0';
         wait; -- done, wait forever
       end process stim;
 end beh;
-
