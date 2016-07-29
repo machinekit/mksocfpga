@@ -77,8 +77,8 @@ set proj_dir [get_property directory [current_project]]
 
 # Set project properties
 set obj [get_projects zturn_jd2cb]
-set_property "board_part" "em.avnet.com:microzed_7010:part0:1.1" $obj
 set_property "default_lib" "xil_defaultlib" $obj
+set_property "part" "xc7z010clg400-1" $obj
 set_property "sim.ip.auto_export_scripts" "1" $obj
 set_property "simulator_language" "Mixed" $obj
 set_property "target_language" "VHDL" $obj
@@ -159,6 +159,8 @@ if {[string equal [get_runs -quiet synth_1] ""]} {
   set_property flow "Vivado Synthesis 2015" [get_runs synth_1]
 }
 set obj [get_runs synth_1]
+set_property "needs_refresh" "1" $obj
+set_property "part" "xc7z010clg400-1" $obj
 
 # set the current synth run
 current_run -synthesis [get_runs synth_1]
@@ -171,6 +173,8 @@ if {[string equal [get_runs -quiet impl_1] ""]} {
   set_property flow "Vivado Implementation 2015" [get_runs impl_1]
 }
 set obj [get_runs impl_1]
+set_property "needs_refresh" "1" $obj
+set_property "part" "xc7z010clg400-1" $obj
 set_property "steps.write_bitstream.args.readback_file" "0" $obj
 set_property "steps.write_bitstream.args.verbose" "0" $obj
 
