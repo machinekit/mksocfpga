@@ -169,4 +169,4 @@ package PIN_ZJD2CB_34 is
 		emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,
 		emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin);
 
-end package PIN_JD2CB_34;
+end package PIN_ZJD2CB_34;

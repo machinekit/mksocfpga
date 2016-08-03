@@ -1,0 +1,11 @@
+HW/machinetalk-protobuf is brought in as a subtree from
+git://github.com/machinekit/machinetalk-protobuf.git
+
+to update the subtree (eg if a proto file changes):
+
+  git remote add machinetalk-protobuf git://github.com/machinekit/machinetalk-protobuf.git
+  git fetch machinetalk-protobuf
+  git subtree merge --prefix=HW/machinetalk-protobuf  machinetalk-protobuf/ --squash
+
+and prepare a PR from the resulting commit.
+
