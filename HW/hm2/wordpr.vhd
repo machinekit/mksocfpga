@@ -12,47 +12,47 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 --
 --    * GNU General Public License (GPL), version 2.0 or later
 --    * 3-clause BSD License
--- 
+--
 --
 -- The GNU GPL License:
--- 
+--
 --     This program is free software; you can redistribute it and/or modify
 --     it under the terms of the GNU General Public License as published by
 --     the Free Software Foundation; either version 2 of the License, or
 --     (at your option) any later version.
--- 
+--
 --     This program is distributed in the hope that it will be useful,
 --     but WITHOUT ANY WARRANTY; without even the implied warranty of
 --     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 --     GNU General Public License for more details.
--- 
+--
 --     You should have received a copy of the GNU General Public License
 --     along with this program; if not, write to the Free Software
 --     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
--- 
--- 
+--
+--
 -- The 3-clause BSD License:
--- 
+--
 --     Redistribution and use in source and binary forms, with or without
 --     modification, are permitted provided that the following conditions
 --     are met:
--- 
+--
 --         * Redistributions of source code must retain the above copyright
 --           notice, this list of conditions and the following disclaimer.
--- 
+--
 --         * Redistributions in binary form must reproduce the above
 --           copyright notice, this list of conditions and the following
 --           disclaimer in the documentation and/or other materials
 --           provided with the distribution.
--- 
+--
 --         * Neither the name of Mesa Electronics nor the names of its
 --           contributors may be used to endorse or promote products
 --           derived from this software without specific prior written
 --           permission.
--- 
--- 
+--
+--
 -- Disclaimer:
--- 
+--
 --     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 --     "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 --     LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -65,14 +65,14 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 --     LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 --     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 --     POSSIBILITY OF SUCH DAMAGE.
--- 
+--
 
 entity wordpr is
     generic (
 	 		size : integer;
 			buswidth : integer
 			);
-	 port (		
+	 port (
 	   	clear: in STD_LOGIC;
 			clk: in STD_LOGIC;
 			ibus: in STD_LOGIC_VECTOR (buswidth-1 downto 0);
@@ -84,7 +84,8 @@ entity wordpr is
 			loadinvert: in STD_LOGIC;
 			readddr: in STD_LOGIC;
 			portdata: out STD_LOGIC_VECTOR (size-1 downto 0);
-			altdata: in STD_LOGIC_VECTOR (size-1 downto 0)
+			altdata: in STD_LOGIC_VECTOR (size-1 downto 0);
+      ddrdata: out STD_LOGIC_VECTOR(size-1 downto 0)
  			);
 end wordpr;
 
@@ -108,9 +109,9 @@ begin
 								readddr,
 								outreg,
 								ddrreg,
-								altdatasel, 
-								invertsel, 
-								altdata, 
+								altdatasel,
+								invertsel,
+								altdata,
 								tdata,
 								tsoutreg,
 								opendrainsel)
@@ -118,7 +119,7 @@ begin
 		if rising_edge(clk) then
 			if loadport = '1'  then
 				outreg <= ibus(size-1 downto 0);
-			end if; 
+			end if;
 			if loadddr = '1' then
 				ddrreg <= ibus(size-1 downto 0);
 			end if;
@@ -131,9 +132,9 @@ begin
 			if loadinvert = '1' then
 				invertsel <= ibus(size-1 downto 0);
 			end if;
-			if clear = '1' then 
-				ddrreg <= (others => '0'); 
-				opendrainsel <= (others => '0');	
+			if clear = '1' then
+				ddrreg <= (others => '0');
+				opendrainsel <= (others => '0');
 			end if;
 		end if; -- clk
 
@@ -143,21 +144,21 @@ begin
 					tdata(i) <= outreg(i);
 				else
 					tdata(i) <= not outreg(i);
-				end if;						
+				end if;
 			else
 				if invertsel(i) = '0' then			-- alternate output data, alternate outputs can be inverted
 					tdata(i) <= altdata(i);
 				else
 					tdata(i) <= not altdata(i);
-				end if;		 
+				end if;
 			end if;
-			if opendrainsel(i) = '0' then				-- normal DDR	
-				if ddrreg(i) = '1' then 
+			if opendrainsel(i) = '0' then				-- normal DDR
+				if ddrreg(i) = '1' then
 					tsoutreg(i) <= tdata(i);
 				else
 					tsoutreg(i) <= 'Z';
 				end if;
-			else	
+			else
 				if tdata(i) = '0' then 				-- open drain option = active pulldown
 					tsoutreg(i) <= '0';
 				else
@@ -165,7 +166,8 @@ begin
 				end if;
 			end if;
 		end loop;
-		
+
+    ddrdata <= ddrreg;
 		portdata <= tsoutreg;
 		obus <= (others => 'Z');
 		if readddr = '1' then
