@@ -70,7 +70,6 @@ use work.IDROMConst.all;
 use work.log2.all;
 use work.decodedstrobe.all;
 use work.oneofndecode.all;
-use work.IDROMConst.all;
 use work.NumberOfModules.all;
 use work.MaxPinsPerModule.all;
 use work.MaxInputPinsPerModule.all;
