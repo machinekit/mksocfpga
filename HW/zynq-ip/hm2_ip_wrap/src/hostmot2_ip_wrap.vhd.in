@@ -70,38 +70,25 @@
 library ieee;
 use IEEE.std_logic_1164.all;
 -- Select pin package here
-use work.@PIN_NAME@.all;
--- Need the IDROMConst for the board names
-use work.IDROMConst.all;
+use work.%PIN_NAME%.all;
 
 entity HostMot2_ip_wrap is
   generic
   (
-  IDROMType: integer := 3;
-   SepClocks: boolean := true;
   OneWS: boolean := true;
-  UseStepGenPrescaler : boolean := true;
-  UseIRQLogic: boolean := true;
   PWMRefWidth: integer := 13;
-  UseWatchDog: boolean := true;
-  OffsetToModules: integer := 64;
-  OffsetToPinDesc: integer := 448;
-  ClockHigh: integer := ClockHigh25;
-  ClockMed: integer := ClockMed25;
-  ClockLow: integer := ClockMed20;
-  FPGASize: integer := 9;
-  FPGAPins: integer := 144;
-  IOPorts: integer := 2;
-  IOWidth: integer := 34;
-  LIOWidth: integer := 6;
-  PortWidth: integer := 17;
-  BusWidth: integer := 32;
-  AddrWidth: integer := 16;
-  InstStride0: integer := 4;
-  InstStride1: integer := 64;
-  RegStride0: integer := 256;
-  RegStride1: integer := 256;
-  LEDCount: integer := 2
+  ClockHigh: integer;
+  ClockMed: integer;
+  ClockLow: integer;
+  FPGASize: integer;
+  FPGAPins: integer;
+  IOPorts: integer;
+  IOWidth: integer;
+  LIOWidth: integer;
+  PortWidth: integer;
+  BusWidth: integer;
+  AddrWidth: integer;
+  LEDCount: integer
   );
   port
   (
@@ -119,6 +106,7 @@ entity HostMot2_ip_wrap is
   dreq: out std_logic;
   demandmode: out std_logic;
   iobits: inout std_logic_vector (iowidth -1 downto 0);
+  ioddrbits: out std_logic_vector (iowidth -1 downto 0);
   liobits: inout std_logic_vector (liowidth -1 downto 0);
   rates: out std_logic_vector (4 downto 0);
   leds: out std_logic_vector(ledcount-1 downto 0)
@@ -131,20 +119,20 @@ begin
     generic map (
       ThePinDesc => PinDesc,
       TheModuleID=> ModuleID,
-      IDROMType => IDROMType,
-      SepClocks => SepClocks,
+      IDROMType => 3,
+      SepClocks => true,
       OneWS => OneWS,
-      UseStepGenPrescaler => UseStepGenPrescaler,
-      UseIRQLogic => UseIRQLogic,
+      UseStepGenPrescaler => true,
+      UseIRQLogic => true,
       PWMRefWidth => PWMRefWidth,
-      UseWatchDog => UseWatchDog,
-      OffsetToModules => OffsetToModules,
-      OffsetToPinDesc => OffsetToPinDesc,
+      UseWatchDog => true,
+      OffsetToModules => 64,
+      OffsetToPinDesc => 448,
       ClockHigh => ClockHigh,
       ClockMed => ClockMed,
       ClockLow => ClockLow,
-      BoardNameLow => BoardNameMesa,
-      BoardNameHigh => x"@BOARD_NAME_HEX@",
+      BoardNameLow => x"%BOARD_NAME_LOW_HEX%",
+      BoardNameHigh => x"%BOARD_NAME_HIGH_HEX%",
       FPGASize => FPGASize,
       FPGAPins => FPGAPins,
       IOPorts => IOPorts,
@@ -153,10 +141,10 @@ begin
       PortWidth => PortWidth,
       BusWidth => BusWidth,
       AddrWidth => AddrWidth,
-      InstStride0 => InstStride0,
-      InstStride1 => InstStride1,
-      RegStride0 => RegStride0,
-      RegStride1 => RegStride1,
+      InstStride0 => 4,
+      InstStride1 => 64,
+      RegStride0 => 256,
+      RegStride1 => 256,
       LEDCount => LEDCount
     )
     port map (
@@ -172,6 +160,7 @@ begin
       dreq => dreq,
       demandmode => demandmode,
       iobits => iobits,
+      ioddrbits => ioddrbits,
       liobits => liobits,
       rates => rates,
       leds => leds

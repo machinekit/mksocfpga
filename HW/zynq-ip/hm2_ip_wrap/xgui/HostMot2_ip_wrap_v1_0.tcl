@@ -10,24 +10,13 @@ proc init_gui { IPINST } {
   ipgui::add_param $IPINST -name "ClockMed" -parent ${Page_0}
   ipgui::add_param $IPINST -name "FPGAPins" -parent ${Page_0}
   ipgui::add_param $IPINST -name "FPGASize" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "IDROMType" -parent ${Page_0}
   ipgui::add_param $IPINST -name "IOPorts" -parent ${Page_0}
   ipgui::add_param $IPINST -name "IOWidth" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "InstStride0" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "InstStride1" -parent ${Page_0}
   ipgui::add_param $IPINST -name "LEDCount" -parent ${Page_0}
   ipgui::add_param $IPINST -name "LIOWidth" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "OffsetToModules" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "OffsetToPinDesc" -parent ${Page_0}
   ipgui::add_param $IPINST -name "OneWS" -parent ${Page_0}
   ipgui::add_param $IPINST -name "PWMRefWidth" -parent ${Page_0}
   ipgui::add_param $IPINST -name "PortWidth" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "RegStride0" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "RegStride1" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "SepClocks" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "UseIRQLogic" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "UseStepGenPrescaler" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "UseWatchDog" -parent ${Page_0}
 
 
 }
@@ -95,15 +84,6 @@ proc validate_PARAM_VALUE.FPGASize { PARAM_VALUE.FPGASize } {
 	return true
 }
 
-proc update_PARAM_VALUE.IDROMType { PARAM_VALUE.IDROMType } {
-	# Procedure called to update IDROMType when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.IDROMType { PARAM_VALUE.IDROMType } {
-	# Procedure called to validate IDROMType
-	return true
-}
-
 proc update_PARAM_VALUE.IOPorts { PARAM_VALUE.IOPorts } {
 	# Procedure called to update IOPorts when any of the dependent parameters in the arguments change
 }
@@ -122,24 +102,6 @@ proc validate_PARAM_VALUE.IOWidth { PARAM_VALUE.IOWidth } {
 	return true
 }
 
-proc update_PARAM_VALUE.InstStride0 { PARAM_VALUE.InstStride0 } {
-	# Procedure called to update InstStride0 when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.InstStride0 { PARAM_VALUE.InstStride0 } {
-	# Procedure called to validate InstStride0
-	return true
-}
-
-proc update_PARAM_VALUE.InstStride1 { PARAM_VALUE.InstStride1 } {
-	# Procedure called to update InstStride1 when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.InstStride1 { PARAM_VALUE.InstStride1 } {
-	# Procedure called to validate InstStride1
-	return true
-}
-
 proc update_PARAM_VALUE.LEDCount { PARAM_VALUE.LEDCount } {
 	# Procedure called to update LEDCount when any of the dependent parameters in the arguments change
 }
@@ -155,24 +117,6 @@ proc update_PARAM_VALUE.LIOWidth { PARAM_VALUE.LIOWidth } {
 
 proc validate_PARAM_VALUE.LIOWidth { PARAM_VALUE.LIOWidth } {
 	# Procedure called to validate LIOWidth
-	return true
-}
-
-proc update_PARAM_VALUE.OffsetToModules { PARAM_VALUE.OffsetToModules } {
-	# Procedure called to update OffsetToModules when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.OffsetToModules { PARAM_VALUE.OffsetToModules } {
-	# Procedure called to validate OffsetToModules
-	return true
-}
-
-proc update_PARAM_VALUE.OffsetToPinDesc { PARAM_VALUE.OffsetToPinDesc } {
-	# Procedure called to update OffsetToPinDesc when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.OffsetToPinDesc { PARAM_VALUE.OffsetToPinDesc } {
-	# Procedure called to validate OffsetToPinDesc
 	return true
 }
 
@@ -203,104 +147,27 @@ proc validate_PARAM_VALUE.PortWidth { PARAM_VALUE.PortWidth } {
 	return true
 }
 
-proc update_PARAM_VALUE.RegStride0 { PARAM_VALUE.RegStride0 } {
-	# Procedure called to update RegStride0 when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.RegStride0 { PARAM_VALUE.RegStride0 } {
-	# Procedure called to validate RegStride0
-	return true
-}
-
-proc update_PARAM_VALUE.RegStride1 { PARAM_VALUE.RegStride1 } {
-	# Procedure called to update RegStride1 when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.RegStride1 { PARAM_VALUE.RegStride1 } {
-	# Procedure called to validate RegStride1
-	return true
-}
-
-proc update_PARAM_VALUE.SepClocks { PARAM_VALUE.SepClocks } {
-	# Procedure called to update SepClocks when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.SepClocks { PARAM_VALUE.SepClocks } {
-	# Procedure called to validate SepClocks
-	return true
-}
-
-proc update_PARAM_VALUE.UseIRQLogic { PARAM_VALUE.UseIRQLogic } {
-	# Procedure called to update UseIRQLogic when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.UseIRQLogic { PARAM_VALUE.UseIRQLogic } {
-	# Procedure called to validate UseIRQLogic
-	return true
-}
-
-proc update_PARAM_VALUE.UseStepGenPrescaler { PARAM_VALUE.UseStepGenPrescaler } {
-	# Procedure called to update UseStepGenPrescaler when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.UseStepGenPrescaler { PARAM_VALUE.UseStepGenPrescaler } {
-	# Procedure called to validate UseStepGenPrescaler
-	return true
-}
-
-proc update_PARAM_VALUE.UseWatchDog { PARAM_VALUE.UseWatchDog } {
-	# Procedure called to update UseWatchDog when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.UseWatchDog { PARAM_VALUE.UseWatchDog } {
-	# Procedure called to validate UseWatchDog
-	return true
-}
-
-
-proc update_MODELPARAM_VALUE.IDROMType { MODELPARAM_VALUE.IDROMType PARAM_VALUE.IDROMType } {
-	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
-	set_property value [get_property value ${PARAM_VALUE.IDROMType}] ${MODELPARAM_VALUE.IDROMType}
-}
-
-proc update_MODELPARAM_VALUE.SepClocks { MODELPARAM_VALUE.SepClocks PARAM_VALUE.SepClocks } {
-	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
-	set_property value [get_property value ${PARAM_VALUE.SepClocks}] ${MODELPARAM_VALUE.SepClocks}
-}
 
 proc update_MODELPARAM_VALUE.OneWS { MODELPARAM_VALUE.OneWS PARAM_VALUE.OneWS } {
 	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
 	set_property value [get_property value ${PARAM_VALUE.OneWS}] ${MODELPARAM_VALUE.OneWS}
 }
 
-proc update_MODELPARAM_VALUE.UseStepGenPrescaler { MODELPARAM_VALUE.UseStepGenPrescaler PARAM_VALUE.UseStepGenPrescaler } {
+proc update_MODELPARAM_VALUE.UseStepGenPrescaler { MODELPARAM_VALUE.UseStepGenPrescaler } {
 	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
-	set_property value [get_property value ${PARAM_VALUE.UseStepGenPrescaler}] ${MODELPARAM_VALUE.UseStepGenPrescaler}
+	# WARNING: There is no corresponding user parameter named "UseStepGenPrescaler". Setting updated value from the model parameter.
+set_property value true ${MODELPARAM_VALUE.UseStepGenPrescaler}
 }
 
-proc update_MODELPARAM_VALUE.UseIRQLogic { MODELPARAM_VALUE.UseIRQLogic PARAM_VALUE.UseIRQLogic } {
+proc update_MODELPARAM_VALUE.UseIRQLogic { MODELPARAM_VALUE.UseIRQLogic } {
 	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
-	set_property value [get_property value ${PARAM_VALUE.UseIRQLogic}] ${MODELPARAM_VALUE.UseIRQLogic}
+	# WARNING: There is no corresponding user parameter named "UseIRQLogic". Setting updated value from the model parameter.
+set_property value true ${MODELPARAM_VALUE.UseIRQLogic}
 }
 
 proc update_MODELPARAM_VALUE.PWMRefWidth { MODELPARAM_VALUE.PWMRefWidth PARAM_VALUE.PWMRefWidth } {
 	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
 	set_property value [get_property value ${PARAM_VALUE.PWMRefWidth}] ${MODELPARAM_VALUE.PWMRefWidth}
-}
-
-proc update_MODELPARAM_VALUE.UseWatchDog { MODELPARAM_VALUE.UseWatchDog PARAM_VALUE.UseWatchDog } {
-	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
-	set_property value [get_property value ${PARAM_VALUE.UseWatchDog}] ${MODELPARAM_VALUE.UseWatchDog}
-}
-
-proc update_MODELPARAM_VALUE.OffsetToModules { MODELPARAM_VALUE.OffsetToModules PARAM_VALUE.OffsetToModules } {
-	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
-	set_property value [get_property value ${PARAM_VALUE.OffsetToModules}] ${MODELPARAM_VALUE.OffsetToModules}
-}
-
-proc update_MODELPARAM_VALUE.OffsetToPinDesc { MODELPARAM_VALUE.OffsetToPinDesc PARAM_VALUE.OffsetToPinDesc } {
-	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
-	set_property value [get_property value ${PARAM_VALUE.OffsetToPinDesc}] ${MODELPARAM_VALUE.OffsetToPinDesc}
 }
 
 proc update_MODELPARAM_VALUE.ClockHigh { MODELPARAM_VALUE.ClockHigh PARAM_VALUE.ClockHigh } {
@@ -356,26 +223,6 @@ proc update_MODELPARAM_VALUE.BusWidth { MODELPARAM_VALUE.BusWidth PARAM_VALUE.Bu
 proc update_MODELPARAM_VALUE.AddrWidth { MODELPARAM_VALUE.AddrWidth PARAM_VALUE.AddrWidth } {
 	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
 	set_property value [get_property value ${PARAM_VALUE.AddrWidth}] ${MODELPARAM_VALUE.AddrWidth}
-}
-
-proc update_MODELPARAM_VALUE.InstStride0 { MODELPARAM_VALUE.InstStride0 PARAM_VALUE.InstStride0 } {
-	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
-	set_property value [get_property value ${PARAM_VALUE.InstStride0}] ${MODELPARAM_VALUE.InstStride0}
-}
-
-proc update_MODELPARAM_VALUE.InstStride1 { MODELPARAM_VALUE.InstStride1 PARAM_VALUE.InstStride1 } {
-	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
-	set_property value [get_property value ${PARAM_VALUE.InstStride1}] ${MODELPARAM_VALUE.InstStride1}
-}
-
-proc update_MODELPARAM_VALUE.RegStride0 { MODELPARAM_VALUE.RegStride0 PARAM_VALUE.RegStride0 } {
-	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
-	set_property value [get_property value ${PARAM_VALUE.RegStride0}] ${MODELPARAM_VALUE.RegStride0}
-}
-
-proc update_MODELPARAM_VALUE.RegStride1 { MODELPARAM_VALUE.RegStride1 PARAM_VALUE.RegStride1 } {
-	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
-	set_property value [get_property value ${PARAM_VALUE.RegStride1}] ${MODELPARAM_VALUE.RegStride1}
 }
 
 proc update_MODELPARAM_VALUE.LEDCount { MODELPARAM_VALUE.LEDCount PARAM_VALUE.LEDCount } {

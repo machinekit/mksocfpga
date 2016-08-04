@@ -123,9 +123,6 @@ proc create_root_design { parentCell } {
 
   # Create instance: HostMot2_ip_wrap_0, and set properties
   set HostMot2_ip_wrap_0 [ create_bd_cell -type ip -vlnv machinekit.io:user:HostMot2_ip_wrap:1.0 HostMot2_ip_wrap_0 ]
-  set_property -dict [ list \
-CONFIG.IOWidth {32} \
- ] $HostMot2_ip_wrap_0
 
   # Create instance: btint_axi_0, and set properties
   set btint_axi_0 [ create_bd_cell -type ip -vlnv jd2.com:user:btint_axi:1.0 btint_axi_0 ]
@@ -319,36 +316,36 @@ preplace inst processing_system7_0 -pg 1 -lvl 3 -y 470 -defaultsOSRD
 preplace netloc processing_system7_1_GPIO_0 1 3 1 NJ
 preplace netloc uart0_rxd_1 1 0 3 NJ 860 NJ 790 NJ
 preplace netloc btint_axi_0_UART_TX 1 3 1 NJ
-preplace netloc processing_system7_0_axi_periph_M00_AXI 1 2 1 750
+preplace netloc processing_system7_0_axi_periph_M00_AXI 1 2 1 760
 preplace netloc HostMot2_ip_wrap_0_interrupt 1 1 2 390 630 730
-preplace netloc processing_system7_0_M_AXI_GP0 1 1 3 430 290 NJ 290 1200
+preplace netloc processing_system7_0_M_AXI_GP0 1 1 3 430 300 NJ 300 1200
 preplace netloc temp_intn_1 1 0 1 NJ
-preplace netloc btint_axi_1_UART_TX 1 3 1 NJ
-preplace netloc processing_system7_0_FCLK_RESET0_N 1 0 4 40 290 NJ 260 NJ 300 1210
 preplace netloc util_vector_logic_0_Res 1 1 1 NJ
+preplace netloc processing_system7_0_FCLK_RESET0_N 1 0 4 40 290 NJ 290 NJ 290 1210
+preplace netloc btint_axi_1_UART_TX 1 3 1 NJ
 preplace netloc uart1_rxd_1 1 0 3 NJ 920 NJ 920 NJ
-preplace netloc processing_system7_0_axi_periph_M02_AXI 1 2 1 730
-preplace netloc rst_processing_system7_0_100M_peripheral_aresetn 1 1 2 410 250 780
+preplace netloc processing_system7_0_axi_periph_M02_AXI 1 2 1 740
+preplace netloc rst_processing_system7_0_100M_peripheral_aresetn 1 1 2 410 260 790
 preplace netloc hdmio_int_b_1 1 0 1 NJ
-preplace netloc hm2_axilite_int_0_WRITESTB 1 0 4 20 30 NJ 30 NJ 30 1210
-preplace netloc hm2_axilite_int_0_READSTB 1 0 4 10 20 NJ 20 NJ 20 1220
-preplace netloc xlconcat_0_dout 1 2 1 760
+preplace netloc hm2_axilite_int_0_WRITESTB 1 0 4 30 280 NJ 280 NJ 280 1200
+preplace netloc hm2_axilite_int_0_READSTB 1 0 4 40 30 NJ 30 NJ 30 1210
+preplace netloc xlconcat_0_dout 1 2 1 770
 preplace netloc processing_system7_1_IIC_0 1 3 1 NJ
-preplace netloc HostMot2_ip_wrap_0_obus 1 1 2 NJ 80 780
-preplace netloc hm2_axilite_int_0_IBUS 1 0 4 30 270 NJ 270 NJ 270 1200
+preplace netloc HostMot2_ip_wrap_0_obus 1 1 2 NJ 80 790
+preplace netloc hm2_axilite_int_0_IBUS 1 0 4 20 10 NJ 10 NJ 10 1220
 preplace netloc mems_intn_1 1 0 1 NJ
 preplace netloc processing_system7_1_DDR 1 3 1 NJ
-preplace netloc Net 1 1 3 NJ 110 NJ 110 NJ
-preplace netloc hm2_axilite_int_0_ADDR 1 0 4 0 10 NJ 10 NJ 10 1230
-preplace netloc rst_processing_system7_0_100M_interconnect_aresetn 1 1 1 400
+preplace netloc Net 1 1 3 NJ 160 NJ 110 NJ
+preplace netloc hm2_axilite_int_0_ADDR 1 0 4 30 20 NJ 20 NJ 20 1200
 preplace netloc util_vector_logic_2_Res 1 1 1 NJ
 preplace netloc util_vector_logic_1_Res 1 1 1 NJ
-preplace netloc processing_system7_0_FCLK_CLK0 1 0 4 20 470 420 310 770 640 1200
+preplace netloc rst_processing_system7_0_100M_interconnect_aresetn 1 1 1 400
+preplace netloc processing_system7_0_FCLK_CLK0 1 0 4 20 470 420 310 780 640 1200
 preplace netloc processing_system7_1_FIXED_IO 1 3 1 NJ
 preplace netloc processing_system7_0_FCLK_CLK1 1 3 1 NJ
-preplace netloc processing_system7_0_axi_periph_M01_AXI 1 2 1 740
-preplace netloc processing_system7_0_FCLK_CLK2 1 0 4 40 280 NJ 280 NJ 280 1220
-levelinfo -pg 1 -20 210 580 1000 1250 -top 0 -bot 990
+preplace netloc processing_system7_0_axi_periph_M01_AXI 1 2 1 750
+preplace netloc processing_system7_0_FCLK_CLK2 1 0 4 40 270 NJ 270 NJ 270 1220
+levelinfo -pg 1 0 210 580 1000 1240 -top 0 -bot 990
 ",
 }
 

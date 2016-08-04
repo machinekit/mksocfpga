@@ -75,8 +75,8 @@ entity jdcb_io is
 	);
 	port (
 	    clk : in std_logic; -- Expect 100MHz clock here
-	    IO_IN : in std_logic_vector(NUM_IO_BITS - 1 downto 0); -- from pins
-      IO_OUT : out std_logic_vector(NUM_IO_BITS - 1 downto 0) -- to io port
+	    IOBITS_HM2 : inout std_logic_vector(NUM_IO_BITS - 1 downto 0); -- from pins
+      IOBITS_PORT : inout std_logic_vector(NUM_IO_BITS - 1 downto 0) -- to io port
 	);
 end jdcb_io;
 
@@ -90,34 +90,34 @@ architecture arch_imp of jdcb_io is
     signal faults_valid : std_logic;    -- When motors are turned off, ignore amp faults
     signal mtr_pwr_del : std_logic;
 begin
-    IO_OUT(3 downto 1) <= IO_IN(3 downto 1); -- motor 1 output pins no extra logic
-    IO_OUT(0) <= faults_valid AND (NOT(IO_IN(0))); -- motor 1 fault is delayed and inverted
-    IO_OUT(7 downto 5) <= IO_IN(7 downto 5); -- motor 2 output pins no extra logic
-    IO_OUT(4) <= faults_valid AND (NOT(IO_IN(4))); -- motor 2 fault is delayed and inverted
-    IO_OUT(11 downto 9) <= IO_IN(11 downto 9); -- motor 3 output pins no extra logic
-    IO_OUT(8) <= faults_valid AND (NOT(IO_IN(8))); -- motor 3 fault is delayed and inverted
-    IO_OUT(15 downto 13) <= IO_IN(15 downto 13); -- motor 1 output pins no extra logic
-    IO_OUT(12) <= faults_valid AND (NOT(IO_IN(12))); -- motor 1 fault is delayed and inverted
-    IO_OUT(16) <= faults_valid AND (NOT(IO_IN(4)) OR NOT(IO_IN(8))); -- M2 & M3 motors combined fault signal, fault when high
-    IO_OUT(20 downto 17) <= NOT(lim_deb(3 downto 0)); -- Limits get debounced, and inverted
-    IO_OUT(23 downto 21) <= IO_IN(23 downto 21);
-    IO_OUT(24) <= NOT(IO_IN(24));  -- Z-probe input is not debounced, but inverted
-    IO_OUT(25) <= NOT(aux2_in_deb);  -- AUXIN2 gets debounced, and inverted
-    IO_OUT(26) <= NOT(sw_probe_deb); -- debounce switch z probe
-    IO_OUT(27) <= NOT(IO_IN(27));  -- E-Stop input is not debounced, but inverted
-    IO_OUT(28) <= NOT(IO_IN(28));  -- Torch Break input is not debounced, but inverted
-    IO_OUT(29) <= (NOT(IO_IN(27)) OR (NOT(IO_IN(28)) AND NOT(IO_IN(30))));  -- Logical E-Stop
-    IO_OUT(31) <= (NOT(IO_IN(24)) OR NOT(sw_probe_deb)); -- combined z-probe signal
-    IO_OUT(30) <= IO_IN(30) and IO_IN(16) and IO_IN(29) and IO_IN(31); -- hide warnings of incomplete buffers by using the signals in a junk signal
+    IOBITS_PORT(3 downto 1) <= IOBITS_HM2(3 downto 1); -- motor 1 output pins no extra logic
+    IOBITS_HM2(0) <= faults_valid AND (NOT(IOBITS_PORT(0))); -- motor 1 fault is delayed and inverted
+    IOBITS_PORT(7 downto 5) <= IOBITS_HM2(7 downto 5); -- motor 2 output pins no extra logic
+    IOBITS_HM2(4) <= faults_valid AND (NOT(IOBITS_PORT(4))); -- motor 2 fault is delayed and inverted
+    IOBITS_PORT(11 downto 9) <= IOBITS_HM2(11 downto 9); -- motor 3 output pins no extra logic
+    IOBITS_HM2(8) <= faults_valid AND (NOT(IOBITS_PORT(8))); -- motor 3 fault is delayed and inverted
+    IOBITS_PORT(15 downto 13) <= IOBITS_HM2(15 downto 13); -- motor 4 output pins no extra logic
+    IOBITS_HM2(12) <= faults_valid AND (NOT(IOBITS_PORT(12))); -- motor 4 fault is delayed and inverted
+    IOBITS_HM2(16) <= faults_valid AND (NOT(IOBITS_PORT(4)) OR NOT(IOBITS_PORT(8))); -- M2 & M3 motors combined fault signal, fault when high
+    IOBITS_HM2(20 downto 17) <= NOT(lim_deb(3 downto 0)); -- Limits get debounced, and inverted
+    IOBITS_HM2(23 downto 21) <= IOBITS_PORT(23 downto 21);
+    IOBITS_HM2(24) <= NOT(IOBITS_PORT(24));  -- Z-probe input is not debounced, but inverted
+    IOBITS_HM2(25) <= NOT(aux2_in_deb);  -- AUXIN2 gets debounced, and inverted
+    IOBITS_HM2(26) <= NOT(sw_probe_deb); -- debounce switch z probe
+    IOBITS_HM2(27) <= NOT(IOBITS_PORT(27));  -- E-Stop input is not debounced, but inverted
+    IOBITS_HM2(28) <= NOT(IOBITS_PORT(28));  -- Torch Break input is not debounced, but inverted
+    IOBITS_HM2(29) <= (NOT(IOBITS_PORT(27)) OR (NOT(IOBITS_PORT(28)) AND NOT(IOBITS_PORT(30))));  -- Logical E-Stop
+    IOBITS_HM2(31) <= (NOT(IOBITS_PORT(24)) OR NOT(sw_probe_deb)); -- combined z-probe signal
+    IOBITS_HM2(30) <= IOBITS_PORT(30) and IOBITS_PORT(16) and IOBITS_PORT(29) and IOBITS_PORT(31); -- hide warnings of incomplete buffers by using the signals in a junk signal
 
-    faults_valid <= mtr_pwr_del AND IO_IN(22); -- don't delay when turning off power
+    faults_valid <= mtr_pwr_del AND IOBITS_PORT(22); -- don't delay when turning off power
 
     gen_lim : for i in 0 to 3 generate
         limx: entity work.inp_deb
         generic map (NUM_STAGES => NUM_DEB_STAGES)
         port map (
             clk => deb_clk,
-            input => IO_IN(i+17),
+            input => IOBITS_PORT(i+17),
             output => lim_deb(i)
         );
     end generate gen_lim;
@@ -126,7 +126,7 @@ begin
         generic map (NUM_STAGES => NUM_DEB_STAGES)
         port map (
             clk => deb_clk,
-            input => IO_IN(26),
+            input => IOBITS_PORT(26),
             output => sw_probe_deb
         );
 
@@ -134,7 +134,7 @@ begin
         generic map (NUM_STAGES => NUM_DEB_STAGES)
         port map (
             clk => deb_clk,
-            input => IO_IN(25),
+            input => IOBITS_PORT(25),
             output => aux2_in_deb
         );
 
@@ -146,7 +146,7 @@ begin
         )
         port map (
             clk => deb_clk,
-            input => IO_IN(22),
+            input => IOBITS_PORT(22),
             output => mtr_pwr_del
         );
 
