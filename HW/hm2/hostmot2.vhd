@@ -129,6 +129,7 @@ entity HostMot2 is
 	dreq: out std_logic;
 	demandmode: out std_logic;
 	iobits: inout std_logic_vector (IOWidth -1 downto 0);
+  ioddrbits : out std_logic_vector (IOWidth -1 downto 0);
 	liobits: inout std_logic_vector (LIOWidth -1 downto 0);
 	rates: out std_logic_vector (4 downto 0);
 	leds: out std_logic_vector(LEDCount-1 downto 0)
@@ -304,7 +305,8 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 			loadinvert => LoadOutputInvCmd(i),
 			readddr => ReadDDRCmd(i),
 			portdata => IOBits((((i+1)*PortWidth) -1) downto (i*PortWidth)),
-			altdata => Altdata((((i+1)*PortWidth) -1) downto (i*PortWidth))
+			altdata => Altdata((((i+1)*PortWidth) -1) downto (i*PortWidth)),
+      ddrdata => IODDRBits((((i+1)*PortWidth) -1) downto (i*PortWidth))
 			);
 	end generate;
 
