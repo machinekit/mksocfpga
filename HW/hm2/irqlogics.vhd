@@ -100,9 +100,9 @@ begin
 			if loadstatus = '1' then 
 				statusreg <= ibus(4 downto 0);
 			end if;	
-			if rated = "10" then					-- falling edge of rate source
+			if rated = "01" then					-- rising edge of rate source
 				irqff <= '1';
-			end if; -- rate falling edge
+			end if; -- rate rising edge
 			if clear = '1' then
 				irqff <= '0';
 			end if;		
