@@ -18,7 +18,7 @@ entity btint_controller is
 	    rst_n   : in std_logic;
       cnt_rst_n : out std_logic;
         clk     : in std_logic;
-        pp_buf_lock : in std_logic_vector(1 downto 0); -- Identifies which buffer is being written to by rx component
+        pp_buf_lock : in std_logic; -- Identifies which buffer is being written to by rx component
         pp_addr : out std_logic_vector(PP_BUF_ADDR_WIDTH - 1 downto 0); -- PP Buffer address bus
         pp_data1 : in std_logic_vector(7 downto 0); -- PP Buffer data bus 1
         pp_data2 : in std_logic_vector(7 downto 0); -- PP Buffer data bus 2
@@ -46,7 +46,7 @@ architecture beh of btint_controller is
                    latch_reg,
                    wait_for_sync);
 	signal current_state, next_state, prev_state, new_prev_state : sm_type := start;
-    signal pp_buf_lock_s : std_logic_vector(1 downto 0) := (others => '0');
+    signal pp_buf_lock_s : std_logic := '0';
     signal pp_buf_change : std_logic := '0';
     signal pp_buf_sel_s : std_logic := '0';
     signal pp_data : std_logic_vector(7 downto 0);
@@ -440,10 +440,10 @@ begin
             pp_buf_lock_s <= pp_buf_lock;
             pp_buf_change <= '0';
             if(current_state = wait_for_resp) then
-              if(pp_buf_lock = b"10" and pp_buf_lock_s = b"01") then
+              if(pp_buf_lock = '1' and pp_buf_lock_s = '0') then
                 pp_buf_sel_s <= '0';
                 pp_buf_change <= '1';
-              elsif(pp_buf_lock = b"01" and pp_buf_lock_s = b"10")then
+              elsif(pp_buf_lock = '0' and pp_buf_lock_s = '1')then
                 pp_buf_sel_s <= '1';
                 pp_buf_change <= '1';
               end if;

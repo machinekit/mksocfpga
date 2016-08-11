@@ -46,7 +46,7 @@ architecture imp of btint_top is
 
     -- Packet Validator, writes to pp buffer
     signal pp_wr : std_logic;
-    signal pp_lock : std_logic_vector(1 downto 0);
+    signal pp_lock : std_logic;
     signal pp_wr_data : std_logic_vector(7 downto 0);
     signal pp_wr_addr : std_logic_vector(PP_BUF_ADDR_WIDTH - 1 downto 0);
     signal odata_rx : std_logic_vector(31 downto 0);
@@ -60,10 +60,11 @@ architecture imp of btint_top is
     signal odata_ctrl : std_logic_vector(31 downto 0);
     signal cnt_rst_n : std_logic;
 
+    -- Sets up 230400 baud with a 50MHz input clock
     constant BAUDREG : unsigned(BAUD_TIMER_WIDTH - 1 downto 0) := x"001A";
 begin
-  pp_we1 <= (pp_wr and pp_lock(0));
-  pp_we2 <= (pp_wr and pp_lock(1));
+  pp_we1 <= '1' when (pp_wr = '1' and pp_lock = '0') else '0';
+  pp_we2 <= '1' when (pp_wr = '1' and pp_lock = '1') else '0';
     -- ------------------------------------------
     -- Ping-Pong Buffer
     -- ------------------------------------------

@@ -76,6 +76,8 @@ entity HostMot2_ip_wrap is
   generic
   (
   OneWS: boolean := true;
+  UseStepGenPrescaler: boolean := true;
+  UseIRQLogic: boolean := true;
   PWMRefWidth: integer := 13;
   ClockHigh: integer;
   ClockMed: integer;
@@ -122,8 +124,8 @@ begin
       IDROMType => 3,
       SepClocks => true,
       OneWS => OneWS,
-      UseStepGenPrescaler => true,
-      UseIRQLogic => true,
+      UseStepGenPrescaler => UseStepGenPrescaler,
+      UseIRQLogic => UseIRQLogic,
       PWMRefWidth => PWMRefWidth,
       UseWatchDog => true,
       OffsetToModules => 64,

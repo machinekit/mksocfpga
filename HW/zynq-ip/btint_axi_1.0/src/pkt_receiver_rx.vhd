@@ -18,7 +18,7 @@ entity pkt_receiver_rx is
 	(
 	    rst_n   : in std_logic;
         clk     : in std_logic;
-        pp_buf_lock : out std_logic_vector(1 downto 0); -- Ping pong between two buffer locations, 0 locks buffer 0, 1 locks buffer 1
+        pp_buf_lock : out std_logic; -- Ping pong between two buffer locations, 0 locks buffer 0, 1 locks buffer 1
         pp_addr : out std_logic_vector(PP_BUF_ADDR_WIDTH - 1 downto 0); -- PP Buffer address bus
         pp_data : out std_logic_vector(7 downto 0); -- PP Buffer data bus
         pp_wr : out std_logic;
@@ -48,7 +48,7 @@ architecture beh of pkt_receiver_rx is
     signal uart_rd_s : std_logic := '0';
     signal pp_wr_s : std_logic := '0';
     signal pkt_fifo : std_logic_vector(15 downto 0);
-    signal pp_buf_lock_s : std_logic_vector(1 downto 0);
+    signal pp_buf_lock_s : std_logic;
 
     -- Registers
     signal rx_fr_err_cnt : std_logic_vector(31 downto 0) := (others => '0');
@@ -106,16 +106,16 @@ begin
     upd_pp : process(rst_n, clk, current_state, pp_buf_lock_s, chksum1, chksum2)
     begin
         if(rst_n = '0') then
-            pp_buf_lock_s <= b"01";
+            pp_buf_lock_s <= '0';
             reg_chkerr_cnt <= (others => '0');
         elsif (rising_edge(clk)) then
             pp_buf_lock_s <= pp_buf_lock_s;
             if(current_state = val_chk) then
                 if(pkt_fifo = (chksum1 & chksum2)) then
-                  if(pp_buf_lock_s = b"01") then -- good checksum switch buffer
-                    pp_buf_lock_s <= b"10";
+                  if(pp_buf_lock_s = '1') then -- good checksum switch buffer
+                    pp_buf_lock_s <= '0';
                   else
-                    pp_buf_lock_s <= b"01";
+                    pp_buf_lock_s <= '1';
                   end if;
                 else
                     reg_chkerr_cnt <= std_logic_vector(unsigned(reg_chkerr_cnt) + 1);

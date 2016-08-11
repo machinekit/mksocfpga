@@ -119,9 +119,6 @@ CONFIG.IOWidth {36} \
   # Create instance: btint_axi_0, and set properties
   set btint_axi_0 [ create_bd_cell -type ip -vlnv jd2.com:user:btint_axi:1.0 btint_axi_0 ]
 
-  # Create instance: btint_axi_1, and set properties
-  set btint_axi_1 [ create_bd_cell -type ip -vlnv jd2.com:user:btint_axi:1.0 btint_axi_1 ]
-
   # Create instance: hm2_axilite_int_0, and set properties
   set hm2_axilite_int_0 [ create_bd_cell -type ip -vlnv machinekit.io:user:hm2_axilite_int:1.0 hm2_axilite_int_0 ]
 
@@ -137,7 +134,7 @@ CONFIG.PCW_EN_CLK1_PORT {1} \
 CONFIG.PCW_EN_CLK2_PORT {0} \
 CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {100} \
 CONFIG.PCW_FPGA1_PERIPHERAL_FREQMHZ {200} \
-CONFIG.PCW_FPGA2_PERIPHERAL_FREQMHZ {200} \
+CONFIG.PCW_FPGA2_PERIPHERAL_FREQMHZ {50} \
 CONFIG.PCW_GPIO_EMIO_GPIO_ENABLE {0} \
 CONFIG.PCW_GPIO_MIO_GPIO_ENABLE {1} \
 CONFIG.PCW_I2C0_PERIPHERAL_ENABLE {1} \
@@ -192,13 +189,14 @@ CONFIG.PCW_USB0_PERIPHERAL_ENABLE {1} \
 CONFIG.PCW_USB0_RESET_ENABLE {1} \
 CONFIG.PCW_USB0_RESET_IO {MIO 7} \
 CONFIG.PCW_USE_FABRIC_INTERRUPT {1} \
+CONFIG.PCW_USE_M_AXI_GP1 {0} \
 CONFIG.PCW_USE_S_AXI_HP0 {0} \
  ] $processing_system7_0
 
   # Create instance: processing_system7_0_axi_periph, and set properties
   set processing_system7_0_axi_periph [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 processing_system7_0_axi_periph ]
   set_property -dict [ list \
-CONFIG.NUM_MI {3} \
+CONFIG.NUM_MI {2} \
  ] $processing_system7_0_axi_periph
 
   # Create instance: rst_processing_system7_0_100M, and set properties
@@ -213,78 +211,70 @@ CONFIG.NUM_PORTS {1} \
   # Create interface connections
   connect_bd_intf_net -intf_net processing_system7_0_M_AXI_GP0 [get_bd_intf_pins processing_system7_0/M_AXI_GP0] [get_bd_intf_pins processing_system7_0_axi_periph/S00_AXI]
   connect_bd_intf_net -intf_net processing_system7_0_axi_periph_M00_AXI [get_bd_intf_pins btint_axi_0/S_AXI] [get_bd_intf_pins processing_system7_0_axi_periph/M00_AXI]
-  connect_bd_intf_net -intf_net processing_system7_0_axi_periph_M01_AXI [get_bd_intf_pins btint_axi_1/S_AXI] [get_bd_intf_pins processing_system7_0_axi_periph/M01_AXI]
-  connect_bd_intf_net -intf_net processing_system7_0_axi_periph_M02_AXI [get_bd_intf_pins hm2_axilite_int_0/S_AXI] [get_bd_intf_pins processing_system7_0_axi_periph/M02_AXI]
+  connect_bd_intf_net -intf_net processing_system7_0_axi_periph_M01_AXI [get_bd_intf_pins hm2_axilite_int_0/S_AXI] [get_bd_intf_pins processing_system7_0_axi_periph/M01_AXI]
   connect_bd_intf_net -intf_net processing_system7_1_DDR [get_bd_intf_ports DDR] [get_bd_intf_pins processing_system7_0/DDR]
   connect_bd_intf_net -intf_net processing_system7_1_FIXED_IO [get_bd_intf_ports FIXED_IO] [get_bd_intf_pins processing_system7_0/FIXED_IO]
 
   # Create port connections
-  connect_bd_net -net HostMot2_ip_wrap_0_interrupt [get_bd_pins HostMot2_ip_wrap_0/interrupt] [get_bd_pins btint_axi_0/sync] [get_bd_pins btint_axi_1/sync] [get_bd_pins xlconcat_0/In0]
+  connect_bd_net -net HostMot2_ip_wrap_0_interrupt [get_bd_pins HostMot2_ip_wrap_0/interrupt] [get_bd_pins xlconcat_0/In0]
   connect_bd_net -net HostMot2_ip_wrap_0_obus [get_bd_pins HostMot2_ip_wrap_0/obus] [get_bd_pins hm2_axilite_int_0/OBUS]
   connect_bd_net -net Net [get_bd_ports IOBits] [get_bd_pins HostMot2_ip_wrap_0/iobits]
   connect_bd_net -net btint_axi_0_UART_TX [get_bd_ports uart0_txd] [get_bd_pins btint_axi_0/UART_TX]
-  connect_bd_net -net btint_axi_1_UART_TX [get_bd_ports uart1_txd] [get_bd_pins btint_axi_1/UART_TX]
   connect_bd_net -net hm2_axilite_int_0_ADDR [get_bd_pins HostMot2_ip_wrap_0/addr] [get_bd_pins hm2_axilite_int_0/ADDR]
   connect_bd_net -net hm2_axilite_int_0_IBUS [get_bd_pins HostMot2_ip_wrap_0/ibus] [get_bd_pins hm2_axilite_int_0/IBUS]
   connect_bd_net -net hm2_axilite_int_0_READSTB [get_bd_pins HostMot2_ip_wrap_0/readstb] [get_bd_pins hm2_axilite_int_0/READSTB]
   connect_bd_net -net hm2_axilite_int_0_WRITESTB [get_bd_pins HostMot2_ip_wrap_0/writestb] [get_bd_pins hm2_axilite_int_0/WRITESTB]
-  connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_pins HostMot2_ip_wrap_0/clklow] [get_bd_pins HostMot2_ip_wrap_0/clkmed] [get_bd_pins btint_axi_0/S_AXI_ACLK] [get_bd_pins btint_axi_1/S_AXI_ACLK] [get_bd_pins hm2_axilite_int_0/S_AXI_ACLK] [get_bd_pins processing_system7_0/FCLK_CLK0] [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK] [get_bd_pins processing_system7_0_axi_periph/ACLK] [get_bd_pins processing_system7_0_axi_periph/M00_ACLK] [get_bd_pins processing_system7_0_axi_periph/M01_ACLK] [get_bd_pins processing_system7_0_axi_periph/M02_ACLK] [get_bd_pins processing_system7_0_axi_periph/S00_ACLK] [get_bd_pins rst_processing_system7_0_100M/slowest_sync_clk]
+  connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_pins HostMot2_ip_wrap_0/clklow] [get_bd_pins HostMot2_ip_wrap_0/clkmed] [get_bd_pins btint_axi_0/S_AXI_ACLK] [get_bd_pins hm2_axilite_int_0/S_AXI_ACLK] [get_bd_pins processing_system7_0/FCLK_CLK0] [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK] [get_bd_pins processing_system7_0_axi_periph/ACLK] [get_bd_pins processing_system7_0_axi_periph/M00_ACLK] [get_bd_pins processing_system7_0_axi_periph/M01_ACLK] [get_bd_pins processing_system7_0_axi_periph/S00_ACLK] [get_bd_pins rst_processing_system7_0_100M/slowest_sync_clk]
   connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins HostMot2_ip_wrap_0/clkhigh] [get_bd_pins processing_system7_0/FCLK_CLK1]
   connect_bd_net -net processing_system7_0_FCLK_RESET0_N [get_bd_pins processing_system7_0/FCLK_RESET0_N] [get_bd_pins rst_processing_system7_0_100M/ext_reset_in]
   connect_bd_net -net rst_processing_system7_0_100M_interconnect_aresetn [get_bd_pins processing_system7_0_axi_periph/ARESETN] [get_bd_pins rst_processing_system7_0_100M/interconnect_aresetn]
-  connect_bd_net -net rst_processing_system7_0_100M_peripheral_aresetn [get_bd_pins btint_axi_0/S_AXI_ARESETN] [get_bd_pins btint_axi_1/S_AXI_ARESETN] [get_bd_pins hm2_axilite_int_0/S_AXI_ARESETN] [get_bd_pins processing_system7_0_axi_periph/M00_ARESETN] [get_bd_pins processing_system7_0_axi_periph/M01_ARESETN] [get_bd_pins processing_system7_0_axi_periph/M02_ARESETN] [get_bd_pins processing_system7_0_axi_periph/S00_ARESETN] [get_bd_pins rst_processing_system7_0_100M/peripheral_aresetn]
+  connect_bd_net -net rst_processing_system7_0_100M_peripheral_aresetn [get_bd_pins btint_axi_0/S_AXI_ARESETN] [get_bd_pins hm2_axilite_int_0/S_AXI_ARESETN] [get_bd_pins processing_system7_0_axi_periph/M00_ARESETN] [get_bd_pins processing_system7_0_axi_periph/M01_ARESETN] [get_bd_pins processing_system7_0_axi_periph/S00_ARESETN] [get_bd_pins rst_processing_system7_0_100M/peripheral_aresetn]
   connect_bd_net -net uart0_rxd_1 [get_bd_ports uart0_rxd] [get_bd_pins btint_axi_0/UART_RX]
-  connect_bd_net -net uart1_rxd_1 [get_bd_ports uart1_rxd] [get_bd_pins btint_axi_1/UART_RX]
-  connect_bd_net -net xlconcat_0_dout [get_bd_pins processing_system7_0/IRQ_F2P] [get_bd_pins xlconcat_0/dout]
+  connect_bd_net -net xlconcat_0_dout [get_bd_pins btint_axi_0/sync] [get_bd_pins processing_system7_0/IRQ_F2P] [get_bd_pins xlconcat_0/dout]
 
   # Create address segments
   create_bd_addr_seg -range 0x10000 -offset 0x43C00000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs btint_axi_0/S_AXI/reg0] SEG_btint_axi_0_reg0
-  create_bd_addr_seg -range 0x10000 -offset 0x43C10000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs btint_axi_1/S_AXI/reg0] SEG_btint_axi_1_reg0
-  create_bd_addr_seg -range 0x10000 -offset 0x43C20000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs hm2_axilite_int_0/S_AXI/reg0] SEG_hm2_axilite_int_0_reg0
+  create_bd_addr_seg -range 0x10000 -offset 0x43C10000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs hm2_axilite_int_0/S_AXI/reg0] SEG_hm2_axilite_int_0_reg0
 
   # Perform GUI Layout
   regenerate_bd_layout -layout_string {
    guistr: "# # String gsaved with Nlview 6.5.5  2015-06-26 bk=1.3371 VDI=38 GEI=35 GUI=JA:1.8
 #  -string -flagsOSRD
-preplace port DDR -pg 1 -y 360 -defaultsOSRD
-preplace port uart0_rxd -pg 1 -y 720 -defaultsOSRD
-preplace port uart1_txd -pg 1 -y 740 -defaultsOSRD
-preplace port uart1_rxd -pg 1 -y 760 -defaultsOSRD
-preplace port FIXED_IO -pg 1 -y 380 -defaultsOSRD
-preplace port uart0_txd -pg 1 -y 570 -defaultsOSRD
-preplace portBus IOBits -pg 1 -y 120 -defaultsOSRD
-preplace inst rst_processing_system7_0_100M -pg 1 -lvl 3 -y 210 -defaultsOSRD
-preplace inst xlconcat_0 -pg 1 -lvl 2 -y 470 -defaultsOSRD
-preplace inst hm2_axilite_int_0 -pg 1 -lvl 5 -y 270 -defaultsOSRD
-preplace inst btint_axi_0 -pg 1 -lvl 5 -y 570 -defaultsOSRD
-preplace inst btint_axi_1 -pg 1 -lvl 5 -y 740 -defaultsOSRD
-preplace inst HostMot2_ip_wrap_0 -pg 1 -lvl 1 -y 160 -defaultsOSRD
-preplace inst processing_system7_0_axi_periph -pg 1 -lvl 4 -y 550 -defaultsOSRD
-preplace inst processing_system7_0 -pg 1 -lvl 3 -y 460 -defaultsOSRD
-preplace netloc uart0_rxd_1 1 0 5 NJ 720 NJ 720 NJ 730 NJ 730 NJ
+preplace port DDR -pg 1 -y 540 -defaultsOSRD
+preplace port uart0_rxd -pg 1 -y 510 -defaultsOSRD -right
+preplace port uart1_txd -pg 1 -y 40 -defaultsOSRD
+preplace port uart1_rxd -pg 1 -y 20 -defaultsOSRD -right
+preplace port FIXED_IO -pg 1 -y 560 -defaultsOSRD
+preplace port uart0_txd -pg 1 -y 420 -defaultsOSRD
+preplace portBus IOBits -pg 1 -y 150 -defaultsOSRD
+preplace inst rst_processing_system7_0_100M -pg 1 -lvl 3 -y 390 -defaultsOSRD
+preplace inst xlconcat_0 -pg 1 -lvl 2 -y 100 -defaultsOSRD
+preplace inst hm2_axilite_int_0 -pg 1 -lvl 5 -y 250 -defaultsOSRD
+preplace inst btint_axi_0 -pg 1 -lvl 5 -y 420 -defaultsOSRD
+preplace inst HostMot2_ip_wrap_0 -pg 1 -lvl 1 -y 150 -defaultsOSRD
+preplace inst processing_system7_0_axi_periph -pg 1 -lvl 4 -y 390 -defaultsOSRD
+preplace inst processing_system7_0 -pg 1 -lvl 3 -y 640 -defaultsOSRD
 preplace netloc btint_axi_0_UART_TX 1 5 1 NJ
+preplace netloc uart0_rxd_1 1 4 2 1300 510 NJ
 preplace netloc processing_system7_0_axi_periph_M00_AXI 1 4 1 N
-preplace netloc HostMot2_ip_wrap_0_interrupt 1 1 4 280 420 NJ 720 NJ 720 1290
-preplace netloc processing_system7_0_M_AXI_GP0 1 3 1 940
-preplace netloc processing_system7_0_FCLK_RESET0_N 1 2 2 500 120 910
-preplace netloc btint_axi_1_UART_TX 1 5 1 NJ
-preplace netloc uart1_rxd_1 1 0 5 NJ 760 NJ 760 NJ 760 NJ 760 NJ
-preplace netloc processing_system7_0_axi_periph_M02_AXI 1 4 1 1250
-preplace netloc rst_processing_system7_0_100M_peripheral_aresetn 1 3 2 930 290 1270
-preplace netloc xlconcat_0_dout 1 2 1 NJ
-preplace netloc hm2_axilite_int_0_WRITESTB 1 0 6 30 300 NJ 300 NJ 90 NJ 90 NJ 90 1550
-preplace netloc hm2_axilite_int_0_READSTB 1 0 6 30 30 NJ 30 NJ 30 NJ 30 NJ 30 1560
-preplace netloc HostMot2_ip_wrap_0_obus 1 1 4 NJ 80 NJ 80 NJ 80 1300
-preplace netloc hm2_axilite_int_0_IBUS 1 0 6 20 290 NJ 290 NJ 300 NJ 300 NJ 350 1540
-preplace netloc processing_system7_1_DDR 1 3 3 NJ 360 NJ 360 NJ
-preplace netloc rst_processing_system7_0_100M_interconnect_aresetn 1 3 1 950
-preplace netloc processing_system7_0_FCLK_CLK0 1 0 5 0 20 NJ 20 490 610 920 710 1300
-preplace netloc hm2_axilite_int_0_ADDR 1 0 6 10 10 NJ 10 NJ 10 NJ 10 NJ 10 1570
-preplace netloc Net 1 1 5 NJ 110 NJ 110 NJ 110 NJ 110 NJ
-preplace netloc processing_system7_1_FIXED_IO 1 3 3 NJ 380 NJ 380 NJ
-preplace netloc processing_system7_0_FCLK_CLK1 1 0 4 40 310 NJ 310 NJ 310 900
-preplace netloc processing_system7_0_axi_periph_M01_AXI 1 4 1 1260
-levelinfo -pg 1 -20 160 380 700 1100 1420 1600 -top 0 -bot 830
+preplace netloc HostMot2_ip_wrap_0_interrupt 1 1 1 NJ
+preplace netloc processing_system7_0_M_AXI_GP0 1 3 1 950
+preplace netloc processing_system7_0_FCLK_RESET0_N 1 2 2 520 790 940
+preplace netloc rst_processing_system7_0_100M_peripheral_aresetn 1 3 2 960 230 1300
+preplace netloc hm2_axilite_int_0_WRITESTB 1 0 6 30 20 NJ 20 NJ 20 NJ 20 NJ 20 1580
+preplace netloc hm2_axilite_int_0_READSTB 1 0 6 50 290 NJ 200 NJ 200 NJ 200 NJ 170 1550
+preplace netloc xlconcat_0_dout 1 2 3 500 490 NJ 530 NJ
+preplace netloc HostMot2_ip_wrap_0_obus 1 1 4 NJ 50 NJ 50 NJ 50 1310
+preplace netloc hm2_axilite_int_0_IBUS 1 0 6 20 10 NJ 10 NJ 10 NJ 10 NJ 10 1570
+preplace netloc processing_system7_1_DDR 1 3 3 NJ 540 NJ 540 NJ
+preplace netloc rst_processing_system7_0_100M_interconnect_aresetn 1 3 1 920
+preplace netloc hm2_axilite_int_0_ADDR 1 0 6 40 280 NJ 280 NJ 280 NJ 220 NJ 330 1560
+preplace netloc processing_system7_0_FCLK_CLK0 1 0 5 60 300 NJ 300 510 300 940 250 1290
+preplace netloc Net 1 1 5 NJ 150 NJ 150 NJ 150 NJ 150 NJ
+preplace netloc processing_system7_1_FIXED_IO 1 3 3 NJ 560 NJ 560 NJ
+preplace netloc processing_system7_0_FCLK_CLK1 1 0 4 70 480 NJ 480 NJ 480 920
+preplace netloc processing_system7_0_axi_periph_M01_AXI 1 4 1 1280
+levelinfo -pg 1 0 190 410 720 1120 1430 1600 -top 0 -bot 800
 ",
 }
 
