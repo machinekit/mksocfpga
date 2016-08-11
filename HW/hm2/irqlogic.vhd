@@ -110,14 +110,14 @@ begin
 				divlatch <= ibus(dividerwidth-1 downto 0);
 				irqdiv <= ibus(dividerwidth-1 downto 0);
 			end if;	
-			if rated = "10" then					-- falling edge of rate source
+			if rated = "01" then					-- rising edge of rate source
 				if irqdivmsb = '1' then			-- note special case where divider latch MSB is set = divide by 1 
 					irqdiv <= divlatch;
 					irqff <= '1';
 				else
 					irqdiv <= irqdiv -1;
 				end if;
-			end if; -- rate falling edge
+			end if; -- rate rising edge
 			if clear = '1' then
 				irqff <= '0';
 			end if;		
