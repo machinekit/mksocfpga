@@ -157,7 +157,7 @@ CONFIG.PCW_MIO_26_SLEW {fast} \
 CONFIG.PCW_MIO_27_SLEW {fast} \
 CONFIG.PCW_MIO_46_PULLUP {disabled} \
 CONFIG.PCW_MIO_47_PULLUP {disabled} \
-CONFIG.PCW_MIO_50_PULLUP {disabled} \
+CONFIG.PCW_MIO_50_PULLUP {enabled} \
 CONFIG.PCW_MIO_51_PULLUP {disabled} \
 CONFIG.PCW_MIO_9_PULLUP {disabled} \
 CONFIG.PCW_PRESET_BANK1_VOLTAGE {LVCMOS 1.8V} \
@@ -254,22 +254,22 @@ preplace inst btint_axi_0 -pg 1 -lvl 5 -y 420 -defaultsOSRD
 preplace inst HostMot2_ip_wrap_0 -pg 1 -lvl 1 -y 150 -defaultsOSRD
 preplace inst processing_system7_0_axi_periph -pg 1 -lvl 4 -y 390 -defaultsOSRD
 preplace inst processing_system7_0 -pg 1 -lvl 3 -y 640 -defaultsOSRD
-preplace netloc btint_axi_0_UART_TX 1 5 1 NJ
 preplace netloc uart0_rxd_1 1 4 2 1300 510 NJ
+preplace netloc btint_axi_0_UART_TX 1 5 1 NJ
 preplace netloc processing_system7_0_axi_periph_M00_AXI 1 4 1 N
 preplace netloc HostMot2_ip_wrap_0_interrupt 1 1 1 NJ
 preplace netloc processing_system7_0_M_AXI_GP0 1 3 1 950
 preplace netloc processing_system7_0_FCLK_RESET0_N 1 2 2 520 790 940
 preplace netloc rst_processing_system7_0_100M_peripheral_aresetn 1 3 2 960 230 1300
+preplace netloc xlconcat_0_dout 1 2 3 500 490 NJ 530 NJ
 preplace netloc hm2_axilite_int_0_WRITESTB 1 0 6 30 20 NJ 20 NJ 20 NJ 20 NJ 20 1580
 preplace netloc hm2_axilite_int_0_READSTB 1 0 6 50 290 NJ 200 NJ 200 NJ 200 NJ 170 1550
-preplace netloc xlconcat_0_dout 1 2 3 500 490 NJ 530 NJ
 preplace netloc HostMot2_ip_wrap_0_obus 1 1 4 NJ 50 NJ 50 NJ 50 1310
 preplace netloc hm2_axilite_int_0_IBUS 1 0 6 20 10 NJ 10 NJ 10 NJ 10 NJ 10 1570
 preplace netloc processing_system7_1_DDR 1 3 3 NJ 540 NJ 540 NJ
 preplace netloc rst_processing_system7_0_100M_interconnect_aresetn 1 3 1 920
-preplace netloc hm2_axilite_int_0_ADDR 1 0 6 40 280 NJ 280 NJ 280 NJ 220 NJ 330 1560
 preplace netloc processing_system7_0_FCLK_CLK0 1 0 5 60 300 NJ 300 510 300 940 250 1290
+preplace netloc hm2_axilite_int_0_ADDR 1 0 6 40 280 NJ 280 NJ 280 NJ 220 NJ 330 1560
 preplace netloc Net 1 1 5 NJ 150 NJ 150 NJ 150 NJ 150 NJ
 preplace netloc processing_system7_1_FIXED_IO 1 3 3 NJ 560 NJ 560 NJ
 preplace netloc processing_system7_0_FCLK_CLK1 1 0 4 70 480 NJ 480 NJ 480 920
