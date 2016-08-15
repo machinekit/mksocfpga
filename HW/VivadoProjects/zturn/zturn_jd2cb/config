@@ -11,9 +11,9 @@ BIT_FILE=zturn_jd2cb.bit
 ##
 
 # Pin File relative to HW directory
-PIN_FILE=VivadoProjects/zturn/zturn_jd2cb/const/PIN_ZJD2CB_34.vhd
+PIN_FILE=VivadoProjects/zturn/zturn_jd2cb/const/PIN_ZJD2CB_36.vhd
 # Pin package name defined in above pin file
-PIN_NAME=PIN_ZJD2CB_34
+PIN_NAME=PIN_ZJD2CB_36
 
 ############################################################################
 # HostMot2 Generic Parameters, autofills IP correctly without regenerating

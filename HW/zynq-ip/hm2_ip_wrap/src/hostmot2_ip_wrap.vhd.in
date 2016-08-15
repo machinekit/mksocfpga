@@ -79,18 +79,18 @@ entity HostMot2_ip_wrap is
   UseStepGenPrescaler: boolean := true;
   UseIRQLogic: boolean := true;
   PWMRefWidth: integer := 13;
-  ClockHigh: integer;
-  ClockMed: integer;
-  ClockLow: integer;
-  FPGASize: integer;
-  FPGAPins: integer;
-  IOPorts: integer;
-  IOWidth: integer;
-  LIOWidth: integer;
-  PortWidth: integer;
-  BusWidth: integer;
-  AddrWidth: integer;
-  LEDCount: integer
+  ClockHigh: integer := 200000000;
+  ClockMed: integer := 100000000;
+  ClockLow: integer := 100000000;
+  FPGASize: integer := 8;
+  FPGAPins: integer := 144;
+  IOPorts: integer := 2;
+  IOWidth: integer := 36;
+  LIOWidth: integer := 0;
+  PortWidth: integer := 18;
+  BusWidth: integer := 32;
+  AddrWidth: integer := 16;
+  LEDCount: integer := 0
   );
   port
   (
@@ -107,8 +107,10 @@ entity HostMot2_ip_wrap is
   interrupt: out std_logic;
   dreq: out std_logic;
   demandmode: out std_logic;
-  iobits: inout std_logic_vector (iowidth -1 downto 0);
+  inbits: in std_logic_vector (iowidth -1 downto 0);
+  outbits: out std_logic_vector (iowidth -1 downto 0);
   ioddrbits: out std_logic_vector (iowidth -1 downto 0);
+  ioodrbits: out std_logic_vector (iowidth -1 downto 0);
   liobits: inout std_logic_vector (liowidth -1 downto 0);
   rates: out std_logic_vector (4 downto 0);
   leds: out std_logic_vector(ledcount-1 downto 0)
@@ -161,8 +163,10 @@ begin
       int => interrupt,
       dreq => dreq,
       demandmode => demandmode,
-      iobits => iobits,
+      inbits => inbits,
+      outbits => outbits,
       ioddrbits => ioddrbits,
+      ioodrbits => ioodrbits,
       liobits => liobits,
       rates => rates,
       leds => leds

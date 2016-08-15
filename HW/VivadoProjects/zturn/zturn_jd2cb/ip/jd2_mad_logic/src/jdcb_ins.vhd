@@ -61,63 +61,64 @@
 --     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 --     POSSIBILITY OF SUCH DAMAGE.
 --
--- This is a module specifically created to remove some debounce and OR/AND
--- logic from a HAL configuration file.
 
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity jdcb_io is
+entity jdcb_ins is
 	generic (
-		NUM_IO_BITS	: integer	:= 32;
+		WIDTH	: integer	:= 36;
 		NUM_DEB_STAGES : integer := 10 -- Number of stages of debounce before output is latched
 	);
 	port (
 	    clk : in std_logic; -- Expect 100MHz clock here
-	    IOBITS_HM2 : inout std_logic_vector(NUM_IO_BITS - 1 downto 0); -- from pins
-      IOBITS_PORT : inout std_logic_vector(NUM_IO_BITS - 1 downto 0) -- to io port
+	    INS : in std_logic_vector(WIDTH - 1 downto 0); -- Raw Inputs
+        LOG_INS : out std_logic_vector(WIDTH - 1 downto 0) -- Logic applied inputs
 	);
-end jdcb_io;
+end jdcb_ins;
 
-architecture arch_imp of jdcb_io is
+architecture arch_imp of jdcb_ins is
     signal sw_probe_deb : std_logic;
-    signal aux2_in_deb : std_logic;
+    signal aux1_in_deb : std_logic;
     signal lim_deb : std_logic_vector(3 downto 0);
     signal deb_clk : std_logic := '0';
     signal half_period : unsigned(15 downto 0) := x"30D4"; -- 4 kHz debounce clock
     signal timer_cnt: unsigned(15 downto 0) := (others => '0');
     signal faults_valid : std_logic;    -- When motors are turned off, ignore amp faults
     signal mtr_pwr_del : std_logic;
-begin
-    IOBITS_PORT(3 downto 1) <= IOBITS_HM2(3 downto 1); -- motor 1 output pins no extra logic
-    IOBITS_HM2(0) <= faults_valid AND (NOT(IOBITS_PORT(0))); -- motor 1 fault is delayed and inverted
-    IOBITS_PORT(7 downto 5) <= IOBITS_HM2(7 downto 5); -- motor 2 output pins no extra logic
-    IOBITS_HM2(4) <= faults_valid AND (NOT(IOBITS_PORT(4))); -- motor 2 fault is delayed and inverted
-    IOBITS_PORT(11 downto 9) <= IOBITS_HM2(11 downto 9); -- motor 3 output pins no extra logic
-    IOBITS_HM2(8) <= faults_valid AND (NOT(IOBITS_PORT(8))); -- motor 3 fault is delayed and inverted
-    IOBITS_PORT(15 downto 13) <= IOBITS_HM2(15 downto 13); -- motor 4 output pins no extra logic
-    IOBITS_HM2(12) <= faults_valid AND (NOT(IOBITS_PORT(12))); -- motor 4 fault is delayed and inverted
-    IOBITS_HM2(16) <= faults_valid AND (NOT(IOBITS_PORT(4)) OR NOT(IOBITS_PORT(8))); -- M2 & M3 motors combined fault signal, fault when high
-    IOBITS_HM2(20 downto 17) <= NOT(lim_deb(3 downto 0)); -- Limits get debounced, and inverted
-    IOBITS_HM2(23 downto 21) <= IOBITS_PORT(23 downto 21);
-    IOBITS_HM2(24) <= NOT(IOBITS_PORT(24));  -- Z-probe input is not debounced, but inverted
-    IOBITS_HM2(25) <= NOT(aux2_in_deb);  -- AUXIN2 gets debounced, and inverted
-    IOBITS_HM2(26) <= NOT(sw_probe_deb); -- debounce switch z probe
-    IOBITS_HM2(27) <= NOT(IOBITS_PORT(27));  -- E-Stop input is not debounced, but inverted
-    IOBITS_HM2(28) <= NOT(IOBITS_PORT(28));  -- Torch Break input is not debounced, but inverted
-    IOBITS_HM2(29) <= (NOT(IOBITS_PORT(27)) OR (NOT(IOBITS_PORT(28)) AND NOT(IOBITS_PORT(30))));  -- Logical E-Stop
-    IOBITS_HM2(31) <= (NOT(IOBITS_PORT(24)) OR NOT(sw_probe_deb)); -- combined z-probe signal
-    IOBITS_HM2(30) <= IOBITS_PORT(30) and IOBITS_PORT(16) and IOBITS_PORT(29) and IOBITS_PORT(31); -- hide warnings of incomplete buffers by using the signals in a junk signal
+begin    
 
-    faults_valid <= mtr_pwr_del AND IOBITS_PORT(22); -- don't delay when turning off power
+    LOG_INS(0) <= faults_valid AND (NOT(INS(0))); -- motor 1 fault is delayed and inverted
+    LOG_INS(3 downto 1) <= INS(3 downto 1);
+    LOG_INS(4) <= faults_valid AND (NOT(INS(4))); -- motor 2 fault is delayed and inverted
+    LOG_INS(7 downto 5) <= INS(7 downto 5);
+    LOG_INS(8) <= faults_valid AND (NOT(INS(8))); -- motor 3 fault is delayed and inverted
+    LOG_INS(11 downto 9) <= INS(11 downto 9);
+    LOG_INS(12) <= faults_valid AND (NOT(INS(12))); -- motor 4 fault is delayed and inverted
+    LOG_INS(15 downto 13) <= INS(15 downto 13);
+    LOG_INS(16) <= faults_valid AND (NOT(INS(4)) OR NOT(INS(8))); -- M2 & M3 motors combined fault signal, fault when high
+    LOG_INS(20 downto 17) <= NOT(lim_deb(3 downto 0));
+    LOG_INS(23 downto 21) <= INS(23 downto 21); -- Generic outputs not touched
+    LOG_INS(24) <= NOT(INS(24));  -- Z-probe input is not debounced, but inverted
+    LOG_INS(25) <= NOT(aux1_in_deb);  -- AUXIN1 gets debounced, and inverted
+    LOG_INS(26) <= NOT(sw_probe_deb); -- debounce switch z probe
+    LOG_INS(27) <= NOT(INS(27));  -- E-Stop input is not debounced, but inverted
+    LOG_INS(28) <= NOT(INS(28));  -- Torch Break input is not debounced, but inverted
+    LOG_INS(29) <= NOT(INS(27)) OR (NOT(INS(28)) AND NOT(INS(30)));  -- Logical E-Stop
+    LOG_INS(30) <= INS(30) AND INS(16) AND INS(29) AND INS(31);
+    LOG_INS(31) <= NOT(INS(24)) OR NOT(sw_probe_deb); -- combined z-probe signal
+    LOG_INS(32) <= faults_valid AND (NOT(INS(32))); -- motor 5 fault is delayed and inverted
+    LOG_INS(35 downto 33) <= INS(35 downto 33);  
+
+    faults_valid <= (mtr_pwr_del AND INS(22)); -- don't delay when turning off power
 
     gen_lim : for i in 0 to 3 generate
         limx: entity work.inp_deb
         generic map (NUM_STAGES => NUM_DEB_STAGES)
         port map (
             clk => deb_clk,
-            input => IOBITS_PORT(i+17),
+            input => INS(i+17),
             output => lim_deb(i)
         );
     end generate gen_lim;
@@ -126,7 +127,7 @@ begin
         generic map (NUM_STAGES => NUM_DEB_STAGES)
         port map (
             clk => deb_clk,
-            input => IOBITS_PORT(26),
+            input => INS(26),
             output => sw_probe_deb
         );
 
@@ -134,8 +135,8 @@ begin
         generic map (NUM_STAGES => NUM_DEB_STAGES)
         port map (
             clk => deb_clk,
-            input => IOBITS_PORT(25),
-            output => aux2_in_deb
+            input => INS(25),
+            output => aux1_in_deb
         );
 
     motor_pwr_del : entity work.sig_Delay
@@ -146,7 +147,7 @@ begin
         )
         port map (
             clk => deb_clk,
-            input => IOBITS_PORT(22),
+            input => INS(22),
             output => mtr_pwr_del
         );
 
