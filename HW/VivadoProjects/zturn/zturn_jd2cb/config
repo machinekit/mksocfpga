@@ -14,6 +14,8 @@ BIT_FILE=zturn_jd2cb.bit
 PIN_FILE=VivadoProjects/zturn/zturn_jd2cb/const/PIN_ZJD2CB_36.vhd
 # Pin package name defined in above pin file
 PIN_NAME=PIN_ZJD2CB_36
+#FWID File name in the const folder
+FWID_NAME=FWID_ZJD2CB_36
 
 ############################################################################
 # HostMot2 Generic Parameters, autofills IP correctly without regenerating
@@ -22,4 +24,4 @@ PIN_NAME=PIN_ZJD2CB_36
 
 # The name of the board to compile into the IP. Matches board name in hal files
 BOARD_NAME_HIGH_HEX=4243444A     #JDCB
-BOARD_NAME_LOW_HEX=4332444A      #JD2C
+BOARD_NAME_LOW_HEX=4332444A      #JD2Z

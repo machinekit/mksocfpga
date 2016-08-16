@@ -1,15 +1,15 @@
 -- Copyright (C) 2016, Devin Hughes, JD Squared
--- http=>
+-- http://www.jd2.com
 --
 -- This program is is licensed under a disjunctive dual license giving you
 -- the choice of one of the two following sets of free software/open source
--- licensing terms=>
+-- licensing terms:
 --
 --    * GNU General Public License (GPL), version 2.0 or later
 --    * 3-clause BSD License
 --
 --
--- The GNU GPL License=>
+-- The GNU GPL License:
 --
 --     This program is free software; you can redistribute it and/or modify
 --     it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 --     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 --
 --
--- The 3-clause BSD License=>
+-- The 3-clause BSD License:
 --
 --     Redistribution and use in source and binary forms, with or without
 --     modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@
 --           permission.
 --
 --
--- Disclaimer=>
+-- Disclaimer:
 --
 --     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 --     "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT

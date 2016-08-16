@@ -73,12 +73,12 @@ use work.IDROMConst.all;
 
 package PIN_ZJD2CB_36 is
 	constant ModuleID : ModuleIDType :=(
-        (HM2DPLLTag,	x"00",	ClockLowTag,	    x"01",	HM2DPLLBaseRateAddr&PadT,	    HM2DPLLNumRegs,		    x"00",	HM2DPLLMPBitMask),
-		(WatchDogTag,	x"00",	ClockLowTag,	    x"01",	WatchDogTimeAddr&PadT,		    WatchDogNumRegs,		x"00",	WatchDogMPBitMask),
-		(IOPortTag,		x"00",	ClockLowTag,	    x"01",	PortAddr&PadT,					IOPortNumRegs,			x"00",	IOPortMPBitMask),
-		(StepGenTag,	x"02",	ClockLowTag,	    x"0A",	StepGenRateAddr&PadT,		    StepGenNumRegs,		    x"00",	StepGenMPBitMask),
-	    (LEDTag,		x"00",	ClockLowTag,	    x"01",	LEDAddr&PadT,					LEDNumRegs,				x"00",	LEDMPBitMask),
-		(NullTag,		x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
+    (HM2DPLLTag,	x"00",	ClockLowTag,	    x"01",	HM2DPLLBaseRateAddr&PadT,	    HM2DPLLNumRegs,		    x"00",	HM2DPLLMPBitMask),
+		(WatchDogTag,	x"00",	ClockLowTag,	    x"01",	WatchDogTimeAddr&PadT,		    WatchDogNumRegs,			x"00",	WatchDogMPBitMask),
+		(IOPortTag,		x"00",	ClockLowTag,	    x"02",	PortAddr&PadT,								IOPortNumRegs,				x"00",	IOPortMPBitMask),
+		(StepGenTag,	x"02",	ClockLowTag,	    x"05",	StepGenRateAddr&PadT,					StepGenNumRegs,		    x"00",	StepGenMPBitMask),
+    (LEDTag,			x"00",	ClockLowTag,	    x"01",	LEDAddr&PadT,									LEDNumRegs,						x"00",	LEDMPBitMask),
+		(FWIDTag,     x"00",  ClockLowTag,    	x"01",  FWIDAddr&PadT,        				FWIDNumRegs,          x"00",  FWIDMPBitMask),
 		(NullTag,		x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
 		(NullTag,		x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
 		(NullTag,		x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
@@ -129,7 +129,7 @@ package PIN_ZJD2CB_36 is
         IOPortTag & x"03" & StepGenTag & StepGenStepPin,        -- I/O 13   PIN 76 M4-STP
         IOPortTag & x"03" & StepGenTag & StepGenDirPin,         -- I/O 14   PIN 84 M4-DIR
         IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 15   PIN 82 M4-EN GPIO
-        
+
         IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 16   PIN 35 GPIO
 
         IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 17   PIN 82-2 LIM1 GPIO
@@ -149,12 +149,12 @@ package PIN_ZJD2CB_36 is
         IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 29   PIN 36-2 GPIO
         IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 30   PIN 38-2 GPIO
         IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 31   PIN 42-2 GPIO
-                
+
         IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 32   PIN 74 M5-FB GPIO
-        IOPortTag & x"03" & StepGenTag & StepGenStepPin,        -- I/O 33   PIN 76 M5-STP
-        IOPortTag & x"03" & StepGenTag & StepGenDirPin,         -- I/O 34   PIN 84 M5-DIR
+        IOPortTag & x"04" & StepGenTag & StepGenStepPin,        -- I/O 33   PIN 76 M5-STP
+        IOPortTag & x"04" & StepGenTag & StepGenDirPin,         -- I/O 34   PIN 84 M5-DIR
         IOPortTag & x"00" & NullTag & NullPin,                  -- I/O 35   PIN 82 M5-EN GPIO
-        
+
         emptypin,emptypin,emptypin,emptypin,emptypin,emptypin, -- added for 34 pin 5I25
 		emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,
 

@@ -13,6 +13,7 @@ if [ -z "$1" ]; then
     usage
 fi
 
+CUR_DIR=`realpath .`
 CONFIG_FILE=`realpath $1`
 
 if [ ! -f "$CONFIG_FILE" ]; then
@@ -38,6 +39,13 @@ sed -e "s|%PIN_NAME%|$PIN_NAME|" \
     -e "s|%BOARD_NAME_LOW_HEX%|$BOARD_NAME_LOW_HEX|" \
     "$IP_DIR"/src/hostmot2_ip_wrap.vhd.in > \
     "$IP_DIR"/src/hostmot2_ip_wrap.vhd
+    
+# Create the firmware_id.mif file
+cd ../firmware-tag
+make py-proto
+python genfwid.py "$FWID_NAME" > "$PRJ_DIR/const/firmware_id.mif"
+
+cd ../VivadoProjects
 
 # Run the tcl script to build the project and generate the bitfile
 /opt/Xilinx/Vivado/2015.4/bin/vivado -mode batch -source "$PRJ_DIR/$BUILD_TCL"

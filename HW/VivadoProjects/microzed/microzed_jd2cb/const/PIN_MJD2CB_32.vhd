@@ -71,14 +71,14 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 use work.IDROMConst.all;
 
-package PIN_JD2CB_34 is
+package PIN_MJD2CB_32 is
 	constant ModuleID : ModuleIDType :=(
                 (HM2DPLLTag,	x"00",	ClockLowTag,	x"01",	HM2DPLLBaseRateAddr&PadT,	HM2DPLLNumRegs,		x"00",	HM2DPLLMPBitMask),
 		(WatchDogTag,	x"00",	ClockLowTag,	x"01",	WatchDogTimeAddr&PadT,		WatchDogNumRegs,		x"00",	WatchDogMPBitMask),
-		(IOPortTag,		x"00",	ClockLowTag,	x"01",	PortAddr&PadT,					IOPortNumRegs,			x"00",	IOPortMPBitMask),
-		(StepGenTag,	x"02",	ClockLowTag,	x"0A",	StepGenRateAddr&PadT,		StepGenNumRegs,		x"00",	StepGenMPBitMask),
-		(PWMTag,			x"00",	ClockHighTag,	x"02",	PWMValAddr&PadT,				PWMNumRegs,				x"00",	PWMMPBitMask),
+		(IOPortTag,		x"00",	ClockLowTag,	x"02",	PortAddr&PadT,					IOPortNumRegs,			x"00",	IOPortMPBitMask),
+		(StepGenTag,	x"02",	ClockLowTag,	x"04",	StepGenRateAddr&PadT,		StepGenNumRegs,		x"00",	StepGenMPBitMask),
 		(LEDTag,			x"00",	ClockLowTag,	x"01",	LEDAddr&PadT,					LEDNumRegs,				x"00",	LEDMPBitMask),
+		(FWIDTag,     x"00",  ClockLowTag,    	x"01",  FWIDAddr&PadT,        				FWIDNumRegs,          x"00",  FWIDMPBitMask),
 		(NullTag,		x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
 		(NullTag,		x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
 		(NullTag,		x"00",	NullTag,			x"00",	NullAddr&PadT,					x"00",					x"00",	x"00000000"),
@@ -169,4 +169,4 @@ package PIN_JD2CB_34 is
 		emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,
 		emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin);
 
-end package PIN_JD2CB_34;
+end package PIN_MJD2CB_32;

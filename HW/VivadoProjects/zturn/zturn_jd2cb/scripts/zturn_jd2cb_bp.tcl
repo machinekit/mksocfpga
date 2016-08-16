@@ -105,6 +105,7 @@ add_files -norecurse $proj_dir/src/soc_system/hdl/soc_system_wrapper.vhd
 set obj [get_filesets sources_1]
 set files [list \
  "[file normalize "$proj_dir/src/soc_system/hdl/soc_system_wrapper.vhd"]"\
+ "[file normalize "$origin_dir/../const/firmware_id.mif"]"\
 ]
 add_files -norecurse -fileset $obj $files
 
@@ -112,6 +113,11 @@ set file "$proj_dir/src/soc_system/hdl/soc_system_wrapper.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property "file_type" "VHDL" $file_obj
+
+set file "$origin_dir/../const/firmware_id.mif"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "Memory Initialization Files" $file_obj
 
 # Set 'sources_1' fileset properties
 set obj [get_filesets sources_1]
