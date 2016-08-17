@@ -7,14 +7,25 @@ BUILD_TCL=scripts/microzed_jd2cb_bp.tcl
 BIT_FILE=microzed_jd2cb.bit
 
 # The name of the board to compile into the IP. Matches board name in hal files
-BOARD_NAME_HEX=4243444A     #JDCB 
+BOARD_NAME_HEX=4243444A     #JDCB
 
 ## HostMot2 Pin constraints - these update the IP. Physical pin constraints
 #  belong in an xdc file referenced by the tcl scripts.
-## 
+##
 
 # Pin File relative to HW directory
-PIN_FILE=VivadoProjects/microzed/microzed_jd2cb/const/PIN_JD2CB_34.vhd
+PIN_FILE=VivadoProjects/microzed/microzed_jd2cb/const/PIN_MJD2CB_32.vhd
 # Pin package name defined in above pin file
-PIN_NAME=PIN_JD2CB_34
+PIN_NAME=PIN_MJD2CB_32
 
+#FWID Module name in the firmware-tag folder
+FWID_NAME=FWID_MJD2CB_32
+
+############################################################################
+# HostMot2 Generic Parameters, autofills IP correctly without regenerating
+# block diagram script
+############################################################################
+
+# The name of the board to compile into the IP. Matches board name in hal files
+BOARD_NAME_HIGH_HEX=4243444A     #JDCB
+BOARD_NAME_LOW_HEX=4332444A      #JD2M

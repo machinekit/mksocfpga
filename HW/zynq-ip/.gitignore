@@ -1,2 +1,4 @@
-tmp*
-*.zip
+/tmp*
+/*/tmp*
+/*.zip
+/*/*.zip

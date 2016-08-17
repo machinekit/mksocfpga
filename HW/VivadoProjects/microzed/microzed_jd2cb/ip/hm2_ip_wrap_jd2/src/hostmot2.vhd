@@ -66,7 +66,7 @@ use IEEE.std_logic_UNSIGNED.ALL;
 --     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 --     POSSIBILITY OF SUCH DAMAGE.
 --
-use work.@PIN_NAME@.all;
+use work.PIN_JD2CB_34.all;
 use work.IDROMConst.all;
 use work.log2.all;
 use work.decodedstrobe.all;
@@ -103,10 +103,10 @@ entity HostMot2 is
 		BoardNameHigh : std_Logic_Vector(31 downto 0) := BoardName5i25;
 		FPGASize: integer := 9;
 		FPGAPins: integer := 144;
-		IOPorts: integer := 2;
-		IOWidth: integer := 34;
+		IOPorts: integer := 1;
+		IOWidth: integer := 32;
 		LIOWidth: integer := 6;
-		PortWidth: integer := 17;
+		PortWidth: integer := 32;
 		BusWidth: integer := 32;
 		AddrWidth: integer := 16;
 		InstStride0: integer := 4;
@@ -225,6 +225,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 	signal LoadOpenDrainModeCmd: std_logic_vector(IOPorts -1 downto 0);
 	signal OutputInvSel: std_logic;
 	signal LoadOutputInvCmd: std_logic_vector(IOPorts -1 downto 0);
+	signal IOLogBits: std_logic_vector (iowidth -1 downto 0);
 
 -- qcounter related signals
 	signal Probe : std_logic; -- hs probe input for counters,stepgens etc
@@ -307,6 +308,19 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 			);
 	end generate;
 
+	makeilogic: for i in 0 to IOPorts -1 generate
+		ilogicx: entity work.jdcb_io
+		generic map (
+		    NUM_IO_BITS => iowidth,
+		    NUM_DEB_STAGES => 10    -- 2.5ms at 100MHz
+		)
+		port map (
+		clk => clklow,
+		IO_IN => IOBits((((i+1)*PortWidth) -1) downto (i*PortWidth)),
+		IO_OUT => IOLogBits((((i+1)*PortWidth) -1) downto (i*PortWidth))
+ 		);
+	end generate;
+
 	makeiports: for i in 0 to IOPorts -1 generate
 		iportx: entity work.WordRB
 		generic map (size => PortWidth,
@@ -314,7 +328,7 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 		port map (
 		obus => obus,
 		readport => ReadPortCmd(i),
-		portdata => IOBits((((i+1)*PortWidth) -1) downto (i*PortWidth))
+		portdata => IOLogBits((((i+1)*PortWidth) -1) downto (i*PortWidth))
  		);
 	end generate;
 
