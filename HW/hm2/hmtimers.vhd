@@ -145,7 +145,7 @@ begin
 				FilteredSync <= FilteredSync(0)&'0';
 			end if;
 			
-			if PrescaleCount = x"01" then
+			if PrescaleCount <= x"01" then
 				PrescaleCount <= PreScale;
 				Accum <= Accum + (x"00"&BaseRate)  -DPLLCorrection;
 				if PhaseErr23 > Plimit then
