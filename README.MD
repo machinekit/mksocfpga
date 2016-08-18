@@ -1,17 +1,10 @@
 Quartus Build Status: [![Quartus Build Status](https://jenkins.machinekit.io/buildStatus/icon?job=mksocfpga)](https://jenkins.machinekit.io/buildStatus/icon?job=mksocfpga)
 
-Debian Packaging Status: [![Debian Packaging Status](https://jenkins.machinekit.io/buildStatus/icon?job=mksocfpga-packaging)](https://jenkins.machinekit.io/buildStatus/icon?job=mksocfpga-packaging)
+Vivado Build status: [![Vivado Build Status](https://jenkins.machinekit.io/buildStatus/icon?job=mksocfpga-vivado)](https://jenkins.machinekit.io/job/mksocfpga-vivado)
 
+Quartus Debian Packaging Status: [![Debian Packaging Status](https://jenkins.machinekit.io/buildStatus/icon?job=mksocfpga-packaging)](https://jenkins.machinekit.io/buildStatus/icon?job=mksocfpga-packaging)
 
-11-apr-2016
+Vivado Debian Packaging Status: [![Build Status](https://jenkins.machinekit.io/buildStatus/icon?job=mksocfpga-packaging-vivado)](https://jenkins.machinekit.io/job/mksocfpga-packaging-vivado)
 
-The mksocfpga project is getting very near to handing off the final bits and pieces to Machinekit.
-
-Right now All 3 HW boards are Machinekit functional.
-
-There is very soon a Mksocfpga Omap Builder based Sd-Image for the Nano online.
-
-The DE1-Soc board only needs to have the 3 Quartus output files replaced in the /boot folder to work.
-
-The SoCKit board also needs replacement of the u-boot binary.
+Mesanet.com firmware for the CycloneV and Zynq SoC/FPGA platforms
 
