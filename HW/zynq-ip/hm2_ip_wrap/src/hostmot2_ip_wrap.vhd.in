@@ -118,7 +118,12 @@ entity HostMot2_ip_wrap is
 end HostMot2_ip_wrap;
 
 architecture arch of HostMot2_ip_wrap is
+signal irq : std_logic := '0';
+
 begin
+  -- Zynq interrupt controller wants active high interrupt!
+  interrupt <= not irq;
+
   the_hm2 : entity work.HostMot2
     generic map (
       ThePinDesc => PinDesc,
@@ -160,7 +165,7 @@ begin
       clklow => clklow,
       clkmed => clkmed,
       clkhigh => clkhigh,
-      int => interrupt,
+      int => irq,
       dreq => dreq,
       demandmode => demandmode,
       inbits => inbits,
