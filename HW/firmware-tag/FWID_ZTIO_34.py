@@ -9,7 +9,7 @@ def gen_fwid(*args,**kwargs):
     fw.comment = get_build_url()
 
     fw.fpga_part_number = "7z010"
-    fw.num_leds = 0
+    fw.num_leds = 3
     fw.board_name = "ZTIO"
 
     c = fw.connector.add()
