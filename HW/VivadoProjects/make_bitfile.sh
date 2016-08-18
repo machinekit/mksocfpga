@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e  # Exit immediately if a command exits with a non-zero status
 
 # Builds a bitfile using Vivado. Pass in the config file for the
 # project you want to build. Expects Xilinx tools to be installed in
