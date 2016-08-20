@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# TCL Template Filename
+TCL_TEMP_FILE=../../zynq_bp.tcl.in
+
+# Base Project Name
+PRJ_NAME=zturn_ztio_z7020_bp
+
+# The fpga device we are building for
+FPGA_DEVICE=xc7z020clg400-1
+
+# The physical package pin constraint file
+PIN_HW_XDC_FILE=const/zturn_ztio_pinmap.xdc
+
+# The name of the bitfile
+BIT_FILE=zturn_ztio_z7020.bit
+
+# The filename of the top level block diagram
+TOP_LEVEL_BD_FILE=scripts/zturn_ztio_bd.tcl
+
+## HostMot2 Pin constraints - these update the IP. Physical pin constraints
+#  belong in an xdc file above
+
+# HM2 Pin Filename relative to project folder
+PIN_FILE=const/PIN_ZTIO_34.vhd
+# Pin package name defined in above pin file
+PIN_NAME=PIN_ZTIO_34
+#FWID File name in the const folder
+FWID_NAME=FWID_ZTIO_34
+
+############################################################################
+# HostMot2 Generic Parameters, autofills IP correctly without regenerating
+# block diagram script
+############################################################################
+
+# The name of the board to compile into the IP. Matches board name in hal files
+BOARD_NAME_HIGH_HEX=4F49545A    #ZTIO
+BOARD_NAME_LOW_HEX=5249594D     #MYIR

@@ -1,0 +1,43 @@
+#!/bin/sh
+
+# TCL Template Filename. Leave this here
+# to let the config decide if the base template is
+# correct for the project
+TCL_TEMP_FILE=../../zynq_bp.tcl.in
+
+# Base Project Name
+PRJ_NAME=microzed_jd2cb_z7010_bp
+
+# The fpga device we are building for
+FPGA_DEVICE=xc7z010clg400-1
+
+# The board part file url, if the target has one
+BOARD_PART="em.avnet.com:microzed_7010:part0:1.1"
+
+# The physical package pin constraint file
+PIN_HW_XDC_FILE=const/microzed_jd2cb_pinmap.xdc
+
+# The name of the bitfile
+BIT_FILE=microzed_jd2cb_z010.bit
+
+# The filename of the top level block diagram
+TOP_LEVEL_BD_FILE=scripts/mzed_jd2cb_bd.tcl
+
+## HostMot2 Pin constraints - these update the IP. Physical pin constraints
+#  belong in an xdc file above
+
+# HM2 Pin Filename relative to project folder
+PIN_FILE=const/PIN_MJD2CB_32.vhd
+# Pin package name defined in above pin file
+PIN_NAME=PIN_MJD2CB_32
+#FWID File name in the const folder
+FWID_NAME=FWID_MJD2CB_32
+
+############################################################################
+# HostMot2 Generic Parameters, autofills IP correctly without regenerating
+# block diagram script
+############################################################################
+
+# The name of the board to compile into the IP. Matches board name in hal files
+BOARD_NAME_HIGH_HEX=4243444A     #JDCB
+BOARD_NAME_LOW_HEX=4332444A      #JD2M
