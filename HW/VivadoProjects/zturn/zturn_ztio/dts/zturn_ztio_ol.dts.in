@@ -9,7 +9,7 @@
       #address-cells = <1>;
       #size-cells = <1>;
 
-	  firmware-name = "zynq/zturn_ztio.bit.bin";
+	  firmware-name = "zynq/%BIT_FILE%";
 
 	  hm2reg_io_0: hm2-socfpga0@0x43C00000 {
 		compatible = "generic-uio,ui_pdrv";
@@ -20,4 +20,3 @@
     };
   };
 };
-

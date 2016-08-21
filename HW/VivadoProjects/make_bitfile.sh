@@ -48,6 +48,7 @@ sed -e "s|%PIN_NAME%|$PIN_NAME|" \
     "$IP_DIR"/src/hostmot2_ip_wrap.vhd
 
 PRJ_FILE="$PRJ_DIR_CREATED"/"$PRJ_NAME".tcl
+BIT_FILE="$PRJ_NAME".bit
 
 # Update the project creation script from the config
 sed -e "s|%PRJ_NAME%|$PRJ_NAME|" \
@@ -59,11 +60,23 @@ sed -e "s|%PRJ_NAME%|$PRJ_NAME|" \
     "$PRJ_DIR"/"$TCL_TEMP_FILE" > \
     "$PRJ_FILE"
 
+# Create a dts variant for every input template file a project exposes
+if [ -d "$PRJ_DIR"/dts ]; then
+    temps=`find "$PRJ_DIR"/dts/ -type f -name *.dts.in`
+    for temp in $temps
+    do
+        outname=`basename "$temp"`
+        outfpath="$PRJ_DIR_CREATED"/${outname%_ol.dts.in}_"$FPGA_DEV_SHORT"_ol.dts
+        echo $outfpath
+        sed "s|%BIT_FILE%|$BIT_FILE.bin|" \
+            "$temp" > "$outfpath"
+    done
+fi
+
 # Create the firmware_id.mif file
 cd ../firmware-tag
 make py-proto
 python genfwid.py "$FWID_NAME" > "$PRJ_DIR_CREATED/firmware_id.mif"
-
 cd ../VivadoProjects
 
 # Run the tcl script to build the project and generate the bitfile

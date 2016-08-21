@@ -9,7 +9,7 @@
       #address-cells = <1>;
       #size-cells = <1>;
 
-	  firmware-name = "zynq/zturn_jd2cb.bit.bin";
+	  firmware-name = "zynq/%BIT_FILE%";
 
 	  hm2reg_io_0: hm2-socfpga0@0x43C00000 {
 		compatible = "generic-uio,ui_pdrv";
@@ -17,15 +17,15 @@
 		interrupt-parent = <&intc>;
 		interrupts = <0 29 1>;
 	  };
-	  
-  	  btint_axi_0: btint_axi0@0x43C10000 {
+
+	  btint_axi_0: btint_axi0@0x43C10000 {
 		compatible = "generic-uio,ui_pdrv";
 		reg = < 0x43C10000 0x00010000 >;
 		interrupt-parent = <&intc>;
 		interrupts = <0 30 1>;
 	  };
 
-  	  btint_axi_1: btint_axi1@0x43C20000 {
+	  btint_axi_1: btint_axi1@0x43C20000 {
 		compatible = "generic-uio,ui_pdrv";
 		reg = < 0x43C20000 0x00010000 >;
 		interrupt-parent = <&intc>;
@@ -34,4 +34,3 @@
     };
   };
 };
-
