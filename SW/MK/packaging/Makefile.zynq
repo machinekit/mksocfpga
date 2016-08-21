@@ -25,6 +25,3 @@ clean:
 # how to create a dtbo from a dts:
 %.dtbo: %.dts
 	$(DTC) -I dts -O dtb -@  -o $@ $<
-
-
-

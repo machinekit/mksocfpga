@@ -28,11 +28,17 @@ IP_DIR=`realpath ../zynq-ip/hm2_ip_wrap`
 # Get the project specific environment variables
 . "$CONFIG_FILE"
 
+# Delete any old project artifacts folder and remake it
+PRJ_DIR_CREATED="$PRJ_DIR"/"$PRJ_NAME"_created
+[ -d "$PRJ_DIR_CREATED" ] && rm -r "$PRJ_DIR_CREATED"
+mkdir "$PRJ_DIR_CREATED"
+
 ## Put pin info into the sources defining the wrapper IP package
 # component file1 needs the pin file path
-sed "s|%PIN_FILE%|$PIN_FILE|" \
+sed "s|%PIN_FILE%|$PRJ_DIR/$PIN_FILE|" \
     "$IP_DIR"/component.xml.in > \
     "$IP_DIR"/component.xml
+
 # VHDL file needs generics filled out. This short circuits having to regen
 # IP inside the gui
 sed -e "s|%PIN_NAME%|$PIN_NAME|" \
@@ -40,20 +46,32 @@ sed -e "s|%PIN_NAME%|$PIN_NAME|" \
     -e "s|%BOARD_NAME_LOW_HEX%|$BOARD_NAME_LOW_HEX|" \
     "$IP_DIR"/src/hostmot2_ip_wrap.vhd.in > \
     "$IP_DIR"/src/hostmot2_ip_wrap.vhd
-    
+
+PRJ_FILE="$PRJ_DIR_CREATED"/"$PRJ_NAME".tcl
+
+# Update the project creation script from the config
+sed -e "s|%PRJ_NAME%|$PRJ_NAME|" \
+    -e "s|%FPGA_DEVICE%|$FPGA_DEVICE|" \
+    -e "s|%BOARD_PART%|$BOARD_PART|" \
+    -e "s|%TOP_LEVEL_BD_FILE%|$TOP_LEVEL_BD_FILE|" \
+    -e "s|%BIT_FILE%|$BIT_FILE|" \
+    -e "s|%PIN_HW_XDC_FILE%|$PIN_HW_XDC_FILE|" \
+    "$PRJ_DIR"/"$TCL_TEMP_FILE" > \
+    "$PRJ_FILE"
+
 # Create the firmware_id.mif file
 cd ../firmware-tag
 make py-proto
-python genfwid.py "$FWID_NAME" > "$PRJ_DIR/const/firmware_id.mif"
+python genfwid.py "$FWID_NAME" > "$PRJ_DIR_CREATED/firmware_id.mif"
 
 cd ../VivadoProjects
 
 # Run the tcl script to build the project and generate the bitfile
-/opt/Xilinx/Vivado/2015.4/bin/vivado -mode batch -source "$PRJ_DIR/$BUILD_TCL"
+/opt/Xilinx/Vivado/2015.4/bin/vivado -mode batch -source "$PRJ_FILE"
 
 # Update the bif file for bootgen
 # component file1 needs the pin file path
-sed "s|%BIT_FILE%|$PRJ_DIR/$BIT_FILE|" \
+sed "s|%BIT_FILE%|$PRJ_DIR_CREATED/$BIT_FILE|" \
     bif/all.bif.in > \
     bif/all.bif
 
