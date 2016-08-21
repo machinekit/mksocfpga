@@ -1,22 +1,22 @@
 #!/bin/sh
 
-# TCL Template Filename
+# TCL Template Filename. Leave this here
+# to let the config decide if the base template is
+# correct for the project
 TCL_TEMP_FILE=../../zynq_bp.tcl.in
-
-# Base Project Name
-PRJ_NAME=zturn_jd2cb_z7020_bp
 
 # The fpga device we are building for
 FPGA_DEVICE=xc7z020clg400-1
+FPGA_DEV_SHORT=7z020
+
+# Base Project Name
+PRJ_NAME=zturn_jd2cb_"$FPGA_DEV_SHORT"
 
 # The board part file url, if the target has one
 BOARD_PART=""
 
 # The physical package pin constraint file
 PIN_HW_XDC_FILE=const/zturn_jd2cb_pinmap.xdc
-
-# The name of the bitfile
-BIT_FILE=zturn_jd2cb_z7020.bit
 
 # The filename of the top level block diagram
 TOP_LEVEL_BD_FILE=scripts/zturn_jd2cb_bd.tcl

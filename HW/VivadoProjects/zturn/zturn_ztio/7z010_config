@@ -3,17 +3,18 @@
 # TCL Template Filename
 TCL_TEMP_FILE=../../zynq_bp.tcl.in
 
-# Base Project Name
-PRJ_NAME=zturn_ztio_z7020_bp
-
 # The fpga device we are building for
-FPGA_DEVICE=xc7z020clg400-1
+FPGA_DEVICE=xc7z010clg400-1
+FPGA_DEV_SHORT=7z010
+
+# Base Project Name
+PRJ_NAME=zturn_ztio_"$FPGA_DEV_SHORT"
+
+# The board part file url, if the target has one
+BOARD_PART=""
 
 # The physical package pin constraint file
 PIN_HW_XDC_FILE=const/zturn_ztio_pinmap.xdc
-
-# The name of the bitfile
-BIT_FILE=zturn_ztio_z7020.bit
 
 # The filename of the top level block diagram
 TOP_LEVEL_BD_FILE=scripts/zturn_ztio_bd.tcl
