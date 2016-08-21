@@ -1,17 +1,16 @@
 # find all $(FWEXT) files in $(BASEDIR)
 # generate a matching dts containing the path name
-# convert to dtbo under /lib/firmware/zynq/dtbo/<bit.bin-basename>_ol.dtbo
+# convert to dtbo under /lib/firmware/zynq/dtbo/<dts-name>.dtbo
 
 # use dtc which came with kernel:
 #DTC  := /usr/src/linux-headers-$(shell uname -r)/scripts/dtc/dtc
 DTC := dtc
 
-BASEDIR := /lib/firmware/zynq
-FWEXT   := bit.bin
+BASEDIR := /lib/firmware/zynq/dtbo
 
 
-FW_BASENAMES := $(patsubst %.$(FWEXT),%,$(patsubst $(BASEDIR)/%,%, $(wildcard $(BASEDIR)/*.$(FWEXT))))
-DTBO := $(addprefix $(BASEDIR)/dtbo/, $(addsuffix _ol.dtbo,$(FW_BASENAMES)))
+FW_BASENAMES := $(patsubst %.dts,%,$(wildcard $(BASEDIR)/*.dts))
+DTBO := $(addsuffix .dtbo,$(FW_BASENAMES))
 
 all:	$(DTBO)
 
