@@ -69,19 +69,19 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 use work.IDROMConst.all;
 
-package PIN_7I76_7I85S_GPIO_GPIO is
+package PIN_7I77_7I76_GPIO_GPIO is
     constant ModuleID : ModuleIDType :=(
         -- GTag             Version Clock           NumInst BaseAddr                    NumRegisters            Strides MultiRegs
-        (HM2DPLLTag,        x"00",  ClockLowTag,    x"01",  HM2DPLLBaseRateAddr&PadT,   HM2DPLLNumRegs,         x"00",  HM2DPLLMPBitMask),
         (WatchDogTag,       x"00",  ClockLowTag,    x"01",  WatchDogTimeAddr&PadT,      WatchDogNumRegs,        x"00",  WatchDogMPBitMask),
         (IOPortTag,         x"00",  ClockLowTag,    x"04",  PortAddr&PadT,              IOPortNumRegs,          x"00",  IOPortMPBitMask),
-        (QcountTag,         x"02",  ClockLowTag,    x"01",  QcounterAddr&PadT,          QCounterNumRegs,        x"00",  QCounterMPBitMask),
         (MuxedQcountTag,    MQCRev, ClockLowTag,    x"08",  MuxedQcounterAddr&PadT,     MuxedQCounterNumRegs,   x"00", MuxedQCounterMPBitMask),
         (MuxedQCountSelTag, x"00",  ClockLowTag,    x"01",  NullAddr&PadT,              x"00",                  x"00",  x"00000000"),
-        (SSerialTag,        x"00",  ClockLowTag,    x"03",  SSerialCommandAddr&PadT,    SSerialNumRegs,         x"10",  SSerialMPBitMask),
-        (StepGenTag,        x"02",  ClockLowTag,    x"0D",  StepGenRateAddr&PadT,       StepGenNumRegs,         x"00",  StepGenMPBitMask),
+        (QcountTag,         x"02",  ClockLowTag,    x"01",  QcounterAddr&PadT,          QCounterNumRegs,        x"00",  QCounterMPBitMask),
+        (SSerialTag,        x"00",  ClockLowTag,    x"01",  SSerialCommandAddr&PadT,    SSerialNumRegs,         x"10",  SSerialMPBitMask),
+        (StepGenTag,        x"02",  ClockLowTag,    x"05",  StepGenRateAddr&PadT,       StepGenNumRegs,         x"00",  StepGenMPBitMask),
         (LEDTag,            x"00",  ClockLowTag,    x"01",  LEDAddr&PadT,               LEDNumRegs,             x"00",  LEDMPBitMask),
         (FWIDTag,           x"00",  ClockLowTag,    x"01",  FWIDAddr&PadT,              FWIDNumRegs,            x"00",  FWIDMPBitMask),
+        (NullTag,           x"00",  NullTag,        x"00",  NullAddr&PadT,              x"00",                  x"00",  x"00000000"),
         (NullTag,           x"00",  NullTag,        x"00",  NullAddr&PadT,              x"00",                  x"00",  x"00000000"),
         (NullTag,           x"00",  NullTag,        x"00",  NullAddr&PadT,              x"00",                  x"00",  x"00000000"),
         (NullTag,           x"00",  NullTag,        x"00",  NullAddr&PadT,              x"00",                  x"00",  x"00000000"),
@@ -110,44 +110,44 @@ package PIN_7I76_7I85S_GPIO_GPIO is
     constant PinDesc : PinDescType :=(
 --      Base       Sec      Sec       Sec
 --      func       unit     func      pin                           -- hostmot2 DE0-Nano    DB25-P2
-        IOPortTag & x"00" & StepGenTag & StepGenDirPin,             -- I/O 00   GPIO_0 16   PIN 1
-        IOPortTag & x"00" & StepGenTag & StepGenStepPin,            -- I/O 01   GPIO_0 17   PIN 14
-        IOPortTag & x"01" & StepGenTag & StepGenDirPin,             -- I/O 02   GPIO_0 14   PIN 2
-        IOPortTag & x"01" & StepGenTag & StepGenStepPin,            -- I/O 03   GPIO_0 15   PIN 15
-        IOPortTag & x"02" & StepGenTag & StepGenDirPin,             -- I/O 04   GPIO_0 12   PIN 3
-        IOPortTag & x"02" & StepGenTag & StepGenStepPin,            -- I/O 05   GPIO_0 13   PIN 16
-        IOPortTag & x"03" & StepGenTag & StepGenDirPin,             -- I/O 06   GPIO_0 10   PIN 4
-        IOPortTag & x"03" & StepGenTag & StepGenStepPin,            -- I/O 07   GPIO_0 11   PIN 17
-        IOPortTag & x"04" & StepGenTag & StepGenDirPin,             -- I/O 08   GPIO_0 08   PIN 5
-        IOPortTag & x"04" & StepGenTag & StepGenStepPin,            -- I/O 09   GPIO_0 09   PIN 6
-        IOPortTag & x"00" & SSerialTag & SSerialTX0Pin,             -- I/O 10   GPIO_0 06   PIN 7
-        IOPortTag & x"00" & SSerialTag & SSerialRX0Pin,             -- I/O 11   GPIO_0 07   PIN 8
-        IOPortTag & x"00" & SSerialTag & SSerialTX1Pin,             -- I/O 12   GPIO_0 04   PIN 9
-        IOPortTag & x"00" & SSerialTag & SSerialRX1Pin,             -- I/O 13   GPIO_0 05   PIN 10
-        IOPortTag & x"00" & QCountTag & x"03",                      -- I/O 14   GPIO_0 02   PIN 11
-        IOPortTag & x"00" & QCountTag & x"02",                      -- I/O 15   GPIO_0 03   PIN 12
-        IOPortTag & x"00" & QCountTag & x"01",                      -- I/O 16   GPIO_0 00   PIN 13
+        IOPortTag & x"00" & SSerialTag & SSerialTXEN2Pin,           -- I/O 00   GPIO_0 16   PIN 1
+        IOPortTag & x"00" & SSerialTag & SSerialTX2Pin,             -- I/O 01   GPIO_0 17   PIN 14
+        IOPortTag & x"00" & SSerialTag & SSerialRX2Pin,             -- I/O 02   GPIO_0 14   PIN 2
+        IOPortTag & x"00" & SSerialTag & SSerialTX1Pin,             -- I/O 03   GPIO_0 15   PIN 15
+        IOPortTag & x"00" & SSerialTag & SSerialRX1Pin,             -- I/O 04   GPIO_0 12   PIN 3
+        IOPortTag & x"00" & SSerialTag & SSerialTX0Pin,             -- I/O 05   GPIO_0 13   PIN 16
+        IOPortTag & x"00" & SSerialTag & SSerialRX0Pin,             -- I/O 06   GPIO_0 10   PIN 4
+        IOPortTag & x"00" & MuxedQCountSelTag & MuxedQCountSel0Pin, -- I/O 07   GPIO_0 11   PIN 17
+        IOPortTag & x"00" & MuxedQCountTag & MuxedQCountQAPin,      -- I/O 08   GPIO_0 08   PIN 5
+        IOPortTag & x"00" & MuxedQCountTag & MuxedQCountQBPin,      -- I/O 09   GPIO_0 09   PIN 6
+        IOPortTag & x"00" & MuxedQCountTag & MuxedQCountIDXPin,     -- I/O 10   GPIO_0 06   PIN 7
+        IOPortTag & x"01" & MuxedQCountTag & MuxedQCountQAPin,      -- I/O 11   GPIO_0 07   PIN 8
+        IOPortTag & x"01" & MuxedQCountTag & MuxedQCountQBPin,      -- I/O 12   GPIO_0 04   PIN 9
+        IOPortTag & x"01" & MuxedQCountTag & MuxedQCountIDXPin,     -- I/O 13   GPIO_0 05   PIN 10
+        IOPortTag & x"02" & MuxedQCountTag & MuxedQCountQAPin,      -- I/O 14   GPIO_0 02   PIN 11
+        IOPortTag & x"02" & MuxedQCountTag & MuxedQCountQBPin,      -- I/O 15   GPIO_0 03   PIN 12
+        IOPortTag & x"02" & MuxedQCountTag & MuxedQCountIDXPin,     -- I/O 16   GPIO_0 00   PIN 13
                                                                     --          GPIO_0 01           LED0
 
 --      Base       Sec      Sec       Sec
 --      func       unit     func      pin                           -- hostmot2 DE0-Nano    DB25-P2
-        IOPortTag & x"00" & SSerialTag & SSerialRX2Pin,             -- I/O 17   GPIO_0 34   PIN 1
-        IOPortTag & x"00" & SSerialTag & SSerialTX2Pin,             -- I/O 18   GPIO_0 35   PIN 14
-        IOPortTag & x"08" & StepGenTag & StepGenStepPin,            -- I/O 19   GPIO_0 32   PIN 2
-        IOPortTag & x"08" & StepGenTag & StepGenDirPin,             -- I/O 20   GPIO_0 33   PIN 15
-        IOPortTag & x"07" & StepGenTag & StepGenStepPin,            -- I/O 21   GPIO_0 30   PIN 3
-        IOPortTag & x"07" & StepGenTag & StepGenDirPin,             -- I/O 22   GPIO_0 31   PIN 16
-        IOPortTag & x"06" & StepGenTag & StepGenStepPin,            -- I/O 23   GPIO_0 28   PIN 4
-        IOPortTag & x"06" & StepGenTag & StepGenDirPin,             -- I/O 24   GPIO_0 29   PIN 17
-        IOPortTag & x"05" & StepGenTag & StepGenStepPin,            -- I/O 25   GPIO_0 26   PIN 5
-        IOPortTag & x"05" & StepGenTag & StepGenDirPin,             -- I/O 26   GPIO_0 27   PIN 6
-        IOPortTag & x"00" & MuxedQCountSelTag & MuxedQCountSel0Pin, -- I/O 27   GPIO_0 24   PIN 7
-        IOPortTag & x"00" & MuxedQCountTag & MuxedQCountQAPin,      -- I/O 28   GPIO_0 25   PIN 8
-        IOPortTag & x"00" & MuxedQCountTag & MuxedQCountQBPin,      -- I/O 29   GPIO_0 22   PIN 9
-        IOPortTag & x"00" & MuxedQCountTag & MuxedQCountIDXPin,     -- I/O 30   GPIO_0 23   PIN 10
-        IOPortTag & x"01" & MuxedQCountTag & MuxedQCountQAPin,      -- I/O 31   GPIO_0 20   PIN 11
-        IOPortTag & x"01" & MuxedQCountTag & MuxedQCountQBPin,      -- I/O 32   GPIO_0 21   PIN 12
-        IOPortTag & x"01" & MuxedQCountTag & MuxedQCountIDXPin,     -- I/O 33   GPIO_0 18   PIN 13
+        IOPortTag & x"00" & StepGenTag & StepGenDirPin,             -- I/O 17   GPIO_0 34   PIN 1
+        IOPortTag & x"00" & StepGenTag & StepGenStepPin,            -- I/O 18   GPIO_0 35   PIN 14
+        IOPortTag & x"01" & StepGenTag & StepGenDirPin,             -- I/O 19   GPIO_0 32   PIN 2
+        IOPortTag & x"01" & StepGenTag & StepGenStepPin,            -- I/O 20   GPIO_0 33   PIN 15
+        IOPortTag & x"02" & StepGenTag & StepGenDirPin,             -- I/O 21   GPIO_0 30   PIN 3
+        IOPortTag & x"02" & StepGenTag & StepGenStepPin,            -- I/O 22   GPIO_0 31   PIN 16
+        IOPortTag & x"03" & StepGenTag & StepGenDirPin,             -- I/O 23   GPIO_0 28   PIN 4
+        IOPortTag & x"03" & StepGenTag & StepGenStepPin,            -- I/O 24   GPIO_0 29   PIN 17
+        IOPortTag & x"04" & StepGenTag & StepGenDirPin,             -- I/O 25   GPIO_0 26   PIN 5
+        IOPortTag & x"04" & StepGenTag & StepGenStepPin,            -- I/O 26   GPIO_0 27   PIN 6
+        IOPortTag & x"00" & SSerialTag & SSerialTX3Pin,             -- I/O 27   GPIO_0 24   PIN 7
+        IOPortTag & x"00" & SSerialTag & SSerialRX3Pin,             -- I/O 28   GPIO_0 25   PIN 8
+        IOPortTag & x"00" & SSerialTag & SSerialTX4Pin,             -- I/O 29   GPIO_0 22   PIN 9
+        IOPortTag & x"00" & SSerialTag & SSerialRX4Pin,             -- I/O 30   GPIO_0 23   PIN 10
+        IOPortTag & x"03" & QCountTag & x"03",                      -- I/O 31   GPIO_0 20   PIN 11
+        IOPortTag & x"03" & QCountTag & x"02",                      -- I/O 32   GPIO_0 21   PIN 12
+        IOPortTag & x"03" & QCountTag & x"01",                      -- I/O 33   GPIO_0 18   PIN 13
                                                                     --          GPIO_0 19           LED1
 
 --      Base       Sec      Sec       Sec
@@ -204,4 +204,4 @@ package PIN_7I76_7I85S_GPIO_GPIO is
         emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,
         emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin);
 
-end package PIN_7I76_7I85S_GPIO_GPIO;
+end package PIN_7I77_7I76_GPIO_GPIO;

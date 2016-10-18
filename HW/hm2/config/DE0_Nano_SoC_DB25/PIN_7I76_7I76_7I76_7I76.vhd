@@ -130,24 +130,25 @@ package PIN_7I76_7I76_7I76_7I76 is
                                                                     --          GPIO_0 01           LED0
 
 --      Base       Sec      Sec       Sec
---      func       unit     func      pin                           -- I/O 17   GPIO_0 34   PIN 1
-        IOPortTag & x"05" & StepGenTag & StepGenDirPin,             -- I/O 18   GPIO_0 35   PIN 14
-        IOPortTag & x"05" & StepGenTag & StepGenStepPin,            -- I/O 19   GPIO_0 32   PIN 2
-        IOPortTag & x"06" & StepGenTag & StepGenDirPin,             -- I/O 20   GPIO_0 33   PIN 15
-        IOPortTag & x"06" & StepGenTag & StepGenStepPin,            -- I/O 21   GPIO_0 30   PIN 3
-        IOPortTag & x"07" & StepGenTag & StepGenDirPin,             -- I/O 22   GPIO_0 31   PIN 16
-        IOPortTag & x"07" & StepGenTag & StepGenStepPin,            -- I/O 23   GPIO_0 28   PIN 4
-        IOPortTag & x"08" & StepGenTag & StepGenDirPin,             -- I/O 24   GPIO_0 29   PIN 17
-        IOPortTag & x"08" & StepGenTag & StepGenStepPin,            -- I/O 25   GPIO_0 26   PIN 5
-        IOPortTag & x"09" & StepGenTag & StepGenDirPin,             -- I/O 26   GPIO_0 27   PIN 6
-        IOPortTag & x"09" & StepGenTag & StepGenStepPin,            -- I/O 27   GPIO_0 24   PIN 7
-        IOPortTag & x"00" & SSerialTag & SSerialTX2Pin,             -- I/O 28   GPIO_0 25   PIN 8
-        IOPortTag & x"00" & SSerialTag & SSerialRX2Pin,             -- I/O 29   GPIO_0 22   PIN 9
-        IOPortTag & x"00" & SSerialTag & SSerialTX3Pin,             -- I/O 30   GPIO_0 23   PIN 10
-        IOPortTag & x"00" & SSerialTag & SSerialRX3Pin,             -- I/O 31   GPIO_0 20   PIN 11
-        IOPortTag & x"01" & QCountTag & x"03",                      -- I/O 32   GPIO_0 21   PIN 12
-        IOPortTag & x"01" & QCountTag & x"02",                      -- I/O 33   GPIO_0 18   PIN 13
-        IOPortTag & x"01" & QCountTag & x"01",                      --          GPIO_0 19           LED1
+--      func       unit     func      pin                           -- hostmot2 DE0-Nano    DB25-P2
+        IOPortTag & x"05" & StepGenTag & StepGenDirPin,             -- I/O 17   GPIO_0 34   PIN 1
+        IOPortTag & x"05" & StepGenTag & StepGenStepPin,            -- I/O 18   GPIO_0 35   PIN 14
+        IOPortTag & x"06" & StepGenTag & StepGenDirPin,             -- I/O 19   GPIO_0 32   PIN 2
+        IOPortTag & x"06" & StepGenTag & StepGenStepPin,            -- I/O 20   GPIO_0 33   PIN 15
+        IOPortTag & x"07" & StepGenTag & StepGenDirPin,             -- I/O 21   GPIO_0 30   PIN 3
+        IOPortTag & x"07" & StepGenTag & StepGenStepPin,            -- I/O 22   GPIO_0 31   PIN 16
+        IOPortTag & x"08" & StepGenTag & StepGenDirPin,             -- I/O 23   GPIO_0 28   PIN 4
+        IOPortTag & x"08" & StepGenTag & StepGenStepPin,            -- I/O 24   GPIO_0 29   PIN 17
+        IOPortTag & x"09" & StepGenTag & StepGenDirPin,             -- I/O 25   GPIO_0 26   PIN 5
+        IOPortTag & x"09" & StepGenTag & StepGenStepPin,            -- I/O 26   GPIO_0 27   PIN 6
+        IOPortTag & x"00" & SSerialTag & SSerialTX2Pin,             -- I/O 27   GPIO_0 24   PIN 7
+        IOPortTag & x"00" & SSerialTag & SSerialRX2Pin,             -- I/O 28   GPIO_0 25   PIN 8
+        IOPortTag & x"00" & SSerialTag & SSerialTX3Pin,             -- I/O 29   GPIO_0 22   PIN 9
+        IOPortTag & x"00" & SSerialTag & SSerialRX3Pin,             -- I/O 30   GPIO_0 23   PIN 10
+        IOPortTag & x"01" & QCountTag & x"03",                      -- I/O 31   GPIO_0 20   PIN 11
+        IOPortTag & x"01" & QCountTag & x"02",                      -- I/O 32   GPIO_0 21   PIN 12
+        IOPortTag & x"01" & QCountTag & x"01",                      -- I/O 33   GPIO_0 18   PIN 13
+                                                                    --          GPIO_0 19           LED1
 
 --      Base       Sec      Sec       Sec
 --      func       unit     func      pin                           -- hostmot2 DE0-Nano    DB25-P2
