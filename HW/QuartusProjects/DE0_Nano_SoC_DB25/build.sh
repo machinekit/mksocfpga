@@ -44,10 +44,6 @@ build_config() {
     # the % character to support a batch-style variable scheme
     sed "s/%CONFIG%/${1}/g" <hostmot2_cfg.vhd.in > hostmot2_cfg.vhd
 
-
-    # generate the MIF file containing the FirmwareID protobuf message
-    python ../../firmware-tag/genfwid.py $1 >firmware_id.mif
-
     # Actually build the FPGA bit file
     make rbf
 
@@ -88,6 +84,10 @@ fi
 # Cleanup all stamp files to trigger a full rebuild
 # Including processing the qsys files into synthesizable code
 make clean
+
+# Generate the MIF file containing the FirmwareID protobuf message
+# This only needs to be done once per board
+python ../../firmware-tag/genfwid.py ${BOARDNAME} > firmware_id.mif
 
 # Build each configuration, one at a time
 for CONFIG in ${CONFIG_NAMES} ; do
