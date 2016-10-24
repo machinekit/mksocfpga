@@ -145,9 +145,9 @@ package PIN_7I77_7I76_GPIO_GPIO is
         IOPortTag & x"00" & SSerialTag & SSerialRX3Pin,             -- I/O 28   GPIO_0 25   PIN 8
         IOPortTag & x"00" & SSerialTag & SSerialTX4Pin,             -- I/O 29   GPIO_0 22   PIN 9
         IOPortTag & x"00" & SSerialTag & SSerialRX4Pin,             -- I/O 30   GPIO_0 23   PIN 10
-        IOPortTag & x"03" & QCountTag & x"03",                      -- I/O 31   GPIO_0 20   PIN 11
-        IOPortTag & x"03" & QCountTag & x"02",                      -- I/O 32   GPIO_0 21   PIN 12
-        IOPortTag & x"03" & QCountTag & x"01",                      -- I/O 33   GPIO_0 18   PIN 13
+        IOPortTag & x"00" & QCountTag & QCountIdxPin,               -- I/O 31   GPIO_0 20   PIN 11
+        IOPortTag & x"00" & QCountTag & QCountQBPin,                -- I/O 32   GPIO_0 21   PIN 12
+        IOPortTag & x"00" & QCountTag & QCountQAPin,                -- I/O 33   GPIO_0 18   PIN 13
                                                                     --          GPIO_0 19           LED1
 
 --      Base       Sec      Sec       Sec
