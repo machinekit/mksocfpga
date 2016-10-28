@@ -207,7 +207,7 @@ begin
    rd_addr_mux : process(addr_rd, odata_ctrl, odata_rx)
    begin
      case(addr_rd) is
-       when x"0600" | x"0604" | x"0608" | x"060C" =>
+       when x"0800" | x"0804" | x"0808" | x"080C" =>
           odata <= odata_rx;
        when others =>
           odata <= odata_ctrl;

@@ -57,10 +57,10 @@ architecture beh of pkt_receiver_rx is
     signal reg_chkerr_cnt : std_logic_vector(31 downto 0) := (others => '0');
 
     -- addresses
-    constant REG_OF_ERR_ADDR : std_logic_vector(15 downto 0) := x"0600";
-    constant REG_FR_ERR_ADDR : std_logic_vector(15 downto 0) := x"0604";
-    constant REG_BYTE_CNT_ADDR : std_logic_vector(15 downto 0) := x"0608";
-    constant REG_CHKERR_CNT_ADDR : std_logic_vector(15 downto 0) := x"060C";
+    constant REG_OF_ERR_ADDR : std_logic_vector(15 downto 0) := x"0800";
+    constant REG_FR_ERR_ADDR : std_logic_vector(15 downto 0) := x"0804";
+    constant REG_BYTE_CNT_ADDR : std_logic_vector(15 downto 0) := x"0808";
+    constant REG_CHKERR_CNT_ADDR : std_logic_vector(15 downto 0) := x"080C";
 begin
 
     -- Reading registers mux
