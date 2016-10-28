@@ -36,9 +36,13 @@ entity btint_controller is
 end entity;
 
 architecture beh of btint_controller is
-	type sm_type is (start, send_qry_g10int, send_qry_g10x, send_qry_g10x2, send_qry_g10x3,
-                   send_qry_g20int, send_qry_g20x, send_qry_g20x2, send_qry_g20x3,
-                   send_qry_g300int, send_qry_g300x, send_qry_g300x2, send_qry_g300x3,
+	type sm_type is (start, 
+	               send_qry_g10int, send_qry_g10x, send_qry_g10x2, 
+	               send_qry_g10x3, send_qry_g10x4, send_qry_g10x5,
+                   send_qry_g20int, send_qry_g20x, send_qry_g20x2, 
+                   send_qry_g20x3, send_qry_g20x4, send_qry_g20x5,
+                   send_qry_g300int, send_qry_g300x, send_qry_g300x2, 
+                   send_qry_g300x3, send_qry_g300x4, send_qry_g300x5,
                    send_qry_data, wait_for_resp, parse_resp_cmd,
                    parse_cal1, parse_data1,
                    parse_32_1, parse_32_2,
@@ -66,14 +70,20 @@ architecture beh of btint_controller is
     signal reg_gain_10x : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_gain_10x2 : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_gain_10x3 : std_logic_vector(31 downto 0) := (others => '0');
+    signal reg_gain_10x4 : std_logic_vector(31 downto 0) := (others => '0');
+    signal reg_gain_10x5 : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_gain_20int : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_gain_20x : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_gain_20x2 : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_gain_20x3 : std_logic_vector(31 downto 0) := (others => '0');
+    signal reg_gain_20x4 : std_logic_vector(31 downto 0) := (others => '0');
+    signal reg_gain_20x5 : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_gain_300int : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_gain_300x : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_gain_300x2 : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_gain_300x3 : std_logic_vector(31 downto 0) := (others => '0');
+    signal reg_gain_300x4 : std_logic_vector(31 downto 0) := (others => '0');
+    signal reg_gain_300x5 : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_outs : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_ins : std_logic_vector(31 downto 0) := (others => '0');
     signal reg_adc_value : std_logic_vector(31 downto 0) := (others => '0');
@@ -96,14 +106,20 @@ architecture beh of btint_controller is
     constant PKT_QRY_CAL_G10X_ADD : std_logic_vector(7 downto 0) := x"02";
     constant PKT_QRY_CAL_G10X2_ADD : std_logic_vector(7 downto 0) := x"03";
     constant PKT_QRY_CAL_G10X3_ADD : std_logic_vector(7 downto 0) := x"04";
-    constant PKT_QRY_CAL_G20INT_ADD : std_logic_vector(7 downto 0) := x"05";
-    constant PKT_QRY_CAL_G20X_ADD : std_logic_vector(7 downto 0) := x"06";
-    constant PKT_QRY_CAL_G20X2_ADD : std_logic_vector(7 downto 0) := x"07";
-    constant PKT_QRY_CAL_G20X3_ADD : std_logic_vector(7 downto 0) := x"08";
-    constant PKT_QRY_CAL_G300INT_ADD : std_logic_vector(7 downto 0) := x"09";
-    constant PKT_QRY_CAL_G300X_ADD : std_logic_vector(7 downto 0) := x"0A";
-    constant PKT_QRY_CAL_G300X2_ADD : std_logic_vector(7 downto 0) := x"0B";
-    constant PKT_QRY_CAL_G300X3_ADD : std_logic_vector(7 downto 0) := x"0C";
+    constant PKT_QRY_CAL_G10X4_ADD : std_logic_vector(7 downto 0) := x"05";
+    constant PKT_QRY_CAL_G10X5_ADD : std_logic_vector(7 downto 0) := x"06";
+    constant PKT_QRY_CAL_G20INT_ADD : std_logic_vector(7 downto 0) := x"15";
+    constant PKT_QRY_CAL_G20X_ADD : std_logic_vector(7 downto 0) := x"16";
+    constant PKT_QRY_CAL_G20X2_ADD : std_logic_vector(7 downto 0) := x"17";
+    constant PKT_QRY_CAL_G20X3_ADD : std_logic_vector(7 downto 0) := x"18";
+    constant PKT_QRY_CAL_G20X4_ADD : std_logic_vector(7 downto 0) := x"19";
+    constant PKT_QRY_CAL_G20X5_ADD : std_logic_vector(7 downto 0) := x"1A";
+    constant PKT_QRY_CAL_G300INT_ADD : std_logic_vector(7 downto 0) := x"29";
+    constant PKT_QRY_CAL_G300X_ADD : std_logic_vector(7 downto 0) := x"2A";
+    constant PKT_QRY_CAL_G300X2_ADD : std_logic_vector(7 downto 0) := x"2B";
+    constant PKT_QRY_CAL_G300X3_ADD : std_logic_vector(7 downto 0) := x"2C";
+    constant PKT_QRY_CAL_G300X4_ADD : std_logic_vector(7 downto 0) := x"2D";
+    constant PKT_QRY_CAL_G300X5_ADD : std_logic_vector(7 downto 0) := x"2E";
 
     -- addresses
     constant REG_MAGIC_ADD : std_logic_vector(15 downto 0) := x"0000";
@@ -112,19 +128,25 @@ architecture beh of btint_controller is
     constant REG_GAIN10X_ADD : std_logic_vector(15 downto 0) := x"0104";
     constant REG_GAIN10X2_ADD : std_logic_vector(15 downto 0) := x"0108";
     constant REG_GAIN10X3_ADD : std_logic_vector(15 downto 0) := x"010C";
-    constant REG_GAIN20INT_ADD : std_logic_vector(15 downto 0) := x"0110";
-    constant REG_GAIN20X_ADD : std_logic_vector(15 downto 0) := x"0114";
-    constant REG_GAIN20X2_ADD : std_logic_vector(15 downto 0) := x"0118";
-    constant REG_GAIN20X3_ADD : std_logic_vector(15 downto 0) := x"011C";
-    constant REG_GAIN300INT_ADD : std_logic_vector(15 downto 0) := x"0120";
-    constant REG_GAIN300X_ADD : std_logic_vector(15 downto 0) := x"0124";
-    constant REG_GAIN300X2_ADD : std_logic_vector(15 downto 0) := x"0128";
-    constant REG_GAIN300X3_ADD : std_logic_vector(15 downto 0) := x"012C";
-    constant REG_OUTS_ADD : std_logic_vector(15 downto 0) := x"0200";
-    constant REG_INS_ADD : std_logic_vector(15 downto 0) := x"0300";
-    constant REG_ADCVAL_ADD : std_logic_vector(15 downto 0) := x"0400";
-    constant REG_ERRCNT_ADD : std_logic_vector(15 downto 0) := x"0500";
-    constant REG_TIMERRCNT_ADD : std_logic_vector(15 downto 0) := x"0504";
+    constant REG_GAIN10X4_ADD : std_logic_vector(15 downto 0) := x"0110";
+    constant REG_GAIN10X5_ADD : std_logic_vector(15 downto 0) := x"0114";
+    constant REG_GAIN20INT_ADD : std_logic_vector(15 downto 0) := x"0200";
+    constant REG_GAIN20X_ADD : std_logic_vector(15 downto 0) := x"0204";
+    constant REG_GAIN20X2_ADD : std_logic_vector(15 downto 0) := x"0208";
+    constant REG_GAIN20X3_ADD : std_logic_vector(15 downto 0) := x"020C";
+    constant REG_GAIN20X4_ADD : std_logic_vector(15 downto 0) := x"0210";
+    constant REG_GAIN20X5_ADD : std_logic_vector(15 downto 0) := x"0214";
+    constant REG_GAIN300INT_ADD : std_logic_vector(15 downto 0) := x"0300";
+    constant REG_GAIN300X_ADD : std_logic_vector(15 downto 0) := x"0304";
+    constant REG_GAIN300X2_ADD : std_logic_vector(15 downto 0) := x"0308";
+    constant REG_GAIN300X3_ADD : std_logic_vector(15 downto 0) := x"030C";
+    constant REG_GAIN300X4_ADD : std_logic_vector(15 downto 0) := x"0310";
+    constant REG_GAIN300X5_ADD : std_logic_vector(15 downto 0) := x"0314";
+    constant REG_OUTS_ADD : std_logic_vector(15 downto 0) := x"0400";
+    constant REG_INS_ADD : std_logic_vector(15 downto 0) := x"0500";
+    constant REG_ADCVAL_ADD : std_logic_vector(15 downto 0) := x"0600";
+    constant REG_ERRCNT_ADD : std_logic_vector(15 downto 0) := x"0700";
+    constant REG_TIMERRCNT_ADD : std_logic_vector(15 downto 0) := x"0704";
 
 begin
   cnt_rst_n <= int_rst_n;
@@ -134,14 +156,20 @@ begin
                            (current_state = send_qry_g10x) or
                            (current_state = send_qry_g10x2) or
                            (current_state = send_qry_g10x3) or
+                           (current_state = send_qry_g10x4) or
+                           (current_state = send_qry_g10x5) or
                            (current_state = send_qry_g20int) or
                            (current_state = send_qry_g20x) or
                            (current_state = send_qry_g20x2) or
                            (current_state = send_qry_g20x3) or
+                           (current_state = send_qry_g20x4) or
+                           (current_state = send_qry_g20x5) or
                            (current_state = send_qry_g300int) or
                            (current_state = send_qry_g300x) or
                            (current_state = send_qry_g300x2) or
                            (current_state = send_qry_g300x3) or
+                           (current_state = send_qry_g300x4) or
+                           (current_state = send_qry_g300x5) or
                            (current_state = send_qry_data)) and (pkt_tx_busy = '0')) else '0';
     clear_sync <= '1' when (current_state = wait_for_sync and sync_pulse = '1') else '0';
     pp_data <= pp_data2 when (pp_buf_sel_s = '1') else pp_data1;
@@ -164,9 +192,12 @@ begin
 
     -- Reading registers mux
     reg_read : process(addr_rd, reg_control_lower, reg_control_upper,
-                       reg_gain_10int, reg_gain_10x, reg_gain_10x2, reg_gain_10x3,
-                       reg_gain_20int, reg_gain_20x, reg_gain_20x2, reg_gain_20x3,
-                       reg_gain_300int, reg_gain_300x, reg_gain_300x2, reg_gain_300x3,
+                       reg_gain_10int, reg_gain_10x, reg_gain_10x2, 
+                       reg_gain_10x3, reg_gain_10x4, reg_gain_10x5,
+                       reg_gain_20int, reg_gain_20x, reg_gain_20x2, 
+                       reg_gain_20x3, reg_gain_20x4, reg_gain_20x5,
+                       reg_gain_300int, reg_gain_300x, reg_gain_300x2, 
+                       reg_gain_300x3, reg_gain_300x4, reg_gain_300x5,
                        reg_outs, reg_ins, reg_adc_value, reg_err_cnt,
                        reg_timerr_cnt)
     begin
@@ -183,6 +214,10 @@ begin
                 odata <= reg_gain_10x2;
             when REG_GAIN10X3_ADD =>
                 odata <= reg_gain_10x3;
+            when REG_GAIN10X4_ADD =>
+                odata <= reg_gain_10x4;
+            when REG_GAIN10X5_ADD =>
+                odata <= reg_gain_10x5;    
             when REG_GAIN20INT_ADD =>
                 odata <= reg_gain_20int;
             when REG_GAIN20X_ADD =>
@@ -191,6 +226,10 @@ begin
                 odata <= reg_gain_20x2;
             when REG_GAIN20X3_ADD =>
                 odata <= reg_gain_20x3;
+            when REG_GAIN20X4_ADD =>
+                odata <= reg_gain_20x4;
+            when REG_GAIN20X5_ADD =>
+                odata <= reg_gain_20x5;        
             when REG_GAIN300INT_ADD =>
                 odata <= reg_gain_300int;
             when REG_GAIN300X_ADD =>
@@ -199,6 +238,10 @@ begin
                 odata <= reg_gain_300x2;
             when REG_GAIN300X3_ADD =>
                 odata <= reg_gain_300x3;
+            when REG_GAIN300X4_ADD =>
+                odata <= reg_gain_300x4;
+            when REG_GAIN300X5_ADD =>
+                odata <= reg_gain_300x5;    
             when REG_OUTS_ADD =>
                 odata <= reg_outs;
             when REG_INS_ADD =>
@@ -261,6 +304,10 @@ begin
                 pkt_tx_data <= PKT_QRY_CAL_CMD & PKT_QRY_CAL_G10X2_ADD & PKT_PAD_2B;
             when send_qry_g10x3 =>
                 pkt_tx_data <= PKT_QRY_CAL_CMD & PKT_QRY_CAL_G10X3_ADD & PKT_PAD_2B;
+            when send_qry_g10x4 =>
+                pkt_tx_data <= PKT_QRY_CAL_CMD & PKT_QRY_CAL_G10X4_ADD & PKT_PAD_2B;
+            when send_qry_g10x5 =>
+                pkt_tx_data <= PKT_QRY_CAL_CMD & PKT_QRY_CAL_G10X5_ADD & PKT_PAD_2B;    
             when send_qry_g20int =>
                 pkt_tx_data <= PKT_QRY_CAL_CMD & PKT_QRY_CAL_G20INT_ADD & PKT_PAD_2B;
             when send_qry_g20x =>
@@ -269,6 +316,10 @@ begin
                 pkt_tx_data <= PKT_QRY_CAL_CMD & PKT_QRY_CAL_G20X2_ADD & PKT_PAD_2B;
             when send_qry_g20x3 =>
                 pkt_tx_data <= PKT_QRY_CAL_CMD & PKT_QRY_CAL_G20X3_ADD & PKT_PAD_2B;
+            when send_qry_g20x4 =>
+                pkt_tx_data <= PKT_QRY_CAL_CMD & PKT_QRY_CAL_G20X4_ADD & PKT_PAD_2B;    
+            when send_qry_g20x5 =>
+                pkt_tx_data <= PKT_QRY_CAL_CMD & PKT_QRY_CAL_G20X5_ADD & PKT_PAD_2B;
             when send_qry_g300int =>
                 pkt_tx_data <= PKT_QRY_CAL_CMD & PKT_QRY_CAL_G300INT_ADD & PKT_PAD_2B;
             when send_qry_g300x =>
@@ -277,6 +328,10 @@ begin
                 pkt_tx_data <= PKT_QRY_CAL_CMD & PKT_QRY_CAL_G300X2_ADD & PKT_PAD_2B;
             when send_qry_g300x3 =>
                 pkt_tx_data <= PKT_QRY_CAL_CMD & PKT_QRY_CAL_G300X3_ADD & PKT_PAD_2B;
+            when send_qry_g300x4 =>
+                pkt_tx_data <= PKT_QRY_CAL_CMD & PKT_QRY_CAL_G300X4_ADD & PKT_PAD_2B;
+            when send_qry_g300x5 =>
+                pkt_tx_data <= PKT_QRY_CAL_CMD & PKT_QRY_CAL_G300X5_ADD & PKT_PAD_2B;        
             when send_qry_data =>
                 pkt_tx_data <= PKT_SETQRY_DATA_CMD & reg_outs(7 downto 0) & PKT_PAD_2B;
             when others =>
@@ -313,14 +368,20 @@ begin
             reg_gain_10x <= (others => '0');
             reg_gain_10x2 <= (others => '0');
             reg_gain_10x3 <= (others => '0');
+            reg_gain_10x4 <= (others => '0');
+            reg_gain_10x5 <= (others => '0');
             reg_gain_20int <= (others => '0');
             reg_gain_20x <= (others => '0');
             reg_gain_20x2 <= (others => '0');
             reg_gain_20x3 <= (others => '0');
+            reg_gain_20x4 <= (others => '0');
+            reg_gain_20x5 <= (others => '0');
             reg_gain_300int <= (others => '0');
             reg_gain_300x <= (others => '0');
             reg_gain_300x2 <= (others => '0');
             reg_gain_300x3 <= (others => '0');
+            reg_gain_300x4 <= (others => '0');
+            reg_gain_300x5 <= (others => '0');
             reg_ins <= (others => '0');
             reg_adc_value <= (others => '0');
             reg_control_upper <= (others => '0');
@@ -355,6 +416,10 @@ begin
                             reg_gain_10x2 <= reg_32_tmp;
                         when PKT_QRY_CAL_G10X3_ADD =>
                             reg_gain_10x3 <= reg_32_tmp;
+                        when PKT_QRY_CAL_G10X4_ADD =>
+                            reg_gain_10x4 <= reg_32_tmp;
+                        when PKT_QRY_CAL_G10X5_ADD =>
+                            reg_gain_10x5 <= reg_32_tmp;        
                         when PKT_QRY_CAL_G20INT_ADD =>
                             reg_gain_20int <= reg_32_tmp;
                         when PKT_QRY_CAL_G20X_ADD =>
@@ -363,6 +428,10 @@ begin
                             reg_gain_20x2 <= reg_32_tmp;
                         when PKT_QRY_CAL_G20X3_ADD =>
                             reg_gain_20x3 <= reg_32_tmp;
+                        when PKT_QRY_CAL_G20X4_ADD =>
+                            reg_gain_20x4 <= reg_32_tmp;
+                        when PKT_QRY_CAL_G20X5_ADD =>
+                            reg_gain_20x5 <= reg_32_tmp;        
                         when PKT_QRY_CAL_G300INT_ADD =>
                             reg_gain_300int <= reg_32_tmp;
                         when PKT_QRY_CAL_G300X_ADD =>
@@ -371,6 +440,10 @@ begin
                             reg_gain_300x2 <= reg_32_tmp;
                         when PKT_QRY_CAL_G300X3_ADD =>
                             reg_gain_300x3 <= reg_32_tmp;
+                        when PKT_QRY_CAL_G300X4_ADD =>
+                            reg_gain_300x4 <= reg_32_tmp;
+                        when PKT_QRY_CAL_G300X5_ADD =>
+                            reg_gain_300x5 <= reg_32_tmp;
                         when PKT_QRY_DATA_ADC_ADD =>
                             reg_adc_value <= reg_32_tmp;
                         when others =>
@@ -411,9 +484,12 @@ begin
         elsif (rising_edge(clk)) then
             timed_out <= '0';
             case current_state is
-                when send_qry_g10int | send_qry_g10x | send_qry_g10x2 | send_qry_g10x3 |
-                     send_qry_g20int | send_qry_g20x | send_qry_g20x2 | send_qry_g20x3 |
-                     send_qry_g300int | send_qry_g300x | send_qry_g300x2 | send_qry_g300x3 =>
+                when send_qry_g10int | send_qry_g10x | send_qry_g10x2 | 
+                     send_qry_g10x3 | send_qry_g10x4 | send_qry_g10x5 |
+                     send_qry_g20int | send_qry_g20x | send_qry_g20x2 | 
+                     send_qry_g20x3 | send_qry_g20x4 | send_qry_g20x5 |
+                     send_qry_g300int | send_qry_g300x | send_qry_g300x2 | 
+                     send_qry_g300x3 | send_qry_g300x4 | send_qry_g300x5 =>
                     timeout_tmr <= TIMEOUT_COUNT_VAL_ST;
                 when send_qry_data =>
                     timeout_tmr <= TIMEOUT_COUNT_VAL_DATA;
@@ -493,6 +569,16 @@ begin
                         next_state <= wait_for_resp;
                         new_prev_state <= send_qry_g10x3;
                     end if;
+                when send_qry_g10x4 =>
+                    if(pkt_tx_we_s = '1') then
+                        next_state <= wait_for_resp;
+                        new_prev_state <= send_qry_g10x4;
+                    end if;
+                when send_qry_g10x5 =>
+                    if(pkt_tx_we_s = '1') then
+                        next_state <= wait_for_resp;
+                        new_prev_state <= send_qry_g10x5;
+                    end if;
                 when send_qry_g20int =>
                     if(pkt_tx_we_s = '1') then
                         next_state <= wait_for_resp;
@@ -513,6 +599,16 @@ begin
                         next_state <= wait_for_resp;
                         new_prev_state <= send_qry_g20x3;
                     end if;
+                when send_qry_g20x4 =>
+                    if(pkt_tx_we_s = '1') then
+                        next_state <= wait_for_resp;
+                        new_prev_state <= send_qry_g20x4;
+                    end if;
+                when send_qry_g20x5 =>
+                    if(pkt_tx_we_s = '1') then
+                        next_state <= wait_for_resp;
+                        new_prev_state <= send_qry_g20x5;
+                    end if;
                 when send_qry_g300int =>
                     if(pkt_tx_we_s = '1') then
                         next_state <= wait_for_resp;
@@ -532,6 +628,16 @@ begin
                     if(pkt_tx_we_s = '1') then
                         next_state <= wait_for_resp;
                         new_prev_state <= send_qry_g300x3;
+                    end if;
+                when send_qry_g300x4 =>
+                    if(pkt_tx_we_s = '1') then
+                        next_state <= wait_for_resp;
+                        new_prev_state <= send_qry_g300x4;
+                    end if;
+                when send_qry_g300x5 =>
+                    if(pkt_tx_we_s = '1') then
+                        next_state <= wait_for_resp;
+                        new_prev_state <= send_qry_g300x5;
                     end if;
                 when send_qry_data =>
                     if(pkt_tx_we_s = '1') then
@@ -577,7 +683,11 @@ begin
                         when send_qry_g10x2 =>
                             next_state <= send_qry_g10x3;
                         when send_qry_g10x3 =>
-                            next_state <= send_qry_g20int;
+                            next_state <= send_qry_g10x4;
+                        when send_qry_g10x4 =>
+                            next_state <= send_qry_g10x5;
+                        when send_qry_g10x5 =>
+                            next_state <= send_qry_g20int;    
                         when send_qry_g20int =>
                             next_state <= send_qry_g20x;
                         when send_qry_g20x =>
@@ -585,7 +695,11 @@ begin
                         when send_qry_g20x2 =>
                             next_state <= send_qry_g20x3;
                         when send_qry_g20x3 =>
-                            next_state <= send_qry_g300int;
+                            next_state <= send_qry_g20x4;
+                        when send_qry_g20x4 =>
+                            next_state <= send_qry_g20x5;
+                        when send_qry_g20x5 =>
+                            next_state <= send_qry_g300int;        
                         when send_qry_g300int =>
                             next_state <= send_qry_g300x;
                         when send_qry_g300x =>
@@ -593,7 +707,11 @@ begin
                         when send_qry_g300x2 =>
                             next_state <= send_qry_g300x3;
                         when send_qry_g300x3 =>
-                            next_state <= send_qry_data;
+                            next_state <= send_qry_g300x4;
+                        when send_qry_g300x4 =>
+                            next_state <= send_qry_g300x5;
+                        when send_qry_g300x5 =>
+                            next_state <= send_qry_data;        
                         when others =>
                             next_state <= wait_for_sync;
                     end case;
