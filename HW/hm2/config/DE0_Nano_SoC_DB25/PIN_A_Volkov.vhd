@@ -69,7 +69,7 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 use work.IDROMConst.all;
 
-package PIN_7I76_7I76_7I76_7I76 is
+package PIN_A_Volkov is
     constant ModuleID : ModuleIDType :=(
         -- GTag             Version Clock           NumInst BaseAddr                    NumRegisters            Strides MultiRegs
         (HM2DPLLTag,        x"00",  ClockLowTag,    x"01",  HM2DPLLBaseRateAddr&PadT,   HM2DPLLNumRegs,         x"00",  HM2DPLLMPBitMask),
@@ -204,4 +204,4 @@ package PIN_7I76_7I76_7I76_7I76 is
         emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,
         emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin);
 
-end package PIN_7I76_7I76_7I76_7I76;
+end package PIN_A_Volkov;
