@@ -77,7 +77,7 @@ package PIN_A_Volkov is
         (IOPortTag,         x"00",  ClockLowTag,    x"04",  PortAddr&PadT,              IOPortNumRegs,          x"00",  IOPortMPBitMask),
         (QcountTag,         x"02",  ClockLowTag,    x"04",  QcounterAddr&PadT,          QCounterNumRegs,        x"00",  QCounterMPBitMask),
         (StepGenTag,        x"02",  ClockLowTag,    x"0C",  StepGenRateAddr&PadT,       StepGenNumRegs,         x"00",  StepGenMPBitMask),
-        (PWMTag,            x"00", ClockHighTag,    x"02",  PWMValAddr&PadT,            PWMNumRegs,             x"00",  PWMMPBitMask),
+        (PWMTag,            x"00",  ClockHighTag,   x"04",  PWMValAddr&PadT,            PWMNumRegs,             x"00",  PWMMPBitMask),
         (LEDTag,            x"00",  ClockLowTag,    x"01",  LEDAddr&PadT,               LEDNumRegs,             x"00",  LEDMPBitMask),
         (FWIDTag,           x"00",  ClockLowTag,    x"01",  FWIDAddr&PadT,              FWIDNumRegs,            x"00",  FWIDMPBitMask),
         (NullTag,           x"00",  NullTag,        x"00",  NullAddr&PadT,              x"00",                  x"00",  x"00000000"),
