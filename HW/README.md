@@ -15,7 +15,7 @@ Start Quartus shell:
 
 cd to one of the quartus project folders:
 
-    cd /the-snowwhite_git/mksocfpga/HW/QuartusProjects/DE0_NANO_SOC_GHRD
+    cd /the-snowwhite_git/mksocfpga/HW/QuartusProjects/DE0_Nano_SoC_Cramps
 
 to start quartus gui with the project in current folder loaded:
 

@@ -643,7 +643,7 @@ set_global_assignment -name VHDL_FILE soc_system_pkg.vhd
 set_global_assignment -name VHDL_FILE ../../cv-ip/cv_ip_pkg.vhd
 #============================================================
 # Firmware ID ROM
-set_global_assignment -name VHDL_FILE firmware_id.vhd
+set_global_assignment -name VHDL_FILE ../Common/firmware_id.vhd
 
 # common MESA Hostmot 2 Sources:
 set_global_assignment -name QIP_FILE ../../hm2/hm2_socfpga.qip

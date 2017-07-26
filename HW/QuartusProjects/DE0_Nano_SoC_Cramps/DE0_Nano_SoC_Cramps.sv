@@ -34,7 +34,7 @@
 `define ENABLE_HPS
 //`define ENABLE_CLK
 
-module DE0_NANO(
+module DE0_Nano_SoC_Cramps(
 
       ///////// ADC /////////
       output             ADC_CONVST,

@@ -2,11 +2,11 @@
 # library pin;
 # use pin.Pintypes.all;
 
-set_global_assignment -name VHDL_FILE ../../hm2/config/DE0_Nano/hostmot2_cfg.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/config/DE0_Nano_SoC_Cramps/hostmot2_cfg.vhd
 
 # change the names of the 2 files below to recompile a new bitfile --->
 # Dev kit specific:
-set_global_assignment -name SYSTEMVERILOG_FILE ../../hm2/config/DE0_Nano/de0nano_2_34.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../hm2/config/DE0_Nano_SoC_Cramps/de0nano_2_34.sv
 
 # I/O Daughterboard adaptor specific:
 set_global_assignment -name VHDL_FILE ../../hm2/config/PIN_G540x2_34_dpll_irq.vhd -library pin
