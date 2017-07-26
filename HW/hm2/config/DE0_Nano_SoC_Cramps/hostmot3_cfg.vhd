@@ -67,36 +67,92 @@ use IEEE.std_logic_UNSIGNED.ALL;
 --     POSSIBILITY OF SUCH DAMAGE.
 --
 
-use work.DE0_Nano_SoC_DB25_card.all;
--- Uncomment one of the following
---use work.PIN_7I76_7I85S_GPIO_GPIO.all;
---use work.PIN_7I76_7I76_7I76_7I76.all;
-use work.PIN_%CONFIG%.all;
+library pin;
+use pin.Pintypes.all;
 
-entity HostMot2_cfg is
-    port (
+entity HostMot3_cfg is
+   	generic
+	(
+--	ThePinDesc: PinDescType;
+--	TheModuleID: ModuleIDType;
+--	IDROMType: integer;
+	SepClocks: boolean;
+	OneWS: boolean;
+--	UseStepGenPrescaler : boolean;
+--	UseIRQLogic: boolean;
+--	PWMRefWidth: integer;
+--	UseWatchDog: boolean;
+--	OffsetToModules: integer;
+--	OffsetToPinDesc: integer;
+	ClockHigh: integer;
+	ClockMed: integer;
+	ClockLow: integer;
+	BoardNameLow : std_Logic_Vector(31 downto 0);
+	BoardNameHigh : std_Logic_Vector(31 downto 0);
+	FPGASize: integer;
+	FPGAPins: integer;
+	IOPorts: integer;
+	IOWidth: integer;
+	PortWidth: integer;
+	LIOWidth: integer;
+	LEDCount: integer;
+	BusWidth: integer;
+	AddrWidth: integer
+--	InstStride0: integer;
+--	InstStride1: integer;
+--	RegStride0: integer;
+--	RegStride1: integer
+		);
+   port (
      -- Generic 32  bit bus interface signals --
-    ibus        : in std_logic_vector(buswidth -1 downto 0);
-    obus        : out std_logic_vector(buswidth -1 downto 0);
-    addr        : in std_logic_vector(addrwidth -1 downto 2);
-    readstb     : in std_logic;
-    writestb    : in std_logic;
-    clklow      : in std_logic;
-    clkmed      : in std_logic;
-    clkhigh     : in std_logic;
-    irq         : out std_logic;
-    dreq        : out std_logic;
-    demandmode  : out std_logic;
-    iobits      : inout std_logic_vector (iowidth -1 downto 0);
-    liobits     : inout std_logic_vector (liowidth -1 downto 0);
-    rates       : out std_logic_vector (4 downto 0);
-    leds        : out std_logic_vector(ledcount-1 downto 0) );
-end HostMot2_cfg;
+    ibustop			: in std_logic_vector(BusWidth -1 downto 0);
+    obustop			: out std_logic_vector(BusWidth -1 downto 0);
+    addr				: in std_logic_vector(AddrWidth -1 downto 2);
+    readstb			: in std_logic;
+    writestb		: in std_logic;
+    clklow			: in std_logic;
+    clkmed			: in std_logic;
+    clkhigh			: in std_logic;
+    intirq			: out std_logic;
+    dreq				: out std_logic;
+    demandmode		: out std_logic;
+    iobitsouttop	: out std_logic_vector (IOWidth -1 downto 0);
+    iobitsintop	: in std_logic_vector (IOWidth -1 downto 0);
+--     liobits			: inout std_logic_vector (LIOWidth -1 downto 0);
+--     rates			: out std_logic_vector (4 downto 0);
+    leds				: out std_logic_vector(LEDCount-1 downto 0) );
+end HostMot3_cfg;
 
-architecture arch of HostMot2_cfg is
+architecture arch of HostMot3_cfg is
+
+	signal ibustop_sig : std_logic_vector(BusWidth -1 downto 0);
+	signal obustop_sig : std_logic_vector(BusWidth -1 downto 0);
+	signal addr_sig : std_logic_vector(AddrWidth -1 downto 2);
+	signal readstb_sig : std_logic;
+	signal writestb_sig : std_logic;
+	signal intirq_sig : std_logic;
+	signal iobitsouttop_sig : std_logic_vector(IOWidth -1 downto 0);
+	signal iobitsintop_sig : std_logic_vector(IOWidth -1 downto 0);
+	signal leds_sig : std_logic_vector(LEDCount -1 downto 0);
 
 begin
-    aHostMot2_cfg: entity work.HostMot2
+
+	process (clkhigh)
+	begin
+		if rising_edge(clkhigh) then
+			ibustop_sig <= ibustop;
+--			obustop <= obustop_sig;
+			addr_sig <= addr;
+			readstb_sig <= readstb;
+			writestb_sig <= writestb;
+--			intirq <= intirq_sig;
+--			iobitsouttop <= iobitsouttop_sig;
+			iobitsintop_sig <= iobitsintop;
+--			leds <= leds_sig;
+		end if;
+	end process;
+
+    aHostMot3_cfg: entity work.HostMot3
     generic map (
         ThePinDesc              => PinDesc,
         TheModuleID             => ModuleID,
@@ -118,29 +174,30 @@ begin
         FPGAPins                => FPGAPins,
         IOPorts                 => IOPorts,
         IOWidth                 => IOWidth,
-        LIOWidth                => LIOWidth,
         PortWidth               => PortWidth,
-        BusWidth                => 32,
-        AddrWidth               => 16,
+        LIOWidth                => LIOWidth,
+        LEDCount                => LEDCount,
+        BusWidth                => BusWidth,
+        AddrWidth               => AddrWidth,
         InstStride0             => 4,
         InstStride1             => 64,
         RegStride0              => 256,
-        RegStride1              => 256,
-        LEDCount                => LEDCount )
+        RegStride1              => 256 )
     port map (
-        ibus                    => ibus,
-        obus                    => obus,
-        addr                    => addr,
-        readstb                 => readstb,
-        writestb                => writestb,
+        ibustop                 => ibustop_sig,
+        obustop                 => obustop,
+        addr                    => addr_sig,
+        readstb                 => readstb_sig,
+        writestb                => writestb_sig,
         clklow                  => clklow,
         clkmed                  => clkmed,
         clkhigh                 => clkhigh,
-        int                     => irq,
+        intirq                  => intirq,
         dreq                    => dreq,
         demandmode              => demandmode,
-        iobits                  => iobits,
-        liobits                 => liobits,
-        rates                   => rates,
+        iobitsouttop            => iobitsouttop,
+        iobitsintop             => iobitsintop_sig,
+--         liobits                 => liobits,
+--         rates                   => rates,
         leds                    => leds );
 end arch;

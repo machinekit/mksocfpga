@@ -14,11 +14,23 @@ set_global_assignment -name VHDL_FILE ../../cv-megawizard/SRL16E.vhd
 
 # Default
 set_global_assignment -name VHDL_FILE ../../hm2/config/IDROMConst.vhd
-# HM2 topfile
-set_global_assignment -name VHDL_FILE ../../hm2/hostmot2.vhd
 
 # HM2 VHDL Setup and config probe functions:
 set_global_assignment -name QIP_FILE ../../hm2/functions/hm2_functions.qip
+
+# HM2 topfile
+set_global_assignment -name VHDL_FILE ../../hm2/hostmot3.vhd
+
+# Wrappers:
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeIOPorts.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeHm2Dpllmods.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeStepgens.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeQCounters.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeMuxedQCounters.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakePwmgens.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeTPPWMGens.vhd
+
+# HM2 cores:
 set_global_assignment -name VHDL_FILE ../../hm2/kubstepgenzi.vhd
 set_global_assignment -name VHDL_FILE ../../hm2/kubstepgenz.vhd
 set_global_assignment -name VHDL_FILE ../../hm2/wordrb.vhd

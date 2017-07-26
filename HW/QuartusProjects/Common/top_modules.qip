@@ -1,0 +1,6 @@
+set_global_assignment -name SYSTEMVERILOG_FILE ../Common/top_io_modules.sv
+set_global_assignment -name VERILOG_FILE "../../cv-ip/debounce/debounce.v"
+set_global_assignment -name VERILOG_FILE "../../cv-ip/altsource_probe/hps_reset.v"
+set_global_assignment -name VERILOG_FILE "../../cv-ip/edge_detect/altera_edge_detector.v"
+set_global_assignment -name VERILOG_FILE "../../cv-ip/intr_capturer/intr_capturer.v"
+set_global_assignment -name SYSTEMVERILOG_FILE ../Common/led_blinker.sv
