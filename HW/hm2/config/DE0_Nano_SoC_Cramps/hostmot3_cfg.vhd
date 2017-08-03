@@ -126,7 +126,7 @@ end HostMot3_cfg;
 architecture arch of HostMot3_cfg is
 
 	signal ibustop_sig : std_logic_vector(BusWidth -1 downto 0);
-	signal obustop_sig : std_logic_vector(BusWidth -1 downto 0);
+--	signal obustop_sig : std_logic_vector(BusWidth -1 downto 0);
 	signal addr_sig : std_logic_vector(AddrWidth -1 downto 2);
 	signal readstb_sig : std_logic;
 	signal writestb_sig : std_logic;

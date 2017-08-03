@@ -10,10 +10,10 @@ module adc_fifo(
     input   reset_n,
     input   addr,
     input   read,
-	 input	reg_outdata,
+    input   reg_outdata,
     input   write,
-    output  reg	[31:0]	readdataout,
-    input   		[31:0]	writedatain,
+    output  reg [31:0]  readdataout,
+    input   [31:0]      writedatain,
 
     input   adc_clk, // max 40mhz
 	// adc interface

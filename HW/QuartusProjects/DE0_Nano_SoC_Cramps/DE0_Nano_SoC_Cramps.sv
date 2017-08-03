@@ -147,7 +147,7 @@ parameter NumIOAddrReg = 6;
     wire        fpga_clk_50;
 // connection of internal logics
     assign LED[5:1] = fpga_led_internal;
-    assign fpga_clk_50 = FPGA_CLK2_50;
+    assign fpga_clk_50 = FPGA_CLK1_50;
     assign stm_hw_events    = {{15{1'b0}}, SW, fpga_led_internal, fpga_debounced_buttons};
 // hm2
     wire [AddrWidth-1:2]    hm_address;
@@ -160,7 +160,7 @@ parameter NumIOAddrReg = 6;
     wire                    hm_clk_med;
     wire                    hm_clk_high;
     wire                    adc_clk_40;
-    wire                    clklow_sig;
+//    wire                    clklow_sig;
     wire                    clkmed_sig;
     wire                    clkhigh_sig;
 
@@ -194,7 +194,7 @@ parameter NumIOAddrReg = 6;
 
 soc_system u0 (
     //Clock&Reset
-    .clk_clk                               (FPGA_CLK1_50 ),                               //                            clk.clk
+    .clk_clk                               (fpga_clk_50 ),                               //                            clk.clk
     .reset_reset_n                         (hps_fpga_reset_n ),                         //                          reset.reset_n
     //HPS ddr3
     .memory_mem_a                          ( HPS_DDR3_ADDR),                       //                memory.mem_a
@@ -293,7 +293,7 @@ soc_system u0 (
 
 top_io_modules top_io_modules_inst
 (
-	.clk(clklow_sig) ,	// input  clk_sig
+	.clk(fpga_clk_50) ,	// input  clk_sig
 	.reset_n(hps_fpga_reset_n) ,	// input  reset_n_sig
 	.button_in(KEY) ,	// input [KEY_WIDTH-1:0] button_in_sig
 	.button_out(fpga_debounced_buttons) ,	// output [KEY_WIDTH-1:0] button_out_sig
@@ -307,7 +307,7 @@ defparam top_io_modules_inst.KEY_WIDTH = 2;
 
 // Mesa code ------------------------------------------------------//
 
-assign clklow_sig = fpga_clk_50;
+//assign clklow_sig = fpga_clk_50;
 assign clkhigh_sig = hm_clk_high;
 assign clkmed_sig = hm_clk_med;
 
@@ -324,7 +324,7 @@ endgenerate
 
 gpio_adr_decoder_reg gpio_adr_decoder_reg_inst
 (
-	.CLOCK(clklow_sig) ,	// input  CLOCK_sig
+	.CLOCK(fpga_clk_50) ,	// input  CLOCK_sig
 	.reg_clk(clkhigh_sig) ,	// input  CLOCK_sig
 	.reset_reg_N(hps_fpga_reset_n) ,	// input  reset_reg_N_sig
 	.chip_sel(hm_chipsel[0]) ,	// input  data_ready_sig
@@ -372,7 +372,7 @@ HostMot3_cfg HostMot3_inst
 	.readstb(hm_read ) ,	// input  readstb_sig
 	.writestb(hm_write) ,	// input  writestb_sig
 
-	.clklow(clklow_sig) ,	// input  clklow_sig  				-- PCI clock --> all
+	.clklow(fpga_clk_50) ,	// input  clklow_sig  				-- PCI clock --> all
 	.clkmed(clkmed_sig) ,	// input  clkmed_sig  				-- Processor clock --> sserialwa, twiddle
 	.clkhigh(clkhigh_sig) ,	// input  clkhigh_sig				-- High speed clock --> most
 	.intirq(int_sig) ,	// output  int_sig							--int => LINT, ---> PCI ?

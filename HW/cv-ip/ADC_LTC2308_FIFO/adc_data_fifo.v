@@ -90,7 +90,7 @@ module adc_data_fifo (
 	defparam
 		dcfifo_component.intended_device_family = "Cyclone V",
 		dcfifo_component.lpm_numwords = 2048,
-		dcfifo_component.lpm_showahead = "ON",
+		dcfifo_component.lpm_showahead = "OFF",
 		dcfifo_component.lpm_type = "dcfifo",
 		dcfifo_component.lpm_width = 15,
 		dcfifo_component.lpm_widthu = 11,

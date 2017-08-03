@@ -9,7 +9,7 @@ def gen_fwid(*args,**kwargs):
     fw.comment = get_build_url()
 
     fw.fpga_part_number = "altera socfpga"
-    fw.num_leds = 4
+    fw.num_leds = 0
     fw.board_name = "Terasic DE0-Nano"
 
     c = fw.connector.add()
@@ -21,7 +21,7 @@ def gen_fwid(*args,**kwargs):
     c.pins = 24
 
     c = fw.connector.add()
-    c.name = "GPIO0.P3"
+    c.name = "GPIO0.P2"
     c.pins = 24
 
     return fw
