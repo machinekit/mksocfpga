@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ip>
+ <presets version="12.1">
+  <preset
+     name="15-inch-touch-lvds"
+     kind="alt_vip_itc"
+     version="All"
+     description="">
+   <parameter name="FIFO_DEPTH" value="1366" />
+   <parameter name="BPS" value="8" />
+   <parameter name="FIELD0_V_SYNC_LENGTH" value="0" />
+   <parameter name="F_FALLING_EDGE" value="0" />
+   <parameter name="FIELD0_V_BLANK" value="0" />
+   <parameter name="NO_OF_MODES" value="1" />
+   <parameter name="GENERATE_SYNC" value="0" />
+   <parameter name="AP_LINE" value="0" />
+   <parameter name="V_FRONT_PORCH" value="17" />
+   <parameter name="ANC_LINE" value="0" />
+   <parameter name="V_SYNC_LENGTH" value="10" />
+   <parameter name="CLOCKS_ARE_SAME" value="0" />
+   <parameter name="F_RISING_EDGE" value="0" />
+   <parameter name="FIELD0_ANC_LINE" value="0" />
+   <parameter name="H_ACTIVE_PIXELS" value="1366" />
+   <parameter name="H_SYNC_LENGTH" value="136" />
+   <parameter name="H_BLANK" value="0" />
+   <parameter name="FIELD0_V_FRONT_PORCH" value="0" />
+   <parameter name="USE_CONTROL" value="0" />
+   <parameter name="INTERLACED" value="0" />
+   <parameter name="H_FRONT_PORCH" value="208" />
+   <parameter name="STD_WIDTH" value="1" />
+   <parameter name="COLOUR_PLANES_ARE_IN_PARALLEL" value="1" />
+   <parameter name="V_BACK_PORCH" value="3" />
+   <parameter name="V_BLANK" value="0" />
+   <parameter name="THRESHOLD" value="1365" />
+   <parameter name="H_BACK_PORCH" value="72" />
+   <parameter name="FIELD0_V_BACK_PORCH" value="0" />
+   <parameter name="ACCEPT_COLOURS_IN_SEQ" value="0" />
+   <parameter name="USE_EMBEDDED_SYNCS" value="0" />
+   <parameter name="V_ACTIVE_LINES" value="768" />
+   <parameter name="NUMBER_OF_COLOUR_PLANES" value="4" />
+   <parameter name="FIELD0_V_RISING_EDGE" value="0" />
+  </preset>
+ </presets>
+</ip>

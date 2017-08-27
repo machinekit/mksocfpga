@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ip>
+ <presets version="12.1">
+  <preset
+     name="15-inch_touch-lvds"
+     kind="alt_vip_vfr"
+     version="All"
+     description="">
+   <parameter name="CLOCKS_ARE_SEPARATE" value="1" />
+   <parameter name="NUMBER_OF_CHANNELS_IN_PARALLEL" value="4" />
+   <parameter name="RMASTER_FIFO_DEPTH" value="64" />
+   <parameter name="MAX_IMAGE_HEIGHT" value="768" />
+   <parameter name="BITS_PER_PIXEL_PER_COLOR_PLANE" value="8" />
+   <parameter name="MAX_IMAGE_WIDTH" value="1366" />
+   <parameter name="NUMBER_OF_CHANNELS_IN_SEQUENCE" value="1" />
+   <parameter name="MEM_PORT_WIDTH" value="128" />
+   <parameter name="RMASTER_BURST_TARGET" value="32" />
+  </preset>
+ </presets>
+</ip>
