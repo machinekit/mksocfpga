@@ -1,2 +1,0 @@
-set_global_assignment -name VHDL_FILE ../../hm2/config/DE0_Nano_SoC_Cramps/hostmot3_cfg.vhd
-set_global_assignment -name SYSTEMVERILOG_FILE ../../hm2/config/DE0_Nano_SoC_Cramps/atlas_3_24.sv

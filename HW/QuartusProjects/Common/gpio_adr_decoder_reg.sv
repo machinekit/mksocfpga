@@ -77,6 +77,7 @@ parameter   MuxGPIOIOWidth  = 36;
 parameter   NumIOAddrReg    = 6;
 parameter   NumGPIO         = 2;
 
+parameter   Capsense        = 1;
 parameter   NumSense        = 4;
 parameter   ADC             = "";
 // local param
@@ -255,7 +256,7 @@ adc_ltc2308_fifo adc_ltc2308_fifo_inst
     assign mux_reg_index 	= busaddress_r - 16'h1120;
     assign mux_reg_addr		= (mux_reg_index[6:2]);
     assign mux_reg_byte		= (mux_reg_index[1:0]);
-
+generate if (Capsense >= 1) begin
     // Writes:
     always @( posedge reset_in or posedge write_address) begin
         if (reset_in) begin
@@ -265,7 +266,9 @@ adc_ltc2308_fifo adc_ltc2308_fifo_inst
             if (busaddress_r == 10'h0304) begin hysteresis_reg  <= busdata_in_r; end 
         end	
     end
-    
+end 
+endgenerate
+
     genvar il;
     generate
         for(il=0;il<NumIOAddrReg;il=il+1) begin : reg_initloop
@@ -323,7 +326,7 @@ adc_ltc2308_fifo adc_ltc2308_fifo_inst
 //	wire [GPIOWidth-1:0] gpio1_out_data = {gpio1_data_fromhm3[GPIOWidth-1:5],4'bz,charge};
 //	wire [GPIOWidth-1:0] gpio1_input_data;
 //	assign gpio_input_data[1] = {gpio1_input_data[GPIOWidth-1:5],sense,charge};
-
+generate if (Capsense >=1) begin
     bidir_io #(.IOWidth(GPIOWidth * NumGPIO),.PortNumWidth(PortNumWidth)) bidir_io_inst
     (
         .clk(reg_clk),
@@ -334,8 +337,20 @@ adc_ltc2308_fifo adc_ltc2308_fifo_inst
         .gpioport({gpioport[1],gpioport[0]}) ,	// inout [IOIOWidth-1:0] gpioport_sig
         .data_from_gpio({gpio_input_data[1],gpio_input_data[0]}) 	// output [IOIOWidth-1:0] read_data_sig
     );
-
-
+    end
+    else begin
+    bidir_io #(.IOWidth(GPIOWidth * NumGPIO),.PortNumWidth(PortNumWidth)) bidir_io_inst
+    (
+        .clk(reg_clk),
+        .portselnum(portnumsel),
+        .out_ena({out_ena[1],out_ena[0]}) ,	// input  out_ena_sig
+        .od({od[1],od[0]}) ,	// input  od_sig
+        .out_data({iodatafromhm3[1], iodatafromhm3[0]}) ,  // input [IOIOWidth-1:0] out_data_sig
+        .gpioport({gpioport[1],gpioport[0]}) ,	// inout [IOIOWidth-1:0] gpioport_sig
+        .data_from_gpio({gpio_input_data[1],gpio_input_data[0]}) 	// output [IOIOWidth-1:0] read_data_sig
+    );
+    end
+endgenerate
     // Read:
 
     integer oo,om,oi;
@@ -346,57 +361,85 @@ adc_ltc2308_fifo adc_ltc2308_fifo_inst
             busdata_to_cpu <= 32'b0;
         end
         else if (read_address) begin
-            if (adc_address_valid) begin busdata_to_cpu <= adc_data_out;	end
-//			if ((busaddress_r == 'h0200) || (busaddress_r == 'h0204)) begin busdata_to_cpu <= adc_data_out;	end
-            else if (busaddress_r == 'h0300) begin busdata_to_cpu <= touched;	end
-            else if (busaddress_r == 'h0304) begin busdata_to_cpu <= hysteresis_reg;	end
-            else if(busaddress_r == 'h1000) begin busdata_to_cpu <= {8'b0,gpio_input_data[0][23:0]}; end
-            else if(busaddress_r == 'h1004) begin busdata_to_cpu <= {8'b0,gpio_input_data[1][11:0],gpio_input_data[0][35:24]}; end
-            else if(busaddress_r == 'h1008) begin busdata_to_cpu <= {8'b0,gpio_input_data[1][35:12]}; end
-//			else if(busaddress_r == 'h100c) begin busdata_to_cpu <= {8'b0,gpio_input_data[2][23:0]}; end
-//			else if(busaddress_r == 'h1010) begin busdata_to_cpu <= {8'b0,gpio_input_data[3][11:0],gpio_input_data[2][35:24]}; end
-//			else if(busaddress_r == 'h1014) begin busdata_to_cpu <= {8'b0,gpio_input_data[3][35:12]}; end
-//			else if ((busaddress_r >= 16'h1100) && (busaddress_r < 16'h1200)) begin
-            else if (ddr_address_valid || od_address_valid) begin
-                for(oo=0;oo<NumIOAddrReg;oo=oo+1) begin : reggen_loop
-                    if (busaddress_r == ('h1100 + (oo*4))) begin busdata_to_cpu <= ddr_reg[oo]; end
-                    else if (busaddress_r == ('h1300 + (oo*4))) begin busdata_to_cpu <= od_reg[oo]; end
-                end
-            end
-            else if (mux_address_valid) begin
-                for(om=0;om<NumIOAddrReg;om=om+1) begin : mux_reggen_loop
-                    for(oi=0;oi<Mux_regPrIOReg;oi=oi+1) begin : mux_reggen_loop
-                        if (busaddress_r == ('h1120 + (om*24) + (oi*4))) begin busdata_to_cpu <= mux_reg[om][oi]; end
+            if (Capsense >= 1) begin
+                if (adc_address_valid) begin busdata_to_cpu <= adc_data_out;	end
+                else if (busaddress_r == 'h0300) begin busdata_to_cpu <= touched;	end
+                else if (busaddress_r == 'h0304) begin busdata_to_cpu <= hysteresis_reg;	end
+                else if(busaddress_r == 'h1000) begin busdata_to_cpu <= {8'b0,gpio_input_data[0][23:0]}; end
+                else if(busaddress_r == 'h1004) begin busdata_to_cpu <= {8'b0,gpio_input_data[1][11:0],gpio_input_data[0][35:24]}; end
+                else if(busaddress_r == 'h1008) begin busdata_to_cpu <= {8'b0,gpio_input_data[1][35:12]}; end
+//			    else if(busaddress_r == 'h100c) begin busdata_to_cpu <= {8'b0,gpio_input_data[2][23:0]}; end
+//			    else if(busaddress_r == 'h1010) begin busdata_to_cpu <= {8'b0,gpio_input_data[3][11:0],gpio_input_data[2][35:24]}; end
+//			    else if(busaddress_r == 'h1014) begin busdata_to_cpu <= {8'b0,gpio_input_data[3][35:12]}; end
+//			    else if ((busaddress_r >= 16'h1100) && (busaddress_r < 16'h1200)) begin
+                else if (ddr_address_valid || od_address_valid) begin
+                    for(oo=0;oo<NumIOAddrReg;oo=oo+1) begin : reggen_loop
+                        if (busaddress_r == ('h1100 + (oo*4))) begin busdata_to_cpu <= ddr_reg[oo]; end
+                        else if (busaddress_r == ('h1300 + (oo*4))) begin busdata_to_cpu <= od_reg[oo]; end
                     end
                 end
+                else if (mux_address_valid) begin
+                    for(om=0;om<NumIOAddrReg;om=om+1) begin : mux_reggen_loop
+                        for(oi=0;oi<Mux_regPrIOReg;oi=oi+1) begin : mux_reggen_loop
+                            if (busaddress_r == ('h1120 + (om*24) + (oi*4))) begin busdata_to_cpu <= mux_reg[om][oi]; end
+                        end
+                    end
+                end
+                else begin busdata_to_cpu <= busdata_fromhm2; end
+            end else begin
+                if (adc_address_valid) begin busdata_to_cpu <= adc_data_out;	end
+//			    if ((busaddress_r == 'h0200) || (busaddress_r == 'h0204)) begin busdata_to_cpu <= adc_data_out;	end
+                else if (busaddress_r == 'h0304) begin busdata_to_cpu <= hysteresis_reg;	end
+                else if(busaddress_r == 'h1000) begin busdata_to_cpu <= {8'b0,gpio_input_data[0][23:0]}; end
+                else if(busaddress_r == 'h1004) begin busdata_to_cpu <= {8'b0,gpio_input_data[1][11:0],gpio_input_data[0][35:24]}; end
+                else if(busaddress_r == 'h1008) begin busdata_to_cpu <= {8'b0,gpio_input_data[1][35:12]}; end
+//			    else if(busaddress_r == 'h100c) begin busdata_to_cpu <= {8'b0,gpio_input_data[2][23:0]}; end
+//			    else if(busaddress_r == 'h1010) begin busdata_to_cpu <= {8'b0,gpio_input_data[3][11:0],gpio_input_data[2][35:24]}; end
+//			    else if(busaddress_r == 'h1014) begin busdata_to_cpu <= {8'b0,gpio_input_data[3][35:12]}; end
+//			    else if ((busaddress_r >= 16'h1100) && (busaddress_r < 16'h1200)) begin
+                else if (ddr_address_valid || od_address_valid) begin
+                    for(oo=0;oo<NumIOAddrReg;oo=oo+1) begin : reggen_loop
+                        if (busaddress_r == ('h1100 + (oo*4))) begin busdata_to_cpu <= ddr_reg[oo]; end
+                        else if (busaddress_r == ('h1300 + (oo*4))) begin busdata_to_cpu <= od_reg[oo]; end
+                    end
+                end
+                else if (mux_address_valid) begin
+                    for(om=0;om<NumIOAddrReg;om=om+1) begin : mux_reggen_loop
+                        for(oi=0;oi<Mux_regPrIOReg;oi=oi+1) begin : mux_reggen_loop
+                            if (busaddress_r == ('h1120 + (om*24) + (oi*4))) begin busdata_to_cpu <= mux_reg[om][oi]; end
+                        end
+                    end
+                end
+                else begin busdata_to_cpu <= busdata_fromhm2; end
             end
-            else begin busdata_to_cpu <= busdata_fromhm2; end
         end
     end
     endgenerate
+    
+generate if (Capsense >=1) begin
+    assign sense = gpio_input_data[1][5:1];
 
-assign sense = gpio_input_data[1][5:1];
+            capsense capsense_inst
+        (
+            .clk(reg_clk) ,	// input  clk_sig
+            .reset(sense_reset) ,	// input  reset_sig
+            .sense(sense) ,	// input [num-1:0] sense_sig
+            .hysteresis(hysteresis),
+            .calibval_0(calibval_0),
+            .counts_0(counts_0),
+            .charge(charge) ,	// output  charge_sig
+            .touched(touched) 	// output [num-1:0] touched_sig
+        );
 
-        capsense capsense_inst
-    (
-        .clk(reg_clk) ,	// input  clk_sig
-        .reset(sense_reset) ,	// input  reset_sig
-        .sense(sense) ,	// input [num-1:0] sense_sig
-        .hysteresis(hysteresis),
-        .calibval_0(calibval_0),
-        .counts_0(counts_0),
-        .charge(charge) ,	// output  charge_sig
-        .touched(touched) 	// output [num-1:0] touched_sig
-    );
-
-    defparam capsense_inst.num = NumSense;
-    // States
-    defparam capsense_inst.CHARGE = 1;
-    defparam capsense_inst.DISCHARGE = 2;
-    // freqwuency in Mhz  , times in us
-    defparam capsense_inst.clockfrequency = 200;
-    defparam capsense_inst.periodtime = 5;
-
+        defparam capsense_inst.num = NumSense;
+        // States
+        defparam capsense_inst.CHARGE = 1;
+        defparam capsense_inst.DISCHARGE = 2;
+        // freqwuency in Mhz  , times in us
+        defparam capsense_inst.clockfrequency = 200;
+        defparam capsense_inst.periodtime = 5;
+    end
+endgenerate
 
 endmodule
 

@@ -30,4 +30,5 @@ parameter BoardAdaptor          = 0;
     parameter MuxGPIOIOWidth    = IOWidth/NumGPIO;
     parameter MuxLedWidth       = LEDCount/NumGPIO;
     parameter ADC               = "DE0-Nano-SoC";
+    parameter Capsense          = 0;
 endpackage //_HeaderIncluded

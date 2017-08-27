@@ -42,7 +42,8 @@ build_config() {
     # Use sed because the C pre-processor only allows identifiers to be #define'd
     # which means in rare instances it could match actual VHDL code.  Here we use
     # the % character to support a batch-style variable scheme
-    sed "s/%CONFIG%/${1}/g" <hm3_pin_config.in > hm3_pin_config.qip
+    sed "s/%CONFIG%/${1}/g" <${CONFIG_DIR}/hm3_pin_config.in > hm3_pin_config.qip
+    sed "s/%CONFIG%/${1}/g" <${CONFIG_DIR}/hm3_DE0_Nano_SoC.in > hm3_DE0_Nano_SoC.qip
 
     # Actually build the FPGA bit file
     make rbf

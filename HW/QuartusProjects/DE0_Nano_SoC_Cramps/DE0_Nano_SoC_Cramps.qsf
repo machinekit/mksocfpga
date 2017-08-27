@@ -649,7 +649,7 @@ set_global_assignment -name ENABLE_SIGNALTAP OFF
 set_global_assignment -name SDC_FILE DE0_Nano_SoC_Cramps.sdc
 set_global_assignment -name VHDL_FILE ../Common/firmware_id.vhd
 set_global_assignment -name MIF_FILE firmware_id.mif
-set_global_assignment -name QIP_FILE ../../hm2/config/DE0_Nano_SoC_Cramps/hm3_DE0_Nano_SoC.qip
+set_global_assignment -name QIP_FILE hm3_DE0_Nano_SoC.qip
 set_global_assignment -name QIP_FILE ../../hm2/hm3_socfpga.qip
 set_global_assignment -name QIP_FILE hm3_pin_config.qip
 set_global_assignment -name SYSTEMVERILOG_FILE ../Common/capsense.sv
