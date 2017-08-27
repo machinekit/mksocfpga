@@ -10,7 +10,7 @@ or:
 
 In the quartus folder place an .ipx file with a relative path to the ip cores folder ie:
 
-https://github.com/the-snowwhite/mksocfpga/blob/work/HW/QuartusProjects/DE0_NANO_SOC_GHRD/soc_system.ipx
+https://github.com/the-snowwhite/mksocfpga/blob/master/HW/QuartusProjects/DE0_Nano_SoC_Cramps/soc_system.ipx
 
     cd <project folder>
     

@@ -26,7 +26,7 @@ set_module_property OPAQUE_ADDRESS_MAP true
 set_module_property GROUP Interfaces
 set_module_property AUTHOR "Michael Brown"
 set_module_property ICON_PATH machinekiticon.png
-set_module_property DISPLAY_NAME hm2reg-io
+set_module_property DISPLAY_NAME "generic-uio,ui_pdrv"
 set_module_property INSTANTIATE_IN_SYSTEM_MODULE true
 set_module_property EDITABLE true
 set_module_property REPORT_TO_TALKBACK false

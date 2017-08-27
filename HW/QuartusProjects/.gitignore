@@ -52,7 +52,6 @@
 *.sopc_builder
 *example*
 *~
-*.sdc
 *.tar.gz
 *.pin
 *.mif

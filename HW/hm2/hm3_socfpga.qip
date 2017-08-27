@@ -1,0 +1,89 @@
+#-------------------- Common HM2 MESA Hostmot 2 Sources --------------------------#
+set_global_assignment -name SEARCH_PATH "../../cv-megawizard/lpm-ip"
+set_global_assignment -name SEARCH_PATH ../../cv-megawizard
+set_global_assignment -name SEARCH_PATH ../../hm2
+set_global_assignment -name SEARCH_PATH "..\\..\\cv-megawizard\\lpm-ip"
+set_global_assignment -name SEARCH_PATH ..\\..\\cv-megawizard
+set_global_assignment -name SEARCH_PATH ..\\..\\hm2
+
+# Altera version of Xilinx SLR16E (shiftreg)ip:
+set_global_assignment -name VHDL_FILE ../../cv-megawizard/lpm_pack.vhd
+set_global_assignment -name QIP_FILE "../../cv-megawizard/lpm-ip/lpm_mux16.qip"
+set_global_assignment -name QIP_FILE "../../cv-megawizard/lpm-ip/lpm_shiftreg16.qip"
+set_global_assignment -name VHDL_FILE ../../cv-megawizard/SRL16E.vhd
+
+# Default
+set_global_assignment -name VHDL_FILE ../../hm2/config/IDROMConst.vhd
+
+# HM2 VHDL Setup and config probe functions:
+set_global_assignment -name QIP_FILE ../../hm2/functions/hm2_functions.qip
+
+# HM2 topfile
+set_global_assignment -name VHDL_FILE ../../hm2/hostmot3.vhd
+
+# Wrappers:
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeIOPorts.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeHm2Dpllmods.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeStepgens.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeQCounters.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeMuxedQCounters.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakePwmgens.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeTPPWMGens.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeSPIs.vhd
+
+# HM2 cores:
+set_global_assignment -name VHDL_FILE ../../hm2/kubstepgenzi.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/kubstepgenz.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wordrb.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wordpr.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/watchdog.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/pwmrefh.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/pwmpdmgenh.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/irqlogics.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/hostmotid.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/hmtimers.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/drqlogic.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/boutreg.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/ubrategen.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/qcountersf.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/qcounterate.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/qcountersfp.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/timestamp.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/qcounteratesk.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/srl16delay.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/bufferedspi.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/threephasepwm.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/simplespix.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/simplessi.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/pktuartx.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/pktuartr.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/uartx.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/uartr.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/daqfifo16.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/biss.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/idrom.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/twiddle.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/scalercounter.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/scalertimer.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/wavegen.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/dpram.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/twidrom.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/sslbprom.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/sslbpram.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/adpram.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/uartx8.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/uartr8.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/waveram.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/fanucabs.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/binosc.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/resolver.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/resolverdaq2.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/OutputInteg.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/sine16.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/resrom.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/syncwavegen.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/sserialwa.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/d8o8sqw.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/d8o8sqws.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/b32qcondmac2w.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/resroms.vhd

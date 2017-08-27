@@ -76,7 +76,7 @@
 #include "hal/drivers/mesa-hostmot2/hostmot2-lowlevel.h"
 #include "hm2_cvsoc.h"
 
-//#include "../Include/mkhm2soc/hps_0.h"
+//#include "../Include/mksocfpga/hps_0.h"
 #define HM2REG_IO_0_SPAN 65536
 
 

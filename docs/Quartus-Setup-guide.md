@@ -56,9 +56,9 @@ Soc EDS: ( You do not have to install DS-5 )
 Git clone:
 
 
-    git clone https://github.com/the-snowwhite/mksocfpga.git mkhm2soc
+    git clone https://github.com/the-snowwhite/mksocfpga.git mksocfpga
 
-    cd mkhm2soc
+    cd mksocfpga
 
 
 Open Quartus shell in new konsole and run make all in project folder:
@@ -71,8 +71,8 @@ Open Quartus shell in new konsole and run make all in project folder:
 
     Version 15.1 [Build 193]
     ------------------------------------------------
-    mib@debian9-ws:~$ cd /home/mib/Development/the-snowwhite-git/mkhm2soc/QuartusProjects/DE0_NANO_SOC_GHRD
-    mib@debian9-ws:~/Development/the-snowwhite-git/mkhm2soc/QuartusProjects/DE0_NANO_SOC_GHRD$ make dts dtb rbf
+    mib@debian9-ws:~$ cd /home/mib/Development/the-snowwhite-git/mksocfpga/QuartusProjects/DE0_Nano_SoC_Cramps
+    mib@debian9-ws:~/Development/the-snowwhite-git/mksocfpga/QuartusProjects/DE0_Nano_SoC_Cramps$ make dts dtb rbf
 
 Build time around 10 min or so .... ends with:
 

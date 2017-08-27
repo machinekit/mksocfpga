@@ -44,10 +44,10 @@ The link between the hm2 avalon interface ip (in qsys), the devicetree (dts-->dt
 [Avalon Interface IP config file](https://github.com/the-snowwhite/mksocfpga/blob/master/HW/ip/hm2reg_io/hm2reg_io_hw.tcl#L76)
 
 
-[this script creates the following relevant headerfile](https://github.com/the-snowwhite/mksocfpga/blob/master/HW/QuartusProjects/DE0_NANO_SOC_GHRD/generate_hps_qsys_header.sh#L1)
+[this script creates the following relevant headerfile](https://github.com/the-snowwhite/mksocfpga/blob/master/HW/QuartusProjects/DE0_Nano_SoC_Cramps/generate_hps_qsys_header.sh#L1)
 
 
-[Headerfile containing all hw address info in customized hps soc ](https://github.com/the-snowwhite/mksocfpga/blob/master/HW/QuartusProjects/DE0_NANO_SOC_GHRD/hps_0.h#L12)
+[Headerfile containing all hw address info in customized hps soc ](https://github.com/the-snowwhite/mksocfpga/blob/master/HW/QuartusProjects/DE0_Nano_SoC_Cramps/hps_0.h#L12)
 
 
 -----
@@ -59,7 +59,7 @@ So how do the Hardware I/O pins relate to the Quartus project files ?
 
 https://github.com/the-snowwhite/mksocfpga/blob/master/HW/hm2/hostmot2.vhd#L70
 
-https://github.com/the-snowwhite/mksocfpga/blob/master/HW/QuartusProjects/DE0_NANO_SOC_GHRD/soc_system.qsf#L651
+https://github.com/the-snowwhite/mksocfpga/blob/master/HW/QuartusProjects/DE0_Nano_SoC_Cramps/soc_system.qsf#L651
 
 https://github.com/the-snowwhite/mksocfpga/blob/master/HW/hm2/config/PIN_G540x2_34.vhd
 
