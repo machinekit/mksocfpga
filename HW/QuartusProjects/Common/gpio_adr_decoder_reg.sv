@@ -1,47 +1,45 @@
 /*
-//		adc addresses:
-//		0x0200	for start and status
-//		0x0204	for data
+//      adc addresses:
+//      0x0200  for start and status
+//      0x0204  for data
 
 //
-//		cap sensor address:
-//		0x0300	     1 bit pr sensor (Data read)
-//		0x0304	     Hysteresis sens 0-7 (4-bit pr sensor)
+//      cap sensor address:
+//      0x0300  1 bit pr sensor (Data read)
+//      0x0304  Hysteresis sens 0-7 (4-bit pr sensor)
 //
-//		0x1000	I/O port  0..23
-//		0x1004  	I/O port 24..47
-//		0x1008	I/O port 48..71
-//		0x100C	I/O port 72..95
-//		0x1010	I/O port 96..127
-//		0x1014	I/O port 128..143
+//      0x1000  I/O port  0..23
+//      0x1004  I/O port 24..47
+//      0x1008  I/O port 48..71
+//      0x100C  I/O port 72..95
+//      0x1010  I/O port 96..127
+//      0x1014  I/O port 128..143
 
-//   	0x1100	DDR for I/O port  0..23
-//   	0x1104	DDR for I/O port  24..47
-//   	0x1108	DDR for I/O port  48..71
-//   	0x110C	DDR for I/O port  72..95
-//   	0x1110	DDR for I/O port  96..127
-//   	0x1114	DDR for I/O port  128..144
-//   	'1' bit in DDR register makes corresponding GPIO bit an output
+//      0x1100  DDR for I/O port  0..23
+//      0x1104  DDR for I/O port  24..47
+//      0x1108  DDR for I/O port  48..71
+//      0x110C  DDR for I/O port  72..95
+//      0x1110  DDR for I/O port  96..127
+//      0x1114  DDR for I/O port  128..144
+//      '1' bit in DDR register makes corresponding GPIO bit an output
 //
-//   	0x1120	Portnums for I/O port  0..3
-//   	0x1124	Portnums for I/O port  4..7
-//   	0x1128	Portnums for I/O port  8..11
-//   	0x112C	Portnums for I/O port  12..15
-//   	0x1130	Portnums for I/O port  16..19
-//   	0x1134	Portnums for I/O port  20..23
+//      0x1120  Portnums for I/O port  0..3
+//      0x1124  Portnums for I/O port  4..7
+//      0x1128  Portnums for I/O port  8..11
+//      0x112C  Portnums for I/O port  12..15
+//      0x1130  Portnums for I/O port  16..19
+//      0x1134  Portnums for I/O port  20..23
 //
-//		0x1300	OpenDrainSelect for I/O port  0..23
-//		0x1304	OpenDrainSelect for I/O port  24..47
-//		0x1308	OpenDrainSelect for I/O port  48..71
-//		0x130C	OpenDrainSelect for I/O port  72..95
-//		0x1310	OpenDrainSelect for I/O port  96..127
-//		0x1314 	OpenDrainSelect for I/O port  128..143
-//		'1' bit in OpenDrainSelect register makes corresponding GPIO an
-//		open drain output.
-//		If OpenDrain is selected for an I/O bit , the DDR register is ignored.
+//      0x1300  OpenDrainSelect for I/O port  0..23
+//      0x1304  OpenDrainSelect for I/O port  24..47
+//      0x1308  OpenDrainSelect for I/O port  48..71
+//      0x130C  OpenDrainSelect for I/O port  72..95
+//      0x1310  OpenDrainSelect for I/O port  96..127
+//      0x1314  OpenDrainSelect for I/O port  128..143
+//      '1' bit in OpenDrainSelect register makes corresponding GPIO an
+//      open drain output.
+//      If OpenDrain is selected for an I/O bit , the DDR register is ignored.
 */
-
-
 
 module gpio_adr_decoder_reg(
     input                               CLOCK,
@@ -172,7 +170,6 @@ adc_ltc2308_fifo adc_ltc2308_fifo_inst
     .clock(CLOCK) ,	// input  clock_sig
     .reset_n(reset_reg_N) ,	// input  reset_n_sig
     .addr(busaddress_r[2]) ,	// input  addr_sig
-//    .read(adc_read_valid) ,	// input  read_sig
     .read_outdata(adc_read_valid) ,	// input  read_sig
     .write(adc_write_valid) ,	// input  write_sig
     .readdataout(adc_data_out) ,	// output [31:0] readdataout_sig
