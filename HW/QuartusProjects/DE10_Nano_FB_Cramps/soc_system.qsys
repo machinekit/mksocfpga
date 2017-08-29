@@ -21,12 +21,12 @@
    {
       datum _lockedAddress
       {
-         value = "1";
+         value = "0";
          type = "boolean";
       }
       datum baseAddress
       {
-         value = "196608";
+         value = "327680";
          type = "String";
       }
    }
@@ -50,12 +50,12 @@
    {
       datum _lockedAddress
       {
-         value = "1";
+         value = "0";
          type = "boolean";
       }
       datum baseAddress
       {
-         value = "200704";
+         value = "331776";
          type = "String";
       }
    }
@@ -157,7 +157,7 @@
    {
       datum _sortIndex
       {
-         value = "15";
+         value = "16";
          type = "int";
       }
    }
@@ -209,6 +209,22 @@
       {
          value = "1";
          type = "boolean";
+      }
+   }
+   element intr_capturer_0
+   {
+      datum _sortIndex
+      {
+         value = "15";
+         type = "int";
+      }
+   }
+   element intr_capturer_0.avalon_slave_0
+   {
+      datum baseAddress
+      {
+         value = "196608";
+         type = "String";
       }
    }
    element jtag_uart
@@ -359,7 +375,7 @@
  <parameter name="hideFromIPCatalog" value="false" />
  <parameter name="lockedInterfaceDefinition" value="" />
  <parameter name="maxAdditionalLatency" value="1" />
- <parameter name="projectName">DE10_NANO_SOC_FB.qpf</parameter>
+ <parameter name="projectName">DE10_Nano_FB_Cramps.qpf</parameter>
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="0" />
  <parameter name="testBenchDutName" value="" />
@@ -1106,6 +1122,14 @@
   <parameter name="USE_PLI" value="0" />
  </module>
  <module
+   name="intr_capturer_0"
+   kind="intr_capturer"
+   version="100.99.98.97"
+   enabled="1">
+  <parameter name="AUTO_INTERRUPT_RECEIVER_INTERRUPTS_USED" value="15" />
+  <parameter name="NUM_INTR" value="32" />
+ </module>
+ <module
    name="jtag_uart"
    kind="altera_avalon_jtag_uart"
    version="15.1"
@@ -1154,7 +1178,7 @@
   <parameter name="PIPELINE_COMMAND" value="1" />
   <parameter name="PIPELINE_RESPONSE" value="1" />
   <parameter name="SYMBOL_WIDTH" value="8" />
-  <parameter name="SYSINFO_ADDR_WIDTH" value="18" />
+  <parameter name="SYSINFO_ADDR_WIDTH" value="19" />
   <parameter name="USE_AUTO_ADDRESS_WIDTH" value="1" />
   <parameter name="USE_RESPONSE" value="0" />
  </module>
@@ -1411,7 +1435,7 @@
    start="mm_bridge_0.m0"
    end="ILC.avalon_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00030000" />
+  <parameter name="baseAddress" value="0x00050000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1420,7 +1444,7 @@
    start="mm_bridge_0.m0"
    end="alt_vip_vfr_hdmi.avalon_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00031000" />
+  <parameter name="baseAddress" value="0x00051000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1469,6 +1493,15 @@
    version="15.1"
    start="fpga_only_master.master"
    end="ILC.avalon_slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00050000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.1"
+   start="fpga_only_master.master"
+   end="intr_capturer_0.avalon_slave_0">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00030000" />
   <parameter name="defaultConnection" value="false" />
@@ -1559,6 +1592,11 @@
    kind="clock"
    version="15.1"
    start="clk_0.clk"
+   end="intr_capturer_0.clock" />
+ <connection
+   kind="clock"
+   version="15.1"
+   start="clk_0.clk"
    end="alt_vip_vfr_hdmi.clock_master" />
  <connection
    kind="clock"
@@ -1595,13 +1633,6 @@
    kind="interrupt"
    version="15.1"
    start="hps_0.f2h_irq0"
-   end="alt_vip_vfr_hdmi.interrupt_sender">
-  <parameter name="irqNumber" value="4" />
- </connection>
- <connection
-   kind="interrupt"
-   version="15.1"
-   start="hps_0.f2h_irq0"
    end="jtag_uart.irq">
   <parameter name="irqNumber" value="2" />
  </connection>
@@ -1625,6 +1656,34 @@
    start="hps_0.f2h_irq0"
    end="hm2reg_io_0.slv_irq">
   <parameter name="irqNumber" value="3" />
+ </connection>
+ <connection
+   kind="interrupt"
+   version="15.1"
+   start="intr_capturer_0.interrupt_receiver"
+   end="jtag_uart.irq">
+  <parameter name="irqNumber" value="1" />
+ </connection>
+ <connection
+   kind="interrupt"
+   version="15.1"
+   start="intr_capturer_0.interrupt_receiver"
+   end="dipsw_pio.irq">
+  <parameter name="irqNumber" value="2" />
+ </connection>
+ <connection
+   kind="interrupt"
+   version="15.1"
+   start="intr_capturer_0.interrupt_receiver"
+   end="button_pio.irq">
+  <parameter name="irqNumber" value="3" />
+ </connection>
+ <connection
+   kind="interrupt"
+   version="15.1"
+   start="intr_capturer_0.interrupt_receiver"
+   end="hm2reg_io_0.slv_irq">
+  <parameter name="irqNumber" value="0" />
  </connection>
  <connection kind="interrupt" version="15.1" start="ILC.irq" end="jtag_uart.irq">
   <parameter name="irqNumber" value="2" />
@@ -1694,12 +1753,12 @@
    kind="reset"
    version="15.1"
    start="clk_0.clk_reset"
-   end="mm_bridge_0.reset" />
+   end="pll_stream.reset" />
  <connection
    kind="reset"
    version="15.1"
    start="clk_0.clk_reset"
-   end="pll_stream.reset" />
+   end="mm_bridge_0.reset" />
  <connection kind="reset" version="15.1" start="clk_0.clk_reset" end="ILC.reset_n" />
  <connection
    kind="reset"
@@ -1709,27 +1768,7 @@
  <connection
    kind="reset"
    version="15.1"
-   start="fpga_only_master.master_reset"
-   end="f2sdram_only_master.clk_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
-   end="f2sdram_only_master.clk_reset" />
- <connection
-   kind="reset"
-   version="15.1"
    start="f2sdram_only_master.master_reset"
-   end="fpga_only_master.clk_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="fpga_only_master.master_reset"
-   end="fpga_only_master.clk_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
    end="fpga_only_master.clk_reset" />
  <connection
    kind="reset"
@@ -1739,57 +1778,7 @@
  <connection
    kind="reset"
    version="15.1"
-   start="fpga_only_master.master_reset"
-   end="hps_only_master.clk_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
-   end="hps_only_master.clk_reset" />
- <connection
-   kind="reset"
-   version="15.1"
    start="f2sdram_only_master.master_reset"
-   end="alt_vip_vfr_hdmi.clock_master_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="fpga_only_master.master_reset"
-   end="alt_vip_vfr_hdmi.clock_master_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
-   end="alt_vip_vfr_hdmi.clock_master_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="f2sdram_only_master.master_reset"
-   end="alt_vip_vfr_hdmi.clock_reset_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="fpga_only_master.master_reset"
-   end="alt_vip_vfr_hdmi.clock_reset_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
-   end="alt_vip_vfr_hdmi.clock_reset_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="f2sdram_only_master.master_reset"
-   end="alt_vip_itc_0.is_clk_rst_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="fpga_only_master.master_reset"
-   end="alt_vip_itc_0.is_clk_rst_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
    end="alt_vip_itc_0.is_clk_rst_reset" />
  <connection
    kind="reset"
@@ -1799,27 +1788,7 @@
  <connection
    kind="reset"
    version="15.1"
-   start="fpga_only_master.master_reset"
-   end="button_pio.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
-   end="button_pio.reset" />
- <connection
-   kind="reset"
-   version="15.1"
    start="f2sdram_only_master.master_reset"
-   end="dipsw_pio.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="fpga_only_master.master_reset"
-   end="dipsw_pio.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
    end="dipsw_pio.reset" />
  <connection
    kind="reset"
@@ -1829,52 +1798,12 @@
  <connection
    kind="reset"
    version="15.1"
-   start="fpga_only_master.master_reset"
-   end="jtag_uart.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
-   end="jtag_uart.reset" />
- <connection
-   kind="reset"
-   version="15.1"
    start="f2sdram_only_master.master_reset"
    end="led_pio.reset" />
  <connection
    kind="reset"
    version="15.1"
-   start="fpga_only_master.master_reset"
-   end="led_pio.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
-   end="led_pio.reset" />
- <connection
-   kind="reset"
-   version="15.1"
    start="f2sdram_only_master.master_reset"
-   end="mm_bridge_0.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="fpga_only_master.master_reset"
-   end="mm_bridge_0.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
-   end="mm_bridge_0.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="f2sdram_only_master.master_reset"
-   end="sysid_qsys.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
    end="sysid_qsys.reset" />
  <connection
    kind="reset"
@@ -1884,48 +1813,13 @@
  <connection
    kind="reset"
    version="15.1"
-   start="fpga_only_master.master_reset"
-   end="pll_stream.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
-   end="pll_stream.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="fpga_only_master.master_reset"
-   end="sysid_qsys.reset" />
- <connection
-   kind="reset"
-   version="15.1"
    start="f2sdram_only_master.master_reset"
    end="hm2reg_io_0.reset" />
  <connection
    kind="reset"
    version="15.1"
-   start="fpga_only_master.master_reset"
-   end="hm2reg_io_0.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
-   end="hm2reg_io_0.reset" />
- <connection
-   kind="reset"
-   version="15.1"
    start="f2sdram_only_master.master_reset"
-   end="ILC.reset_n" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="fpga_only_master.master_reset"
-   end="ILC.reset_n" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
-   end="ILC.reset_n" />
+   end="intr_capturer_0.reset_sink" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />
 </system>

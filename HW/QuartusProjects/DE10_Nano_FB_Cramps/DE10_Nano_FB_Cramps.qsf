@@ -703,7 +703,6 @@ set_global_assignment -name ENABLE_SIGNALTAP OFF
 set_global_assignment -name IGNORE_PARTITIONS ON
 set_global_assignment -name VHDL_INPUT_VERSION VHDL_2008
 set_global_assignment -name VHDL_SHOW_LMF_MAPPING_MESSAGES OFF
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
 set_global_assignment -name SDC_FILE DE10_Nano_FB_Cramps.out.sdc
 set_global_assignment -name VHDL_FILE ../Common/firmware_id.vhd
 set_global_assignment -name MIF_FILE firmware_id.mif
@@ -722,3 +721,4 @@ set_global_assignment -name SYSTEMVERILOG_FILE ../Common/gpio_adr_decoder_reg.sv
 set_global_assignment -name VERILOG_FILE I2C_WRITE_WDATA.v
 set_global_assignment -name VERILOG_FILE I2C_HDMI_Config.v
 set_global_assignment -name VERILOG_FILE I2C_Controller.v
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

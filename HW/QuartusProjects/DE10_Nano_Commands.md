@@ -2,51 +2,37 @@ DE10_Nano_Commands:
 
 u-boot: (replace xx:xx:xx:xx:xx:xx with a REAL mac address)
 
-setenv ethaddr xx:xx:xx:xx:xx:xx
-setenv hostname mksocfpga-nano-soc
-saveenv
-reset
+    setenv ethaddr xx:xx:xx:xx:xx:xx
+    setenv hostname mksocfpga-nano-soc
+    saveenv
+    reset
 
+Machinekit:
+    sudo apt install machinekit-rt-preempt
 
-sudo cp /etc/apt/sources.list-local /etc/apt/sources.list
+Configs:
+    sudo apt install socfpga-rbf
+    sudo apt install git ca-certificates
 
+    git clone https://github.com/the-snowwhite/Hm2-soc_FDM.git
+for De10_Nano:
 
-sudo apt update
-cp /boot/uEnv.txt .
-nano uEnv.txt
+    git checkout DE10_Nano_FB_Cramps
 
-machinekit@mksocfpga-nano-soc:~$ cat uEnv.txt
-kver=4.1.22-ltsi-rt23-socfpga-0.1
-initrd_installed=Yes
-bitimage=/lib/firmware/socfpga/DE10_Nano_FB_Cramps.3x24.rbf
-fpgaload=mmc rescan;load mmc ${bootpart} ${loadaddr} ${bitimage}; fpga load 0 ${loadaddr} ${filesize}
-fpgaintf=ffd08028
-fpgaintf_handoff=0x00000000
-fpga2sdram_apply=3ff795a4
-fpga2sdram=ffc25080
-fpga2sdram_handoff=0x00000000
-axibridge=ffd0501c
-axibridge_handoff=0x00000000
-l3remap=ff800000
-l3remap_handoff=0x00000019
-bridge_enable_handoff=mw ${fpgaintf} ${fpgaintf_handoff}; mw ${fpga2sdram} ${fpga2sdram_handoff}; mw ${axibridge} ${axibridge_handoff}; mw ${l3remap} ${l3remap_handoff}
-loadimage=run fpgaload; run bridge_enable_handoff; load mmc ${bootpart} ${loadaddr} ${bootimage}; load mmc ${bootpart} ${fdt_addr} ${fdtimage}
-
-
-sudo apt install machinekit-rt-preempt
-sudo apt install socfpga-rbf
-sudo apt install git ca-certificates
-
-git clone https://github.com/the-snowwhite/Hm2-soc_FDM.git
-git clone https://github.com/the-snowwhite/Machineface.git
-git clone https://github.com/the-snowwhite/Cetus.git
+    git clone https://github.com/the-snowwhite/Machineface.git
+    git checkout work-updated
+    cd ..
+    git clone https://github.com/the-snowwhite/Cetus.git
+    git checkout probework2
+    cd ..
 
 SPI for tmc2130 stepper drivers:
-git clone --recursive https://github.com/the-snowwhite/SPI.git
-sudo apt install python-dev
-cd SPI/py-spidev
-sudo python setup.py install
-cd ~/
+
+    git clone --recursive https://github.com/the-snowwhite/SPI.git
+    sudo apt install python-dev
+    cd SPI/py-spidev
+    sudo python setup.py install
+    cd ~/
 
 if /usr/include/features.h:374:25: fatal error: sys/cdefs.h: No such file or directory
 -->sudo apt install --reinstall libc6-dev
