@@ -37,16 +37,6 @@ derive_clock_uncertainty
 
 create_clock -name "HDMI_TX_CLK" -period "75.0 MHz" [get_ports {HDMI_TX_CLK}]
 
-set_output_delay -max -clock HDMI_TX_CLK 0.220 [get_ports LCD_R*]
-set_output_delay -min -clock HDMI_TX_CLK -1.506 [get_ports LCD_R*]
-set_output_delay -max -clock HDMI_TX_CLK 0.212 [get_ports LCD_G*]
-set_output_delay -min -clock HDMI_TX_CLK -1.519 [get_ports LCD_G*]
-set_output_delay -max -clock HDMI_TX_CLK 0.264 [get_ports LCD_B*]
-set_output_delay -min -clock HDMI_TX_CLK -1.519 [get_ports LCD_B*]
-set_output_delay -max -clock HDMI_TX_CLK 0.215 [get_ports LCD_DE]
-set_output_delay -min -clock HDMI_TX_CLK -1.485 [get_ports LCD_DE]
-
-
 
 # tsu/th constraints
 
