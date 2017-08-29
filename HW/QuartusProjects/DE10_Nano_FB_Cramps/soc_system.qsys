@@ -1405,15 +1405,6 @@
  <connection
    kind="avalon"
    version="15.1"
-   start="hps_0.h2f_axi_master"
-   end="hm2reg_io_0.slave">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00040000" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="15.1"
    start="hps_0.h2f_lw_axi_master"
    end="mm_bridge_0.s0">
   <parameter name="arbitrationPriority" value="1" />
@@ -1451,6 +1442,15 @@
    kind="avalon"
    version="15.1"
    start="mm_bridge_0.m0"
+   end="intr_capturer_0.avalon_slave_0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00030000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.1"
+   start="mm_bridge_0.m0"
    end="sysid_qsys.control_slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x1000" />
@@ -1482,6 +1482,15 @@
  <connection
    kind="avalon"
    version="15.1"
+   start="mm_bridge_0.m0"
+   end="hm2reg_io_0.slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00040000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.1"
    start="fpga_only_master.master"
    end="jtag_uart.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
@@ -1495,6 +1504,15 @@
    end="ILC.avalon_slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00050000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.1"
+   start="fpga_only_master.master"
+   end="alt_vip_vfr_hdmi.avalon_slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00051000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1558,6 +1576,15 @@
    end="dipsw_pio.s1">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x4000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.1"
+   start="fpga_only_master.master"
+   end="hm2reg_io_0.slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00040000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1759,6 +1786,11 @@
    version="15.1"
    start="clk_0.clk_reset"
    end="mm_bridge_0.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="clk_0.clk_reset"
+   end="hm2reg_io_0.reset" />
  <connection kind="reset" version="15.1" start="clk_0.clk_reset" end="ILC.reset_n" />
  <connection
    kind="reset"
@@ -1814,6 +1846,11 @@
    kind="reset"
    version="15.1"
    start="f2sdram_only_master.master_reset"
+   end="hm2reg_io_0.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
    end="hm2reg_io_0.reset" />
  <connection
    kind="reset"
