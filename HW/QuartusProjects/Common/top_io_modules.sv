@@ -13,13 +13,13 @@ module top_io_modules
 
 	// Output Ports
 	output [KEY_WIDTH-1:0] button_out,
-	output hps_cold_reset,
-	output hps_warm_reset,
-	output hps_debug_reset,
+//	output hps_cold_reset,
+//	output hps_warm_reset,
+//	output hps_debug_reset,
 	output LED
 );
 
-	wire [2:0]  hps_reset_req;
+//	wire [2:0]  hps_reset_req;
 
 // Debounce logic to clean out glitches within 1ms
 debounce debounce_inst (
@@ -38,7 +38,7 @@ hps_reset hps_reset_inst (
   .source_clk (clk),
   .source     (hps_reset_req)
 );
-
+/*
 altera_edge_detector pulse_cold_reset (
   .clk       (clk),
   .rst_n     (reset_n),
@@ -68,7 +68,7 @@ altera_edge_detector pulse_debug_reset (
   defparam pulse_debug_reset.PULSE_EXT = 32;
   defparam pulse_debug_reset.EDGE_TYPE = 1;
   defparam pulse_debug_reset.IGNORE_RST_WHILE_BUSY = 1;
-
+*/
 led_blinker led_blinker_inst
 (
 	.clk(clk) ,	// input  clk_sig
