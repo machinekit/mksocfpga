@@ -143,12 +143,12 @@ parameter NumIOAddrReg = 6;
     wire        hps_cold_reset;
     wire        hps_warm_reset;
     wire        hps_debug_reset;
-    wire [27:0] stm_hw_events;
+//    wire [27:0] stm_hw_events;
     wire        fpga_clk_50;
 // connection of internal logics
     assign LED[5:1] = fpga_led_internal;
     assign fpga_clk_50 = FPGA_CLK1_50;
-    assign stm_hw_events    = {{15{1'b0}}, SW, fpga_led_internal, fpga_debounced_buttons};
+//    assign stm_hw_events    = {{15{1'b0}}, SW, fpga_led_internal, fpga_debounced_buttons};
 // hm2
     wire [AddrWidth-1:2]    hm_address;
     wire [31:0]             hm_datao;
@@ -274,10 +274,10 @@ soc_system u0 (
     .dipsw_pio_export                      ( SW ),  //  dipsw_pio_external_connection.export
     .button_pio_export                     ( fpga_debounced_buttons ), // button_pio_external_connection.export
     .hps_0_h2f_reset_reset_n               ( hps_fpga_reset_n ),                //                hps_0_h2f_reset.reset_n
-    .hps_0_f2h_cold_reset_req_reset_n      (~hps_cold_reset ),      //       hps_0_f2h_cold_reset_req.reset_n
-    .hps_0_f2h_debug_reset_req_reset_n     (~hps_debug_reset ),     //      hps_0_f2h_debug_reset_req.reset_n
-    .hps_0_f2h_stm_hw_events_stm_hwevents  (stm_hw_events ),  //        hps_0_f2h_stm_hw_events.stm_hwevents
-    .hps_0_f2h_warm_reset_req_reset_n      (~hps_warm_reset ),      //       hps_0_f2h_warm_reset_req.reset_n
+//    .hps_0_f2h_cold_reset_req_reset_n      (~hps_cold_reset ),      //       hps_0_f2h_cold_reset_req.reset_n
+//    .hps_0_f2h_debug_reset_req_reset_n     (~hps_debug_reset ),     //      hps_0_f2h_debug_reset_req.reset_n
+//    .hps_0_f2h_stm_hw_events_stm_hwevents  (stm_hw_events ),  //        hps_0_f2h_stm_hw_events.stm_hwevents
+//    .hps_0_f2h_warm_reset_req_reset_n      (~hps_warm_reset ),      //       hps_0_f2h_warm_reset_req.reset_n
     // hm2reg_io_0_conduit
     .mk_io_hm2_datain                      (busdata_out),                    //           .hm2_datain
     .mk_io_hm2_dataout                     (hm_datai),                    //            hm2reg.hm2_dataout
@@ -297,9 +297,9 @@ top_io_modules top_io_modules_inst
 	.reset_n(hps_fpga_reset_n) ,	// input  reset_n_sig
 	.button_in(KEY) ,	// input [KEY_WIDTH-1:0] button_in_sig
 	.button_out(fpga_debounced_buttons) ,	// output [KEY_WIDTH-1:0] button_out_sig
-	.hps_cold_reset(hps_cold_reset) ,	// output  hps_cold_reset_sig
-	.hps_warm_reset(hps_warm_reset) ,	// output  hps_warm_reset_sig
-	.hps_debug_reset(hps_debug_reset) ,	// output  hps_debug_reset_sig
+//	.hps_cold_reset(hps_cold_reset) ,	// output  hps_cold_reset_sig
+//	.hps_warm_reset(hps_warm_reset) ,	// output  hps_warm_reset_sig
+//	.hps_debug_reset(hps_debug_reset) ,	// output  hps_debug_reset_sig
 	.LED(LED[0]) 	// output  LED_sig
 );
 
