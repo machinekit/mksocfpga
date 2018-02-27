@@ -117,7 +117,7 @@ parameter NumIOAddrReg = 6;
     wire        hps_cold_reset;
     wire        hps_warm_reset;
     wire        hps_debug_reset;
-    wire [27:0] stm_hw_events;
+//    wire [27:0] stm_hw_events;
     wire 		fpga_clk_50;
     wire        clk_75;
 
@@ -125,7 +125,7 @@ parameter NumIOAddrReg = 6;
 //	assign LED[5:1] = fpga_led_internal | {7'b0000000, led_level};
     assign LED[5:1] = fpga_led_internal;
     assign fpga_clk_50=FPGA_CLK1_50;
-    assign stm_hw_events    = {{15{1'b0}}, SW, fpga_led_internal, fpga_debounced_buttons};
+//    assign stm_hw_events    = {{15{1'b0}}, SW, fpga_led_internal, fpga_debounced_buttons};
 // hm2
     wire [AddrWidth-1:2]    hm_address;
     wire [31:0]             hm_datao;
@@ -261,10 +261,6 @@ soc_system u0 (
     .dipsw_pio_external_connection_export  ( SW	),  //  dipsw_pio_external_connection.export
     .button_pio_external_connection_export ( fpga_debounced_buttons	), // button_pio_external_connection.export
     .hps_0_h2f_reset_reset_n               ( hps_fpga_reset_n ),                //                hps_0_h2f_reset.reset_n
-    .hps_0_f2h_cold_reset_req_reset_n      (~hps_cold_reset ),      //       hps_0_f2h_cold_reset_req.reset_n
-    .hps_0_f2h_debug_reset_req_reset_n     (~hps_debug_reset ),     //      hps_0_f2h_debug_reset_req.reset_n
-    .hps_0_f2h_stm_hw_events_stm_hwevents  (stm_hw_events ),  //        hps_0_f2h_stm_hw_events.stm_hwevents
-    .hps_0_f2h_warm_reset_req_reset_n      (~hps_warm_reset ),      //       hps_0_f2h_warm_reset_req.reset_n
     // hm2reg_io_0_conduit
     .mk_io_hm2_datain                      (busdata_out),                    //           .hm2_datain
     .mk_io_hm2_dataout                     (hm_datai),                    //            hm2reg.hm2_dataout
@@ -284,9 +280,6 @@ top_io_modules top_io_modules_inst
     .reset_n(hps_fpga_reset_n) ,	// input  reset_n_sig
     .button_in(KEY) ,	// input [KEY_WIDTH-1:0] button_in_sig
     .button_out(fpga_debounced_buttons) ,	// output [KEY_WIDTH-1:0] button_out_sig
-    .hps_cold_reset(hps_cold_reset) ,	// output  hps_cold_reset_sig
-    .hps_warm_reset(hps_warm_reset) ,	// output  hps_warm_reset_sig
-    .hps_debug_reset(hps_debug_reset) ,	// output  hps_debug_reset_sig
     .LED(LED[0]) 	// output  LED_sig
 );
 
@@ -294,20 +287,16 @@ defparam top_io_modules_inst.KEY_WIDTH = 2;
 
 // Mesa code ------------------------------------------------------//
 
-//assign clklow_sig = fpga_clk_50;
 assign clkhigh_sig = hm_clk_high;
 assign clkmed_sig = hm_clk_med;
 
 
 genvar ig;
 generate for(ig=0;ig<NumGPIO;ig=ig+1) begin : iosigloop
-//	assign io_leds_sig[ig] = hm2_leds_sig[(ig*MuxLedWidth)+:MuxLedWidth];
     assign io_bitsout_sig[ig] = hm2_bitsout_sig[(ig*MuxGPIOIOWidth)+:MuxGPIOIOWidth];
     assign io_bitsin_sig[ig] = hm2_bitsin_sig[(ig*MuxGPIOIOWidth)+:MuxGPIOIOWidth];
 end
 endgenerate
-
-//assign LED[7:6] = ~hm2_leds_sig[1:0];
 
 gpio_adr_decoder_reg gpio_adr_decoder_reg_inst
 (
@@ -331,9 +320,6 @@ gpio_adr_decoder_reg gpio_adr_decoder_reg_inst
     .ADC_SCK_o(ADC_SCK),	// output  ADC_SCK_o_sig
     .ADC_SDI_o(ADC_SDI),	// output  ADC_SDI_o_sig
     .ADC_SDO_i(ADC_SDO),	// input  ADC_SDO_i_sig
-// CAP_Sensors
-//	.sense({ARDUINO_IO[9],ARDUINO_IO[10],ARDUINO_IO[11],ARDUINO_IO[12]}),
-//	.charge(ARDUINO_IO[13]),
     .buttons(fpga_debounced_buttons)
 );
 
@@ -342,7 +328,6 @@ defparam gpio_adr_decoder_reg_inst.BusWidth = BusWidth;
 defparam gpio_adr_decoder_reg_inst.GPIOWidth = GPIOWidth;
 defparam gpio_adr_decoder_reg_inst.MuxGPIOIOWidth = MuxGPIOIOWidth;
 defparam gpio_adr_decoder_reg_inst.NumIOAddrReg = NumIOAddrReg;
-//defparam gpio_adr_decoder_reg_inst.MuxLedWidth = MuxLedWidth;
 defparam gpio_adr_decoder_reg_inst.NumGPIO = NumGPIO;
 defparam gpio_adr_decoder_reg_inst.Capsense = Capsense;
 defparam gpio_adr_decoder_reg_inst.NumSense = 4;
@@ -359,12 +344,9 @@ HostMot3_cfg HostMot3_inst
     .clkmed(clkmed_sig) ,	// input  clkmed_sig  				-- Processor clock --> sserialwa, twiddle
     .clkhigh(clkhigh_sig) ,	// input  clkhigh_sig				-- High speed clock --> most
     .intirq(int_sig) ,	// output  int_sig							--int => LINT, ---> PCI ?
-//	.dreq(dreq_sig) ,	// output  dreq_sig
-//	.demandmode(demandmode_sig) ,	// output  demandmode_sig
     .iobitsouttop(hm2_bitsout_sig) ,	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits
     .iobitsintop(hm2_bitsin_sig) 	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits
 //	.liobits(liobits_sig) ,	// inout [lIOWidth-1:0] 			--liobits_sig
-//	.rates(rates_sig) ,	// output [4:0] rates_sig
 //	.leds(hm2_leds_sig) 	// output [ledcount-1:0] leds_sig		--leds => LEDS
 );
 
