@@ -4,4 +4,5 @@ set_global_assignment -name VHDL_FILE ../../hm2/config/DE0_Nano_SoC_DB25/PIN_7I7
 set_global_assignment -name VHDL_FILE ../../hm2/config/DE0_Nano_SoC_DB25/PIN_7I76_7I76_7I76_7I76.vhd
 set_global_assignment -name VHDL_FILE ../../hm2/config/DE0_Nano_SoC_DB25/PIN_7I77_7I76_GPIO_GPIO.vhd
 set_global_assignment -name VHDL_FILE ../../hm2/config/DE0_Nano_SoC_DB25/PIN_A_Volkov.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/config/DE0_Nano_SoC_DB25/PIN_4s6p1q_GPIO_GPIO_GPIO.vhd
 
