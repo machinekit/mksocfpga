@@ -1,0 +1,3 @@
+set_global_assignment -name VHDL_FILE hostmot2_cfg.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/config/DE10_Nano_FB_DB25/DE10_Nano_FB_DB25_card.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/config/DE10_Nano_FB_DB25/IN_7I76_7I76_7I76_7I76.vhd

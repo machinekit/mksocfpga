@@ -1,0 +1,7 @@
+set_global_assignment -name VHDL_FILE ../../hm2/config/IDROMConst.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/config/DE10_Nano_FB_DB25/DE10_Nano_FB_DB25_card.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/config/DE10_Nano_FB_DB25/PIN_7I76_7I76_7I76_7I76.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/config/DE10_Nano_FB_DB25/PIN_7I76_7I85S_GPIO_GPIO.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/config/DE10_Nano_FB_DB25/PIN_7I77_7I76_GPIO_GPIO.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/config/DE10_Nano_FB_DB25/PIN_A_Volkov.vhd
+
