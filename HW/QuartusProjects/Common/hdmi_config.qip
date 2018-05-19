@@ -1,0 +1,3 @@
+set_global_assignment -name VERILOG_FILE ../Common/I2C_Controller.v
+set_global_assignment -name VERILOG_FILE ../Common/I2C_HDMI_Config.v
+set_global_assignment -name VERILOG_FILE ../Common/I2C_WRITE_WDATA.v
