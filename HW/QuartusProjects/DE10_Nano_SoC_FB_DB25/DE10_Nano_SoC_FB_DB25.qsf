@@ -650,7 +650,7 @@ set_global_assignment -name VHDL_FILE ../Common/firmware_id.vhd
 set_global_assignment -name QIP_FILE ../../hm2/hm2_socfpga.qip
 
 # MESA board , pin and daughter card config options:
-set_global_assignment -name QIP_FILE ../../hm2/config/DE10_Nano_SoC_FB_DB25/hm2_DE10_Nano_SoC_FB_DB25.qip
+set_global_assignment -name QIP_FILE ../../hm2/config/DE0_Nano_SoC_DB25/hm2_DE0_Nano_SoC_DB25.qip
 
 # Configured HostMot2 instance
 set_global_assignment -name VHDL_FILE hostmot2_cfg.vhd
