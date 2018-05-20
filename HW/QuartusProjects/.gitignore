@@ -54,7 +54,6 @@
 *~
 *.tar.gz
 *.pin
-*.mif
 *.hex
 *.ddb
 #*.stp
