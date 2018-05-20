@@ -88,7 +88,8 @@ make clean
 
 # Generate the MIF file containing the FirmwareID protobuf message
 # This only needs to be done once per board
-python ../../firmware-tag/genfwid.py ${BOARDNAME} > firmware_id.mif
+#python ../../firmware-tag/genfwid.py ${BOARDNAME} > firmware_id.mif
+python ../../firmware-tag/genfwid.py DE0_Nano_SoC_DB25 > firmware_id.mif
 
 # Build each configuration, one at a time
 for CONFIG in ${CONFIG_NAMES} ; do
