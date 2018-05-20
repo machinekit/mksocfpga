@@ -35,5 +35,19 @@ package cv_ip_pkg is
 		source : out std_logic_vector(2 downto 0) );
 	end component;
 
+	component I2C_HDMI_Config is
+	generic (
+		CLK_Freq : integer := 50000000;
+		I2C_Freq : integer := 20000;
+		LUT_SIZE : integer := 31 );
+	port (
+		iCLK : in std_logic;
+		iRST_N : in std_logic;
+		I2C_SCLK : out std_logic;
+		I2C_SDAT : inout std_logic;
+		HDMI_TX_INT : in std_logic;
+		READY : out std_logic );
+	end component;
+
 end cv_ip_pkg;
 

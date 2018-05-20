@@ -39,6 +39,20 @@ use work.cv_ip_pkg.all;
 
 entity DE10_Nano_SoC_FB_DB25 is
     port (
+        --------- HDMI ---------
+        HDMI_I2C_SCL       : inout std_logic;
+        HDMI_I2C_SDA       : inout std_logic;
+        HDMI_I2S           : inout std_logic;
+        HDMI_LRCLK         : inout std_logic;
+        HDMI_MCLK          : inout std_logic;
+        HDMI_SCLK          : inout std_logic;
+        HDMI_TX_CLK        : out std_logic;
+        HDMI_TX_D          : out std_logic_vector(23 downto 0);
+        HDMI_TX_DE         : out std_logic;
+        HDMI_TX_HS         : out std_logic;
+        HDMI_TX_INT        : in std_logic;
+        HDMI_TX_VS         : out std_logic;
+        
         --------- ADC ---------
         ADC_CONVST         : out   std_logic;
         ADC_SCK            : out   std_logic;
@@ -153,6 +167,7 @@ architecture arch of DE10_Nano_SoC_FB_DB25 is
 
     signal counter                  : unsigned(25 downto 0);
     signal led_level                : std_logic;
+    signal lcd_clk                  : std_logic;
 begin
 
 -- connection of internal logics
@@ -160,7 +175,7 @@ begin
     fpga_clk_50     <= FPGA_CLK2_50;
     stm_hw_events   <= b"00000000000000" & SW & fpga_led_internal & fpga_debounced_buttons;
     ARDUINO_IO(15)  <= irq;
-
+    HDMI_TX_CLK     <= lcd_clk;
 --=======================================================
 --  Structural coding
 --=======================================================
@@ -279,10 +294,20 @@ begin
         adc_io_convst                           => ADC_CONVST,              --                            adc.CONVST
         adc_io_sck                              => ADC_SCK,                 --                               .SCK
         adc_io_sdi                              => ADC_SDI,                 --                               .SDI
-        adc_io_sdo                              => ADC_SDO                  --                               .SDO
+        adc_io_sdo                              => ADC_SDO,                 --                               .SDO
 --      axi_str_data                            => out_data[7:0],           --                    stream_port.data
 --      axi_str_valid                           => out_data[8],             --                               .valid
 --      axi_str_ready                           => ar_in_sig[1])            --                               .ready
+        alt_vip_itc_0_clocked_video_vid_clk       => lcd_clk,           -- alt_vip_itc_0_clocked_video.vid_clk
+        alt_vip_itc_0_clocked_video_vid_data      => HDMI_TX_D,             --                            .vid_data
+--      alt_vip_itc_0_clocked_video_underflow     => CONNECTED_TO_alt_vip_itc_0_clocked_video_underflow,     --                            .underflow
+        alt_vip_itc_0_clocked_video_vid_datavalid => HDMI_TX_DE,            --                            .vid_datavalid
+        alt_vip_itc_0_clocked_video_vid_v_sync    => HDMI_TX_VS,            --                            .vid_v_sync
+        alt_vip_itc_0_clocked_video_vid_h_sync    => HDMI_TX_HS,            --                            .vid_h_sync
+--      alt_vip_itc_0_clocked_video_vid_f         => CONNECTED_TO_alt_vip_itc_0_clocked_video_vid_f,         --                            .vid_f
+--      alt_vip_itc_0_clocked_video_vid_h         => CONNECTED_TO_alt_vip_itc_0_clocked_video_vid_h,         --                            .vid_h
+--      alt_vip_itc_0_clocked_video_vid_v         => CONNECTED_TO_alt_vip_itc_0_clocked_video_vid_v,         --                            .vid_v
+        lcd_clk_clk                               => lcd_clk                --                     lcd_clk.clk
 );
 
 -- Debounce logic to clean out glitches within 1ms
@@ -356,6 +381,21 @@ begin
     end process;
 
     LED(0)  <= led_level;
+
+-- HDMI Config ------------------------------------------------------
+
+    I2C_HDMI_Config_inst : I2C_HDMI_Config
+   port map (
+        iCLK        => fpga_clk_50, 
+        iRST_N      => 1,
+        I2C_SCLK    => HDMI_I2C_SCL,
+        I2C_SDAT    => HDMI_I2C_SDA,
+        HDMI_TX_INT => HDMI_TX_INT
+--        READY       => 
+        );
+
+
+
 
 -- Mesa code --------------------------------------------------------
 
