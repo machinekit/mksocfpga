@@ -269,9 +269,9 @@ begin
         hps_0_hps_io_hps_io_gpio_inst_GPIO61    => HPS_GSENSOR_INT,         --                               .hps_io_gpio_inst_GPIO61
 
         --FPGA Partion
-        led_pio_export                          => fpga_led_internal,       --    led_pio_external_connection.export
+        led_pio_export                          => fpga_led_internal(6 downto 0),       --    led_pio_external_connection.export
         dipsw_pio_export                        => SW,                      --  dipsw_pio_external_connection.export
-        button_pio_export                       => buttons,                 -- button_pio_external_connection.export
+        button_pio_export                       => buttons(1 downto 0),     -- button_pio_external_connection.export
         hps_0_h2f_reset_reset_n                 => hps_fpga_reset_n,        --                hps_0_h2f_reset.reset_n
         hps_0_f2h_cold_reset_req_reset_n        => not hps_cold_reset,      --       hps_0_f2h_cold_reset_req.reset_n
         hps_0_f2h_debug_reset_req_reset_n       => not hps_debug_reset,     --      hps_0_f2h_debug_reset_req.reset_n
@@ -299,7 +299,7 @@ begin
 --      axi_str_valid                           => out_data[8],             --                               .valid
 --      axi_str_ready                           => ar_in_sig[1])            --                               .ready
         alt_vip_itc_0_clocked_video_vid_clk       => lcd_clk,           -- alt_vip_itc_0_clocked_video.vid_clk
-        alt_vip_itc_0_clocked_video_vid_data      => HDMI_TX_D,             --                            .vid_data
+        alt_vip_itc_0_clocked_video_vid_data (23 downto 0)     => HDMI_TX_D,             --                            .vid_data
 --      alt_vip_itc_0_clocked_video_underflow     => CONNECTED_TO_alt_vip_itc_0_clocked_video_underflow,     --                            .underflow
         alt_vip_itc_0_clocked_video_vid_datavalid => HDMI_TX_DE,            --                            .vid_datavalid
         alt_vip_itc_0_clocked_video_vid_v_sync    => HDMI_TX_VS,            --                            .vid_v_sync
@@ -387,7 +387,7 @@ begin
     I2C_HDMI_Config_inst : I2C_HDMI_Config
    port map (
         iCLK        => fpga_clk_50, 
-        iRST_N      => 1,
+        iRST_N      => '1',
         I2C_SCLK    => HDMI_I2C_SCL,
         I2C_SDAT    => HDMI_I2C_SDA,
         HDMI_TX_INT => HDMI_TX_INT
