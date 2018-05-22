@@ -21,7 +21,7 @@
 
 # Some specifics for this build, adjust as necessary
 
-BOARDNAME=DE0_Nano_SoC_FB_DB25
+BOARDNAME=DE10_Nano_SoC_FB_DB25
 OUTPUTDIR=output_files
 
 # You probably don't have to change anything below unless you alter
