@@ -298,7 +298,7 @@ begin
 --      axi_str_data                            => out_data[7:0],           --                    stream_port.data
 --      axi_str_valid                           => out_data[8],             --                               .valid
 --      axi_str_ready                           => ar_in_sig[1])            --                               .ready
-        alt_vip_itc_0_clocked_video_vid_clk       => lcd_clk,           -- alt_vip_itc_0_clocked_video.vid_clk
+        alt_vip_itc_0_clocked_video_vid_clk     => lcd_clk,           -- alt_vip_itc_0_clocked_video.vid_clk
         alt_vip_itc_0_clocked_video_vid_data (23 downto 0)     => HDMI_TX_D,             --                            .vid_data
 --      alt_vip_itc_0_clocked_video_underflow     => CONNECTED_TO_alt_vip_itc_0_clocked_video_underflow,     --                            .underflow
         alt_vip_itc_0_clocked_video_vid_datavalid => HDMI_TX_DE,            --                            .vid_datavalid
