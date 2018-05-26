@@ -172,7 +172,7 @@ soc_system u0 (
     //Clock&Reset
     .clk_clk                                     (FPGA_CLK1_50 ),                               //                            clk.clk
     .reset_reset_n                               (hps_fpga_reset_n ),                         //                          reset.reset_n
-    .alt_vip_itc_0_clocked_video_vid_clk       (HDMI_TX_CLK ),       // alt_vip_itc_0_clocked_video.vid_clk
+    .alt_vip_itc_0_clocked_video_vid_clk       (clk_75 ),       // alt_vip_itc_0_clocked_video.vid_clk
     .alt_vip_itc_0_clocked_video_vid_data      (HDMI_TX_D ),      //                            .vid_data
     .alt_vip_itc_0_clocked_video_underflow     ( ),     //                            .underflow
     .alt_vip_itc_0_clocked_video_vid_datavalid (HDMI_TX_DE), //                            .vid_datavalid
