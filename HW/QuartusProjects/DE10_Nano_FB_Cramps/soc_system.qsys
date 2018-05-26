@@ -55,7 +55,7 @@
       }
       datum baseAddress
       {
-         value = "331776";
+         value = "200704";
          type = "String";
       }
    }
@@ -483,7 +483,7 @@
   <parameter name="V_SYNC_LENGTH" value="6" />
  </module>
  <module name="alt_vip_vfr_hdmi" kind="alt_vip_vfr" version="14.0" enabled="1">
-  <parameter name="AUTO_CLOCK_MASTER_CLOCK_RATE" value="50000000" />
+  <parameter name="AUTO_CLOCK_MASTER_CLOCK_RATE" value="150000000" />
   <parameter name="AUTO_CLOCK_RESET_CLOCK_RATE" value="150000000" />
   <parameter name="BITS_PER_PIXEL_PER_COLOR_PLANE" value="8" />
   <parameter name="CLOCKS_ARE_SEPARATE" value="1" />
@@ -658,7 +658,7 @@
   <parameter name="EXPORT_AFI_HALF_CLK" value="false" />
   <parameter name="EXTRA_SETTINGS" value="" />
   <parameter name="F2H_AXI_CLOCK_FREQ" value="50000000" />
-  <parameter name="F2H_SDRAM0_CLOCK_FREQ" value="50000000" />
+  <parameter name="F2H_SDRAM0_CLOCK_FREQ" value="150000000" />
   <parameter name="F2H_SDRAM1_CLOCK_FREQ" value="100" />
   <parameter name="F2H_SDRAM2_CLOCK_FREQ" value="100" />
   <parameter name="F2H_SDRAM3_CLOCK_FREQ" value="100" />
@@ -671,8 +671,8 @@
   <parameter name="F2SCLK_SDRAMCLK_Enable" value="false" />
   <parameter name="F2SCLK_SDRAMCLK_FREQ" value="0" />
   <parameter name="F2SCLK_WARMRST_Enable" value="false" />
-  <parameter name="F2SDRAM_Type">Avalon-MM Bidirectional</parameter>
-  <parameter name="F2SDRAM_Width" value="256" />
+  <parameter name="F2SDRAM_Type" value="AXI-3" />
+  <parameter name="F2SDRAM_Width" value="128" />
   <parameter name="F2SINTERRUPT_Enable" value="true" />
   <parameter name="F2S_Width" value="3" />
   <parameter name="FORCED_NON_LDC_ADDR_CMD_MEM_CK_INVERT" value="false" />
@@ -1381,7 +1381,7 @@
    kind="avalon"
    version="15.1"
    start="alt_vip_vfr_hdmi.avalon_master"
-   end="hps_0.f2h_axi_slave">
+   end="hps_0.f2h_sdram0_data">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x0000" />
   <parameter name="defaultConnection" value="false" />
@@ -1419,7 +1419,7 @@
    start="mm_bridge_0.m0"
    end="alt_vip_vfr_hdmi.avalon_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00051000" />
+  <parameter name="baseAddress" value="0x00031000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1496,7 +1496,7 @@
    start="fpga_only_master.master"
    end="alt_vip_vfr_hdmi.avalon_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00051000" />
+  <parameter name="baseAddress" value="0x00031000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1591,11 +1591,6 @@
  <connection kind="clock" version="15.1" start="clk_0.clk" end="dipsw_pio.clk" />
  <connection kind="clock" version="15.1" start="clk_0.clk" end="button_pio.clk" />
  <connection kind="clock" version="15.1" start="clk_0.clk" end="jtag_uart.clk" />
- <connection
-   kind="clock"
-   version="15.1"
-   start="clk_0.clk"
-   end="f2sdram_only_master.clk" />
  <connection kind="clock" version="15.1" start="clk_0.clk" end="mm_bridge_0.clk" />
  <connection kind="clock" version="15.1" start="clk_0.clk" end="ILC.clk" />
  <connection kind="clock" version="15.1" start="clk_0.clk" end="hm2reg_io_0.clock" />
@@ -1608,17 +1603,7 @@
    kind="clock"
    version="15.1"
    start="clk_0.clk"
-   end="alt_vip_vfr_hdmi.clock_master" />
- <connection
-   kind="clock"
-   version="15.1"
-   start="clk_0.clk"
    end="hps_0.f2h_axi_clock" />
- <connection
-   kind="clock"
-   version="15.1"
-   start="clk_0.clk"
-   end="hps_0.f2h_sdram0_clock" />
  <connection
    kind="clock"
    version="15.1"
@@ -1634,7 +1619,22 @@
    kind="clock"
    version="15.1"
    start="pll_stream.outclk0"
+   end="f2sdram_only_master.clk" />
+ <connection
+   kind="clock"
+   version="15.1"
+   start="pll_stream.outclk0"
+   end="alt_vip_vfr_hdmi.clock_master" />
+ <connection
+   kind="clock"
+   version="15.1"
+   start="pll_stream.outclk0"
    end="alt_vip_vfr_hdmi.clock_reset" />
+ <connection
+   kind="clock"
+   version="15.1"
+   start="pll_stream.outclk0"
+   end="hps_0.f2h_sdram0_clock" />
  <connection
    kind="clock"
    version="15.1"
