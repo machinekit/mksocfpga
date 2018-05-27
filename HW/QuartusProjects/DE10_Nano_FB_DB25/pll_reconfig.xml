@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<instance entity-name="altera_pll_reconfig" version="16.0" >
+<generic name="device_family" value="Cyclone V" />
+<generic name="ENABLE_MIF" value="false" />
+<generic name="MIF_FILE_NAME" value="" />
+<generic name="ENABLE_BYTEENABLE" value="false" />
+</instance>
