@@ -427,6 +427,11 @@
  <interface name="hps_0_f2h_debug_reset_req" internal="hps_0.f2h_debug_reset_req" />
  <interface name="hps_0_f2h_stm_hw_events" internal="hps_0.f2h_stm_hw_events" />
  <interface name="hps_0_f2h_warm_reset_req" internal="hps_0.f2h_warm_reset_req" />
+ <interface
+   name="hps_0_h2f_reset"
+   internal="hps_0.h2f_reset"
+   type="reset"
+   dir="start" />
  <interface name="hps_0_hps_io" internal="hps_0.hps_io" type="conduit" dir="end" />
  <interface name="lcd_clk" internal="pll_lcd.outclk1" type="clock" dir="start" />
  <interface
@@ -1763,77 +1768,6 @@
  <connection
    kind="reset"
    version="15.1"
-   start="hps_0.h2f_reset"
-   end="fpga_only_master.clk_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_0.h2f_reset"
-   end="hps_only_master.clk_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_0.h2f_reset"
-   end="alt_vip_vfr_hdmi.clock_master_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_0.h2f_reset"
-   end="alt_vip_vfr_hdmi.clock_reset_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_0.h2f_reset"
-   end="alt_vip_itc_0.is_clk_rst_reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_0.h2f_reset"
-   end="button_pio.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_0.h2f_reset"
-   end="dipsw_pio.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_0.h2f_reset"
-   end="hm2reg_io_0.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_0.h2f_reset"
-   end="jtag_uart.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_0.h2f_reset"
-   end="led_pio.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_0.h2f_reset"
-   end="mm_bridge_0.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_0.h2f_reset"
-   end="pll_lcd.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_0.h2f_reset"
-   end="sysid_qsys.reset" />
- <connection kind="reset" version="15.1" start="hps_0.h2f_reset" end="ILC.reset_n" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_0.h2f_reset"
-   end="intr_capturer_0.reset_sink" />
- <connection
-   kind="reset"
-   version="15.1"
    start="fpga_only_master.master_reset"
    end="fpga_only_master.clk_reset" />
  <connection
@@ -1885,11 +1819,6 @@
    kind="reset"
    version="15.1"
    start="fpga_only_master.master_reset"
-   end="hm2reg_io_0.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="fpga_only_master.master_reset"
    end="button_pio.reset" />
  <connection
    kind="reset"
@@ -1906,11 +1835,6 @@
    version="15.1"
    start="hps_only_master.master_reset"
    end="dipsw_pio.reset" />
- <connection
-   kind="reset"
-   version="15.1"
-   start="hps_only_master.master_reset"
-   end="hm2reg_io_0.reset" />
  <connection
    kind="reset"
    version="15.1"
@@ -1961,6 +1885,16 @@
    version="15.1"
    start="hps_only_master.master_reset"
    end="sysid_qsys.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="hm2reg_io_0.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
+   end="hm2reg_io_0.reset" />
  <connection
    kind="reset"
    version="15.1"

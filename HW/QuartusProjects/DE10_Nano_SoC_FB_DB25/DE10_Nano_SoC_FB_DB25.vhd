@@ -52,7 +52,7 @@ entity DE10_Nano_SoC_FB_DB25 is
         HDMI_TX_HS         : out std_logic;
         HDMI_TX_INT        : in std_logic;
         HDMI_TX_VS         : out std_logic;
-        
+
         --------- ADC ---------
         ADC_CONVST         : out   std_logic;
         ADC_SCK            : out   std_logic;
@@ -291,13 +291,6 @@ begin
         mk_io_hm2_int_in                        => irq,                     --                               .hm2_int_in
         clk_100mhz_out_clk                      => hm_clk_med,              --                 clk_100mhz_out.clk
         clk_200mhz_out_clk                      => hm_clk_high,             --                 clk_100mhz_out.clk
-        adc_io_convst                           => ADC_CONVST,              --                            adc.CONVST
-        adc_io_sck                              => ADC_SCK,                 --                               .SCK
-        adc_io_sdi                              => ADC_SDI,                 --                               .SDI
-        adc_io_sdo                              => ADC_SDO,                 --                               .SDO
---      axi_str_data                            => out_data[7:0],           --                    stream_port.data
---      axi_str_valid                           => out_data[8],             --                               .valid
---      axi_str_ready                           => ar_in_sig[1])            --                               .ready
         alt_vip_itc_0_clocked_video_vid_clk     => lcd_clk,           -- alt_vip_itc_0_clocked_video.vid_clk
         alt_vip_itc_0_clocked_video_vid_data (23 downto 0)     => HDMI_TX_D,             --                            .vid_data
 --      alt_vip_itc_0_clocked_video_underflow     => CONNECTED_TO_alt_vip_itc_0_clocked_video_underflow,     --                            .underflow
@@ -386,12 +379,12 @@ begin
 
     I2C_HDMI_Config_inst : I2C_HDMI_Config
    port map (
-        iCLK        => fpga_clk_50, 
+        iCLK        => fpga_clk_50,
         iRST_N      => '1',
         I2C_SCLK    => HDMI_I2C_SCL,
         I2C_SDAT    => HDMI_I2C_SDA,
         HDMI_TX_INT => HDMI_TX_INT
---        READY       => 
+--        READY       =>
         );
 
 

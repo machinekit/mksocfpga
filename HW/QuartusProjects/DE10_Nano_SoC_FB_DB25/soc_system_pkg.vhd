@@ -5,10 +5,6 @@ package soc_pkg is
 	-- From: soc_system/soc_system.cmp
 	component soc_system is
 		port (
-			adc_io_convst                             : out   std_logic;                                        -- convst
-			adc_io_sck                                : out   std_logic;                                        -- sck
-			adc_io_sdi                                : out   std_logic;                                        -- sdi
-			adc_io_sdo                                : in    std_logic                     := 'X';             -- sdo
 			alt_vip_itc_0_clocked_video_vid_clk       : in    std_logic                     := 'X';             -- vid_clk
 			alt_vip_itc_0_clocked_video_vid_data      : out   std_logic_vector(31 downto 0);                    -- vid_data
 			alt_vip_itc_0_clocked_video_underflow     : out   std_logic;                                        -- underflow

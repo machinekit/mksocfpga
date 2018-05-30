@@ -275,14 +275,7 @@ begin
 --      mk_io_hm2_we                            => hm_chipsel,              --                               .hm2_chipsel
         mk_io_hm2_int_in                        => irq,                     --                               .hm2_int_in
         clk_100mhz_out_clk                      => hm_clk_med,              --                 clk_100mhz_out.clk
-        clk_200mhz_out_clk                      => hm_clk_high,             --                 clk_100mhz_out.clk
-        adc_io_convst                           => ADC_CONVST,              --                            adc.CONVST
-        adc_io_sck                              => ADC_SCK,                 --                               .SCK
-        adc_io_sdi                              => ADC_SDI,                 --                               .SDI
-        adc_io_sdo                              => ADC_SDO                  --                               .SDO
---      axi_str_data                            => out_data[7:0],           --                    stream_port.data
---      axi_str_valid                           => out_data[8],             --                               .valid
---      axi_str_ready                           => ar_in_sig[1])            --                               .ready
+        clk_200mhz_out_clk                      => hm_clk_high              --                 clk_100mhz_out.clk
 );
 
 -- Debounce logic to clean out glitches within 1ms
