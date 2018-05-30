@@ -9,27 +9,11 @@
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
-   element adc_ltc2308_fifo_0
-   {
-      datum _sortIndex
-      {
-         value = "17";
-         type = "int";
-      }
-   }
-   element adc_ltc2308_fifo_0.slave
-   {
-      datum baseAddress
-      {
-         value = "327680";
-         type = "String";
-      }
-   }
    element alt_vip_itc_0
    {
       datum _sortIndex
       {
-         value = "1";
+         value = "15";
          type = "int";
       }
    }
@@ -37,7 +21,7 @@
    {
       datum _sortIndex
       {
-         value = "0";
+         value = "14";
          type = "int";
       }
    }
@@ -58,7 +42,7 @@
    {
       datum _sortIndex
       {
-         value = "7";
+         value = "11";
          type = "int";
       }
       datum sopceditor_expanded
@@ -84,7 +68,7 @@
    {
       datum _sortIndex
       {
-         value = "15";
+         value = "0";
          type = "int";
       }
       datum sopceditor_expanded
@@ -97,7 +81,7 @@
    {
       datum _sortIndex
       {
-         value = "3";
+         value = "2";
          type = "int";
       }
    }
@@ -105,7 +89,7 @@
    {
       datum _sortIndex
       {
-         value = "8";
+         value = "10";
          type = "int";
       }
       datum sopceditor_expanded
@@ -139,7 +123,7 @@
    {
       datum _sortIndex
       {
-         value = "12";
+         value = "5";
          type = "int";
       }
       datum sopceditor_expanded
@@ -158,6 +142,11 @@
    }
    element hm2reg_io_0.slave
    {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
       datum baseAddress
       {
          value = "262144";
@@ -165,6 +154,32 @@
       }
    }
    element hps_0
+   {
+      datum _sortIndex
+      {
+         value = "3";
+         type = "int";
+      }
+      datum sopceditor_expanded
+      {
+         value = "1";
+         type = "boolean";
+      }
+   }
+   element hps_0.f2h_axi_slave
+   {
+      datum _lockedAddress
+      {
+         value = "0";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "0";
+         type = "String";
+      }
+   }
+   element hps_only_master
    {
       datum _sortIndex
       {
@@ -177,37 +192,21 @@
          type = "boolean";
       }
    }
-   element hps_0.f2h_axi_slave
-   {
-      datum baseAddress
-      {
-         value = "0";
-         type = "String";
-      }
-   }
-   element hps_only_master
-   {
-      datum _sortIndex
-      {
-         value = "5";
-         type = "int";
-      }
-      datum sopceditor_expanded
-      {
-         value = "1";
-         type = "boolean";
-      }
-   }
    element intr_capturer_0
    {
       datum _sortIndex
       {
-         value = "14";
+         value = "13";
          type = "int";
       }
    }
    element intr_capturer_0.avalon_slave_0
    {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
       datum baseAddress
       {
          value = "196608";
@@ -218,7 +217,7 @@
    {
       datum _sortIndex
       {
-         value = "11";
+         value = "8";
          type = "int";
       }
       datum sopceditor_expanded
@@ -270,7 +269,7 @@
    {
       datum _sortIndex
       {
-         value = "13";
+         value = "6";
          type = "int";
       }
    }
@@ -286,12 +285,17 @@
    {
       datum _sortIndex
       {
-         value = "10";
+         value = "12";
          type = "int";
       }
    }
    element onchip_memory2_0.s1
    {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
       datum baseAddress
       {
          value = "65536";
@@ -302,7 +306,7 @@
    {
       datum _sortIndex
       {
-         value = "2";
+         value = "1";
          type = "int";
       }
    }
@@ -318,7 +322,7 @@
    {
       datum _sortIndex
       {
-         value = "6";
+         value = "7";
          type = "int";
       }
       datum sopceditor_expanded
@@ -361,11 +365,6 @@
  <parameter name="timeStamp" value="0" />
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
- <interface
-   name="adc_io"
-   internal="adc_ltc2308_fifo_0.conduit_end"
-   type="conduit"
-   dir="end" />
  <interface
    name="alt_vip_itc_0_clocked_video"
    internal="alt_vip_itc_0.clocked_video"
@@ -427,11 +426,6 @@
  <interface name="memory" internal="hps_0.memory" type="conduit" dir="end" />
  <interface name="mk_io" internal="hm2reg_io_0.pins" type="conduit" dir="end" />
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
- <module
-   name="adc_ltc2308_fifo_0"
-   kind="adc_ltc2308_fifo"
-   version="1.1"
-   enabled="1" />
  <module name="alt_vip_itc_0" kind="alt_vip_itc" version="14.0" enabled="1">
   <parameter name="ACCEPT_COLOURS_IN_SEQ" value="0" />
   <parameter name="ANC_LINE" value="0" />
@@ -469,8 +463,8 @@
   <parameter name="V_SYNC_LENGTH" value="6" />
  </module>
  <module name="alt_vip_vfr_hdmi" kind="alt_vip_vfr" version="14.0" enabled="1">
-  <parameter name="AUTO_CLOCK_MASTER_CLOCK_RATE" value="100000000" />
-  <parameter name="AUTO_CLOCK_RESET_CLOCK_RATE" value="100000000" />
+  <parameter name="AUTO_CLOCK_MASTER_CLOCK_RATE" value="130000000" />
+  <parameter name="AUTO_CLOCK_RESET_CLOCK_RATE" value="130000000" />
   <parameter name="BITS_PER_PIXEL_PER_COLOR_PLANE" value="8" />
   <parameter name="CLOCKS_ARE_SEPARATE" value="0" />
   <parameter name="FAMILY" value="Cyclone V" />
@@ -639,7 +633,7 @@
   <parameter name="EXPORT_AFI_HALF_CLK" value="false" />
   <parameter name="EXTRA_SETTINGS" value="" />
   <parameter name="F2H_AXI_CLOCK_FREQ" value="50000000" />
-  <parameter name="F2H_SDRAM0_CLOCK_FREQ" value="100000000" />
+  <parameter name="F2H_SDRAM0_CLOCK_FREQ" value="130000000" />
   <parameter name="F2H_SDRAM1_CLOCK_FREQ" value="100" />
   <parameter name="F2H_SDRAM2_CLOCK_FREQ" value="100" />
   <parameter name="F2H_SDRAM3_CLOCK_FREQ" value="100" />
@@ -1476,15 +1470,6 @@
  <connection
    kind="avalon"
    version="15.1"
-   start="mm_bridge_0.m0"
-   end="adc_ltc2308_fifo_0.slave">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00050000" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="15.1"
    start="fpga_only_master.master"
    end="jtag_uart.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
@@ -1558,15 +1543,6 @@
    kind="avalon"
    version="15.1"
    start="fpga_only_master.master"
-   end="adc_ltc2308_fifo_0.slave">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00050000" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="15.1"
-   start="fpga_only_master.master"
    end="hm2reg_io_0.slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00040000" />
@@ -1608,11 +1584,6 @@
    kind="clock"
    version="15.1"
    start="clk_0.clk"
-   end="adc_ltc2308_fifo_0.clock_sink" />
- <connection
-   kind="clock"
-   version="15.1"
-   start="clk_0.clk"
    end="hps_0.f2h_axi_clock" />
  <connection
    kind="clock"
@@ -1629,32 +1600,27 @@
    kind="clock"
    version="15.1"
    start="hps_0.h2f_user0_clock"
-   end="alt_vip_vfr_hdmi.clock_master" />
- <connection
-   kind="clock"
-   version="15.1"
-   start="hps_0.h2f_user0_clock"
-   end="alt_vip_vfr_hdmi.clock_reset" />
- <connection
-   kind="clock"
-   version="15.1"
-   start="hps_0.h2f_user0_clock"
-   end="hps_0.f2h_sdram0_clock" />
- <connection
-   kind="clock"
-   version="15.1"
-   start="hps_0.h2f_user0_clock"
    end="clock_bridge_0.in_clk" />
  <connection
    kind="clock"
    version="15.1"
-   start="hps_0.h2f_user0_clock"
-   end="alt_vip_itc_0.is_clk_rst" />
+   start="pll_lcd.outclk0"
+   end="alt_vip_vfr_hdmi.clock_master" />
  <connection
    kind="clock"
    version="15.1"
-   start="hps_0.h2f_user1_clock"
-   end="adc_ltc2308_fifo_0.clock_sink_adc" />
+   start="pll_lcd.outclk0"
+   end="alt_vip_vfr_hdmi.clock_reset" />
+ <connection
+   kind="clock"
+   version="15.1"
+   start="pll_lcd.outclk0"
+   end="hps_0.f2h_sdram0_clock" />
+ <connection
+   kind="clock"
+   version="15.1"
+   start="pll_lcd.outclk0"
+   end="alt_vip_itc_0.is_clk_rst" />
  <connection
    kind="interrupt"
    version="15.1"
@@ -1666,14 +1632,14 @@
    kind="interrupt"
    version="15.1"
    start="hps_0.f2h_irq0"
-   end="button_pio.irq">
+   end="dipsw_pio.irq">
   <parameter name="irqNumber" value="1" />
  </connection>
  <connection
    kind="interrupt"
    version="15.1"
    start="hps_0.f2h_irq0"
-   end="dipsw_pio.irq">
+   end="button_pio.irq">
   <parameter name="irqNumber" value="2" />
  </connection>
  <connection
@@ -1694,14 +1660,14 @@
    kind="interrupt"
    version="15.1"
    start="intr_capturer_0.interrupt_receiver"
-   end="button_pio.irq">
+   end="dipsw_pio.irq">
   <parameter name="irqNumber" value="1" />
  </connection>
  <connection
    kind="interrupt"
    version="15.1"
    start="intr_capturer_0.interrupt_receiver"
-   end="dipsw_pio.irq">
+   end="button_pio.irq">
   <parameter name="irqNumber" value="2" />
  </connection>
  <connection
@@ -1785,12 +1751,57 @@
    kind="reset"
    version="15.1"
    start="clk_0.clk_reset"
-   end="adc_ltc2308_fifo_0.reset_sink" />
+   end="intr_capturer_0.reset_sink" />
  <connection
    kind="reset"
    version="15.1"
-   start="clk_0.clk_reset"
-   end="intr_capturer_0.reset_sink" />
+   start="fpga_only_master.master_reset"
+   end="fpga_only_master.clk_reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="fpga_only_master.clk_reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
+   end="hps_only_master.clk_reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="hps_only_master.clk_reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
+   end="alt_vip_vfr_hdmi.clock_master_reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="alt_vip_vfr_hdmi.clock_master_reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
+   end="alt_vip_vfr_hdmi.clock_reset_reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="alt_vip_vfr_hdmi.clock_reset_reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
+   end="alt_vip_itc_0.is_clk_rst_reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="alt_vip_itc_0.is_clk_rst_reset" />
  <connection
    kind="reset"
    version="15.1"
@@ -1800,16 +1811,96 @@
    kind="reset"
    version="15.1"
    start="fpga_only_master.master_reset"
+   end="button_pio.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="button_pio.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
+   end="dipsw_pio.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="dipsw_pio.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="hm2reg_io_0.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
+   end="jtag_uart.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="jtag_uart.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
+   end="led_pio.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="led_pio.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
+   end="mm_bridge_0.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="mm_bridge_0.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
+   end="pll_lcd.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="pll_lcd.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
+   end="sysid_qsys.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="sysid_qsys.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
+   end="onchip_memory2_0.reset1" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
    end="onchip_memory2_0.reset1" />
  <connection
    kind="reset"
    version="15.1"
    start="fpga_only_master.master_reset"
-   end="adc_ltc2308_fifo_0.reset_sink" />
+   end="intr_capturer_0.reset_sink" />
  <connection
    kind="reset"
    version="15.1"
-   start="fpga_only_master.master_reset"
+   start="hps_only_master.master_reset"
    end="intr_capturer_0.reset_sink" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />

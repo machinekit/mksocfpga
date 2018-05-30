@@ -13,7 +13,7 @@
    {
       datum _sortIndex
       {
-         value = "3";
+         value = "9";
          type = "int";
       }
    }
@@ -26,7 +26,7 @@
       }
       datum baseAddress
       {
-         value = "65728";
+         value = "20672";
          type = "String";
       }
    }
@@ -34,7 +34,7 @@
    {
       datum _sortIndex
       {
-         value = "10";
+         value = "0";
          type = "int";
       }
    }
@@ -42,7 +42,7 @@
    {
       datum _sortIndex
       {
-         value = "4";
+         value = "8";
          type = "int";
       }
    }
@@ -63,7 +63,7 @@
       }
       datum baseAddress
       {
-         value = "65664";
+         value = "16512";
          type = "String";
       }
    }
@@ -71,7 +71,7 @@
    {
       datum _sortIndex
       {
-         value = "8";
+         value = "3";
          type = "int";
       }
    }
@@ -79,12 +79,17 @@
    {
       datum _sortIndex
       {
-         value = "11";
+         value = "12";
          type = "int";
       }
    }
    element hm2reg_io_0.slave
    {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
       datum baseAddress
       {
          value = "262144";
@@ -95,7 +100,7 @@
    {
       datum _sortIndex
       {
-         value = "0";
+         value = "1";
          type = "int";
       }
    }
@@ -111,7 +116,7 @@
    {
       datum _sortIndex
       {
-         value = "1";
+         value = "2";
          type = "int";
       }
    }
@@ -119,7 +124,7 @@
    {
       datum _sortIndex
       {
-         value = "9";
+         value = "11";
          type = "int";
       }
    }
@@ -145,7 +150,7 @@
    {
       datum _sortIndex
       {
-         value = "7";
+         value = "6";
          type = "int";
       }
    }
@@ -158,7 +163,7 @@
       }
       datum baseAddress
       {
-         value = "131072";
+         value = "8192";
          type = "String";
       }
    }
@@ -166,7 +171,7 @@
    {
       datum _sortIndex
       {
-         value = "5";
+         value = "7";
          type = "int";
       }
    }
@@ -179,23 +184,44 @@
       }
       datum baseAddress
       {
-         value = "65600";
+         value = "12352";
          type = "String";
+      }
+   }
+   element mm_bridge_0
+   {
+      datum _sortIndex
+      {
+         value = "4";
+         type = "int";
+      }
+   }
+   element mm_bridge_0.s0
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
       }
    }
    element onchip_memory2_0
    {
       datum _sortIndex
       {
-         value = "6";
+         value = "10";
          type = "int";
       }
    }
    element onchip_memory2_0.s1
    {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
       datum baseAddress
       {
-         value = "0";
+         value = "65536";
          type = "String";
       }
    }
@@ -339,7 +365,7 @@
    {
       datum _sortIndex
       {
-         value = "2";
+         value = "5";
          type = "int";
       }
    }
@@ -352,7 +378,7 @@
       }
       datum baseAddress
       {
-         value = "65536";
+         value = "4096";
          type = "String";
       }
    }
@@ -1058,6 +1084,26 @@
   <parameter name="width" value="8" />
  </module>
  <module
+   name="mm_bridge_0"
+   kind="altera_avalon_mm_bridge"
+   version="15.1"
+   enabled="1">
+  <parameter name="ADDRESS_UNITS" value="SYMBOLS" />
+  <parameter name="ADDRESS_WIDTH" value="10" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
+  <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone V" />
+  <parameter name="DATA_WIDTH" value="32" />
+  <parameter name="LINEWRAPBURSTS" value="0" />
+  <parameter name="MAX_BURST_SIZE" value="1" />
+  <parameter name="MAX_PENDING_RESPONSES" value="4" />
+  <parameter name="PIPELINE_COMMAND" value="1" />
+  <parameter name="PIPELINE_RESPONSE" value="1" />
+  <parameter name="SYMBOL_WIDTH" value="8" />
+  <parameter name="SYSINFO_ADDR_WIDTH" value="19" />
+  <parameter name="USE_AUTO_ADDRESS_WIDTH" value="1" />
+  <parameter name="USE_RESPONSE" value="0" />
+ </module>
+ <module
    name="onchip_memory2_0"
    kind="altera_avalon_onchip_memory2"
    version="15.1"
@@ -1097,8 +1143,8 @@
  <connection
    kind="avalon"
    version="15.1"
-   start="hps_0.h2f_axi_master"
-   end="onchip_memory2_0.s1">
+   start="hps_0.h2f_lw_axi_master"
+   end="mm_bridge_0.s0">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x0000" />
   <parameter name="defaultConnection" value="false" />
@@ -1106,17 +1152,49 @@
  <connection
    kind="avalon"
    version="15.1"
-   start="hps_0.h2f_lw_axi_master"
+   start="mm_bridge_0.m0"
    end="jtag_uart.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00020000" />
+  <parameter name="baseAddress" value="0x2000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
    kind="avalon"
    version="15.1"
-   start="hps_0.h2f_lw_axi_master"
+   start="mm_bridge_0.m0"
    end="sysid_qsys.control_slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x1000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.1"
+   start="mm_bridge_0.m0"
+   end="button_pio.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x50c0" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.1"
+   start="mm_bridge_0.m0"
+   end="dipsw_pio.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x4080" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection kind="avalon" version="15.1" start="mm_bridge_0.m0" end="led_pio.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x3040" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.1"
+   start="mm_bridge_0.m0"
+   end="onchip_memory2_0.s1">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00010000" />
   <parameter name="defaultConnection" value="false" />
@@ -1124,34 +1202,7 @@
  <connection
    kind="avalon"
    version="15.1"
-   start="hps_0.h2f_lw_axi_master"
-   end="button_pio.s1">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x000100c0" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="15.1"
-   start="hps_0.h2f_lw_axi_master"
-   end="dipsw_pio.s1">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00010080" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="15.1"
-   start="hps_0.h2f_lw_axi_master"
-   end="led_pio.s1">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00010040" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="15.1"
-   start="hps_0.h2f_lw_axi_master"
+   start="mm_bridge_0.m0"
    end="hm2reg_io_0.slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00040000" />
@@ -1163,7 +1214,7 @@
    start="fpga_only_master.master"
    end="jtag_uart.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00020000" />
+  <parameter name="baseAddress" value="0x2000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1181,7 +1232,7 @@
    start="fpga_only_master.master"
    end="sysid_qsys.control_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00010000" />
+  <parameter name="baseAddress" value="0x1000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1199,7 +1250,7 @@
    start="fpga_only_master.master"
    end="led_pio.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00010040" />
+  <parameter name="baseAddress" value="0x3040" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1208,7 +1259,7 @@
    start="fpga_only_master.master"
    end="dipsw_pio.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00010080" />
+  <parameter name="baseAddress" value="0x4080" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1217,7 +1268,7 @@
    start="fpga_only_master.master"
    end="button_pio.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x000100c0" />
+  <parameter name="baseAddress" value="0x50c0" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1226,7 +1277,7 @@
    start="fpga_only_master.master"
    end="onchip_memory2_0.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="baseAddress" value="0x00010000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1253,6 +1304,7 @@
  <connection kind="clock" version="15.1" start="clk_0.clk" end="dipsw_pio.clk" />
  <connection kind="clock" version="15.1" start="clk_0.clk" end="button_pio.clk" />
  <connection kind="clock" version="15.1" start="clk_0.clk" end="jtag_uart.clk" />
+ <connection kind="clock" version="15.1" start="clk_0.clk" end="mm_bridge_0.clk" />
  <connection
    kind="clock"
    version="15.1"
@@ -1291,14 +1343,14 @@
    version="15.1"
    start="hps_0.f2h_irq0"
    end="button_pio.irq">
-  <parameter name="irqNumber" value="1" />
+  <parameter name="irqNumber" value="2" />
  </connection>
  <connection
    kind="interrupt"
    version="15.1"
    start="hps_0.f2h_irq0"
    end="dipsw_pio.irq">
-  <parameter name="irqNumber" value="2" />
+  <parameter name="irqNumber" value="1" />
  </connection>
  <connection
    kind="interrupt"
@@ -1319,14 +1371,14 @@
    version="15.1"
    start="intr_capturer_0.interrupt_receiver"
    end="button_pio.irq">
-  <parameter name="irqNumber" value="1" />
+  <parameter name="irqNumber" value="2" />
  </connection>
  <connection
    kind="interrupt"
    version="15.1"
    start="intr_capturer_0.interrupt_receiver"
    end="dipsw_pio.irq">
-  <parameter name="irqNumber" value="2" />
+  <parameter name="irqNumber" value="1" />
  </connection>
  <connection
    kind="interrupt"
@@ -1375,6 +1427,11 @@
    version="15.1"
    start="clk_0.clk_reset"
    end="hm2reg_io_0.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="clk_0.clk_reset"
+   end="mm_bridge_0.reset" />
  <connection
    kind="reset"
    version="15.1"
@@ -1403,6 +1460,11 @@
  <connection
    kind="reset"
    version="15.1"
+   start="hps_only_master.master_reset"
+   end="hps_only_master.clk_reset" />
+ <connection
+   kind="reset"
+   version="15.1"
    start="fpga_only_master.master_reset"
    end="button_pio.reset" />
  <connection
@@ -1445,6 +1507,31 @@
    version="15.1"
    start="hps_only_master.master_reset"
    end="hm2reg_io_0.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="button_pio.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="dipsw_pio.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="fpga_only_master.master_reset"
+   end="mm_bridge_0.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="mm_bridge_0.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="hps_only_master.master_reset"
+   end="sysid_qsys.reset" />
  <connection
    kind="reset"
    version="15.1"
