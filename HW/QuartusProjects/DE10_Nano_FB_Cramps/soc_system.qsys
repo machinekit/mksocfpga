@@ -63,7 +63,7 @@
    {
       datum _sortIndex
       {
-         value = "10";
+         value = "11";
          type = "int";
       }
       datum sopceditor_expanded
@@ -102,7 +102,7 @@
    {
       datum _sortIndex
       {
-         value = "9";
+         value = "10";
          type = "int";
       }
       datum sopceditor_expanded
@@ -212,7 +212,7 @@
    {
       datum _sortIndex
       {
-         value = "11";
+         value = "6";
          type = "int";
       }
    }
@@ -225,7 +225,7 @@
       }
       datum baseAddress
       {
-         value = "24576";
+         value = "28416";
          type = "String";
       }
    }
@@ -233,7 +233,7 @@
    {
       datum _sortIndex
       {
-         value = "7";
+         value = "8";
          type = "int";
       }
       datum sopceditor_expanded
@@ -259,7 +259,7 @@
    {
       datum _sortIndex
       {
-         value = "8";
+         value = "9";
          type = "int";
       }
       datum sopceditor_expanded
@@ -349,7 +349,7 @@
    {
       datum _sortIndex
       {
-         value = "6";
+         value = "7";
          type = "int";
       }
       datum sopceditor_expanded
@@ -1424,7 +1424,7 @@
    start="mm_bridge_0.m0"
    end="intr_capturer_0.avalon_slave_0">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x6000" />
+  <parameter name="baseAddress" value="0x6f00" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1501,7 +1501,7 @@
    start="fpga_only_master.master"
    end="intr_capturer_0.avalon_slave_0">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x6000" />
+  <parameter name="baseAddress" value="0x6f00" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection

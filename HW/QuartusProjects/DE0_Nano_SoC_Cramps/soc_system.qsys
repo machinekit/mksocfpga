@@ -13,7 +13,7 @@
    {
       datum _sortIndex
       {
-         value = "9";
+         value = "10";
          type = "int";
       }
    }
@@ -26,7 +26,7 @@
       }
       datum baseAddress
       {
-         value = "20672";
+         value = "20480";
          type = "String";
       }
    }
@@ -42,7 +42,7 @@
    {
       datum _sortIndex
       {
-         value = "8";
+         value = "9";
          type = "int";
       }
    }
@@ -124,7 +124,7 @@
    {
       datum _sortIndex
       {
-         value = "11";
+         value = "5";
          type = "int";
       }
    }
@@ -142,7 +142,7 @@
       }
       datum baseAddress
       {
-         value = "196608";
+         value = "3840";
          type = "String";
       }
    }
@@ -150,7 +150,7 @@
    {
       datum _sortIndex
       {
-         value = "6";
+         value = "7";
          type = "int";
       }
    }
@@ -171,7 +171,7 @@
    {
       datum _sortIndex
       {
-         value = "7";
+         value = "8";
          type = "int";
       }
    }
@@ -184,7 +184,7 @@
       }
       datum baseAddress
       {
-         value = "12352";
+         value = "12288";
          type = "String";
       }
    }
@@ -208,7 +208,7 @@
    {
       datum _sortIndex
       {
-         value = "10";
+         value = "11";
          type = "int";
       }
    }
@@ -365,7 +365,7 @@
    {
       datum _sortIndex
       {
-         value = "5";
+         value = "6";
          type = "int";
       }
    }
@@ -1173,7 +1173,7 @@
    start="mm_bridge_0.m0"
    end="button_pio.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x50c0" />
+  <parameter name="baseAddress" value="0x5000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1187,7 +1187,7 @@
  </connection>
  <connection kind="avalon" version="15.1" start="mm_bridge_0.m0" end="led_pio.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x3040" />
+  <parameter name="baseAddress" value="0x3000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1223,7 +1223,7 @@
    start="fpga_only_master.master"
    end="intr_capturer_0.avalon_slave_0">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00030000" />
+  <parameter name="baseAddress" value="0x0f00" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1250,7 +1250,7 @@
    start="fpga_only_master.master"
    end="led_pio.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x3040" />
+  <parameter name="baseAddress" value="0x3000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1268,7 +1268,7 @@
    start="fpga_only_master.master"
    end="button_pio.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x50c0" />
+  <parameter name="baseAddress" value="0x5000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
