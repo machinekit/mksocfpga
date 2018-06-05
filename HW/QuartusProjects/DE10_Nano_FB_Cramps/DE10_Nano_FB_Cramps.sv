@@ -119,7 +119,7 @@ parameter NumIOAddrReg = 6;
     wire        hps_debug_reset;
 //    wire [27:0] stm_hw_events;
     wire 		fpga_clk_50;
-    wire        clk_75;
+    wire        lcd_clk;
 
 // connection of internal logics
 //	assign LED[5:1] = fpga_led_internal | {7'b0000000, led_level};
@@ -166,13 +166,13 @@ I2C_HDMI_Config u_I2C_HDMI_Config (
     .HDMI_TX_INT(HDMI_TX_INT)
     );
 
-    assign HDMI_TX_CLK = clk_75;
+    assign HDMI_TX_CLK = lcd_clk;
 
 soc_system u0 (
     //Clock&Reset
     .clk_clk                                     (FPGA_CLK1_50 ),                               //                            clk.clk
     .reset_reset_n                               (hps_fpga_reset_n ),                         //                          reset.reset_n
-    .alt_vip_itc_0_clocked_video_vid_clk       (clk_75 ),       // alt_vip_itc_0_clocked_video.vid_clk
+    .alt_vip_itc_0_clocked_video_vid_clk       (lcd_clk ),       // alt_vip_itc_0_clocked_video.vid_clk
     .alt_vip_itc_0_clocked_video_vid_data      (HDMI_TX_D ),      //                            .vid_data
     .alt_vip_itc_0_clocked_video_underflow     ( ),     //                            .underflow
     .alt_vip_itc_0_clocked_video_vid_datavalid (HDMI_TX_DE), //                            .vid_datavalid
@@ -181,7 +181,7 @@ soc_system u0 (
     .alt_vip_itc_0_clocked_video_vid_f         ( ),         //                            .vid_f
     .alt_vip_itc_0_clocked_video_vid_h         ( ),         //                            .vid_h
     .alt_vip_itc_0_clocked_video_vid_v         ( ),          //                            .vid_v
-    .lcd_clk_clk                               (clk_75),                               //                        lcd_clk.clk
+    .lcd_clk_clk                               (lcd_clk),                               //                        lcd_clk.clk
     .pll_stream_locked_export                  (),                   //              pll_stream_locked.export
     //HPS ddr3
     .memory_mem_a                          ( HPS_DDR3_ADDR),                       //                memory.mem_a
