@@ -579,7 +579,7 @@ GenMakeTPPWMGens: if TPPWMGens >0  generate
 		);
 end generate;
 
-GenMakeSPIs: if PWMGens >0  generate
+GenMakeSPIs: if SPIs >0  generate
 	MakeSPIs : entity work.MakeSPIs
 	generic map (
 		ThePinDesc => ThePinDesc,
