@@ -154,17 +154,17 @@ parameter   TotalNumregs    = Mux_regPrIOReg * NumIOAddrReg * NumPinsPrIOAddr;
     wire                charge;
     reg [BusWidth-1:0]  hysteresis_reg;
     wire [3:0]          hysteresis[NumSense-1:0];
-    
+
     wire sense_reset    = ~reset_reg_N | ~buttons[1];
 //	wire sense_reset = ~reset_reg_N;
-    
+
     genvar sh;
-    generate	
+    generate
         for(sh=0;sh<NumSense;sh=sh+1) begin : sense_hystloop
             assign hysteresis[sh] = hysteresis_reg[(4*sh)+:4];
         end
     endgenerate
-                
+
 
 adc_ltc2308_fifo adc_ltc2308_fifo_inst
 (
@@ -244,13 +244,14 @@ adc_ltc2308_fifo adc_ltc2308_fifo_inst
     end
     endgenerate
 
-/*
-    genvar po;
-    generate for(po=0;po<NumGPIO;po=po+1) begin : pnloop
-        assign portnumsel[po][MuxGPIOIOWidth-1:0] = portselnum[(po*MuxGPIOIOWidth)+:MuxGPIOIOWidth];
+//  Send input I/O data to Hm3 core
+    integer po;
+    always @ (posedge reg_clk) begin
+        for(po=0;po<NumGPIO;po=po+1) begin : pnloop
+            iodatatohm3[po] <= gpio_input_data[po];
+        end
     end
-    endgenerate
-*/
+
     assign portnumsel[(MuxGPIOIOWidth *NumGPIO)-1:0] = portselnum[(MuxGPIOIOWidth *NumGPIO)-1:0];
 
     assign mux_reg_index 	= busaddress_r - 16'h1120;
@@ -263,10 +264,10 @@ generate if (Capsense >= 1) begin
             hysteresis_reg <= 32'h11111111;
         end
         else if ( write_address ) begin
-            if (busaddress_r == 10'h0304) begin hysteresis_reg  <= busdata_in_r; end 
-        end	
+            if (busaddress_r == 10'h0304) begin hysteresis_reg  <= busdata_in_r; end
+        end
     end
-end 
+end
 endgenerate
 
     genvar il;
@@ -303,7 +304,7 @@ endgenerate
             end
         end
     endgenerate
-/*	
+/*
     genvar bloop;
     generate
         for(bloop=0;bloop<NumGPIO;bloop=bloop+1) begin : gpiooutloop
@@ -322,6 +323,7 @@ endgenerate
         end
     endgenerate
 */
+
 //	wire [GPIOWidth-1:0] gpio1_data_fromhm3 = iodatafromhm3[1];
 //	wire [GPIOWidth-1:0] gpio1_out_data = {gpio1_data_fromhm3[GPIOWidth-1:5],4'bz,charge};
 //	wire [GPIOWidth-1:0] gpio1_input_data;
@@ -355,7 +357,7 @@ endgenerate
 
     integer oo,om,oi;
     generate
-    
+
     always @(posedge reset_in or posedge read_address)begin
         if (reset_in)begin
             busdata_to_cpu <= 32'b0;
@@ -415,7 +417,7 @@ endgenerate
         end
     end
     endgenerate
-    
+
 generate if (Capsense >=1) begin
     assign sense = gpio_input_data[1][5:1];
 
