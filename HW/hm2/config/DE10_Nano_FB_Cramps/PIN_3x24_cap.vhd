@@ -154,12 +154,12 @@ package Pintypes is
         IOPortTag & x"00" & CAPSENSETag & CapSensePin1,     --    I/O 38    GPIO_1 03   03      CapSense sense 1
         IOPortTag & x"00" & CAPSENSETag & CapSensePin2,     --    I/O 39    GPIO_1 04   04      CapSense sense 2
         IOPortTag & x"00" & CAPSENSETag & CapSensePin3,     --    I/O 40    GPIO_1 05   05      CapSense sense 3
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 41    GPIO_1 06   06      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 42    GPIO_1 07   07      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 43    GPIO_1 08   08      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 44    GPIO_1 09   09      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 45    GPIO_1 10   10      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 46    GPIO_1 11   13      just GPIO
+        IOPortTag & x"00" & QCountTag & QCountIdxPin,       --    I/O 41    GPIO_1 06   06      Encoder Z
+        IOPortTag & x"00" & QCountTag & QCountQBPin,        --    I/O 42    GPIO_1 07   07      Encoder B
+        IOPortTag & x"00" & QCountTag & QCountQAPin,        --    I/O 43    GPIO_1 08   08      Encoder A
+        IOPortTag & x"01" & QCountTag & QCountIdxPin,       --    I/O 44    GPIO_1 09   09      Encoder Z
+        IOPortTag & x"01" & QCountTag & QCountQBPin,        --    I/O 45    GPIO_1 10   10      Encoder B
+        IOPortTag & x"01" & QCountTag & QCountQAPin,        --    I/O 46    GPIO_1 11   13      Encoder A
         IOPortTag & x"00" & NullTag & NullPin,              --    I/O 47    GPIO_1 12   14      just GPIO
         IOPortTag & x"00" & NullTag & NullPin,              --    I/O 48    GPIO_1 13   15      just GPIO
         IOPortTag & x"00" & NullTag & NullPin,              --    I/O 49    GPIO_1 14   16      just GPIO
