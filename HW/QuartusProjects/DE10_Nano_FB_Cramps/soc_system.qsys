@@ -394,7 +394,7 @@
  <instanceScript></instanceScript>
  <interface
    name="adc_clk_40mhz"
-   internal="hps_0.h2f_user1_clock"
+   internal="pll_lcd.outclk2"
    type="clock"
    dir="start" />
  <interface
@@ -1279,7 +1279,7 @@
   <parameter name="gui_fractional_cout" value="32" />
   <parameter name="gui_mif_generate" value="false" />
   <parameter name="gui_multiply_factor" value="1" />
-  <parameter name="gui_number_of_clocks" value="2" />
+  <parameter name="gui_number_of_clocks" value="3" />
   <parameter name="gui_operation_mode" value="normal" />
   <parameter name="gui_output_clock_frequency0" value="130.0" />
   <parameter name="gui_output_clock_frequency1" value="65.0" />
@@ -1291,7 +1291,7 @@
   <parameter name="gui_output_clock_frequency15" value="100.0" />
   <parameter name="gui_output_clock_frequency16" value="100.0" />
   <parameter name="gui_output_clock_frequency17" value="100.0" />
-  <parameter name="gui_output_clock_frequency2" value="100.0" />
+  <parameter name="gui_output_clock_frequency2" value="40.0" />
   <parameter name="gui_output_clock_frequency3" value="100.0" />
   <parameter name="gui_output_clock_frequency4" value="100.0" />
   <parameter name="gui_output_clock_frequency5" value="100.0" />
