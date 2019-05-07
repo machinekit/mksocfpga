@@ -74,10 +74,9 @@ begin
     if (slave_read_status)
         readdataout <= {4'b0, measure_fifo_num, 9'b0, measure_fifo_ch, 3'b0, measure_fifo_done};
     else if (slave_read_data)
-        readdataout <= {13'b0, fifo_ch_q, 4'b0, fifo_q};
+        readdataout <= {1'b0, fifo_ch_q, 16'b0, fifo_q};
 end
 
-//reg [1:0] post_read_outdata;
 reg post_read_outdata;
 reg fifo_rdreq;
 always @ (posedge clock or negedge reset_n)
@@ -118,7 +117,7 @@ reg config_first;
 reg wait_measure_done;
 reg measure_start;
 wire measure_done;
-wire [11:0] measure_dataread;
+wire [11:0] measured_data;
 
 // auto channel change
 //wire [2:0] adc_ch_sel = (auto_ch_select) ? 3'h7:measure_fifo_ch;
@@ -200,7 +199,7 @@ adc_ltc2308 adc_ltc2308_inst(
     .measure_start(measure_start), // posedge triggle
     .measure_done(measure_done),
     .measure_ch(adc_ch),
-    .measure_dataread(measure_dataread),
+    .measured_data(measured_data),
 
 
     // adc interface
@@ -215,7 +214,7 @@ adc_ltc2308 adc_ltc2308_inst(
 
 adc_data_fifo adc_data_fifo_inst(
     .aclr(adc_reset),
-    .data({adc_ch_dly, measure_dataread}),
+    .data({adc_ch_dly, measured_data}),
 //    .rdclk(read_outdata),
     .rdclk(clock),
     .rdreq(fifo_rdreq),
