@@ -119,7 +119,6 @@ parameter   TotalNumregs    = Mux_regPrIOReg * NumIOAddrReg * NumPinsPrIOAddr;
     wire [GPIOWidth-1:0]        out_ena[NumGPIO-1:0];
     wire [GPIOWidth-1:0]        od[NumGPIO-1:0];
 
-//	wire [PortNumWidth-1:0]		portnumsel[NumGPIO-1:0][GPIOWidth-1:0];
     wire [PortNumWidth-1:0]		portnumsel[(GPIOWidth * NumGPIO)-1:0];
 
     wire read_address       = read_reg_r[ReadInShift];
@@ -141,11 +140,8 @@ parameter   TotalNumregs    = Mux_regPrIOReg * NumIOAddrReg * NumPinsPrIOAddr;
 //	wire od_write_valid = (od_address_valid && write_address) ?  1'b1 : 1'b0;
 
 // ADC module:
-//    wire read_adc_address   = read_reg_r[AdcOutShift];
-    wire read_adc_address   = read_reg_r[0];
-//    wire read_adc_out       = read_reg_r[AdcOutShift];
     wire adc_address_valid  = ( (busaddress_r >= 16'h0200) && (busaddress_r <= 16'h0204)) ? 1'b1 : 1'b0;
-    wire adc_read_valid     = (adc_address_valid && read_adc_address) ?  1'b1 : 1'b0;
+    wire adc_read_valid     = (adc_address_valid && read_reg) ?  1'b1 : 1'b0;
     wire adc_write_valid    = (adc_address_valid && write_address) ?  1'b1 : 1'b0;
     wire [31:0]adc_data_out;
 
@@ -156,7 +152,6 @@ parameter   TotalNumregs    = Mux_regPrIOReg * NumIOAddrReg * NumPinsPrIOAddr;
     wire [3:0]          hysteresis[NumSense-1:0];
 
     wire sense_reset    = ~reset_reg_N | ~buttons[1];
-//	wire sense_reset = ~reset_reg_N;
 
     genvar sh;
     generate
@@ -170,11 +165,11 @@ adc_ltc2308_fifo adc_ltc2308_fifo_inst
 (
     .clock(CLOCK) ,	// input  clock_sig
     .reset_n(reset_reg_N) ,	// input  reset_n_sig
-    .addr(busaddress_r[2]) ,	// input  addr_sig
+    .addr(busaddress[2]) ,	// input  addr_sig
     .read_outdata(adc_read_valid) ,	// input  read_sig
     .write(adc_write_valid) ,	// input  write_sig
     .readdataout(adc_data_out) ,	// output [31:0] readdataout_sig
-    .writedatain(busdata_in_r) ,	// input [31:0] writedatain_sig
+    .writedatain(busdata_in) ,	// input [31:0] writedatain_sig
 //ADC
     .adc_clk(adc_clk) ,	// input  adc_clk_sig
     .ADC_CONVST_o(ADC_CONVST_o) ,	// output  ADC_CONVST_o_sig
