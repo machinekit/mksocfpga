@@ -144,9 +144,12 @@ parameter NumIOAddrReg = 6;
 
     wire        lcd_clk;
 
+    wire [NumSense-1:0] touched;
 // connection of internal logics
-    assign LED[5:1] = fpga_led_internal;
-    assign fpga_clk_50 = FPGA_CLK1_50;
+//	assign LED[5:1] = fpga_led_internal | {7'b0000000, led_level};
+    assign LED[4:1] = touched;
+    
+    assign fpga_clk_50=FPGA_CLK1_50;
 //    assign stm_hw_events    = {{15{1'b0}}, SW, fpga_led_internal, fpga_debounced_buttons};
 // hm2
     wire [AddrWidth-1:2]    hm_address;
@@ -342,6 +345,7 @@ gpio_adr_decoder_reg gpio_adr_decoder_reg_inst
     .ADC_SCK_o(ADC_SCK),	// output  ADC_SCK_o_sig
     .ADC_SDI_o(ADC_SDI),	// output  ADC_SDI_o_sig
     .ADC_SDO_i(ADC_SDO),	// input  ADC_SDO_i_sig
+    .touched(touched),	// input  ADC_SDO_i_sig
     .buttons(fpga_debounced_buttons)
 );
 
@@ -351,8 +355,9 @@ defparam gpio_adr_decoder_reg_inst.GPIOWidth = GPIOWidth;
 defparam gpio_adr_decoder_reg_inst.MuxGPIOIOWidth = MuxGPIOIOWidth;
 defparam gpio_adr_decoder_reg_inst.NumIOAddrReg = NumIOAddrReg;
 defparam gpio_adr_decoder_reg_inst.NumGPIO = NumGPIO;
+defparam gpio_adr_decoder_reg_inst.ADC = ADC;
 defparam gpio_adr_decoder_reg_inst.Capsense = Capsense;
-defparam gpio_adr_decoder_reg_inst.NumSense = 4;
+defparam gpio_adr_decoder_reg_inst.NumSense = NumSense;
 
 HostMot3_cfg HostMot3_inst
 (
