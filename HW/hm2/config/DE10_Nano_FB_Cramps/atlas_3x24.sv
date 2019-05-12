@@ -31,4 +31,5 @@ parameter BoardAdaptor          = 0;
     parameter MuxLedWidth       = LEDCount/NumGPIO;
     parameter ADC               = "DE0-Nano-SoC";
     parameter Capsense          = 0;
+    parameter NumSense          = 0;
 endpackage //_HeaderIncluded
