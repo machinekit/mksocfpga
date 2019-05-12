@@ -146,13 +146,20 @@ parameter   TotalNumregs    = Mux_regPrIOReg * NumIOAddrReg * NumPinsPrIOAddr;
     wire [31:0]adc_data_out;
 
 // Touch sensor:
+    reg [BusWidth-1:0]  hysteresis_reg;
+    reg [1:0]sr_delay;
+    reg reset_sr;
+    reg [2:0]sr_init_delay;
+    reg reset_init_sr;
     wire [NumSense-1:0] sense;
     wire                charge;
-    reg [BusWidth-1:0]  hysteresis_reg;
     wire [3:0]          hysteresis[NumSense-1:0];
-
-    wire sense_reset    = ~reset_reg_N | ~buttons[1];
-
+    
+    wire sr_delay_act; 
+    wire sr_init_delay_act; 
+   wire sense_reset;
+//	wire sense_reset = ~reset_reg_N;
+    
     genvar sh;
     generate
         for(sh=0;sh<NumSense;sh=sh+1) begin : sense_hystloop
@@ -256,15 +263,35 @@ generate if (Capsense >= 1) begin
     // Writes:
     always @( posedge reset_in or posedge write_address) begin
         if (reset_in) begin
-            hysteresis_reg <= 32'h11111111;
+            hysteresis_reg <= 32'h22222222;
+            reset_sr <= 1'b0;
         end
         else if ( write_address ) begin
-            if (busaddress_r == 10'h0304) begin hysteresis_reg  <= busdata_in_r; end
-        end
+            if (busaddress_r == 10'h0304) begin
+                hysteresis_reg  <= busdata_in_r; 
+                reset_sr <= 1'b1;
+            end 
+            else begin
+                hysteresis_reg  <= hysteresis_reg; 
+                reset_sr <= 1'b0;
+            end
+        end	
     end
 end
 endgenerate
 
+    always @(posedge reg_clk) begin
+        sr_delay[0] <= reset_sr;
+        sr_delay[1] <= sr_delay[0];
+        sr_init_delay[0] <= reset_init_sr;
+        sr_init_delay[1] <= sr_init_delay[0];
+        sr_init_delay[2] <= sr_init_delay[1];
+    end
+    
+    assign sr_delay_act = (sr_delay[1] == 1'b1 && sr_delay[0] == 1'b0)  ? 1'b1 : 1'b0;
+    assign sr_init_delay_act = (sr_init_delay[2] == 1'b0 && sr_init_delay[0] == 1'b1) ? 1'b1 : 1'b0;
+    assign sense_reset    = ~reset_reg_N | ~buttons[1] | sr_delay_act | sr_init_delay_act;
+    
     genvar il;
     generate
         for(il=0;il<NumIOAddrReg;il=il+1) begin : reg_initloop
@@ -356,11 +383,12 @@ endgenerate
     always @(posedge reset_in or posedge read_address)begin
         if (reset_in)begin
             busdata_to_cpu <= 32'b0;
+            reset_init_sr <= 1'b0;
         end
         else if (read_address) begin
             if (Capsense >= 1) begin
                 if (adc_address_valid) begin busdata_to_cpu <= adc_data_out;	end
-                else if (busaddress_r == 'h0300) begin busdata_to_cpu <= touched;	end
+                else if (busaddress_r == 'h0300) begin busdata_to_cpu <= touched; reset_init_sr <= 1'b1;	end
                 else if (busaddress_r == 'h0304) begin busdata_to_cpu <= hysteresis_reg;	end
                 else if(busaddress_r == 'h1000) begin busdata_to_cpu <= {8'b0,gpio_input_data[0][23:0]}; end
                 else if(busaddress_r == 'h1004) begin busdata_to_cpu <= {8'b0,gpio_input_data[1][11:0],gpio_input_data[0][35:24]}; end
