@@ -64,8 +64,8 @@ module gpio_adr_decoder_reg(
     output                              ADC_SDI_o,
     input                               ADC_SDO_i,
 //	Touch sensor:
-    output  [11:0]                      calibval_0,
-    output  [13:0]                      counts_0,
+//    output  [11:0]                      calibval_0,
+//    output  [13:0]                      counts_0,
     output  [NumSense-1:0]              touched,
     input   [1:0]                       buttons
 );
@@ -422,8 +422,8 @@ generate if (Capsense >=1) begin
             .reset(sense_reset) ,	// input  reset_sig
             .sense(sense) ,	// input [num-1:0] sense_sig
             .hysteresis(hysteresis),
-            .calibval_0(calibval_0),
-            .counts_0(counts_0),
+//            .calibval_0(calibval_0),
+//            .counts_0(counts_0),
             .charge(charge) ,	// output  charge_sig
             .touched(touched) 	// output [num-1:0] touched_sig
         );

@@ -8,13 +8,14 @@
 
 module capsense
 (
-	input	clk, reset,
-	input [num-1:0] sense,
-	input [3:0] hysteresis [num-1:0],
-	output [11:0] calibval_0,
-	output [11:0] counts_0,
-	output reg charge,
-	output reg [num-1:0] touched
+    input   clk,
+    input   reset,
+    input [num-1:0] sense,
+    input [3:0] hysteresis [num-1:0],
+//    output [11:0] calibval_0,
+//    output [11:0] counts_0,
+    output reg charge,
+    output reg [num-1:0] touched
 );
 
 	parameter num = 4;
@@ -51,8 +52,8 @@ module capsense
 
 	wire [11:0] actual_count = period_count - counter;
 	
-	assign calibval_0 = calibval[0];
-	assign counts_0 = counts[0];
+//	assign calibval_0 = calibval[0];
+//	assign counts_0 = counts[0];
 	
 	genvar ii;
 	integer i1, i2, i3, i4, i5, i6, l1, l2, l3;
