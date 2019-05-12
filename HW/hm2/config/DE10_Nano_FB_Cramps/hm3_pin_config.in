@@ -1,2 +1,0 @@
-# I/O Daughterboard adaptor specific:
-set_global_assignment -name VHDL_FILE ../../hm2/config/DE10_Nano_FB_Cramps/PIN_%CONFIG%.vhd -library pin

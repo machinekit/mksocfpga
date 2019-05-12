@@ -31,7 +31,7 @@ OUTPUTDIR=output_files
 set -e
 
 # Path to the configuration files
-CONFIG_DIR="../../hm2/config/${BOARDNAME}"
+CONFIG_DIR="../../hm2/config/DExx_Nano_xxx_Cramps"
 
 
 # Routine to build a specific configuration
@@ -43,7 +43,7 @@ build_config() {
     # which means in rare instances it could match actual VHDL code.  Here we use
     # the % character to support a batch-style variable scheme
     sed "s/%CONFIG%/${1}/g" <${CONFIG_DIR}/hm3_pin_config.in > hm3_pin_config.qip
-    sed "s/%CONFIG%/${1}/g" <${CONFIG_DIR}/hm3_DE0_Nano_SoC.in > hm3_DE0_Nano_SoC.qip
+    sed "s/%CONFIG%/${1}/g" <${CONFIG_DIR}/hm3_DExx_Nano_xxx_Cramps.in > hm3_${BOARDNAME}.qip
 
     # Actually build the FPGA bit file
     make rbf
