@@ -39,23 +39,23 @@ entity MakeIOPorts is
 		RegStride0: integer;
 		RegStride1: integer;
 --
-		ClockMed: integer;
+--		ClockMed: integer;
 		BusWidth: integer;
 		AddrWidth: integer;
-		STEPGENs: integer;
-		StepGenTableWidth: integer;
-		UseStepGenPreScaler: boolean;
-		UseStepgenIndex: boolean;
-		UseStepgenProbe: boolean;
-		timersize: integer;			-- = ~480 usec at 33 MHz, ~320 at 50 Mhz
-		asize: integer;
-		rsize: integer;
-		PWMGens: integer;
-		PWMRefWidth  : integer;
-  		UsePWMEnas : boolean;
-		QCounters: integer;
-		UseMuxedProbe: boolean;
-		UseProbe: boolean;
+--		STEPGENs: integer;
+--		StepGenTableWidth: integer;
+--		UseStepGenPreScaler: boolean;
+--		UseStepgenIndex: boolean;
+--		UseStepgenProbe: boolean;
+--		timersize: integer;			-- = ~480 usec at 33 MHz, ~320 at 50 Mhz
+--		asize: integer;
+--		rsize: integer;
+--		PWMGens: integer;
+--		PWMRefWidth  : integer;
+-- 		UsePWMEnas : boolean;
+--		QCounters: integer;
+--		UseMuxedProbe: boolean;
+--		UseProbe: boolean;
 		UseWatchDog: boolean;
 		UseDemandModeDMA: boolean;
 		UseIRQlogic: boolean;
@@ -115,7 +115,7 @@ architecture dataflow of MakeIOPorts is
 	signal PortSel: std_logic;
 
 -- I/O port related signals
-	signal RefCountBus : std_logic_vector(PWMRefWidth-1 downto 0);
+--	signal RefCountBus : std_logic_vector(PWMRefWidth-1 downto 0);
 	signal LoadPortCmd: std_logic_vector(IOPorts -1 downto 0);
 	signal ReadPortCmd: std_logic_vector(IOPorts -1 downto 0);
 
