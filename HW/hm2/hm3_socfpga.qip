@@ -30,6 +30,7 @@ set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeMuxedQCounters.vhd
 set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakePwmgens.vhd
 set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeTPPWMGens.vhd
 set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeSPIs.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeBSPIs.vhd
 
 # HM2 cores:
 set_global_assignment -name VHDL_FILE ../../hm2/kubstepgenzi.vhd
