@@ -161,7 +161,7 @@ constant UsePWMEnas: boolean := PinExists(ThePinDesc,PWMTag,PWMCEnaPin);
 constant TPPWMGens : integer := NumberOfModules(TheModuleID,TPPWMTag);
 constant SPIs: integer := NumberOfModules(TheModuleID,SPITag);
 constant BSPIs: integer := NumberOfModules(TheModuleID,BSPITag);
--- constant DBSPIs: integer := NumberOfModules(TheModuleID,DBSPITag);
+constant DBSPIs: integer := NumberOfModules(TheModuleID,DBSPITag);
 --constant SSSIs: integer := NumberOfModules(TheModuleID,SSSITag);
 --constant FAbss: integer := NumberOfModules(TheModuleID,FAbsTag);
 --constant BISSs: integer := NumberOfModules(TheModuleID,BISSTag);
@@ -196,7 +196,7 @@ constant StepGenTableWidth: integer := MaxPinsPerModule(ThePinDesc,StepGenTag);
     -- extract how many BSPI CS pins are needed
 constant BSPICSWidth: integer := CountPinsInRange(ThePinDesc,BSPITag,BSPICS0Pin,BSPICS7Pin);
     -- extract how many DBSPI CS pins are needed
---constant DBSPICSWidth: integer := CountPinsInRange(ThePinDesc,DBSPITag,DBSPICS0Pin,DBSPICS7Pin);
+constant DBSPICSWidth: integer := CountPinsInRange(ThePinDesc,DBSPITag,DBSPICS0Pin,DBSPICS7Pin);
 
 constant UseProbe: boolean := PinExists(ThePinDesc,QCountTag,QCountProbePin);
 constant UseMuxedProbe: boolean := PinExists(ThePinDesc,MuxedQCountTag,MuxedQCountProbePin);
@@ -675,201 +675,57 @@ GenMakeBSPIs: if BSPIs >0  generate
         );
 end generate;
 
---
--- 	makebspimod:  if BSPIs >0  generate
--- 	signal LoadBSPIData: std_logic_vector(BSPIs -1 downto 0);
--- 	signal ReadBSPIData: std_logic_vector(BSPIs -1 downto 0);
--- 	signal LoadBSPIDescriptor: std_logic_vector(BSPIs -1 downto 0);
--- 	signal ReadBSPIFIFOCOunt: std_logic_vector(BSPIs -1 downto 0);
--- 	signal ClearBSPIFIFO: std_logic_vector(BSPIs -1 downto 0);
--- 	signal BSPIClk: std_logic_vector(BSPIs -1 downto 0);
--- 	signal BSPIIn: std_logic_vector(BSPIs -1 downto 0);
--- 	signal BSPIOut: std_logic_vector(BSPIs -1 downto 0);
--- 	signal BSPIFrame: std_logic_vector(BSPIs -1 downto 0);
--- 	signal BSPIDataSel : std_logic;
--- 	signal BSPIFIFOCountSel : std_logic;
--- 	signal BSPIDescriptorSel : std_logic;
--- 	type BSPICSType is array(BSPIs-1 downto 0) of std_logic_vector(BSPICSWidth-1 downto 0);
--- 	signal BSPICS : BSPICSType;
--- 	begin
--- 		makebspis: for i in 0 to BSPIs -1 generate
--- 			bspi: entity work.BufferedSPI
--- 			generic map (
--- 				cswidth => BSPICSWidth,
--- 				gatedcs => false)
--- 			port map (
--- 				clk  => clklow,
--- 				ibus => ibusint,
--- 				obus => obusint,
--- 				addr => Aint(5 downto 2),
--- 				hostpush => LoadBSPIData(i),
--- 				hostpop => ReadBSPIData(i),
--- 				loaddesc => LoadBSPIDescriptor(i),
--- 				loadasend => '0',
--- 				clear => ClearBSPIFIFO(i),
--- 				readcount => ReadBSPIFIFOCount(i),
--- 				spiclk => BSPIClk(i),
--- 				spiin => BSPIIn(i),
--- 				spiout => BSPIOut(i),
--- 				spiframe => BSPIFrame(i),
--- 				spicsout => BSPICS(i)
--- 				);
--- 		end generate;
---
--- 		BSPIDecodeProcess : process (Aint,Readstb,writestb,BSPIDataSel,BSPIFIFOCountSel,BSPIDescriptorSel)
--- 		begin
--- 			if Aint(AddrWidth-1 downto 8) = BSPIDataAddr then	 --  BSPI data register select
--- 				BSPIDataSel <= '1';
--- 			else
--- 				BSPIDataSel <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = BSPIFIFOCountAddr then	 --  BSPI FIFO count register select
--- 				BSPIFIFOCountSel <= '1';
--- 			else
--- 				BSPIFIFOCountSel <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = BSPIDescriptorAddr then	 --  BSPI channel descriptor register select
--- 				BSPIDescriptorSel <= '1';
--- 			else
--- 				BSPIDescriptorSel <= '0';
--- 			end if;
--- 			LoadBSPIData <= OneOfNDecode(BSPIs,BSPIDataSel,writestb,Aint(7 downto 6)); -- 4 max
--- 			ReadBSPIData <= OneOfNDecode(BSPIs,BSPIDataSel,Readstb,Aint(7 downto 6));
--- 			LoadBSPIDescriptor<= OneOfNDecode(BSPIs,BSPIDescriptorSel,writestb,Aint(5 downto 2));
--- 			ReadBSPIFIFOCOunt <= OneOfNDecode(BSPIs,BSPIFIFOCountSel,Readstb,Aint(5 downto 2));
--- 			ClearBSPIFIFO <= OneOfNDecode(BSPIs,BSPIFIFOCountSel,writestb,Aint(5 downto 2));
--- 		end process BSPIDecodeProcess;
---
--- 		DoBSPIPins: process(BSPIFrame, BSPIOut, BSPIClk, BSPICS, IOBitsCorein)
--- 		begin
--- 			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins
--- 				if ThePinDesc(i)(15 downto 8) = BSPITag then
--- 					case (ThePinDesc(i)(7 downto 0)) is	--secondary pin function, drop MSB
--- 						when BSPIFramePin =>
--- 							IOBitsCorein(i) <= BSPIFrame(conv_integer(ThePinDesc(i)(23 downto 16)));
--- 						when BSPIOutPin =>
--- 							IOBitsCorein(i) <= BSPIOut(conv_integer(ThePinDesc(i)(23 downto 16)));
--- 						when BSPIClkPin =>
--- 							IOBitsCorein(i) <= BSPIClk(conv_integer(ThePinDesc(i)(23 downto 16)));
--- 						when BSPIInPin =>
--- 							BSPIIn(conv_integer(ThePinDesc(i)(23 downto 16))) <= IOBitsCorein(i);
--- 						when others =>
--- 						   IOBitsCorein(i) <= BSPICS(conv_integer(ThePinDesc(i)(23 downto 16)))(conv_integer(ThePinDesc(i)(6 downto 0))-5);
--- 						   magic foo, magic foo, what on earth does it do?
--- 						   (this needs to written more clearly!)
--- 					end case;
--- 				end if;
--- 			end loop;
--- 		end process;
--- 	end generate;
---
--- 	makedbspimod:  if DBSPIs >0  generate
--- 	signal LoadDBSPIData: std_logic_vector(DBSPIs -1 downto 0);
--- 	signal ReadDBSPIData: std_logic_vector(DBSPIs -1 downto 0);
--- 	signal LoadDBSPIDescriptor: std_logic_vector(DBSPIs -1 downto 0);
--- 	signal ReadDBSPIFIFOCOunt: std_logic_vector(DBSPIs -1 downto 0);
--- 	signal ClearDBSPIFIFO: std_logic_vector(DBSPIs -1 downto 0);
--- 	signal DBSPIClk: std_logic_vector(DBSPIs -1 downto 0);
--- 	signal DBSPIIn: std_logic_vector(DBSPIs -1 downto 0);
--- 	signal DBSPIOut: std_logic_vector(DBSPIs -1 downto 0);
--- 	type DBSPICSType is array(DBSPIs-1 downto 0) of std_logic_vector(DBSPICSWidth-1 downto 0);
--- 	signal DBSPICS : DBSPICSType;
--- 	signal DBSPIDataSel : std_logic;
--- 	signal DBSPIFIFOCountSel : std_logic;
--- 	signal DBSPIDescriptorSel : std_logic;
--- 	begin
--- 		makedbspis: for i in 0 to DBSPIs -1 generate
--- 			bspi: entity work.BufferedSPI
--- 			generic map (
--- 				cswidth => DBSPICSWidth,
--- 				gatedcs => true
--- 				)
--- 			port map (
--- 				clk  => clklow,
--- 				ibus => ibusint,
--- 				obus => obusint,
--- 				addr => Aint(5 downto 2),
--- 				hostpush => LoadDBSPIData(i),
--- 				hostpop => ReadDBSPIData(i),
--- 				loaddesc => LoadDBSPIDescriptor(i),
--- 				loadasend => '0',
--- 				clear => ClearDBSPIFIFO(i),
--- 				readcount => ReadDBSPIFIFOCount(i),
--- 				spiclk => DBSPIClk(i),
--- 				spiin => DBSPIIn(i),
--- 				spiout => DBSPIOut(i),
--- 				spicsout => DBSPICS(i)
--- 				);
--- 		end generate;
---
--- 		DBSPIDecodeProcess : process (Aint,Readstb,writestb,DBSPIDataSel,DBSPIFIFOCountSel,DBSPIDescriptorSel)
--- 		begin
--- 			if Aint(AddrWidth-1 downto 8) = DBSPIDataAddr then	 --  DBSPI data register select
--- 				DBSPIDataSel <= '1';
--- 			else
--- 				DBSPIDataSel <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = DBSPIFIFOCountAddr then	 --  DBSPI FIFO count register select
--- 				DBSPIFIFOCountSel <= '1';
--- 			else
--- 				DBSPIFIFOCountSel <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = DBSPIDescriptorAddr then	 --  DBSPI channel descriptor register select
--- 				DBSPIDescriptorSel <= '1';
--- 			else
--- 				DBSPIDescriptorSel <= '0';
--- 			end if;
--- 			LoadDBSPIData <= OneOfNDecode(DBSPIs,DBSPIDataSel,writestb,Aint(7 downto 6)); -- 4 max
--- 			ReadDBSPIData <= OneOfNDecode(DBSPIs,DBSPIDataSel,Readstb,Aint(7 downto 6));
--- 			LoadDBSPIDescriptor<= OneOfNDecode(DBSPIs,DBSPIDescriptorSel,writestb,Aint(5 downto 2));
--- 			ReadDBSPIFIFOCOunt <= OneOfNDecode(DBSPIs,DBSPIFIFOCountSel,Readstb,Aint(5 downto 2));
--- 			ClearDBSPIFIFO <= OneOfNDecode(DBSPIs,DBSPIFIFOCountSel,writestb,Aint(5 downto 2));
--- 		end process DBSPIDecodeProcess;
---
--- 		DoDBSPIPins: process(DBSPIOut, DBSPIClk, DBSPICS, IOBitsCorein)
--- 		begin
--- 			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins
--- 				if ThePinDesc(i)(15 downto 8) = DBSPITag then
--- 					case (ThePinDesc(i)(7 downto 0)) is	--secondary pin function, drop MSB
--- 						when DBSPIOutPin =>
--- 							IOBitsCorein(i) <= DBSPIOut(conv_integer(ThePinDesc(i)(23 downto 16)));
--- 						when DBSPIClkPin =>
--- 							IOBitsCorein(i) <= DBSPIClk(conv_integer(ThePinDesc(i)(23 downto 16)));											when DBSPIInPin =>
--- 							DBSPIIn(conv_integer(ThePinDesc(i)(23 downto 16))) <= IOBitsCorein(i);
--- 						when others =>
--- 							IOBitsCorein(i) <= DBSPICS(conv_integer(ThePinDesc(i)(23 downto 16)))(conv_integer(ThePinDesc(i)(6 downto 0))-5);
--- 				   		magic foo, magic foo, what on earth does it do?
--- 							(this needs to written more clearly!)
--- 					end case;
--- 				end if;
--- 			end loop;
--- 		end process;
---
--- 		DoLocalDDBSPIPins: process(LIOBits,DBSPICS,DBSPIClk,DBSPIOut) -- only for 4I69 LIO currently
--- 		begin
--- 			for i in 0 to LIOWidth -1 loop				-- loop through all the local I/O pins
--- 				report("Doing DBSPI LIOLoop: "& integer'image(i));
--- 				if ThePinDesc(i+IOWidth)(15 downto 8) = DBSPITag then 	-- GTag (Local I/O starts at end of external I/O)
--- 					case (ThePinDesc(i+IOWidth)(7 downto 0)) is	--secondary pin function, drop MSB
--- 						when DBSPIOutPin =>
--- 							LIOBits(i) <= DBSPIOut(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16)));
--- 							report("Local DBSPIOutPin found at LIOBit " & integer'image(i));
--- 						when DBSPIClkPin =>
--- 							LIOBits(i) <= DBSPIClk(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16)));
--- 							report("Local DBSPClkPin found at LIOBit " & integer'image(i));
--- 						when DBSPIInPin =>
--- 							DBSPIIn(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16))) <= LIOBits(i);
--- 							report("Local DBSPIInPin found at LIOBit " & integer'image(i));
--- 						when others =>
--- 							LIOBits(i) <= DBSPICS(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16)))(conv_integer(ThePinDesc(i+IOWidth)(6 downto 0))-5);
--- 							report("Local DBSPICSPin found at LIOBit " & integer'image(i));
--- 						magic foo, magic foo, what on earth does it do?
--- 						(this needs to written more clearly!)
--- 					end case;
--- 				end if;
--- 			end loop;
--- 		end process;
--- 	end generate;
+GenMakeDBSPIs: if DBSPIs >0  generate
+    MakeDBSPIs : entity work.MakeDBSPIs
+    generic map (
+        ThePinDesc => ThePinDesc,
+        ClockHigh => ClockHigh,
+        ClockMed => ClockMed,
+        ClockLow  => ClockLow,
+        BusWidth  => BusWidth,
+        AddrWidth  => AddrWidth,
+        IOWidth  => IOWidth,
+        STEPGENs  => STEPGENs,
+        StepGenTableWidth => StepGenTableWidth,
+        UseStepGenPreScaler => UseStepGenPreScaler,
+        UseStepgenIndex => UseStepgenIndex,
+        UseStepgenProbe => UseStepgenProbe,
+        timersize  => 14,
+        asize  => 48,
+        rsize  => 32,
+        HM2DPLLs => HM2DPLLs,
+        MuxedQCounters  => MuxedQCounters,
+        MuxedQCountersMIM  => MuxedQCountersMIM,
+        PWMGens  => PWMGens,
+        PWMRefWidth  => PWMRefWidth,
+        UsePWMEnas  => UsePWMEnas,
+        TPPWMGens  => TPPWMGens,
+        QCounters  => QCounters,
+        UseMuxedProbe  => UseMuxedProbe,
+        UseProbe  => UseProbe,
+        SPIs  => SPIs,
+        BSPIs  => BSPIs,
+        BSPICSWidth  => BSPICSWidth,
+        DBSPIs  => DBSPIs,
+        DBSPICSWidth  => DBSPICSWidth
+        )
+        port map (
+            ibus			=>	ibusint,
+            obusint			=>	obusint,
+            Aint			=>	Aint,
+            readstb			=>	readstb,
+            writestb		=>	writestb,
+            CoreDataOut		=>	CoreDataOut,
+            IOBitsCorein	=>	IOBitsCorein,
+            clklow			=>	clklow,
+            clkmed			=>	clkmed,
+            clkhigh			=>	clkhigh,
+            PRobe			=>  PRobe,
+            RateSources		=>  RateSources,
+            rates			=>  rates
+        );
+end generate;
+
 --
 -- 	makesssimod:  if SSSIs >0  generate
 -- 	signal LoadSSSIData0: std_logic_vector(SSSIs -1 downto 0);

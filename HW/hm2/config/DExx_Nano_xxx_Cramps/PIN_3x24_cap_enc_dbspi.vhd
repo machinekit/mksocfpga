@@ -81,7 +81,7 @@ package Pintypes is
         (LEDTag,        x"00",  ClockLowTag,    x"01",  LEDAddr&PadT,               LEDNumRegs,         x"00",  LEDMPBitMask),
         (NANOADCTag,    x"00",  ClockLowTag,    x"08",  NANOADCAddr&PadT,           NANOADCNumRegs,     x"00",  NANOADCBitMask),
         (CAPSENSETag,   x"00",  ClockLowTag,    x"04",  CAPSENSEAddr&PadT,          CAPSENSENumRegs,    x"00",  CAPSENSEBitMask),
-        (DBSPITag,      x"00",  ClockLowTag,    x"02",  DBSPIDataAddr&PadT,         DBSPINumRegs,       x"11",  DBSPIMPBitMask),
+        (DBSPITag,      x"00",  ClockLowTag,    x"01",  DBSPIDataAddr&PadT,         DBSPINumRegs,       x"11",  DBSPIMPBitMask),
         (FWIDTag,       x"00",  ClockLowTag,    x"01",  FWIDAddr&PadT,              FWIDNumRegs,        x"00",  FWIDMPBitMask),
         (NullTag,       x"00",  NullTag,        x"00",  NullAddr&PadT,              x"00",              x"00",  x"00000000"),
         (NullTag,       x"00",  NullTag,        x"00",  NullAddr&PadT,              x"00",              x"00",  x"00000000"),
@@ -168,9 +168,9 @@ package Pintypes is
         IOPortTag & x"00" & DBSPITag & DBSPICS2Pin,         --    I/O 52    GPIO_1 17   19      SPI Cs
         IOPortTag & x"00" & DBSPITag & DBSPICS3Pin,         --    I/O 53    GPIO_1 18   20      SPI Cs
         IOPortTag & x"00" & DBSPITag & DBSPICS4Pin,         --    I/O 54    GPIO_1 19   21      SPI Cs
-        IOPortTag & x"01" & DBSPITag & DBSPICS5Pin,         --    I/O 55    GPIO_1 20   22      SPI Cs
-        IOPortTag & x"01" & DBSPITag & DBSPICS6Pin,         --    I/O 56    GPIO_1 21   23      SPI Cs
-        IOPortTag & x"01" & DBSPITag & DBSPICS7Pin,         --    I/O 57    GPIO_1 22   24      SPI Cs
+        IOPortTag & x"00" & DBSPITag & DBSPICS5Pin,         --    I/O 55    GPIO_1 20   22      SPI Cs
+        IOPortTag & x"00" & DBSPITag & DBSPICS6Pin,         --    I/O 56    GPIO_1 21   23      SPI Cs
+        IOPortTag & x"00" & DBSPITag & DBSPICS7Pin,         --    I/O 57    GPIO_1 22   24      SPI Cs
         IOPortTag & x"01" & NullTag & NullPin,              --    I/O 58    GPIO_1 23   25      just GPIO
         IOPortTag & x"01" & NullTag & NullPin,              --    I/O 59    GPIO_1 24   26      just GPIO
         IOPortTag & x"01" & NullTag & NullPin,              --    I/O 60    GPIO_1 25   27      just GPIO
