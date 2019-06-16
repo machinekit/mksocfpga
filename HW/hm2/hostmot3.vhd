@@ -82,59 +82,59 @@ use work.PinExists.all;
 use work.ModuleExists.all;
 
 entity HostMot3 is
-  	generic
-	(
-		ThePinDesc: PinDescType;
-		TheModuleID: ModuleIDType;
-		IDROMType: integer;
-		SepClocks: boolean;
-		OneWS: boolean;
-		UseStepGenPrescaler: boolean;
-		UseIRQLogic: boolean;
-		PWMRefWidth: integer;
-		UseWatchDog: boolean;
-		OffsetToModules: integer;
-		OffsetToPinDesc: integer;
-		ClockHigh: integer;
-		ClockMed: integer;
-		ClockLow: integer;
-		BoardNameLow : std_Logic_Vector(31 downto 0);
-		BoardNameHigh : std_Logic_Vector(31 downto 0);
-		FPGASize: integer;
-		FPGAPins: integer;
-		IOPorts: integer;
-		IOWidth: integer;
-		LIOWidth: integer;
-		PortWidth: integer;
-		BusWidth: integer;
-		AddrWidth: integer;
-		InstStride0: integer;
-		InstStride1: integer;
-		RegStride0: integer;
-		RegStride1: integer;
-		LEDCount: integer
-		);
-	port
-   (
-     -- Generic 32  bit bus interface signals --
+    generic
+    (
+        ThePinDesc: PinDescType;
+        TheModuleID: ModuleIDType;
+        IDROMType: integer;
+        SepClocks: boolean;
+        OneWS: boolean;
+        UseStepGenPrescaler: boolean;
+        UseIRQLogic: boolean;
+        PWMRefWidth: integer;
+        UseWatchDog: boolean;
+        OffsetToModules: integer;
+        OffsetToPinDesc: integer;
+        ClockHigh: integer;
+        ClockMed: integer;
+        ClockLow: integer;
+        BoardNameLow : std_Logic_Vector(31 downto 0);
+        BoardNameHigh : std_Logic_Vector(31 downto 0);
+        FPGASize: integer;
+        FPGAPins: integer;
+        IOPorts: integer;
+        IOWidth: integer;
+        LIOWidth: integer;
+        PortWidth: integer;
+        BusWidth: integer;
+        AddrWidth: integer;
+        InstStride0: integer;
+        InstStride1: integer;
+        RegStride0: integer;
+        RegStride1: integer;
+        LEDCount: integer
+        );
+    port
+(
+    -- Generic 32  bit bus interface signals --
 
-	ibustop: in std_logic_vector(BusWidth -1 downto 0);
-	obustop: out std_logic_vector(BusWidth -1 downto 0);
-	addr: in std_logic_vector(AddrWidth -1 downto 2);
-	readstb: in std_logic;
-	writestb: in std_logic;
-	clklow: in std_logic;
-	clkmed: in std_logic;
-	clkhigh: in std_logic;
-	intirq: out std_logic;
-	dreq: out std_logic;
-	demandmode: out std_logic;
-	iobitsouttop: out std_logic_vector (IOWidth -1 downto 0) := (others => 'Z');
-	iobitsintop: in std_logic_vector (IOWidth -1 downto 0) := (others => 'Z');
-	liobits: inout std_logic_vector (lIOWidth -1 downto 0);
-	rates: out std_logic_vector (4 downto 0);
-	leds: out std_logic_vector(ledcount-1 downto 0)
-	);
+    ibustop: in std_logic_vector(BusWidth -1 downto 0);
+    obustop: out std_logic_vector(BusWidth -1 downto 0);
+    addr: in std_logic_vector(AddrWidth -1 downto 2);
+    readstb: in std_logic;
+    writestb: in std_logic;
+    clklow: in std_logic;
+    clkmed: in std_logic;
+    clkhigh: in std_logic;
+    intirq: out std_logic;
+    dreq: out std_logic;
+    demandmode: out std_logic;
+    iobitsouttop: out std_logic_vector (IOWidth -1 downto 0) := (others => 'Z');
+    iobitsintop: in std_logic_vector (IOWidth -1 downto 0) := (others => 'Z');
+    liobits: inout std_logic_vector (lIOWidth -1 downto 0);
+    rates: out std_logic_vector (4 downto 0);
+    leds: out std_logic_vector(ledcount-1 downto 0)
+    );
 end HostMot3;
 
 
@@ -151,7 +151,7 @@ signal obusint: std_logic_vector(BusWidth -1 downto 0);
 signal IOBitsin: std_logic_vector(IOWidth-1 downto 0);
 signal CoreDataOut: std_logic_vector(IOWidth-1 downto 0);
 
-	-- Extract the number of modules of each type from the ModuleID
+    -- Extract the number of modules of each type from the ModuleID
 constant StepGens: integer := NumberOfModules(TheModuleID,StepGenTag);
 constant QCounters: integer := NumberOfModules(TheModuleID,QCountTag);
 constant MuxedQCounters: integer := NumberOfModules(TheModuleID,MuxedQCountTag);			-- non-muxed index mask
@@ -160,8 +160,8 @@ constant PWMGens : integer := NumberOfModules(TheModuleID,PWMTag);
 constant UsePWMEnas: boolean := PinExists(ThePinDesc,PWMTag,PWMCEnaPin);
 constant TPPWMGens : integer := NumberOfModules(TheModuleID,TPPWMTag);
 constant SPIs: integer := NumberOfModules(TheModuleID,SPITag);
---constant BSPIs: integer := NumberOfModules(TheModuleID,BSPITag);
---constant DBSPIs: integer := NumberOfModules(TheModuleID,DBSPITag);
+constant BSPIs: integer := NumberOfModules(TheModuleID,BSPITag);
+constant DBSPIs: integer := NumberOfModules(TheModuleID,DBSPITag);
 --constant SSSIs: integer := NumberOfModules(TheModuleID,SSSITag);
 --constant FAbss: integer := NumberOfModules(TheModuleID,FAbsTag);
 --constant BISSs: integer := NumberOfModules(TheModuleID,BISSTag);
@@ -193,10 +193,10 @@ constant HM2DPLLs: integer := NumberOfModules(TheModuleID,HM2DPLLTag);
 
 -- extract the needed Stepgen table width from the max pin# used with a stepgen tag
 constant StepGenTableWidth: integer := MaxPinsPerModule(ThePinDesc,StepGenTag);
-	-- extract how many BSPI CS pins are needed
---constant BSPICSWidth: integer := CountPinsInRange(ThePinDesc,BSPITag,BSPICS0Pin,BSPICS7Pin);
-	-- extract how many DBSPI CS pins are needed
---constant DBSPICSWidth: integer := CountPinsInRange(ThePinDesc,DBSPITag,DBSPICS0Pin,DBSPICS7Pin);
+    -- extract how many BSPI CS pins are needed
+constant BSPICSWidth: integer := CountPinsInRange(ThePinDesc,BSPITag,BSPICS0Pin,BSPICS7Pin);
+    -- extract how many DBSPI CS pins are needed
+constant DBSPICSWidth: integer := CountPinsInRange(ThePinDesc,DBSPITag,DBSPICS0Pin,DBSPICS7Pin);
 
 constant UseProbe: boolean := PinExists(ThePinDesc,QCountTag,QCountProbePin);
 constant UseMuxedProbe: boolean := PinExists(ThePinDesc,MuxedQCountTag,MuxedQCountProbePin);
@@ -208,619 +208,524 @@ constant UseStepgenProbe: boolean := PinExists(ThePinDesc,StepGenTag,StepGenProb
 
 -- I/O port related signals
 
-	signal IOBitsCorein :  std_logic_vector(IOWidth-1 downto 0) := (others => '0');
+    signal IOBitsCorein :  std_logic_vector(IOWidth-1 downto 0) := (others => '0');
 
 -- qcounter related signals
-	signal Probe : std_logic; -- hs probe input for counters,stepgens etc
+    signal Probe : std_logic; -- hs probe input for counters,stepgens etc
 
 -- PWM related signals (this is global because its shared by two modules)
-	signal RefCountBus : std_logic_vector(PWMRefWidth-1 downto 0);
+    signal RefCountBus : std_logic_vector(PWMRefWidth-1 downto 0);
 
 -- Timer related signals
 -- 	signal DPLLTimers: std_logic_vector(3 downto 0);
 -- 	signal DPLLRefOut: std_logic;
-	signal RateSources: std_logic_vector(4 downto 0);
+    signal RateSources: std_logic_vector(4 downto 0);
 
-	function bitreverse(v: in std_logic_vector) -- Thanks: J. Bromley
-	return std_logic_vector is
-	variable result: std_logic_vector(v'RANGE);
-	alias tv: std_logic_vector(v'REVERSE_RANGE) is v;
-	begin
-		for i in tv'RANGE loop
-			result(i) := tv(i);
-		end loop;
-		return result;
-	end;
+    function bitreverse(v: in std_logic_vector) -- Thanks: J. Bromley
+    return std_logic_vector is
+    variable result: std_logic_vector(v'RANGE);
+    alias tv: std_logic_vector(v'REVERSE_RANGE) is v;
+    begin
+        for i in tv'RANGE loop
+            result(i) := tv(i);
+        end loop;
+        return result;
+    end;
 
 
-	begin
+    begin
 
-	MakeIOPorts : entity work.MakeIOPorts
-	generic map (
-		ThePinDesc => ThePinDesc,
-		TheModuleID => TheModuleID,
-		IDROMType => IDROMType,
-		OffsetToModules => OffsetToModules,
-		OffsetToPinDesc => OffsetToPinDesc,
-		ClockHigh => ClockHigh,
-		ClockLow => ClockLow,
-		BoardNameLow => BoardNameLow,
-		BoardNameHigh => BoardNameHigh,
-		FPGASize => FPGASize,
-		FPGAPins => FPGAPins,
-		IOPorts => IOPorts,
-		IOWidth => IOWidth,
-		PortWidth => PortWidth,
-		InstStride0 => InstStride0,
-		InstStride1 => InstStride1,
-		RegStride0 => RegStride0,
-		RegStride1 => RegStride1,
+    MakeIOPorts : entity work.MakeIOPorts
+    generic map (
+        ThePinDesc => ThePinDesc,
+        TheModuleID => TheModuleID,
+        IDROMType => IDROMType,
+        OffsetToModules => OffsetToModules,
+        OffsetToPinDesc => OffsetToPinDesc,
+        ClockHigh => ClockHigh,
+        ClockLow => ClockLow,
+        BoardNameLow => BoardNameLow,
+        BoardNameHigh => BoardNameHigh,
+        FPGASize => FPGASize,
+        FPGAPins => FPGAPins,
+        IOPorts => IOPorts,
+        IOWidth => IOWidth,
+        PortWidth => PortWidth,
+        InstStride0 => InstStride0,
+        InstStride1 => InstStride1,
+        RegStride0 => RegStride0,
+        RegStride1 => RegStride1,
 --
-		ClockMed => ClockMed,
-		BusWidth  => BusWidth,
-		AddrWidth  => AddrWidth,
-		STEPGENs  => STEPGENs,
- 		StepGenTableWidth => StepGenTableWidth,
- 		UseStepGenPreScaler => UseStepGenPreScaler,
- 		UseStepgenIndex => UseStepgenIndex,
- 		UseStepgenProbe => UseStepgenProbe,
- 		timersize  => 14,
- 		asize  => 48,
- 		rsize  => 32,
-		PWMGens  => PWMGens,
-		PWMRefWidth  => PWMRefWidth,
-		UsePWMEnas  => UsePWMEnas,
-		QCounters  => QCounters,
-		UseMuxedProbe  => UseMuxedProbe,
-		UseProbe  => UseProbe,
-		UseWatchDog  => UseWatchDog,
-		UseDemandModeDMA  => UseDemandModeDMA,
-		UseIRQlogic  => UseIRQlogic,
-		LEDCount  => LEDCount
-		)
-		port map (
-			ibustop			=>	ibustop,
-			ibusint			=>	ibusint,
-			obustop			=>	obustop,
-			obusint			=>	obusint,
-			addr				=>	addr,
-			Aint				=>	Aint,
-			readstb			=>	readstb,
-			writestb			=>	writestb,
-			iobitsouttop	=>	iobitsouttop,
-			iobitsintop		=>	iobitsintop,
-			IOBitsCorein	=>	IOBitsCorein,
-			CoreDataOut		=>	CoreDataOut,
---			portdata			=>	portdata,
-			clklow 			=>	clklow,
-			clkmed 			=>	clkmed,
-			clkhigh			=>	clkhigh,
-			PRobe 			=>	PRobe,
-			demandmode		=>	demandmode,		-- passed directly to top
-			intirq			=>	intirq,
-			dreq				=>	dreq,
-			RateSources		=>	RateSources,
-			LEDS				=>	leds
-		);
+--        ClockMed => ClockMed,
+        BusWidth  => BusWidth,
+        AddrWidth  => AddrWidth,
+--        STEPGENs  => STEPGENs,
+--        StepGenTableWidth => StepGenTableWidth,
+--        UseStepGenPreScaler => UseStepGenPreScaler,
+--        UseStepgenIndex => UseStepgenIndex,
+--        UseStepgenProbe => UseStepgenProbe,
+--        timersize  => 14,
+--        asize  => 48,
+--        rsize  => 32,
+--        PWMGens  => PWMGens,
+--        PWMRefWidth  => PWMRefWidth,
+--        UsePWMEnas  => UsePWMEnas,
+--        QCounters  => QCounters,
+--        UseMuxedProbe  => UseMuxedProbe,
+--        UseProbe  => UseProbe,
+        UseWatchDog  => UseWatchDog,
+        UseDemandModeDMA  => UseDemandModeDMA,
+        UseIRQlogic  => UseIRQlogic,
+        LEDCount  => LEDCount
+        )
+        port map (
+            ibustop			=>	ibustop,
+            ibusint			=>	ibusint,
+            obustop			=>	obustop,
+            obusint			=>	obusint,
+            addr			=>	addr,
+            Aint			=>	Aint,
+            readstb			=>	readstb,
+            writestb		=>	writestb,
+            iobitsouttop	=>	iobitsouttop,
+            iobitsintop		=>	iobitsintop,
+            IOBitsCorein	=>	IOBitsCorein,
+            CoreDataOut		=>	CoreDataOut,
+--			portdata		=>	portdata,
+            clklow 			=>	clklow,
+            clkmed 			=>	clkmed,
+            clkhigh			=>	clkhigh,
+            PRobe 			=>	PRobe,
+            demandmode		=>	demandmode,		-- passed directly to top
+            intirq			=>	intirq,
+            dreq			=>	dreq,
+            RateSources		=>	RateSources,
+            LEDS			=>	leds
+        );
 
 GenMakeHm2Dpllmods: if HM2DPLLs >0  generate
-	MakeHm2Dpllmods : entity work.MakeHm2Dpllmods
-	generic map (
-		ThePinDesc => ThePinDesc,
-		ClockHigh => ClockHigh,
-		ClockMed => ClockMed,
-		ClockLow  => ClockLow,
-		BusWidth  => BusWidth,
-		AddrWidth  => AddrWidth,
-		IOWidth  => IOWidth,
-		STEPGENs  => STEPGENs,
- 		StepGenTableWidth => StepGenTableWidth,
- 		UseStepGenPreScaler => UseStepGenPreScaler,
- 		UseStepgenIndex => UseStepgenIndex,
- 		UseStepgenProbe => UseStepgenProbe,
- 		timersize  => 14,
- 		asize  => 48,
- 		rsize  => 32,
-		HM2DPLLs => HM2DPLLs,
-		MuxedQCounters  => MuxedQCounters,
-		MuxedQCountersMIM  => MuxedQCountersMIM,
-		PWMGens  => PWMGens,
-		PWMRefWidth  => PWMRefWidth,
-		UsePWMEnas  => UsePWMEnas,
-		TPPWMGens  => TPPWMGens,
-		QCounters  => QCounters,
-		UseMuxedProbe  => UseMuxedProbe,
-		UseProbe  => UseProbe
-		)
-		port map (
-			ibus				=>  ibusint,
-			obusint			=>  obusint,
-			Aint				=>  Aint,
-			readstb			=>  readstb,
-			writestb			=>  writestb,
-			CoreDataOut		=>  CoreDataOut,
-			IOBitsCorein	=>  IOBitsCorein,
-			clklow			=>  clklow,
-			clkmed			=>  clkmed,
-			clkhigh			=>  clkhigh,
-			PRobe				=>  PRobe,
-			RateSources		=>  RateSources,
-			rates				=>  rates
-		);
+    MakeHm2Dpllmods : entity work.MakeHm2Dpllmods
+    generic map (
+        ThePinDesc => ThePinDesc,
+        ClockHigh => ClockHigh,
+        ClockMed => ClockMed,
+        ClockLow  => ClockLow,
+        BusWidth  => BusWidth,
+        AddrWidth  => AddrWidth,
+        IOWidth  => IOWidth,
+        STEPGENs  => STEPGENs,
+        StepGenTableWidth => StepGenTableWidth,
+        UseStepGenPreScaler => UseStepGenPreScaler,
+        UseStepgenIndex => UseStepgenIndex,
+        UseStepgenProbe => UseStepgenProbe,
+        timersize  => 14,
+        asize  => 48,
+        rsize  => 32,
+        HM2DPLLs => HM2DPLLs,
+        MuxedQCounters  => MuxedQCounters,
+        MuxedQCountersMIM  => MuxedQCountersMIM,
+        PWMGens  => PWMGens,
+        PWMRefWidth  => PWMRefWidth,
+        UsePWMEnas  => UsePWMEnas,
+        TPPWMGens  => TPPWMGens,
+        QCounters  => QCounters,
+        UseMuxedProbe  => UseMuxedProbe,
+        UseProbe  => UseProbe
+        )
+        port map (
+            ibus			=>  ibusint,
+            obusint			=>  obusint,
+            Aint			=>  Aint,
+            readstb			=>  readstb,
+            writestb		=>  writestb,
+            CoreDataOut		=>  CoreDataOut,
+            IOBitsCorein	=>  IOBitsCorein,
+            clklow			=>  clklow,
+            clkmed			=>  clkmed,
+            clkhigh			=>  clkhigh,
+            PRobe			=>  PRobe,
+            RateSources		=>  RateSources,
+            rates			=>  rates
+        );
 end generate;
 
 GenMakeStepgens: if STEPGENs >0  generate
-	MakeStepgens : entity work.MakeStepgens
-	generic map (
-		ThePinDesc => ThePinDesc,
-		ClockHigh => ClockHigh,
-		ClockMed => ClockMed,
-		ClockLow  => ClockLow,
-		BusWidth  => BusWidth,
-		AddrWidth  => AddrWidth,
-		IOWidth  => IOWidth,
-		STEPGENs  => STEPGENs,
- 		StepGenTableWidth => StepGenTableWidth,
- 		UseStepGenPreScaler => UseStepGenPreScaler,
- 		UseStepgenIndex => UseStepgenIndex,
- 		UseStepgenProbe => UseStepgenProbe,
- 		timersize  => 14,
- 		asize  => 48,
- 		rsize  => 32,
-		HM2DPLLs => HM2DPLLs,
-		MuxedQCounters  => MuxedQCounters,
-		MuxedQCountersMIM  => MuxedQCountersMIM,
-		PWMGens  => PWMGens,
-		PWMRefWidth  => PWMRefWidth,
-		UsePWMEnas  => UsePWMEnas,
-		TPPWMGens  => TPPWMGens,
-		QCounters  => QCounters,
-		UseMuxedProbe  => UseMuxedProbe,
-		UseProbe  => UseProbe
-		)
-		port map (
-			ibus				=>	ibusint,
-			obusint			=>	obusint,
-			Aint				=>	Aint,
-			readstb			=>	readstb,
-			writestb			=>	writestb,
-			CoreDataOut		=>	CoreDataOut,
-			IOBitsCorein	=>	IOBitsCorein,
-			clklow			=>	clklow,
-			clkmed			=>	clkmed,
-			clkhigh			=>	clkhigh,
-			PRobe				=>  PRobe,
-			RateSources		=>  RateSources,
-			rates				=>  rates
-		);
+    MakeStepgens : entity work.MakeStepgens
+    generic map (
+        ThePinDesc => ThePinDesc,
+        ClockHigh => ClockHigh,
+        ClockMed => ClockMed,
+        ClockLow  => ClockLow,
+        BusWidth  => BusWidth,
+        AddrWidth  => AddrWidth,
+        IOWidth  => IOWidth,
+        STEPGENs  => STEPGENs,
+        StepGenTableWidth => StepGenTableWidth,
+        UseStepGenPreScaler => UseStepGenPreScaler,
+        UseStepgenIndex => UseStepgenIndex,
+        UseStepgenProbe => UseStepgenProbe,
+        timersize  => 14,
+        asize  => 48,
+        rsize  => 32,
+        HM2DPLLs => HM2DPLLs,
+        MuxedQCounters  => MuxedQCounters,
+        MuxedQCountersMIM  => MuxedQCountersMIM,
+        PWMGens  => PWMGens,
+        PWMRefWidth  => PWMRefWidth,
+        UsePWMEnas  => UsePWMEnas,
+        TPPWMGens  => TPPWMGens,
+        QCounters  => QCounters,
+        UseMuxedProbe  => UseMuxedProbe,
+        UseProbe  => UseProbe
+        )
+        port map (
+            ibus			=>	ibusint,
+            obusint			=>	obusint,
+            Aint			=>	Aint,
+            readstb			=>	readstb,
+            writestb		=>	writestb,
+            CoreDataOut		=>	CoreDataOut,
+            IOBitsCorein	=>	IOBitsCorein,
+            clklow			=>	clklow,
+            clkmed			=>	clkmed,
+            clkhigh			=>	clkhigh,
+            PRobe			=>  PRobe,
+            RateSources		=>  RateSources,
+            rates			=>  rates
+        );
 end generate;
 
 GenMakeQCounters: if QCounters >0  generate
-	MakeQCounters : entity work.MakeQCounters
-	generic map (
-		ThePinDesc => ThePinDesc,
-		ClockHigh => ClockHigh,
-		ClockMed => ClockMed,
-		ClockLow  => ClockLow,
-		BusWidth  => BusWidth,
-		AddrWidth  => AddrWidth,
-		IOWidth  => IOWidth,
-		STEPGENs  => STEPGENs,
- 		StepGenTableWidth => StepGenTableWidth,
- 		UseStepGenPreScaler => UseStepGenPreScaler,
- 		UseStepgenIndex => UseStepgenIndex,
- 		UseStepgenProbe => UseStepgenProbe,
- 		timersize  => 14,
- 		asize  => 48,
- 		rsize  => 32,
-		HM2DPLLs => HM2DPLLs,
-		MuxedQCounters  => MuxedQCounters,
-		MuxedQCountersMIM  => MuxedQCountersMIM,
-		PWMGens  => PWMGens,
-		PWMRefWidth  => PWMRefWidth,
-		UsePWMEnas  => UsePWMEnas,
-		TPPWMGens  => TPPWMGens,
-		QCounters  => QCounters,
-		UseMuxedProbe  => UseMuxedProbe,
-		UseProbe  => UseProbe
-		)
-		port map (
-			ibus				=>	ibusint,
-			obusint			=>	obusint,
-			Aint				=>	Aint,
-			readstb			=>	readstb,
-			writestb			=>	writestb,
-			CoreDataOut		=>	CoreDataOut,
-			IOBitsCorein	=>	IOBitsCorein,
-			clklow			=>	clklow,
-			clkmed			=>	clkmed,
-			clkhigh			=>	clkhigh,
-			PRobe				=>  PRobe,
-			RateSources		=>  RateSources,
-			rates				=>  rates
-		);
+    MakeQCounters : entity work.MakeQCounters
+    generic map (
+        ThePinDesc => ThePinDesc,
+        ClockHigh => ClockHigh,
+        ClockMed => ClockMed,
+        ClockLow  => ClockLow,
+        BusWidth  => BusWidth,
+        AddrWidth  => AddrWidth,
+        IOWidth  => IOWidth,
+        STEPGENs  => STEPGENs,
+        StepGenTableWidth => StepGenTableWidth,
+        UseStepGenPreScaler => UseStepGenPreScaler,
+        UseStepgenIndex => UseStepgenIndex,
+        UseStepgenProbe => UseStepgenProbe,
+        timersize  => 14,
+        asize  => 48,
+        rsize  => 32,
+        HM2DPLLs => HM2DPLLs,
+        MuxedQCounters  => MuxedQCounters,
+        MuxedQCountersMIM  => MuxedQCountersMIM,
+        PWMGens  => PWMGens,
+        PWMRefWidth  => PWMRefWidth,
+        UsePWMEnas  => UsePWMEnas,
+        TPPWMGens  => TPPWMGens,
+        QCounters  => QCounters,
+        UseMuxedProbe  => UseMuxedProbe,
+        UseProbe  => UseProbe
+        )
+        port map (
+            ibus			=>	ibusint,
+            obusint			=>	obusint,
+            Aint			=>	Aint,
+            readstb			=>	readstb,
+            writestb		=>	writestb,
+            CoreDataOut		=>	CoreDataOut,
+            IOBitsCorein	=>	IOBitsCorein,
+            clklow			=>	clklow,
+            clkmed			=>	clkmed,
+            clkhigh			=>	clkhigh,
+            PRobe			=>  PRobe,
+            RateSources		=>  RateSources,
+            rates			=>  rates
+        );
 end generate;
 
 GenMakeMuxedQCounters: if MuxedQCounters >0  generate
-	MakeMuxedQCounters : entity work.MakeMuxedQCounters
-	generic map (
-		ThePinDesc => ThePinDesc,
-		ClockHigh => ClockHigh,
-		ClockMed => ClockMed,
-		ClockLow  => ClockLow,
-		BusWidth  => BusWidth,
-		AddrWidth  => AddrWidth,
-		IOWidth  => IOWidth,
-		STEPGENs  => STEPGENs,
- 		StepGenTableWidth => StepGenTableWidth,
- 		UseStepGenPreScaler => UseStepGenPreScaler,
- 		UseStepgenIndex => UseStepgenIndex,
- 		UseStepgenProbe => UseStepgenProbe,
- 		timersize  => 14,
- 		asize  => 48,
- 		rsize  => 32,
-		HM2DPLLs => HM2DPLLs,
-		MuxedQCounters  => MuxedQCounters,
-		MuxedQCountersMIM  => MuxedQCountersMIM,
-		PWMGens  => PWMGens,
-		PWMRefWidth  => PWMRefWidth,
-		UsePWMEnas  => UsePWMEnas,
-		TPPWMGens  => TPPWMGens,
-		QCounters  => QCounters,
-		UseMuxedProbe  => UseMuxedProbe,
-		UseProbe  => UseProbe
-		)
-		port map (
-			ibus				=>	ibusint,
-			obusint			=>	obusint,
-			Aint				=>	Aint,
-			readstb			=>	readstb,
-			writestb			=>	writestb,
-			CoreDataOut		=>	CoreDataOut,
-			IOBitsCorein	=>	IOBitsCorein,
-			clklow			=>	clklow,
-			clkmed			=>	clkmed,
-			clkhigh			=>	clkhigh,
-			PRobe				=>  PRobe,
-			RateSources		=>  RateSources,
-			rates				=>  rates
-		);
+    MakeMuxedQCounters : entity work.MakeMuxedQCounters
+    generic map (
+        ThePinDesc => ThePinDesc,
+        ClockHigh => ClockHigh,
+        ClockMed => ClockMed,
+        ClockLow  => ClockLow,
+        BusWidth  => BusWidth,
+        AddrWidth  => AddrWidth,
+        IOWidth  => IOWidth,
+        STEPGENs  => STEPGENs,
+        StepGenTableWidth => StepGenTableWidth,
+        UseStepGenPreScaler => UseStepGenPreScaler,
+        UseStepgenIndex => UseStepgenIndex,
+        UseStepgenProbe => UseStepgenProbe,
+        timersize  => 14,
+        asize  => 48,
+        rsize  => 32,
+        HM2DPLLs => HM2DPLLs,
+        MuxedQCounters  => MuxedQCounters,
+        MuxedQCountersMIM  => MuxedQCountersMIM,
+        PWMGens  => PWMGens,
+        PWMRefWidth  => PWMRefWidth,
+        UsePWMEnas  => UsePWMEnas,
+        TPPWMGens  => TPPWMGens,
+        QCounters  => QCounters,
+        UseMuxedProbe  => UseMuxedProbe,
+        UseProbe  => UseProbe
+        )
+        port map (
+            ibus			=>	ibusint,
+            obusint			=>	obusint,
+            Aint			=>	Aint,
+            readstb			=>	readstb,
+            writestb		=>	writestb,
+            CoreDataOut		=>	CoreDataOut,
+            IOBitsCorein	=>	IOBitsCorein,
+            clklow			=>	clklow,
+            clkmed			=>	clkmed,
+            clkhigh			=>	clkhigh,
+            PRobe			=>  PRobe,
+            RateSources		=>  RateSources,
+            rates			=>  rates
+        );
 end generate;
 
 GenMakePWMgens: if PWMGens >0  generate
-	MakePWMgens : entity work.MakePWMgens
-	generic map (
-		ThePinDesc => ThePinDesc,
-		ClockHigh => ClockHigh,
-		ClockMed => ClockMed,
-		ClockLow  => ClockLow,
-		BusWidth  => BusWidth,
-		AddrWidth  => AddrWidth,
-		IOWidth  => IOWidth,
-		STEPGENs  => STEPGENs,
- 		StepGenTableWidth => StepGenTableWidth,
- 		UseStepGenPreScaler => UseStepGenPreScaler,
- 		UseStepgenIndex => UseStepgenIndex,
- 		UseStepgenProbe => UseStepgenProbe,
- 		timersize  => 14,
- 		asize  => 48,
- 		rsize  => 32,
-		HM2DPLLs => HM2DPLLs,
-		MuxedQCounters  => MuxedQCounters,
-		MuxedQCountersMIM  => MuxedQCountersMIM,
-		PWMGens  => PWMGens,
-		PWMRefWidth  => PWMRefWidth,
-		UsePWMEnas  => UsePWMEnas,
-		TPPWMGens  => TPPWMGens,
-		QCounters  => QCounters,
-		UseMuxedProbe  => UseMuxedProbe,
-		UseProbe  => UseProbe
-		)
-		port map (
-			ibus				=>	ibusint,
-			obusint			=>	obusint,
-			Aint				=>	Aint,
-			readstb			=>	readstb,
-			writestb			=>	writestb,
-			CoreDataOut		=>	CoreDataOut,
-			IOBitsCorein	=>	IOBitsCorein,
-			clklow			=>	clklow,
-			clkmed			=>	clkmed,
-			clkhigh			=>	clkhigh,
-			PRobe				=>  PRobe,
-			RateSources		=>  RateSources,
-			rates				=>  rates
-		);
+    MakePWMgens : entity work.MakePWMgens
+    generic map (
+        ThePinDesc => ThePinDesc,
+        ClockHigh => ClockHigh,
+        ClockMed => ClockMed,
+        ClockLow  => ClockLow,
+        BusWidth  => BusWidth,
+        AddrWidth  => AddrWidth,
+        IOWidth  => IOWidth,
+        STEPGENs  => STEPGENs,
+        StepGenTableWidth => StepGenTableWidth,
+        UseStepGenPreScaler => UseStepGenPreScaler,
+        UseStepgenIndex => UseStepgenIndex,
+        UseStepgenProbe => UseStepgenProbe,
+        timersize  => 14,
+        asize  => 48,
+        rsize  => 32,
+        HM2DPLLs => HM2DPLLs,
+        MuxedQCounters  => MuxedQCounters,
+        MuxedQCountersMIM  => MuxedQCountersMIM,
+        PWMGens  => PWMGens,
+        PWMRefWidth  => PWMRefWidth,
+        UsePWMEnas  => UsePWMEnas,
+        TPPWMGens  => TPPWMGens,
+        QCounters  => QCounters,
+        UseMuxedProbe  => UseMuxedProbe,
+        UseProbe  => UseProbe
+        )
+        port map (
+            ibus			=>	ibusint,
+            obusint			=>	obusint,
+            Aint			=>	Aint,
+            readstb			=>	readstb,
+            writestb		=>	writestb,
+            CoreDataOut		=>	CoreDataOut,
+            IOBitsCorein	=>	IOBitsCorein,
+            clklow			=>	clklow,
+            clkmed			=>	clkmed,
+            clkhigh			=>	clkhigh,
+            PRobe			=>  PRobe,
+            RateSources		=>  RateSources,
+            rates			=>  rates
+        );
 end generate;
 
 GenMakeTPPWMGens: if TPPWMGens >0  generate
-	MakeTPPWMGens : entity work.MakeTPPWMGens
-	generic map (
-		ThePinDesc => ThePinDesc,
-		ClockHigh => ClockHigh,
-		ClockMed => ClockMed,
-		ClockLow  => ClockLow,
-		BusWidth  => BusWidth,
-		AddrWidth  => AddrWidth,
-		IOWidth  => IOWidth,
-		STEPGENs  => STEPGENs,
- 		StepGenTableWidth => StepGenTableWidth,
- 		UseStepGenPreScaler => UseStepGenPreScaler,
- 		UseStepgenIndex => UseStepgenIndex,
- 		UseStepgenProbe => UseStepgenProbe,
- 		timersize  => 14,
- 		asize  => 48,
- 		rsize  => 32,
-		HM2DPLLs => HM2DPLLs,
-		MuxedQCounters  => MuxedQCounters,
-		MuxedQCountersMIM  => MuxedQCountersMIM,
-		PWMGens  => PWMGens,
-		PWMRefWidth  => PWMRefWidth,
-		UsePWMEnas  => UsePWMEnas,
-		TPPWMGens  => TPPWMGens,
-		QCounters  => QCounters,
-		UseMuxedProbe  => UseMuxedProbe,
-		UseProbe  => UseProbe
-		)
-		port map (
-			ibus				=>	ibusint,
-			obusint			=>	obusint,
-			Aint				=>	Aint,
-			readstb			=>	readstb,
-			writestb			=>	writestb,
-			CoreDataOut		=>	CoreDataOut,
-			IOBitsCorein	=>	IOBitsCorein,
-			clklow			=>	clklow,
-			clkmed			=>	clkmed,
-			clkhigh			=>	clkhigh,
-			PRobe				=>  PRobe,
-			RateSources		=>  RateSources,
-			rates				=>  rates
-		);
+    MakeTPPWMGens : entity work.MakeTPPWMGens
+    generic map (
+        ThePinDesc => ThePinDesc,
+        ClockHigh => ClockHigh,
+        ClockMed => ClockMed,
+        ClockLow  => ClockLow,
+        BusWidth  => BusWidth,
+        AddrWidth  => AddrWidth,
+        IOWidth  => IOWidth,
+        STEPGENs  => STEPGENs,
+        StepGenTableWidth => StepGenTableWidth,
+        UseStepGenPreScaler => UseStepGenPreScaler,
+        UseStepgenIndex => UseStepgenIndex,
+        UseStepgenProbe => UseStepgenProbe,
+        timersize  => 14,
+        asize  => 48,
+        rsize  => 32,
+        HM2DPLLs => HM2DPLLs,
+        MuxedQCounters  => MuxedQCounters,
+        MuxedQCountersMIM  => MuxedQCountersMIM,
+        PWMGens  => PWMGens,
+        PWMRefWidth  => PWMRefWidth,
+        UsePWMEnas  => UsePWMEnas,
+        TPPWMGens  => TPPWMGens,
+        QCounters  => QCounters,
+        UseMuxedProbe  => UseMuxedProbe,
+        UseProbe  => UseProbe
+        )
+        port map (
+            ibus			=>	ibusint,
+            obusint			=>	obusint,
+            Aint			=>	Aint,
+            readstb			=>	readstb,
+            writestb		=>	writestb,
+            CoreDataOut		=>	CoreDataOut,
+            IOBitsCorein	=>	IOBitsCorein,
+            clklow			=>	clklow,
+            clkmed			=>	clkmed,
+            clkhigh			=>	clkhigh,
+            PRobe			=>  PRobe,
+            RateSources		=>  RateSources,
+            rates			=>  rates
+        );
 end generate;
 
 GenMakeSPIs: if SPIs >0  generate
-	MakeSPIs : entity work.MakeSPIs
-	generic map (
-		ThePinDesc => ThePinDesc,
-		ClockHigh => ClockHigh,
-		ClockMed => ClockMed,
-		ClockLow  => ClockLow,
-		BusWidth  => BusWidth,
-		AddrWidth  => AddrWidth,
-		IOWidth  => IOWidth,
-		STEPGENs  => STEPGENs,
- 		StepGenTableWidth => StepGenTableWidth,
- 		UseStepGenPreScaler => UseStepGenPreScaler,
- 		UseStepgenIndex => UseStepgenIndex,
- 		UseStepgenProbe => UseStepgenProbe,
- 		timersize  => 14,
- 		asize  => 48,
- 		rsize  => 32,
-		HM2DPLLs => HM2DPLLs,
-		MuxedQCounters  => MuxedQCounters,
-		MuxedQCountersMIM  => MuxedQCountersMIM,
-		PWMGens  => PWMGens,
-		PWMRefWidth  => PWMRefWidth,
-		UsePWMEnas  => UsePWMEnas,
-		TPPWMGens  => TPPWMGens,
-		QCounters  => QCounters,
-		UseMuxedProbe  => UseMuxedProbe,
-		UseProbe  => UseProbe,
-		SPIs  => SPIs
-		)
-		port map (
-			ibus				=>	ibusint,
-			obusint			=>	obusint,
-			Aint				=>	Aint,
-			readstb			=>	readstb,
-			writestb			=>	writestb,
-			CoreDataOut		=>	CoreDataOut,
-			IOBitsCorein	=>	IOBitsCorein,
-			clklow			=>	clklow,
-			clkmed			=>	clkmed,
-			clkhigh			=>	clkhigh,
-			PRobe				=>  PRobe,
-			RateSources		=>  RateSources,
-			rates				=>  rates
-		);
+    MakeSPIs : entity work.MakeSPIs
+    generic map (
+        ThePinDesc => ThePinDesc,
+        ClockHigh => ClockHigh,
+        ClockMed => ClockMed,
+        ClockLow  => ClockLow,
+        BusWidth  => BusWidth,
+        AddrWidth  => AddrWidth,
+        IOWidth  => IOWidth,
+        STEPGENs  => STEPGENs,
+        StepGenTableWidth => StepGenTableWidth,
+        UseStepGenPreScaler => UseStepGenPreScaler,
+        UseStepgenIndex => UseStepgenIndex,
+        UseStepgenProbe => UseStepgenProbe,
+        timersize  => 14,
+        asize  => 48,
+        rsize  => 32,
+        HM2DPLLs => HM2DPLLs,
+        MuxedQCounters  => MuxedQCounters,
+        MuxedQCountersMIM  => MuxedQCountersMIM,
+        PWMGens  => PWMGens,
+        PWMRefWidth  => PWMRefWidth,
+        UsePWMEnas  => UsePWMEnas,
+        TPPWMGens  => TPPWMGens,
+        QCounters  => QCounters,
+        UseMuxedProbe  => UseMuxedProbe,
+        UseProbe  => UseProbe,
+        SPIs  => SPIs
+        )
+        port map (
+            ibus			=>	ibusint,
+            obusint			=>	obusint,
+            Aint			=>	Aint,
+            readstb			=>	readstb,
+            writestb		=>	writestb,
+            CoreDataOut		=>	CoreDataOut,
+            IOBitsCorein	=>	IOBitsCorein,
+            clklow			=>	clklow,
+            clkmed			=>	clkmed,
+            clkhigh			=>	clkhigh,
+            PRobe			=>  PRobe,
+            RateSources		=>  RateSources,
+            rates			=>  rates
+        );
 end generate;
 
---
--- 	makebspimod:  if BSPIs >0  generate
--- 	signal LoadBSPIData: std_logic_vector(BSPIs -1 downto 0);
--- 	signal ReadBSPIData: std_logic_vector(BSPIs -1 downto 0);
--- 	signal LoadBSPIDescriptor: std_logic_vector(BSPIs -1 downto 0);
--- 	signal ReadBSPIFIFOCOunt: std_logic_vector(BSPIs -1 downto 0);
--- 	signal ClearBSPIFIFO: std_logic_vector(BSPIs -1 downto 0);
--- 	signal BSPIClk: std_logic_vector(BSPIs -1 downto 0);
--- 	signal BSPIIn: std_logic_vector(BSPIs -1 downto 0);
--- 	signal BSPIOut: std_logic_vector(BSPIs -1 downto 0);
--- 	signal BSPIFrame: std_logic_vector(BSPIs -1 downto 0);
--- 	signal BSPIDataSel : std_logic;
--- 	signal BSPIFIFOCountSel : std_logic;
--- 	signal BSPIDescriptorSel : std_logic;
--- 	type BSPICSType is array(BSPIs-1 downto 0) of std_logic_vector(BSPICSWidth-1 downto 0);
--- 	signal BSPICS : BSPICSType;
--- 	begin
--- 		makebspis: for i in 0 to BSPIs -1 generate
--- 			bspi: entity work.BufferedSPI
--- 			generic map (
--- 				cswidth => BSPICSWidth,
--- 				gatedcs => false)
--- 			port map (
--- 				clk  => clklow,
--- 				ibus => ibusint,
--- 				obus => obusint,
--- 				addr => Aint(5 downto 2),
--- 				hostpush => LoadBSPIData(i),
--- 				hostpop => ReadBSPIData(i),
--- 				loaddesc => LoadBSPIDescriptor(i),
--- 				loadasend => '0',
--- 				clear => ClearBSPIFIFO(i),
--- 				readcount => ReadBSPIFIFOCount(i),
--- 				spiclk => BSPIClk(i),
--- 				spiin => BSPIIn(i),
--- 				spiout => BSPIOut(i),
--- 				spiframe => BSPIFrame(i),
--- 				spicsout => BSPICS(i)
--- 				);
--- 		end generate;
---
--- 		BSPIDecodeProcess : process (Aint,Readstb,writestb,BSPIDataSel,BSPIFIFOCountSel,BSPIDescriptorSel)
--- 		begin
--- 			if Aint(AddrWidth-1 downto 8) = BSPIDataAddr then	 --  BSPI data register select
--- 				BSPIDataSel <= '1';
--- 			else
--- 				BSPIDataSel <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = BSPIFIFOCountAddr then	 --  BSPI FIFO count register select
--- 				BSPIFIFOCountSel <= '1';
--- 			else
--- 				BSPIFIFOCountSel <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = BSPIDescriptorAddr then	 --  BSPI channel descriptor register select
--- 				BSPIDescriptorSel <= '1';
--- 			else
--- 				BSPIDescriptorSel <= '0';
--- 			end if;
--- 			LoadBSPIData <= OneOfNDecode(BSPIs,BSPIDataSel,writestb,Aint(7 downto 6)); -- 4 max
--- 			ReadBSPIData <= OneOfNDecode(BSPIs,BSPIDataSel,Readstb,Aint(7 downto 6));
--- 			LoadBSPIDescriptor<= OneOfNDecode(BSPIs,BSPIDescriptorSel,writestb,Aint(5 downto 2));
--- 			ReadBSPIFIFOCOunt <= OneOfNDecode(BSPIs,BSPIFIFOCountSel,Readstb,Aint(5 downto 2));
--- 			ClearBSPIFIFO <= OneOfNDecode(BSPIs,BSPIFIFOCountSel,writestb,Aint(5 downto 2));
--- 		end process BSPIDecodeProcess;
---
--- 		DoBSPIPins: process(BSPIFrame, BSPIOut, BSPIClk, BSPICS, IOBitsCorein)
--- 		begin
--- 			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins
--- 				if ThePinDesc(i)(15 downto 8) = BSPITag then
--- 					case (ThePinDesc(i)(7 downto 0)) is	--secondary pin function, drop MSB
--- 						when BSPIFramePin =>
--- 							IOBitsCorein(i) <= BSPIFrame(conv_integer(ThePinDesc(i)(23 downto 16)));
--- 						when BSPIOutPin =>
--- 							IOBitsCorein(i) <= BSPIOut(conv_integer(ThePinDesc(i)(23 downto 16)));
--- 						when BSPIClkPin =>
--- 							IOBitsCorein(i) <= BSPIClk(conv_integer(ThePinDesc(i)(23 downto 16)));
--- 						when BSPIInPin =>
--- 							BSPIIn(conv_integer(ThePinDesc(i)(23 downto 16))) <= IOBitsCorein(i);
--- 						when others =>
--- 						   IOBitsCorein(i) <= BSPICS(conv_integer(ThePinDesc(i)(23 downto 16)))(conv_integer(ThePinDesc(i)(6 downto 0))-5);
--- 						   -- magic foo, magic foo, what on earth does it do?
--- 						   -- (this needs to written more clearly!)
--- 					end case;
--- 				end if;
--- 			end loop;
--- 		end process;
--- 	end generate;
---
--- 	makedbspimod:  if DBSPIs >0  generate
--- 	signal LoadDBSPIData: std_logic_vector(DBSPIs -1 downto 0);
--- 	signal ReadDBSPIData: std_logic_vector(DBSPIs -1 downto 0);
--- 	signal LoadDBSPIDescriptor: std_logic_vector(DBSPIs -1 downto 0);
--- 	signal ReadDBSPIFIFOCOunt: std_logic_vector(DBSPIs -1 downto 0);
--- 	signal ClearDBSPIFIFO: std_logic_vector(DBSPIs -1 downto 0);
--- 	signal DBSPIClk: std_logic_vector(DBSPIs -1 downto 0);
--- 	signal DBSPIIn: std_logic_vector(DBSPIs -1 downto 0);
--- 	signal DBSPIOut: std_logic_vector(DBSPIs -1 downto 0);
--- 	type DBSPICSType is array(DBSPIs-1 downto 0) of std_logic_vector(DBSPICSWidth-1 downto 0);
--- 	signal DBSPICS : DBSPICSType;
--- 	signal DBSPIDataSel : std_logic;
--- 	signal DBSPIFIFOCountSel : std_logic;
--- 	signal DBSPIDescriptorSel : std_logic;
--- 	begin
--- 		makedbspis: for i in 0 to DBSPIs -1 generate
--- 			bspi: entity work.BufferedSPI
--- 			generic map (
--- 				cswidth => DBSPICSWidth,
--- 				gatedcs => true
--- 				)
--- 			port map (
--- 				clk  => clklow,
--- 				ibus => ibusint,
--- 				obus => obusint,
--- 				addr => Aint(5 downto 2),
--- 				hostpush => LoadDBSPIData(i),
--- 				hostpop => ReadDBSPIData(i),
--- 				loaddesc => LoadDBSPIDescriptor(i),
--- 				loadasend => '0',
--- 				clear => ClearDBSPIFIFO(i),
--- 				readcount => ReadDBSPIFIFOCount(i),
--- 				spiclk => DBSPIClk(i),
--- 				spiin => DBSPIIn(i),
--- 				spiout => DBSPIOut(i),
--- 				spicsout => DBSPICS(i)
--- 				);
--- 		end generate;
---
--- 		DBSPIDecodeProcess : process (Aint,Readstb,writestb,DBSPIDataSel,DBSPIFIFOCountSel,DBSPIDescriptorSel)
--- 		begin
--- 			if Aint(AddrWidth-1 downto 8) = DBSPIDataAddr then	 --  DBSPI data register select
--- 				DBSPIDataSel <= '1';
--- 			else
--- 				DBSPIDataSel <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = DBSPIFIFOCountAddr then	 --  DBSPI FIFO count register select
--- 				DBSPIFIFOCountSel <= '1';
--- 			else
--- 				DBSPIFIFOCountSel <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = DBSPIDescriptorAddr then	 --  DBSPI channel descriptor register select
--- 				DBSPIDescriptorSel <= '1';
--- 			else
--- 				DBSPIDescriptorSel <= '0';
--- 			end if;
--- 			LoadDBSPIData <= OneOfNDecode(DBSPIs,DBSPIDataSel,writestb,Aint(7 downto 6)); -- 4 max
--- 			ReadDBSPIData <= OneOfNDecode(DBSPIs,DBSPIDataSel,Readstb,Aint(7 downto 6));
--- 			LoadDBSPIDescriptor<= OneOfNDecode(DBSPIs,DBSPIDescriptorSel,writestb,Aint(5 downto 2));
--- 			ReadDBSPIFIFOCOunt <= OneOfNDecode(DBSPIs,DBSPIFIFOCountSel,Readstb,Aint(5 downto 2));
--- 			ClearDBSPIFIFO <= OneOfNDecode(DBSPIs,DBSPIFIFOCountSel,writestb,Aint(5 downto 2));
--- 		end process DBSPIDecodeProcess;
---
--- 		DoDBSPIPins: process(DBSPIOut, DBSPIClk, DBSPICS, IOBitsCorein)
--- 		begin
--- 			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins
--- 				if ThePinDesc(i)(15 downto 8) = DBSPITag then
--- 					case (ThePinDesc(i)(7 downto 0)) is	--secondary pin function, drop MSB
--- 						when DBSPIOutPin =>
--- 							IOBitsCorein(i) <= DBSPIOut(conv_integer(ThePinDesc(i)(23 downto 16)));
--- 						when DBSPIClkPin =>
--- 							IOBitsCorein(i) <= DBSPIClk(conv_integer(ThePinDesc(i)(23 downto 16)));											when DBSPIInPin =>
--- 							DBSPIIn(conv_integer(ThePinDesc(i)(23 downto 16))) <= IOBitsCorein(i);
--- 						when others =>
--- 							IOBitsCorein(i) <= DBSPICS(conv_integer(ThePinDesc(i)(23 downto 16)))(conv_integer(ThePinDesc(i)(6 downto 0))-5);
--- 				   		-- magic foo, magic foo, what on earth does it do?
--- 							-- (this needs to written more clearly!)
--- 					end case;
--- 				end if;
--- 			end loop;
--- 		end process;
---
--- 		DoLocalDDBSPIPins: process(LIOBits,DBSPICS,DBSPIClk,DBSPIOut) -- only for 4I69 LIO currently
--- 		begin
--- 			for i in 0 to LIOWidth -1 loop				-- loop through all the local I/O pins
--- 				report("Doing DBSPI LIOLoop: "& integer'image(i));
--- 				if ThePinDesc(i+IOWidth)(15 downto 8) = DBSPITag then 	-- GTag (Local I/O starts at end of external I/O)
--- 					case (ThePinDesc(i+IOWidth)(7 downto 0)) is	--secondary pin function, drop MSB
--- 						when DBSPIOutPin =>
--- 							LIOBits(i) <= DBSPIOut(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16)));
--- 							report("Local DBSPIOutPin found at LIOBit " & integer'image(i));
--- 						when DBSPIClkPin =>
--- 							LIOBits(i) <= DBSPIClk(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16)));
--- 							report("Local DBSPClkPin found at LIOBit " & integer'image(i));
--- 						when DBSPIInPin =>
--- 							DBSPIIn(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16))) <= LIOBits(i);
--- 							report("Local DBSPIInPin found at LIOBit " & integer'image(i));
--- 						when others =>
--- 							LIOBits(i) <= DBSPICS(conv_integer(ThePinDesc(i+IOWidth)(23 downto 16)))(conv_integer(ThePinDesc(i+IOWidth)(6 downto 0))-5);
--- 							report("Local DBSPICSPin found at LIOBit " & integer'image(i));
--- 						-- magic foo, magic foo, what on earth does it do?
--- 						-- (this needs to written more clearly!)
--- 					end case;
--- 				end if;
--- 			end loop;
--- 		end process;
--- 	end generate;
+GenMakeBSPIs: if BSPIs >0  generate
+    MakeBSPIs : entity work.MakeBSPIs
+    generic map (
+        ThePinDesc => ThePinDesc,
+        ClockHigh => ClockHigh,
+        ClockMed => ClockMed,
+        ClockLow  => ClockLow,
+        BusWidth  => BusWidth,
+        AddrWidth  => AddrWidth,
+        IOWidth  => IOWidth,
+        STEPGENs  => STEPGENs,
+        StepGenTableWidth => StepGenTableWidth,
+        UseStepGenPreScaler => UseStepGenPreScaler,
+        UseStepgenIndex => UseStepgenIndex,
+        UseStepgenProbe => UseStepgenProbe,
+        timersize  => 14,
+        asize  => 48,
+        rsize  => 32,
+        HM2DPLLs => HM2DPLLs,
+        MuxedQCounters  => MuxedQCounters,
+        MuxedQCountersMIM  => MuxedQCountersMIM,
+        PWMGens  => PWMGens,
+        PWMRefWidth  => PWMRefWidth,
+        UsePWMEnas  => UsePWMEnas,
+        TPPWMGens  => TPPWMGens,
+        QCounters  => QCounters,
+        UseMuxedProbe  => UseMuxedProbe,
+        UseProbe  => UseProbe,
+        SPIs  => SPIs,
+        BSPIs  => BSPIs,
+        BSPICSWidth  => BSPICSWidth
+        )
+        port map (
+            ibus			=>	ibusint,
+            obusint			=>	obusint,
+            Aint			=>	Aint,
+            readstb			=>	readstb,
+            writestb		=>	writestb,
+            CoreDataOut		=>	CoreDataOut,
+            IOBitsCorein	=>	IOBitsCorein,
+            clklow			=>	clklow,
+            clkmed			=>	clkmed,
+            clkhigh			=>	clkhigh,
+            PRobe			=>  PRobe,
+            RateSources		=>  RateSources,
+            rates			=>  rates
+        );
+end generate;
+
+GenMakeDBSPIs: if DBSPIs >0  generate
+    MakeDBSPIs : entity work.MakeDBSPIs
+    generic map (
+        ThePinDesc => ThePinDesc,
+        ClockHigh => ClockHigh,
+        ClockMed => ClockMed,
+        ClockLow  => ClockLow,
+        BusWidth  => BusWidth,
+        AddrWidth  => AddrWidth,
+        IOWidth  => IOWidth,
+        STEPGENs  => STEPGENs,
+        StepGenTableWidth => StepGenTableWidth,
+        UseStepGenPreScaler => UseStepGenPreScaler,
+        UseStepgenIndex => UseStepgenIndex,
+        UseStepgenProbe => UseStepgenProbe,
+        timersize  => 14,
+        asize  => 48,
+        rsize  => 32,
+        HM2DPLLs => HM2DPLLs,
+        MuxedQCounters  => MuxedQCounters,
+        MuxedQCountersMIM  => MuxedQCountersMIM,
+        PWMGens  => PWMGens,
+        PWMRefWidth  => PWMRefWidth,
+        UsePWMEnas  => UsePWMEnas,
+        TPPWMGens  => TPPWMGens,
+        QCounters  => QCounters,
+        UseMuxedProbe  => UseMuxedProbe,
+        UseProbe  => UseProbe,
+        SPIs  => SPIs,
+        BSPIs  => BSPIs,
+        BSPICSWidth  => BSPICSWidth,
+        DBSPIs  => DBSPIs,
+        DBSPICSWidth  => DBSPICSWidth
+        )
+        port map (
+            ibus			=>	ibusint,
+            obusint			=>	obusint,
+            Aint			=>	Aint,
+            readstb			=>	readstb,
+            writestb		=>	writestb,
+            CoreDataOut		=>	CoreDataOut,
+            IOBitsCorein	=>	IOBitsCorein,
+            clklow			=>	clklow,
+            clkmed			=>	clkmed,
+            clkhigh			=>	clkhigh,
+            PRobe			=>  PRobe,
+            RateSources		=>  RateSources,
+            rates			=>  rates
+        );
+end generate;
+
 --
 -- 	makesssimod:  if SSSIs >0  generate
 -- 	signal LoadSSSIData0: std_logic_vector(SSSIs -1 downto 0);
@@ -1880,7 +1785,7 @@ end generate;
 -- 				testbit  =>   SSerialTestBits(i)
 -- 				);
 -- 		end generate;
--- 
+--
 -- 		SSerialDecodeProcess : process (Aint,Readstb,writestb,SSerialCommandSel,SSerialDataSel,
 -- 		                                SSerialRAMSel0,SSerialRAMSel1,SSerialRAMSel2,SSerialRAMSel3)
 -- 		begin
@@ -1931,10 +1836,10 @@ end generate;
 --         report "UARTS per sserial 1 " &  integer 'image(UARTSPerSSerial(1));
 --         report "UARTS per sserial 2 " &  integer 'image(UARTSPerSSerial(2));
 --         report "UARTS per sserial 3 " &  integer 'image(UARTSPerSSerial(3));
--- 
--- 
+--
+--
 -- 		end process SSerialDecodeProcess;
--- 
+--
 -- 		DoSSerialPins: process(SSerialTX, SSerialTXEn, SSerialTestBits, IOBitsCorein)
 -- 		begin
 -- 			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins
@@ -1955,7 +1860,7 @@ end generate;
 -- 			end loop;
 -- 		end process;
 -- 	end generate;
--- 
+--
 -- 	maketwiddlermod:  if Twiddlers >0  generate
 -- 	signal LoadTwiddlerCommand: std_logic_vector(Twiddlers -1 downto 0);
 -- 	signal ReadTwiddlerCommand: std_logic_vector(Twiddlers -1 downto 0);
@@ -1996,7 +1901,7 @@ end generate;
 -- --				testbit  =>   TwiddlerTestBits(i)
 -- 				);
 -- 		end generate;
--- 
+--
 -- 		TwiddleDecodeProcess : process (Aint,Readstb,writestb,TwiddlerCommandSel,TwiddlerDataSel,TwiddlerRAMSel)
 -- 		begin
 -- 			if Aint(AddrWidth-1 downto 8) = TwiddlerCommandAddr then
@@ -2021,7 +1926,7 @@ end generate;
 -- 			LoadTwiddlerRam <= OneOfNDecode(Twiddlers,TwiddlerRAMSel,writestb,Aint(7 downto 6)); 	-- 16 addresses per Twiddle RAM max, this implies 4 max Twiddlers
 -- 			ReadTwiddlerRam <= OneOfNDecode(Twiddlers,TwiddlerRAMSel,Readstb,Aint(7 downto 6)); 	-- 16 addresses per Twiddle RAM max
 -- 		end process TwiddleDecodeProcess;
--- 
+--
 -- 		DoTwiddlerPins: process(TwiddlerOutput)
 -- 		begin
 -- 			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins
@@ -2039,7 +1944,7 @@ end generate;
 -- 				end if;
 -- 			end loop;
 -- 		end process;
--- 
+--
 -- 	end generate;
 
 -- 	makescalercounters: if ScalerCounters >0 generate -- note scaler counter are in pairs
@@ -2050,7 +1955,7 @@ end generate;
 -- 	signal ScalerCountSel: std_logic;
 -- 	signal ScalerLatchSel: std_logic;
 -- 	signal ReadScalerTimer: std_logic;
--- 
+--
 -- 	begin
 -- 		scalertimerx : entity work.scalertimer
 -- 				port map (
@@ -2058,7 +1963,7 @@ end generate;
 -- 					readtimer => ReadScalerTimer,
 -- 					clk => clklow
 -- 					);
--- 
+--
 -- 		makescalercounters: for i in 0 to ScalerCounters-1 generate
 -- 			scalercounterx: entity work.scalercounter
 -- 				port map (
@@ -2071,7 +1976,7 @@ end generate;
 -- 					clk =>	clklow
 -- 				);
 -- 		end generate;
--- 
+--
 -- 		DoScalerCounterPins: process(IOBitsCorein)
 -- 		begin
 -- 			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins
@@ -2085,7 +1990,7 @@ end generate;
 -- 				end if;
 -- 			end loop;
 -- 		end process;
--- 
+--
 -- 		ScalerDecodeProcess : process (Aint,Readstb,ScalerCountSel,ScalerLatchSel)
 -- 		begin
 -- 			if Aint(AddrWidth-1 downto 8) = ScalerCountAddr then	 --
@@ -2093,23 +1998,23 @@ end generate;
 -- 			else
 -- 				ScalerCountSel <= '0';
 -- 			end if;
--- 
+--
 -- 			if Aint(AddrWidth-1 downto 8) = ScalerLatchAddr then	 --
 -- 				ScalerLatchSel <= '1';
 -- 			else
 -- 				ScalerLatchSel <= '0';
 -- 			end if;
--- 
+--
 -- 			if Aint(AddrWidth-1 downto 8) = ScalerTimerAddr and readstb = '1' then	 --
 -- 				ReadScalerTimer <= '1';
 -- 			else
 -- 				ReadScalerTimer <= '0';
 -- 			end if;
--- 
+--
 -- 			ReadScalerCount <= OneOfNDecode(ScalerCounters,ScalerCountSel,readstb,Aint(7 downto 2));
 -- 			ReadScalerLatch <= OneOfNDecode(ScalerCounters,ScalerLatchSel,readstb,Aint(7 downto 2));
 -- 		end process ScalerDecodeProcess;
--- 
+--
 -- 	end generate;
 
 --   MuxedEncMIM: if  MuxedQCountersMIM > 0 generate
