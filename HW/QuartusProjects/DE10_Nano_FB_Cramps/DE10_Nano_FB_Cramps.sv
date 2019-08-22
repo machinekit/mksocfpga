@@ -353,6 +353,7 @@ defparam gpio_adr_decoder_reg_inst.ADC = ADC;
 defparam gpio_adr_decoder_reg_inst.Mux_En = Mux_En;
 defparam gpio_adr_decoder_reg_inst.Capsense = Capsense;
 defparam gpio_adr_decoder_reg_inst.NumSense = NumSense;
+defparam gpio_adr_decoder_reg_inst.Capsense_Pins = Capsense_Pins;
 
 HostMot3_cfg HostMot3_inst
 (

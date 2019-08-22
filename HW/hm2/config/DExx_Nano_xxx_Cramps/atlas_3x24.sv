@@ -32,5 +32,7 @@ parameter BoardAdaptor          = 0;
     parameter ADC               = "DE0-Nano-SoC";
     parameter Mux_En            = 1;
     parameter Capsense          = 0;
-    parameter NumSense          = 0;
+    parameter NumSense          = 4;
+                              // Capsense Pins: '{.. etc , Sensor1, Sensor0, charge out}   // GPIO 0-71
+    parameter int Capsense_Pins[NumSense:0]   = '{ 40, 39,      38,      37, 36        };
 endpackage //_HeaderIncluded
