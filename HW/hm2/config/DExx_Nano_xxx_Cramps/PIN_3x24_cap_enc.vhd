@@ -76,7 +76,7 @@ package Pintypes is
         (WatchDogTag,   x"00",  ClockLowTag,    x"01",  WatchDogTimeAddr&PadT,      WatchDogNumRegs,    x"00",  WatchDogMPBitMask),
         (IOPortTag,     x"00",  ClockLowTag,    x"03",  PortAddr&PadT,              IOPortNumRegs,      x"00",  IOPortMPBitMask),
         (QcountTag,     x"02",  ClockLowTag,    x"02",  QcounterAddr&PadT,          QCounterNumRegs,    x"00",  QCounterMPBitMask),
-        (StepGenTag,    x"02",  ClockLowTag,    x"0A",  StepGenRateAddr&PadT,       StepGenNumRegs,     x"00",  StepGenMPBitMask),
+        (StepGenTag,    x"02",  ClockLowTag,    x"09",  StepGenRateAddr&PadT,       StepGenNumRegs,     x"00",  StepGenMPBitMask),
         (PWMTag,        x"00",  ClockHighTag,   x"06",  PWMValAddr&PadT,            PWMNumRegs,         x"00",  PWMMPBitMask),
         (LEDTag,        x"00",  ClockLowTag,    x"01",  LEDAddr&PadT,               LEDNumRegs,         x"00",  LEDMPBitMask),
         (NANOADCTag,    x"00",  ClockLowTag,    x"08",  NANOADCAddr&PadT,           NANOADCNumRegs,     x"00",  NANOADCBitMask),
