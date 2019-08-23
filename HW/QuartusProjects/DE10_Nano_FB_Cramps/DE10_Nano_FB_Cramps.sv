@@ -163,8 +163,6 @@ parameter NumIOAddrReg = 6;
     wire                    hm_clk_high;
     wire                    adc_clk_40;
 //    wire                    clklow_sig;
-    wire                    clkmed_sig;
-    wire                    clkhigh_sig;
 
 // Mesa I/O Signals:
     wire [LEDCount-1:0]         hm2_leds_sig;
@@ -312,10 +310,6 @@ defparam top_io_modules_inst.KEY_WIDTH = 2;
 
 // Mesa code ------------------------------------------------------//
 
-assign clkhigh_sig = hm_clk_high;
-assign clkmed_sig = hm_clk_med;
-
-
 genvar ig;
 generate for(ig=0;ig<NumGPIO;ig=ig+1) begin : iosigloop
     assign io_bitsout_sig[ig] = hm2_bitsout_sig[(ig*MuxGPIOIOWidth)+:MuxGPIOIOWidth];
@@ -369,8 +363,8 @@ HostMot3_cfg HostMot3_inst
     .writestb(hm_write) ,	// input  writestb_sig
 
     .clklow(fpga_clk_50) ,	// input  clklow_sig  				-- PCI clock --> all
-    .clkmed(clkmed_sig) ,	// input  clkmed_sig  				-- Processor clock --> sserialwa, twiddle
-    .clkhigh(clkhigh_sig) ,	// input  clkhigh_sig				-- High speed clock --> most
+    .clkmed(hm_clk_med) ,	// input  hm_clk_med  				-- Processor clock --> sserialwa, twiddle
+    .clkhigh(hm_clk_high) ,	// input  hm_clk_high				-- High speed clock --> most
     .intirq(int_sig) ,	// output  int_sig							--int => LINT, ---> PCI ?
     .iobitsouttop(hm2_bitsout_sig) ,	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits
     .iobitsintop(hm2_bitsin_sig) 	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits
