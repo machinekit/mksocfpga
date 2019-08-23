@@ -80,6 +80,7 @@ parameter   NumGPIO         = 2;
 parameter   Capsense        = 1;
 parameter   NumSense        = 4;
 parameter   ADC             = "";
+parameter   Mux_En          = 1;
 // local param
 parameter   IoRegWidth      = 24;
 parameter   AdcOutShift     = 2;
@@ -154,12 +155,12 @@ parameter   TotalNumregs    = Mux_regPrIOReg * NumIOAddrReg * NumPinsPrIOAddr;
     wire [NumSense-1:0] sense;
     wire                charge;
     wire [3:0]          hysteresis[NumSense-1:0];
-    
-    wire sr_delay_act; 
-    wire sr_init_delay_act; 
+
+    wire sr_delay_act;
+    wire sr_init_delay_act;
    wire sense_reset;
 //	wire sense_reset = ~reset_reg_N;
-    
+
     genvar sh;
     generate
         for(sh=0;sh<NumSense;sh=sh+1) begin : sense_hystloop
@@ -268,14 +269,14 @@ generate if (Capsense >= 1) begin
         end
         else if ( write_address ) begin
             if (busaddress_r == 10'h0304) begin
-                hysteresis_reg  <= busdata_in_r; 
+                hysteresis_reg  <= busdata_in_r;
                 reset_sr <= 1'b1;
-            end 
+            end
             else begin
-                hysteresis_reg  <= hysteresis_reg; 
+                hysteresis_reg  <= hysteresis_reg;
                 reset_sr <= 1'b0;
             end
-        end	
+        end
     end
 end
 endgenerate
@@ -287,11 +288,11 @@ endgenerate
         sr_init_delay[1] <= sr_init_delay[0];
         sr_init_delay[2] <= sr_init_delay[1];
     end
-    
+
     assign sr_delay_act = (sr_delay[1] == 1'b1 && sr_delay[0] == 1'b0)  ? 1'b1 : 1'b0;
     assign sr_init_delay_act = (sr_init_delay[2] == 1'b0 && sr_init_delay[0] == 1'b1) ? 1'b1 : 1'b0;
     assign sense_reset    = ~reset_reg_N | ~buttons[1] | sr_delay_act | sr_init_delay_act;
-    
+
     genvar il;
     generate
         for(il=0;il<NumIOAddrReg;il=il+1) begin : reg_initloop
@@ -351,7 +352,7 @@ endgenerate
 //	wire [GPIOWidth-1:0] gpio1_input_data;
 //	assign gpio_input_data[1] = {gpio1_input_data[GPIOWidth-1:5],sense,charge};
 generate if (Capsense >=1) begin
-    bidir_io #(.IOWidth(GPIOWidth * NumGPIO),.PortNumWidth(PortNumWidth)) bidir_io_inst
+    bidir_io #(.IOWidth(GPIOWidth * NumGPIO),.PortNumWidth(PortNumWidth),.Mux_En(Mux_En)) bidir_io_inst
     (
         .clk(reg_clk),
         .portselnum(portnumsel),
@@ -363,7 +364,7 @@ generate if (Capsense >=1) begin
     );
     end
     else begin
-    bidir_io #(.IOWidth(GPIOWidth * NumGPIO),.PortNumWidth(PortNumWidth)) bidir_io_inst
+    bidir_io #(.IOWidth(GPIOWidth * NumGPIO),.PortNumWidth(PortNumWidth),.Mux_En(Mux_En)) bidir_io_inst
     (
         .clk(reg_clk),
         .portselnum(portnumsel),
