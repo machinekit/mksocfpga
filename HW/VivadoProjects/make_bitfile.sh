@@ -33,9 +33,10 @@ PRJ_DIR_CREATED="$PRJ_DIR"/"$PRJ_NAME"_created
 [ -d "$PRJ_DIR_CREATED" ] && rm -r "$PRJ_DIR_CREATED"
 mkdir "$PRJ_DIR_CREATED"
 
-## Put pin info into the sources defining the wrapper IP package
-# component file1 needs the pin file path
-sed "s|%PIN_FILE%|$PRJ_DIR/$PIN_FILE|" \
+## Put pin and firmware info into the sources defining the wrapper IP package
+# component file1 needs the pin and firmware file path
+sed -e "s|%PIN_FILE%|$PRJ_DIR/$PIN_FILE|" \
+    -e "s|%FW_FILE%|"$PRJ_DIR_CREATED"/firmware_id.mif|" \
     "$IP_DIR"/component.xml.in > \
     "$IP_DIR"/component.xml
 
