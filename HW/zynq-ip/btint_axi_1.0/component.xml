@@ -831,11 +831,6 @@
       <xilinx:vendorURL>http://www.jd2.com</xilinx:vendorURL>
       <xilinx:coreRevision>4</xilinx:coreRevision>
       <xilinx:coreCreationDateTime>2016-07-06T20:58:46Z</xilinx:coreCreationDateTime>
-      <xilinx:tags>
-        <xilinx:tag xilinx:name="user.org:user:btint:1.0_ARCHIVE_LOCATION">/home/developer/btint_ip/btint_1.0</xilinx:tag>
-        <xilinx:tag xilinx:name="jd2.com:user:btint:1.0_ARCHIVE_LOCATION">/home/developer/btint_ip/btint_1.0</xilinx:tag>
-        <xilinx:tag xilinx:name="jd2.com:user:btint_axi:1.0_ARCHIVE_LOCATION">/home/developer/mksocfpga/HW/zynq-ip/btint_axi_1.0</xilinx:tag>
-      </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2015.4</xilinx:xilinxVersion>

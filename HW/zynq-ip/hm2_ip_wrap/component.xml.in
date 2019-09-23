@@ -1447,9 +1447,6 @@
         <xilinx:canUpgradeFrom>user.org:user:HostMot2_ip_wrap:1.0</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
       <xilinx:coreCreationDateTime>2016-08-16T15:10:56Z</xilinx:coreCreationDateTime>
-      <xilinx:tags>
-        <xilinx:tag xilinx:name="machinekit.io:user:HostMot2_ip_wrap:1.0_ARCHIVE_LOCATION">/home/developer/mksocfpga/HW/zynq-ip/hm2_ip_wrap</xilinx:tag>
-      </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2015.4</xilinx:xilinxVersion>
