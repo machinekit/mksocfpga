@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# TCL Template Filename
+TCL_TEMP_FILE=../../zynq_bp.tcl.in
+
+# The fpga device we are building for
+FPGA_DEVICE=xczu3eg-sbva484-1-e
+FPGA_DEV_SHORT=Xczu3g
+
+# Base Project Name
+PRJ_NAME=ultra96_v1_"$FPGA_DEV_SHORT"
+
+# The board part file url, if the target has one
+BOARD_PART="em.avnet.com:ultra96v1:part0:1.2"
+
+# The physical package pin constraint file
+PIN_HW_XDC_FILE=const/ultra96_pinmap.xdc
+
+# The filename of the top level block diagram
+TOP_LEVEL_BD_FILE=scripts/soc_system.tcl
+
+## HostMot2 Pin constraints - these update the IP. Physical pin constraints
+#  belong in an xdc file above
+
+# HM2 Pin Filename relative to project folder
+PIN_FILE=const/PIN_ULTR_36.vhd
+# Pin package name defined in above pin file
+PIN_NAME=PIN_ULTR_36
+#FWID File name in the const folder
+FWID_NAME=FWID_ULTRA96_36
+
+############################################################################
+# HostMot2 Generic Parameters, autofills IP correctly without regenerating
+# block diagram script
+############################################################################
+
+# The name of the board to compile into the IP. Matches board name in hal files
+BOARD_NAME_HIGH_HEX=52544C55    #ULTR
+BOARD_NAME_LOW_HEX=544E5641     #AVNT

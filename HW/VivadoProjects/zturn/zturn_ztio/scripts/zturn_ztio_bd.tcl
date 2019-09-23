@@ -25,7 +25,7 @@ if { [get_projects -quiet] eq "" } {
 set design_name soc_system
 
 # This script was generated for a remote BD
-set str_bd_folder [get_property directory [current_project]]/src
+set str_bd_folder [get_property directory [current_project]]
 set str_bd_filepath ${str_bd_folder}/${design_name}.bd
 
 # Check if remote design exists on disk
