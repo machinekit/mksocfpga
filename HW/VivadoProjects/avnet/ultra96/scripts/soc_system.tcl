@@ -34,19 +34,11 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 # START
 ################################################################
 
-# To test this script, run the following commands from Vivado Tcl console:
-# source soc_system_script.tcl
-
-# If there is no project opened, this script will create a
-# project, but make sure you do not have an existing project
-# <./myproj/project_1.xpr> in the current working folder.
-
-set list_projs [get_projects -quiet]
-if { $list_projs eq "" } {
-   create_project project_1 myproj -part xczu3eg-sbva484-1-e
-   set_property BOARD_PART em.avnet.com:ultra96v1:part0:1.2 [current_project]
+# CHECKING IF PROJECT EXISTS
+if { [get_projects -quiet] eq "" } {
+   puts "ERROR: Please open or create a project!"
+   return 1
 }
-
 
 # CHANGE DESIGN NAME HERE
 variable design_name
@@ -89,7 +81,7 @@ if { ${design_name} eq "" } {
    set errMsg "Design <$design_name> already exists in your project, please set the variable <design_name> to another value."
    set nRet 1
 } elseif { [get_files -quiet ${design_name}.bd] ne "" } {
-   # USE CASES: 
+   # USE CASES:
    #    6) Current opened design, has components, but diff names, design_name exists in project.
    #    7) No opened design, design_name exists in project.
 
@@ -123,7 +115,7 @@ set bCheckIPsPassed 1
 ##################################################################
 set bCheckIPs 1
 if { $bCheckIPs == 1 } {
-   set list_check_ips "\ 
+   set list_check_ips "\
 machinekit.io:user:HostMot2_ip_wrap:1.0\
 xilinx.com:ip:clk_wiz:6.0\
 machinekit.io:user:hm2_axilite_int:1.0\
