@@ -13,7 +13,7 @@ FPGA_DEV_SHORT=7z010
 PRJ_NAME=microzed_jd2cb_"$FPGA_DEV_SHORT"
 
 # The board part file url, if the target has one
-BOARD_PART="em.avnet.com:microzed_7010:part0:1.1"
+BOARD_PART="em.avnet.com:microzed_7010:part0:1.2"
 
 # The physical package pin constraint file
 PIN_HW_XDC_FILE=const/microzed_jd2cb_pinmap.xdc
