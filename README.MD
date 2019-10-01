@@ -37,6 +37,13 @@ cd /work/HW/firmware-tag
 make TOPDIR=/work py-proto
 ````
 
+### See bitfile configs available in a project
+````
+# From the Docker Quartus build image command line, run:
+cd /work/HW/QuartusProjects/<project>
+./build.sh ?
+````
+
 ### Build the desired FPGA bit file
 ````
 # From the Docker Quartus build image command line, run:

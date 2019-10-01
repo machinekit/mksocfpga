@@ -1,5 +1,5 @@
 module bidir_io
-#(parameter IOWidth=36, parameter PortNumWidth=8)
+#(parameter IOWidth=36, parameter PortNumWidth=8, parameter Mux_En = 1)
 (
     input   [PortNumWidth-1:0]  portselnum  [IOWidth-1:0],
     input   clk,
@@ -24,8 +24,14 @@ generate
 
         always @ (posedge clk)
         begin
-            io_data_in[loop] <= gpioport[portselnum[loop]];
-            outmuxdataout[loop] <= out_data[portselnum[loop]];
+            if (Mux_En == 1) begin
+                io_data_in[loop] <= gpioport[portselnum[loop]];
+                outmuxdataout[loop] <= out_data[portselnum[loop]];
+            end
+            else begin
+                io_data_in[loop] <= gpioport[loop];
+                outmuxdataout[loop] <= out_data[loop];
+            end
         end
     end
 endgenerate

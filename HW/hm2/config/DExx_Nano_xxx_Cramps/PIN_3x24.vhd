@@ -110,81 +110,81 @@ package Pintypes is
     constant PinDesc : PinDescType :=(
 --      Base       Sec      Sec       Sec
 --      func       unit     func      pin                   -- hostmot2 DE0-Nano        pin    Function
-        IOPortTag & x"00" & StepGenTag & StepGenStepPin,    -- I/O 00   GPIO_0 01    01        X Step
-        IOPortTag & x"00" & StepGenTag & StepGenDirPin,     -- I/O 01   GPIO_0 02    02        X Dir
-        IOPortTag & x"01" & StepGenTag & StepGenStepPin,    -- I/O 02   GPIO_0 03    03        Y Step
-        IOPortTag & x"01" & StepGenTag & StepGenDirPin,     -- I/O 03   GPIO_0 04    04         Y Dir
-        IOPortTag & x"02" & StepGenTag & StepGenStepPin,    -- I/O 04   GPIO_0 05    05        Z Step
-        IOPortTag & x"02" & StepGenTag & StepGenDirPin,     -- I/O 05   GPIO_0 06    06        Z Dir
-        IOPortTag & x"03" & StepGenTag & StepGenStepPin,    -- I/O 06   GPIO_0 07    07        E0 Step
-        IOPortTag & x"03" & StepGenTag & StepGenDirPin,     -- I/O 07   GPIO_0 08    08        E0 Dir
-        IOPortTag & x"04" & StepGenTag & StepGenStepPin,    -- I/O 08   GPIO_0 09    09        E1 Step
-        IOPortTag & x"04" & StepGenTag & StepGenDirPin,     -- I/O 09   GPIO_0 10    10        E1 Dir
-        IOPortTag & x"05" & StepGenTag & StepGenStepPin,    -- I/O 10   GPIO_0 11    13        E2 Step
-        IOPortTag & x"05" & StepGenTag & StepGenDirPin,     -- I/O 11   GPIO_0 12    14        E2 Dir
-        IOPortTag & x"06" & StepGenTag & StepGenStepPin,    -- I/O 12   GPIO_0 13    15        U Step
-        IOPortTag & x"06" & StepGenTag & StepGenDirPin,     -- I/O 13   GPIO_0 14    16        U Dir
-        IOPortTag & x"07" & StepGenTag & StepGenStepPin,    -- I/O 14   GPIO_0 15    17        V Step
-        IOPortTag & x"07" & StepGenTag & StepGenDirPin,     -- I/O 15   GPIO_0 16    18        V Dir
-        IOPortTag & x"08" & StepGenTag & StepGenStepPin,    -- I/O 16   GPIO_0 17    19        W Step
-        IOPortTag & x"08" & StepGenTag & StepGenDirPin,     -- I/O 17   GPIO_0 18    20        W Dir
-        IOPortTag & x"00" & PWMTag & PWMAOutPin,            -- I/O 18   GPIO_0 19    21        Spindle DAC PWM
-        IOPortTag & x"01" & PWMTag & PWMAOutPin,            -- I/O 19   GPIO_0 20    22        Spindle DAC PWM
-        IOPortTag & x"02" & PWMTag & PWMAOutPin,            -- I/O 20   GPIO_0 21    23        Spindle DAC PWM
-        IOPortTag & x"03" & PWMTag & PWMAOutPin,            -- I/O 21   GPIO_0 22    24        Spindle DAC PWM
-        IOPortTag & x"04" & PWMTag & PWMAOutPin,            -- I/O 22   GPIO_0 23    25        Spindle DAC PWM
-        IOPortTag & x"05" & PWMTag & PWMAOutPin,            -- I/O 23   GPIO_0 24    26        Spindle DAC PWM
-        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 24   GPIO_0 25    27        Limit X-Min
-        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 25   GPIO_0 26    28        Limit X-Max
-        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 26   GPIO_0 27    31        Limit Y-Min
+        IOPortTag & x"00" & StepGenTag & StepGenStepPin,    -- I/O 00   GPIO_0 00    01        X Step
+        IOPortTag & x"00" & StepGenTag & StepGenDirPin,     -- I/O 01   GPIO_0 01    02        X Dir
+        IOPortTag & x"01" & StepGenTag & StepGenStepPin,    -- I/O 02   GPIO_0 02    03        Y Step
+        IOPortTag & x"01" & StepGenTag & StepGenDirPin,     -- I/O 03   GPIO_0 03    04         Y Dir
+        IOPortTag & x"02" & StepGenTag & StepGenStepPin,    -- I/O 04   GPIO_0 04    05        Z Step
+        IOPortTag & x"02" & StepGenTag & StepGenDirPin,     -- I/O 05   GPIO_0 05    06        Z Dir
+        IOPortTag & x"03" & StepGenTag & StepGenStepPin,    -- I/O 06   GPIO_0 06    07        E0 Step
+        IOPortTag & x"03" & StepGenTag & StepGenDirPin,     -- I/O 07   GPIO_0 07    08        E0 Dir
+        IOPortTag & x"04" & StepGenTag & StepGenStepPin,    -- I/O 08   GPIO_0 08    09        E1 Step
+        IOPortTag & x"04" & StepGenTag & StepGenDirPin,     -- I/O 09   GPIO_0 09    10        E1 Dir
+        IOPortTag & x"05" & StepGenTag & StepGenStepPin,    -- I/O 10   GPIO_0 10    13        E2 Step
+        IOPortTag & x"05" & StepGenTag & StepGenDirPin,     -- I/O 11   GPIO_0 11    14        E2 Dir
+        IOPortTag & x"06" & StepGenTag & StepGenStepPin,    -- I/O 12   GPIO_0 12    15        U Step
+        IOPortTag & x"06" & StepGenTag & StepGenDirPin,     -- I/O 13   GPIO_0 13    16        U Dir
+        IOPortTag & x"07" & StepGenTag & StepGenStepPin,    -- I/O 14   GPIO_0 14    17        V Step
+        IOPortTag & x"07" & StepGenTag & StepGenDirPin,     -- I/O 15   GPIO_0 15    18        V Dir
+        IOPortTag & x"08" & StepGenTag & StepGenStepPin,    -- I/O 16   GPIO_0 16    19        W Step
+        IOPortTag & x"08" & StepGenTag & StepGenDirPin,     -- I/O 17   GPIO_0 17    20        W Dir
+        IOPortTag & x"00" & PWMTag & PWMAOutPin,            -- I/O 18   GPIO_0 18    21        Spindle DAC PWM
+        IOPortTag & x"01" & PWMTag & PWMAOutPin,            -- I/O 19   GPIO_0 19    22        Spindle DAC PWM
+        IOPortTag & x"02" & PWMTag & PWMAOutPin,            -- I/O 20   GPIO_0 20    23        Spindle DAC PWM
+        IOPortTag & x"03" & PWMTag & PWMAOutPin,            -- I/O 21   GPIO_0 21    24        Spindle DAC PWM
+        IOPortTag & x"04" & PWMTag & PWMAOutPin,            -- I/O 22   GPIO_0 22    25        Spindle DAC PWM
+        IOPortTag & x"05" & PWMTag & PWMAOutPin,            -- I/O 23   GPIO_0 23    26        Spindle DAC PWM
+        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 24   GPIO_0 24    27        Limit X-Min
+        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 25   GPIO_0 25    28        Limit X-Max
+        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 26   GPIO_0 26    31        Limit Y-Min
         IOPortTag & x"00" & NullTag & NullPin,              -- I/O 27   GPIO_0 27    32        Limit Y-Max
-        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 28   GPIO_0 29    33        Limit Z-Min
-        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 29   GPIO_0 30    34        Limit Z-Max
-        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 30   GPIO_0 31    35        just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 31   GPIO_0 32    36        Led
-        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 32   GPIO_0 33    37        Axis_ENA_n
-        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 33   GPIO_0 34    38        Machine_Pwr
-        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 34   GPIO_0 35    39        Estop (In)
-        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 35   GPIO_0 36    40        Estop_Sw
+        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 28   GPIO_0 28    33        Limit Z-Min
+        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 29   GPIO_0 29    34        Limit Z-Max
+        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 30   GPIO_0 30    35        just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 31   GPIO_0 31    36        Led
+        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 32   GPIO_0 32    37        Axis_ENA_n
+        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 33   GPIO_0 33    38        Machine_Pwr
+        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 34   GPIO_0 34    39        Estop (In)
+        IOPortTag & x"00" & NullTag & NullPin,              -- I/O 35   GPIO_0 35    40        Estop_Sw
 
 --      Base       Sec      Sec       Sec
 --      func       unit     func      pin                   -- hostmot2    DE0-Nano     pin    Function
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 36    GPIO_1 01   01      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 37    GPIO_1 02   02      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 38    GPIO_1 03   03      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 39    GPIO_1 04   04      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 40    GPIO_1 05   05      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 41    GPIO_1 06   06      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 42    GPIO_1 07   07      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 43    GPIO_1 08   08      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 44    GPIO_1 09   09      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 45    GPIO_1 10   10      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 46    GPIO_1 11   13      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 47    GPIO_1 12   14      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 48    GPIO_1 13   15      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 49    GPIO_1 14   16      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 50    GPIO_1 15   17      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 51    GPIO_1 16   18      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 52    GPIO_1 17   19      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 53    GPIO_1 18   20      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 54    GPIO_1 19   21      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 55    GPIO_1 20   22      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 56    GPIO_1 21   23      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 57    GPIO_1 22   24      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 58    GPIO_1 23   25      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 59    GPIO_1 24   26      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 60    GPIO_1 25   27      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 61    GPIO_1 26   28      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 62    GPIO_1 27   31      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 63    GPIO_1 28   32      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 64    GPIO_1 29   33      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 65    GPIO_1 30   34      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 66    GPIO_1 31   35      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 67    GPIO_1 32   36      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 68    GPIO_1 33   37      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 69    GPIO_1 34   38      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 70    GPIO_1 35   39      just GPIO
-        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 71    GPIO_1 36   40      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 36    GPIO_1 00   01      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 37    GPIO_1 01   02      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 38    GPIO_1 02   03      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 39    GPIO_1 03   04      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 40    GPIO_1 04   05      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 41    GPIO_1 05   06      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 42    GPIO_1 06   07      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 43    GPIO_1 07   08      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 44    GPIO_1 08   09      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 45    GPIO_1 09   10      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 46    GPIO_1 10   13      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 47    GPIO_1 11   14      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 48    GPIO_1 12   15      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 49    GPIO_1 13   16      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 50    GPIO_1 14   17      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 51    GPIO_1 15   18      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 52    GPIO_1 16   19      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 53    GPIO_1 17   20      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 54    GPIO_1 18   21      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 55    GPIO_1 19   22      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 56    GPIO_1 20   23      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 57    GPIO_1 21   24      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 58    GPIO_1 22   25      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 59    GPIO_1 23   26      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 60    GPIO_1 24   27      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 61    GPIO_1 25   28      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 62    GPIO_1 26   31      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 63    GPIO_1 27   32      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 64    GPIO_1 28   33      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 65    GPIO_1 29   34      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 66    GPIO_1 30   35      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 67    GPIO_1 31   36      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 68    GPIO_1 32   37      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 69    GPIO_1 33   38      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 70    GPIO_1 34   39      just GPIO
+        IOPortTag & x"00" & NullTag & NullPin,              --    I/O 71    GPIO_1 35   40      just GPIO
 
                 -- Remainder of 144 pin descriptors are unused
         emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,emptypin,

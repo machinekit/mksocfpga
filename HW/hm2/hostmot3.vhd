@@ -170,14 +170,14 @@ constant DBSPIs: integer := NumberOfModules(TheModuleID,DBSPITag);
 --constant PktUARTs: integer := NumberOfModules(TheModuleID,PktUARTRTag); -- assumption
 --constant WaveGens: integer := NumberOfModules(TheModuleID,WaveGenTag);
 --constant ResolverMods: integer := NumberOfModules(TheModuleID,ResModTag);
---constant SSerials: integer := NumberOfModules(TheModuleID,SSerialTag);
---type  SSerialType is array(0 to 3) of integer;
---constant UARTSPerSSerial: SSerialType :=(
---(InputPinsPerModule(ThePinDesc,SSerialTag,0)),
---(InputPinsPerModule(ThePinDesc,SSerialTag,1)),
---(InputPinsPerModule(ThePinDesc,SSerialTag,2)),
---(InputPinsPerModule(ThePinDesc,SSerialTag,3)));
---constant MaxUARTSPerSSerial: integer := MaxInputPinsPerModule(ThePinDesc,SSerialTag);
+constant SSerials: integer := NumberOfModules(TheModuleID,SSerialTag);
+-- type  SSerialType is array(0 to 3) of integer;
+-- constant UARTSPerSSerial: SSerialType :=(
+-- (InputPinsPerModule(ThePinDesc,SSerialTag,0)),
+-- (InputPinsPerModule(ThePinDesc,SSerialTag,1)),
+-- (InputPinsPerModule(ThePinDesc,SSerialTag,2)),
+-- (InputPinsPerModule(ThePinDesc,SSerialTag,3)));
+constant MaxUARTSPerSSerial: integer := MaxInputPinsPerModule(ThePinDesc,SSerialTag);
 --constant	Twiddlers: integer := NumberOfModules(TheModuleID,TwiddlerTag);
 --constant InputsPerTwiddler: integer := MaxInputPinsPerModule(ThePinDesc,TwiddlerTag)+MaxIOPinsPerModule(ThePinDesc,TwiddlerTag);
 --constant OutputsPerTwiddler: integer := MaxOutputPinsPerModule(ThePinDesc,TwiddlerTag); -- MaxOutputsPer pin counts I/O pins also
@@ -725,105 +725,58 @@ GenMakeDBSPIs: if DBSPIs >0  generate
             rates			=>  rates
         );
 end generate;
-
 --
--- 	makesssimod:  if SSSIs >0  generate
--- 	signal LoadSSSIData0: std_logic_vector(SSSIs -1 downto 0);
--- 	signal ReadSSSIData0: std_logic_vector(SSSIs -1 downto 0);
--- 	signal ReadSSSIData1: std_logic_vector(SSSIs -1 downto 0);
--- 	signal LoadSSSIControl: std_logic_vector(SSSIs -1 downto 0);
--- 	signal ReadSSSIControl: std_logic_vector(SSSIs -1 downto 0);
--- 	signal SSSIClk: std_logic_vector(SSSIs -1 downto 0);
--- 	signal SSSIData: std_logic_vector(SSSIs -1 downto 0);
--- 	signal SSSIBusyBits: std_logic_vector(SSSIs -1 downto 0);
--- 	signal SSSIDAVBits: std_logic_vector(SSSIs -1 downto 0);
--- 	signal SSSIDataSel0 : std_logic;
--- 	signal SSSIDataSel1 : std_logic;
--- 	signal SSSIControlSel : std_logic;
--- 	signal GlobalPStartSSSI : std_logic;
--- 	signal GlobalSSSIBusySel : std_logic;
--- 	signal GlobalTStartSSSI : std_logic;
--- 		begin
--- 		makesssis: for i in 0 to SSSIs -1 generate
--- 			sssi: entity work.SimpleSSI
--- 			port  map (
--- 				clk => clklow,
--- 				ibus => ibusint,
--- 				obus => obusint,
--- 				loadcontrol => LoadSSSIControl(i),
--- 				lstart => LoadSSSIData0(i),
--- 				pstart => GlobalPstartSSSI,
--- 				timers => RateSources,
--- 				readdata0 => ReadSSSIData0(i),
--- 				readdata1 => ReadSSSIData1(i),
--- 				readcontrol => ReadSSSIControl(i),
--- 				busyout => SSSIBusyBits(i),
--- 				davout => SSSIDAVBits(i),
--- 				ssiclk => SSSIClk(i),
--- 				ssidata => SSSIData(i)
--- 				);
--- 		end generate;
---
--- 		SSSIDecodeProcess : process (Aint,Readstb,writestb,SSSIDataSel0,GlobalSSSIBusySel,
--- 		                             SSSIBusyBits,SSSIDAvBits,SSSIDataSel1,SSSIControlSel)
--- 		begin
--- 			if Aint(AddrWidth-1 downto 8) = SSSIDataAddr0 then	 --  SSSI data register select 0
--- 				SSSIDataSel0 <= '1';
--- 			else
--- 				SSSIDataSel0 <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = SSSIDataAddr1 then	 --  SSSI data register select 1
--- 				SSSIDataSel1 <= '1';
--- 			else
--- 				SSSIDataSel1 <= '0';
--- 			end if;
---
--- 			if Aint(AddrWidth-1 downto 8) = SSSIControlAddr then	 --  SSSI control register select
--- 				SSSIControlSel <= '1';
--- 			else
--- 				SSSIControlSel <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = SSSIGlobalPStartAddr and writestb = '1' then	 --
--- 				GlobalPStartSSSI <= '1';
--- 			else
--- 				GlobalPStartSSSI <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = SSSIGlobalPStartAddr and readstb = '1' then	 --
--- 				GlobalSSSIBusySel <= '1';
--- 			else
--- 				GlobalSSSIBusySel <= '0';
--- 			end if;
--- 			LoadSSSIData0 <= OneOfNDecode(SSSIs,SSSIDataSel0,writestb,Aint(7 downto 2)); -- 64 max
--- 			ReadSSSIData0 <= OneOfNDecode(SSSIs,SSSIDataSel0,Readstb,Aint(7 downto 2));
--- 			ReadSSSIData1 <= OneOfNDecode(SSSIs,SSSIDataSel1,Readstb,Aint(7 downto 2));
--- 			LoadSSSIControl <= OneOfNDecode(SSSIs,SSSIControlSel,writestb,Aint(7 downto 2));
--- 			ReadSSSIControl <= OneOfNDecode(SSSIs,SSSIControlSel,Readstb,Aint(7 downto 2));
--- 			obusint <= (others => 'Z');
--- 			if GlobalSSSIBusySel = '1' then
--- 				obusint(SSSIs -1 downto 0) <= SSSIBusyBits;
--- 				obusint(31 downto SSSIs) <= (others => '0');
--- 			end if;
--- 		end process SSSIDecodeProcess;
---
--- 		DoSSIPins: process(SSSIClk, IOBitsCorein,SSSIDavBits)
--- 		begin
--- 			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins
--- 				if ThePinDesc(i)(15 downto 8) = SSSITag then 	-- this hideous masking of pinnumbers/vs pintype is why they should be separate bytes, maybe IDROM type 4...
--- 					case (ThePinDesc(i)(7 downto 0)) is	--secondary pin function, drop MSB
--- 						when SSSIClkPin =>
--- 							IOBitsCorein(i) <= SSSIClk(conv_integer(ThePinDesc(i)(23 downto 16)));
--- 						when SSSIClkEnPin =>
--- 							IOBitsCorein(i) <= '0';		-- for RS-422 daughtercards that have drive enables
--- 						when SSSIDAVPin =>
--- 							IOBitsCorein(i) <= SSSIDAVBits(conv_integer(ThePinDesc(i)(23 downto 16)));
--- 						when SSSIDataPin =>
--- 							SSSIData(conv_integer(ThePinDesc(i)(23 downto 16))) <= IOBitsCorein(i);
--- 						when others => null;
--- 					end case;
--- 				end if;
--- 			end loop;
--- 		end process;
--- 	end generate;
+-- GenMakeSSSIs: if SSSIs >0  generate
+--     MakeSSSIs : entity work.MakeSSSIs
+--     generic map (
+--         ThePinDesc => ThePinDesc,
+--         ClockHigh => ClockHigh,
+--         ClockMed => ClockMed,
+--         ClockLow  => ClockLow,
+--         BusWidth  => BusWidth,
+--         AddrWidth  => AddrWidth,
+--         IOWidth  => IOWidth,
+--         STEPGENs  => STEPGENs,
+--         StepGenTableWidth => StepGenTableWidth,
+--         UseStepGenPreScaler => UseStepGenPreScaler,
+--         UseStepgenIndex => UseStepgenIndex,
+--         UseStepgenProbe => UseStepgenProbe,
+--         timersize  => 14,
+--         asize  => 48,
+--         rsize  => 32,
+--         HM2DPLLs => HM2DPLLs,
+--         MuxedQCounters  => MuxedQCounters,
+--         MuxedQCountersMIM  => MuxedQCountersMIM,
+--         PWMGens  => PWMGens,
+--         PWMRefWidth  => PWMRefWidth,
+--         UsePWMEnas  => UsePWMEnas,
+--         TPPWMGens  => TPPWMGens,
+--         QCounters  => QCounters,
+--         UseMuxedProbe  => UseMuxedProbe,
+--         UseProbe  => UseProbe,
+--         SPIs  => SPIs,
+--         BSPIs  => BSPIs,
+--         BSPICSWidth  => BSPICSWidth,
+--         DBSPIs  => DBSPIs,
+--         DBSPICSWidth  => DBSPICSWidth,
+--         SSSIs  => SSSIs
+--         )
+--         port map (
+--             ibus			=>	ibusint,
+--             obusint			=>	obusint,
+--             Aint			=>	Aint,
+--             readstb			=>	readstb,
+--             writestb		=>	writestb,
+--             CoreDataOut		=>	CoreDataOut,
+--             IOBitsCorein	=>	IOBitsCorein,
+--             clklow			=>	clklow,
+--             clkmed			=>	clkmed,
+--             clkhigh			=>	clkhigh,
+--             PRobe			=>  PRobe,
+--             RateSources		=>  RateSources,
+--             rates			=>  rates
+--         );
+-- end generate;
 --
 -- 	makeFAbsmod:  if FAbss >0  generate
 -- 	signal LoadFAbsData0: std_logic_vector(FAbss -1 downto 0);
@@ -1725,141 +1678,59 @@ end generate;
 -- 			end loop;
 -- 		end process;
 -- 	end generate;
---
--- 	makesserialmod:  if SSerials >0  generate
--- 	signal LoadSSerialCommand: std_logic_vector(SSerials -1 downto 0);
--- 	signal ReadSSerialCommand: std_logic_vector(SSerials -1 downto 0);
--- 	signal LoadSSerialData: std_logic_vector(SSerials -1 downto 0);
--- 	signal ReadSSerialData: std_logic_vector(SSerials -1 downto 0);
--- 	signal LoadSSerialRAM0: std_logic_vector(SSerials -1 downto 0);
--- 	signal ReadSSerialRAM0: std_logic_vector(SSerials -1 downto 0);
--- 	signal LoadSSerialRAM1: std_logic_vector(SSerials -1 downto 0);
--- 	signal ReadSSerialRAM1: std_logic_vector(SSerials -1 downto 0);
--- 	signal LoadSSerialRAM2: std_logic_vector(SSerials -1 downto 0);
--- 	signal ReadSSerialRAM2: std_logic_vector(SSerials -1 downto 0);
--- 	signal LoadSSerialRAM3: std_logic_vector(SSerials -1 downto 0);
--- 	signal ReadSSerialRAM3: std_logic_vector(SSerials -1 downto 0);
--- 	type  SSerialRXType is array(SSerials-1 downto 0) of std_logic_vector(MaxUARTsPerSSerial-1 downto 0);
--- 	signal SSerialRX: SSerialRXType;
--- 	type  SSerialTXType is array(SSerials-1 downto 0) of std_logic_vector(MaxUARTsPerSSerial-1 downto 0);
--- 	signal SSerialTX: SSerialTXType;
--- 	type  SSerialTXEnType is array(SSerials-1 downto 0) of std_logic_vector(MaxUARTsPerSSerial-1 downto 0);
--- 	signal SSerialTXEn: SSerialTXEnType;
--- 	signal SSerialTestBits: std_logic_vector(SSerials -1 downto 0);
--- 	signal SSerialCommandSel: std_logic;
--- 	signal SSerialDataSel: std_logic;
--- 	signal SSerialRAMSel0: std_logic;
--- 	signal SSerialRAMSel1: std_logic;
--- 	signal SSerialRAMSel2: std_logic;
--- 	signal SSerialRAMSel3: std_logic;
--- 	begin
--- 		makesserials: for i in 0 to SSerials -1 generate
--- 			asserial: entity work.sserialwa
--- 			generic map (
--- 				Ports => UARTSPerSSerial(i),
--- 				InterfaceRegs => UARTSPerSSerial(i),	-- must be power of 2
--- 				BaseClock => ClockMed,
--- 				NeedCRC8 => true
--- 			)
--- 			port map(
--- 				clk  => clklow,
--- 				clkmed => clkmed,
--- 				ibus  => ibusint,
--- 				obus  => obusint,
--- 				hloadcommand  => LoadSSerialCommand(i),
--- 				hreadcommand  => ReadSSerialCommand(i),
--- 				hloaddata  => LoadSSerialData(i),
--- 				hreaddata  => ReadSSerialData(i),
--- 				regaddr  =>  Aint(log2(UARTSPerSSerial(i))+1 downto 2),
--- 				hloadregs0  => LoadSSerialRAM0(i),
--- 				hreadregs0  => ReadSSerialRAM0(i),
--- 				hloadregs1  => LoadSSerialRAM1(i),
--- 				hreadregs1  => ReadSSerialRAM1(i),
--- 				hloadregs2  => LoadSSerialRAM2(i),
--- 				hreadregs2  => ReadSSerialRAM2(i),
--- 				hloadregs3  => LoadSSerialRAM3(i),
--- 				hreadregs3  => ReadSSerialRAM3(i),
--- 				rxserial  =>  SSerialRX(i)(UARTSPerSSerial(i) -1 downto 0),
--- 				txserial  =>  SSerialTX(i)(UARTSPerSSerial(i) -1 downto 0),
--- 				txenable  =>  SSerialTXEn(i)(UARTSPerSSerial(i) -1 downto 0),
--- 				testbit  =>   SSerialTestBits(i)
--- 				);
--- 		end generate;
---
--- 		SSerialDecodeProcess : process (Aint,Readstb,writestb,SSerialCommandSel,SSerialDataSel,
--- 		                                SSerialRAMSel0,SSerialRAMSel1,SSerialRAMSel2,SSerialRAMSel3)
--- 		begin
--- 			if Aint(AddrWidth-1 downto 8) = SSerialCommandAddr then
--- 				SSerialCommandSel <= '1';
--- 			else
--- 				SSerialCommandSel <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = SSerialDataAddr then
--- 				SSerialDataSel <= '1';
--- 			else
--- 				SSerialDataSel <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = SSerialRAMAddr0 then
--- 				SSerialRAMSel0 <= '1';
--- 			else
--- 				SSerialRAMSel0 <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = SSerialRAMAddr1 then
--- 				SSerialRAMSel1 <= '1';
--- 			else
--- 				SSerialRAMSel1 <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = SSerialRAMAddr2 then
--- 				SSerialRAMSel2 <= '1';
--- 			else
--- 				SSerialRAMSel2 <= '0';
--- 			end if;
--- 			if Aint(AddrWidth-1 downto 8) = SSerialRAMAddr3 then
--- 				SSerialRAMSel3 <= '1';
--- 			else
--- 				SSerialRAMSel3 <= '0';
--- 			end if;
--- 			LoadSSerialCommand <= OneOfNDecode(SSerials,SSerialCommandSel,writestb,Aint(7 downto 6));
--- 			ReadSSerialCommand <= OneOfNDecode(SSerials,SSerialCommandSel,Readstb,Aint(7 downto 6));
--- 			LoadSSerialData <= OneOfNDecode(SSerials,SSerialDataSel,writestb,Aint(7 downto 6));
--- 			ReadSSerialData <= OneOfNDecode(SSerials,SSerialDataSel,Readstb,Aint(7 downto 6));
--- 			LoadSSerialRam0 <= OneOfNDecode(SSerials,SSerialRAMSel0,writestb,Aint(7 downto 6)); 	-- 16 addresses per SSerial RAM max, this implies 4 max sserials
--- 			ReadSSerialRam0 <= OneOfNDecode(SSerials,SSerialRAMSel0,Readstb,Aint(7 downto 6)); 	-- 16 addresses per SSerial RAM max, this implies 4 max sserials
--- 			LoadSSerialRam1 <= OneOfNDecode(SSerials,SSerialRAMSel1,writestb,Aint(7 downto 6)); 	-- 16 addresses per SSerial RAM max, this implies 4 max sserials
--- 			ReadSSerialRam1 <= OneOfNDecode(SSerials,SSerialRAMSel1,Readstb,Aint(7 downto 6)); 	-- 16 addresses per SSerial RAM max
--- 			LoadSSerialRam2 <= OneOfNDecode(SSerials,SSerialRAMSel2,writestb,Aint(7 downto 6)); 	-- 16 addresses per SSerial RAM max
--- 			ReadSSerialRam2 <= OneOfNDecode(SSerials,SSerialRAMSel2,Readstb,Aint(7 downto 6)); 	-- 16 addresses per SSerial RAM max
--- 			LoadSSerialRam3 <= OneOfNDecode(SSerials,SSerialRAMSel3,writestb,Aint(7 downto 6)); 	-- 16 addresses per SSerial RAM max
--- 			ReadSSerialRam3 <= OneOfNDecode(SSerials,SSerialRAMSel3,Readstb,Aint(7 downto 6)); 	-- 16 addresses per SSerial RAM max
---         report "Max UARTS per sserial " & integer'image(MaxUARTSPerSSerial);
---         report "UARTS per sserial 0 " &  integer 'image(UARTSPerSSerial(0));
---         report "UARTS per sserial 1 " &  integer 'image(UARTSPerSSerial(1));
---         report "UARTS per sserial 2 " &  integer 'image(UARTSPerSSerial(2));
---         report "UARTS per sserial 3 " &  integer 'image(UARTSPerSSerial(3));
---
---
--- 		end process SSerialDecodeProcess;
---
--- 		DoSSerialPins: process(SSerialTX, SSerialTXEn, SSerialTestBits, IOBitsCorein)
--- 		begin
--- 			for i in 0 to IOWidth -1 loop				-- loop through all the external I/O pins
--- 				if ThePinDesc(i)(15 downto 8) = SSerialTag then 	-- this hideous masking of pinnumbers/vs pintype is why they should be separate bytes, maybe IDROM type 4...
--- 					if (ThePinDesc(i)(7 downto 0) and x"F0") = x"80" then 	-- txouts match 8X
--- 						IOBitsCorein(i) <=   SSerialTX(conv_integer(ThePinDesc(i)(23 downto 16)))(conv_integer(ThePinDesc(i)(3 downto 0))-1);	-- 16 max ports
--- 					end if;
--- 					if (ThePinDesc(i)(7 downto 0) and x"F0") = x"90" then 	-- txens match 9X
--- 						IOBitsCorein(i) <= not SSerialTXEn(conv_integer(ThePinDesc(i)(23 downto 16)))(conv_integer(ThePinDesc(i)(3 downto 0))-1); 	-- 16 max ports
--- 					end if;
--- 					if (ThePinDesc(i)(7 downto 0) and x"F0") = x"00" then 	-- rxins match 0X
--- 						SSerialRX(conv_integer(ThePinDesc(i)(23 downto 16)))(conv_integer(ThePinDesc(i)(3 downto 0))-1) <= IOBitsCorein(i);		-- 16 max ports
--- 					end if;
--- 					if ThePinDesc(i)(7 downto 0) = SSerialTestPin then
--- 						IOBitsCorein(i) <= SSerialTestBits(i);
--- 					end if;
--- 				end if;
--- 			end loop;
--- 		end process;
--- 	end generate;
+
+GenMakeSSerials: if SSerials >0  generate
+    MakeSSerials : entity work.MakeSSerials
+    generic map (
+        ThePinDesc => ThePinDesc,
+        ClockHigh => ClockHigh,
+        ClockMed => ClockMed,
+        ClockLow  => ClockLow,
+        BusWidth  => BusWidth,
+        AddrWidth  => AddrWidth,
+        IOWidth  => IOWidth,
+        STEPGENs  => STEPGENs,
+        StepGenTableWidth => StepGenTableWidth,
+        UseStepGenPreScaler => UseStepGenPreScaler,
+        UseStepgenIndex => UseStepgenIndex,
+        UseStepgenProbe => UseStepgenProbe,
+        timersize  => 14,
+        asize  => 48,
+        rsize  => 32,
+        HM2DPLLs => HM2DPLLs,
+        MuxedQCounters  => MuxedQCounters,
+        MuxedQCountersMIM  => MuxedQCountersMIM,
+        PWMGens  => PWMGens,
+        PWMRefWidth  => PWMRefWidth,
+        UsePWMEnas  => UsePWMEnas,
+        TPPWMGens  => TPPWMGens,
+        QCounters  => QCounters,
+        UseMuxedProbe  => UseMuxedProbe,
+        UseProbe  => UseProbe,
+        SPIs  => SPIs,
+        BSPIs  => BSPIs,
+        BSPICSWidth  => BSPICSWidth,
+        DBSPIs  => DBSPIs,
+        DBSPICSWidth  => DBSPICSWidth,
+        SSerials  => SSerials,
+        MaxUARTSPerSSerial  => MaxUARTSPerSSerial
+        )
+        port map (
+            ibus			=>	ibusint,
+            obusint			=>	obusint,
+            Aint			=>	Aint,
+            readstb			=>	readstb,
+            writestb		=>	writestb,
+            CoreDataOut		=>	CoreDataOut,
+            IOBitsCorein	=>	IOBitsCorein,
+            clklow			=>	clklow,
+            clkmed			=>	clkmed,
+            clkhigh			=>	clkhigh,
+            PRobe			=>  PRobe,
+            RateSources		=>  RateSources,
+            rates			=>  rates
+        );
+end generate;
 --
 -- 	maketwiddlermod:  if Twiddlers >0  generate
 -- 	signal LoadTwiddlerCommand: std_logic_vector(Twiddlers -1 downto 0);

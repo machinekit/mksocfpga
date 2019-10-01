@@ -32,6 +32,8 @@ set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeTPPWMGens.vhd
 set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeSPIs.vhd
 set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeBSPIs.vhd
 set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeDBSPIs.vhd
+#set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeSSIs.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/wrappers/MakeSSerials.vhd
 
 # HM2 cores:
 set_global_assignment -name VHDL_FILE ../../hm2/kubstepgenzi.vhd
@@ -70,11 +72,11 @@ set_global_assignment -name VHDL_FILE ../../hm2/idrom.vhd
 #set_global_assignment -name VHDL_FILE ../../hm2/wavegen.vhd
 #set_global_assignment -name VHDL_FILE ../../hm2/dpram.vhd
 #set_global_assignment -name VHDL_FILE ../../hm2/twidrom.vhd
-#set_global_assignment -name VHDL_FILE ../../hm2/sslbprom.vhd
-#set_global_assignment -name VHDL_FILE ../../hm2/sslbpram.vhd
-#set_global_assignment -name VHDL_FILE ../../hm2/adpram.vhd
-#set_global_assignment -name VHDL_FILE ../../hm2/uartx8.vhd
-#set_global_assignment -name VHDL_FILE ../../hm2/uartr8.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/sslbprom.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/sslbpram.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/adpram.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/uartx8.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/uartr8.vhd
 #set_global_assignment -name VHDL_FILE ../../hm2/waveram.vhd
 #set_global_assignment -name VHDL_FILE ../../hm2/fanucabs.vhd
 #set_global_assignment -name VHDL_FILE ../../hm2/binosc.vhd
@@ -84,8 +86,8 @@ set_global_assignment -name VHDL_FILE ../../hm2/idrom.vhd
 #set_global_assignment -name VHDL_FILE ../../hm2/sine16.vhd
 #set_global_assignment -name VHDL_FILE ../../hm2/resrom.vhd
 #set_global_assignment -name VHDL_FILE ../../hm2/syncwavegen.vhd
-#set_global_assignment -name VHDL_FILE ../../hm2/sserialwa.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/sserialwa.vhd
 #set_global_assignment -name VHDL_FILE ../../hm2/d8o8sqw.vhd
-#set_global_assignment -name VHDL_FILE ../../hm2/d8o8sqws.vhd
+set_global_assignment -name VHDL_FILE ../../hm2/d8o8sqws.vhd
 #set_global_assignment -name VHDL_FILE ../../hm2/b32qcondmac2w.vhd
 #set_global_assignment -name VHDL_FILE ../../hm2/resroms.vhd

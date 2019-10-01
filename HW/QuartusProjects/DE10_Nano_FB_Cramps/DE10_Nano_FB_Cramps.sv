@@ -148,7 +148,7 @@ parameter NumIOAddrReg = 6;
 // connection of internal logics
 //	assign LED[5:1] = fpga_led_internal | {7'b0000000, led_level};
     assign LED[4:1] = touched;
-    
+
     assign fpga_clk_50=FPGA_CLK1_50;
 //    assign stm_hw_events    = {{15{1'b0}}, SW, fpga_led_internal, fpga_debounced_buttons};
 // hm2
@@ -163,8 +163,6 @@ parameter NumIOAddrReg = 6;
     wire                    hm_clk_high;
     wire                    adc_clk_40;
 //    wire                    clklow_sig;
-    wire                    clkmed_sig;
-    wire                    clkhigh_sig;
 
 // Mesa I/O Signals:
     wire [LEDCount-1:0]         hm2_leds_sig;
@@ -312,10 +310,6 @@ defparam top_io_modules_inst.KEY_WIDTH = 2;
 
 // Mesa code ------------------------------------------------------//
 
-assign clkhigh_sig = hm_clk_high;
-assign clkmed_sig = hm_clk_med;
-
-
 genvar ig;
 generate for(ig=0;ig<NumGPIO;ig=ig+1) begin : iosigloop
     assign io_bitsout_sig[ig] = hm2_bitsout_sig[(ig*MuxGPIOIOWidth)+:MuxGPIOIOWidth];
@@ -326,7 +320,7 @@ endgenerate
 gpio_adr_decoder_reg gpio_adr_decoder_reg_inst
 (
     .CLOCK(fpga_clk_50) ,	// input  CLOCK_sig
-    .reg_clk(clkhigh_sig) ,	// input  CLOCK_sig
+    .reg_clk(hm_clk_high) ,	// input  CLOCK_sig
     .reset_reg_N(hps_fpga_reset_n) ,	// input  reset_reg_N_sig
     .chip_sel(hm_chipsel[0]) ,	// input  data_ready_sig
     .write_reg(hm_write) ,	// input  data_ready_sig
@@ -356,8 +350,10 @@ defparam gpio_adr_decoder_reg_inst.MuxGPIOIOWidth = MuxGPIOIOWidth;
 defparam gpio_adr_decoder_reg_inst.NumIOAddrReg = NumIOAddrReg;
 defparam gpio_adr_decoder_reg_inst.NumGPIO = NumGPIO;
 defparam gpio_adr_decoder_reg_inst.ADC = ADC;
+defparam gpio_adr_decoder_reg_inst.Mux_En = Mux_En;
 defparam gpio_adr_decoder_reg_inst.Capsense = Capsense;
 defparam gpio_adr_decoder_reg_inst.NumSense = NumSense;
+defparam gpio_adr_decoder_reg_inst.Capsense_Pins = Capsense_Pins;
 
 HostMot3_cfg HostMot3_inst
 (
@@ -368,8 +364,8 @@ HostMot3_cfg HostMot3_inst
     .writestb(hm_write) ,	// input  writestb_sig
 
     .clklow(fpga_clk_50) ,	// input  clklow_sig  				-- PCI clock --> all
-    .clkmed(clkmed_sig) ,	// input  clkmed_sig  				-- Processor clock --> sserialwa, twiddle
-    .clkhigh(clkhigh_sig) ,	// input  clkhigh_sig				-- High speed clock --> most
+    .clkmed(hm_clk_med) ,	// input  hm_clk_med  				-- Processor clock --> sserialwa, twiddle
+    .clkhigh(hm_clk_high) ,	// input  hm_clk_high				-- High speed clock --> most
     .intirq(int_sig) ,	// output  int_sig							--int => LINT, ---> PCI ?
     .iobitsouttop(hm2_bitsout_sig) ,	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits
     .iobitsintop(hm2_bitsin_sig) 	// inout [IOWidth-1:0] 				--iobits => IOBITS,-- external I/O bits

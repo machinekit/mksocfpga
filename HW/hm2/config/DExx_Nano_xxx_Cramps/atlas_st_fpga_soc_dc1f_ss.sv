@@ -30,7 +30,7 @@ parameter BoardAdaptor          = 0;
     parameter MuxGPIOIOWidth    = IOWidth/NumGPIO;
     parameter MuxLedWidth       = LEDCount/NumGPIO;
     parameter ADC               = "DE0-Nano-SoC";
-    parameter Mux_En            = 1;
+    parameter Mux_En            = 0;
     parameter Capsense          = 0;
     parameter NumSense          = 4;
                               // Capsense Pins: '{.. etc , Sensor1, Sensor0, charge out}   // GPIO 0-71

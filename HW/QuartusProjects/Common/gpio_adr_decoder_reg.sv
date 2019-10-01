@@ -79,7 +79,9 @@ parameter   NumGPIO         = 2;
 
 parameter   Capsense        = 1;
 parameter   NumSense        = 4;
+parameter   int Capsense_Pins[NumSense:0]   = '{40, 39, 38, 37, 36};
 parameter   ADC             = "";
+parameter   Mux_En          = 1;
 // local param
 parameter   IoRegWidth      = 24;
 parameter   AdcOutShift     = 2;
@@ -147,19 +149,19 @@ parameter   TotalNumregs    = Mux_regPrIOReg * NumIOAddrReg * NumPinsPrIOAddr;
 
 // Touch sensor:
     reg [BusWidth-1:0]  hysteresis_reg;
-    reg [1:0]sr_delay;
+    reg [1:0]           sr_delay;
     reg reset_sr;
-    reg [2:0]sr_init_delay;
+    reg [2:0]           sr_init_delay;
     reg reset_init_sr;
     wire [NumSense-1:0] sense;
     wire                charge;
     wire [3:0]          hysteresis[NumSense-1:0];
-    
-    wire sr_delay_act; 
-    wire sr_init_delay_act; 
-   wire sense_reset;
+
+    wire sr_delay_act;
+    wire sr_init_delay_act;
+    wire sense_reset;
 //	wire sense_reset = ~reset_reg_N;
-    
+
     genvar sh;
     generate
         for(sh=0;sh<NumSense;sh=sh+1) begin : sense_hystloop
@@ -168,22 +170,22 @@ parameter   TotalNumregs    = Mux_regPrIOReg * NumIOAddrReg * NumPinsPrIOAddr;
     endgenerate
 
 
-adc_ltc2308_fifo adc_ltc2308_fifo_inst
-(
-    .clock(CLOCK) ,	// input  clock_sig
-    .reset_n(reset_reg_N) ,	// input  reset_n_sig
-    .addr(busaddress[2]) ,	// input  addr_sig
-    .read_outdata(adc_read_valid) ,	// input  read_sig
-    .write(adc_write_valid) ,	// input  write_sig
-    .readdataout(adc_data_out) ,	// output [31:0] readdataout_sig
-    .writedatain(busdata_in) ,	// input [31:0] writedatain_sig
-//ADC
-    .adc_clk(adc_clk) ,	// input  adc_clk_sig
-    .ADC_CONVST_o(ADC_CONVST_o) ,	// output  ADC_CONVST_o_sig
-    .ADC_SCK_o(ADC_SCK_o) ,	// output  ADC_SCK_o_sig
-    .ADC_SDI_o(ADC_SDI_o) ,	// output  ADC_SDI_o_sig
-    .ADC_SDO_i(ADC_SDO_i) 	// input  ADC_SDO_i_sig
-);
+    adc_ltc2308_fifo adc_ltc2308_fifo_inst
+    (
+        .clock(CLOCK) ,	// input  clock_sig
+        .reset_n(reset_reg_N) ,	// input  reset_n_sig
+        .addr(busaddress[2]) ,	// input  addr_sig
+        .read_outdata(adc_read_valid) ,	// input  read_sig
+        .write(adc_write_valid) ,	// input  write_sig
+        .readdataout(adc_data_out) ,	// output [31:0] readdataout_sig
+        .writedatain(busdata_in) ,	// input [31:0] writedatain_sig
+    //ADC
+        .adc_clk(adc_clk) ,	// input  adc_clk_sig
+        .ADC_CONVST_o(ADC_CONVST_o) ,	// output  ADC_CONVST_o_sig
+        .ADC_SCK_o(ADC_SCK_o) ,	// output  ADC_SCK_o_sig
+        .ADC_SDI_o(ADC_SDI_o) ,	// output  ADC_SDI_o_sig
+        .ADC_SDO_i(ADC_SDO_i) 	// input  ADC_SDO_i_sig
+    );
 
 
 // I/O stuff:
@@ -259,26 +261,27 @@ adc_ltc2308_fifo adc_ltc2308_fifo_inst
     assign mux_reg_index 	= busaddress_r - 16'h1120;
     assign mux_reg_addr		= (mux_reg_index[6:2]);
     assign mux_reg_byte		= (mux_reg_index[1:0]);
-generate if (Capsense >= 1) begin
-    // Writes:
-    always @( posedge reset_in or posedge write_address) begin
-        if (reset_in) begin
-            hysteresis_reg <= 32'h22222222;
-            reset_sr <= 1'b0;
-        end
-        else if ( write_address ) begin
-            if (busaddress_r == 10'h0304) begin
-                hysteresis_reg  <= busdata_in_r; 
-                reset_sr <= 1'b1;
-            end 
-            else begin
-                hysteresis_reg  <= hysteresis_reg; 
+
+    generate if (Capsense >= 1) begin
+        // Writes:
+        always @( posedge reset_in or posedge write_address) begin
+            if (reset_in) begin
+                hysteresis_reg <= 32'h22222222;
                 reset_sr <= 1'b0;
             end
-        end	
+            else if ( write_address ) begin
+                if (busaddress_r == 10'h0304) begin
+                    hysteresis_reg  <= busdata_in_r;
+                    reset_sr <= 1'b1;
+                end
+                else begin
+                    hysteresis_reg  <= hysteresis_reg;
+                    reset_sr <= 1'b0;
+                end
+            end
+        end
     end
-end
-endgenerate
+    endgenerate
 
     always @(posedge reg_clk) begin
         sr_delay[0] <= reset_sr;
@@ -287,11 +290,11 @@ endgenerate
         sr_init_delay[1] <= sr_init_delay[0];
         sr_init_delay[2] <= sr_init_delay[1];
     end
-    
+
     assign sr_delay_act = (sr_delay[1] == 1'b1 && sr_delay[0] == 1'b0)  ? 1'b1 : 1'b0;
     assign sr_init_delay_act = (sr_init_delay[2] == 1'b0 && sr_init_delay[0] == 1'b1) ? 1'b1 : 1'b0;
     assign sense_reset    = ~reset_reg_N | ~buttons[1] | sr_delay_act | sr_init_delay_act;
-    
+
     genvar il;
     generate
         for(il=0;il<NumIOAddrReg;il=il+1) begin : reg_initloop
@@ -326,55 +329,68 @@ endgenerate
             end
         end
     endgenerate
-/*
-    genvar bloop;
+
+    wire [((GPIOWidth * NumGPIO)-1):0] gpio_out_data;
+    genvar cl,ci0,ci1;
     generate
-        for(bloop=0;bloop<NumGPIO;bloop=bloop+1) begin : gpiooutloop
-            bidir_io #(.IOWidth(GPIOWidth),.PortNumWidth(PortNumWidth)) bidir_io_inst
+        if (Capsense >=1) begin
+            for(cl=0;cl<(GPIOWidth * NumGPIO)-1;cl++) begin : capsenseloop
+        //            .out_data({iodatafromhm3[1][GPIOWidth-1:5],4'bz,charge, iodatafromhm3[0]}) ,  // input [IOIOWidth-1:0] out_data_sig
+                if(cl<=35) begin
+                    if (Capsense_Pins[0] == cl) begin
+                        assign gpio_out_data[cl] = charge;
+                    end
+                    else begin
+                        for(ci0=1;ci0<NumSense+1;ci0++)begin : capsense0loop
+                            if(Capsense_Pins[ci0] == cl) begin
+                                assign gpio_out_data[cl] = 1'bz;
+                            end
+                            else begin
+                                assign gpio_out_data[cl] = iodatafromhm3[0][cl];
+                            end
+                        end
+                    end
+                end
+                else begin
+                    if (Capsense_Pins[0] == cl) begin
+                        assign gpio_out_data[cl] = charge;
+                    end
+                    else begin
+                        for(ci1=1;ci1<NumSense+1;ci1++) begin : capsense1loop
+                            if(Capsense_Pins[ci1] == cl) begin
+                                assign gpio_out_data[cl] = 1'bz;
+                            end
+                            else begin
+                                assign gpio_out_data[cl] = iodatafromhm3[1][cl-36];
+                            end
+                        end
+                    end
+                end
+            end
+            bidir_io #(.IOWidth(GPIOWidth * NumGPIO),.PortNumWidth(PortNumWidth),.Mux_En(Mux_En)) bidir_io_inst
             (
                 .clk(reg_clk),
-                .portselnum(portnumsel[bloop]),
-                .out_ena(out_ena[bloop]) ,	// input  out_ena_sig
-                .od(od[bloop]) ,	// input  od_sig
-                .out_data(iodatafromhm3[bloop]) ,  // input [IOIOWidth-1:0] out_data_sig
-                .gpioport(gpioport[bloop]) ,	// inout [IOIOWidth-1:0] gpioport_sig
-                .gpio_in_data(gpio_input_data[bloop]) 	// output [IOIOWidth-1:0] read_data_sig
+                .portselnum(portnumsel),
+                .out_ena({out_ena[1],out_ena[0]}) ,	// input  out_ena_sig
+                .od({od[1],od[0]}) ,	// input  od_sig
+                .out_data(gpio_out_data) ,  // input [IOIOWidth-1:0] out_data_sig
+                .gpioport({gpioport[1],gpioport[0]}) ,	// inout [IOIOWidth-1:0] gpioport_sig
+                .data_from_gpio({gpio_input_data[1],gpio_input_data[0]}) 	// output [IOIOWidth-1:0] read_data_sig
             );
-//			defparam bidir_io_inst[il].IOWidth = GPIOWidth;
-//			defparam bidir_io_inst[il].PortNumWidth = PortNumWidth;
+            end
+        else begin
+            bidir_io #(.IOWidth(GPIOWidth * NumGPIO),.PortNumWidth(PortNumWidth),.Mux_En(Mux_En)) bidir_io_inst
+            (
+                .clk(reg_clk),
+                .portselnum(portnumsel),
+                .out_ena({out_ena[1],out_ena[0]}) ,	// input  out_ena_sig
+                .od({od[1],od[0]}) ,	// input  od_sig
+                .out_data({iodatafromhm3[1], iodatafromhm3[0]}) ,  // input [IOIOWidth-1:0] out_data_sig
+                .gpioport({gpioport[1],gpioport[0]}) ,	// inout [IOIOWidth-1:0] gpioport_sig
+                .data_from_gpio({gpio_input_data[1],gpio_input_data[0]}) 	// output [IOIOWidth-1:0] read_data_sig
+            );
         end
     endgenerate
-*/
-
-//	wire [GPIOWidth-1:0] gpio1_data_fromhm3 = iodatafromhm3[1];
-//	wire [GPIOWidth-1:0] gpio1_out_data = {gpio1_data_fromhm3[GPIOWidth-1:5],4'bz,charge};
-//	wire [GPIOWidth-1:0] gpio1_input_data;
-//	assign gpio_input_data[1] = {gpio1_input_data[GPIOWidth-1:5],sense,charge};
-generate if (Capsense >=1) begin
-    bidir_io #(.IOWidth(GPIOWidth * NumGPIO),.PortNumWidth(PortNumWidth)) bidir_io_inst
-    (
-        .clk(reg_clk),
-        .portselnum(portnumsel),
-        .out_ena({out_ena[1],out_ena[0]}) ,	// input  out_ena_sig
-        .od({od[1],od[0]}) ,	// input  od_sig
-        .out_data({iodatafromhm3[1][GPIOWidth-1:5],4'bz,charge, iodatafromhm3[0]}) ,  // input [IOIOWidth-1:0] out_data_sig
-        .gpioport({gpioport[1],gpioport[0]}) ,	// inout [IOIOWidth-1:0] gpioport_sig
-        .data_from_gpio({gpio_input_data[1],gpio_input_data[0]}) 	// output [IOIOWidth-1:0] read_data_sig
-    );
-    end
-    else begin
-    bidir_io #(.IOWidth(GPIOWidth * NumGPIO),.PortNumWidth(PortNumWidth)) bidir_io_inst
-    (
-        .clk(reg_clk),
-        .portselnum(portnumsel),
-        .out_ena({out_ena[1],out_ena[0]}) ,	// input  out_ena_sig
-        .od({od[1],od[0]}) ,	// input  od_sig
-        .out_data({iodatafromhm3[1], iodatafromhm3[0]}) ,  // input [IOIOWidth-1:0] out_data_sig
-        .gpioport({gpioport[1],gpioport[0]}) ,	// inout [IOIOWidth-1:0] gpioport_sig
-        .data_from_gpio({gpio_input_data[1],gpio_input_data[0]}) 	// output [IOIOWidth-1:0] read_data_sig
-    );
-    end
-endgenerate
     // Read:
 
     integer oo,om,oi;
@@ -413,8 +429,8 @@ endgenerate
                 else begin busdata_to_cpu <= busdata_fromhm2; end
             end else begin
                 if (adc_address_valid) begin busdata_to_cpu <= adc_data_out;	end
-//			    if ((busaddress_r == 'h0200) || (busaddress_r == 'h0204)) begin busdata_to_cpu <= adc_data_out;	end
-                else if (busaddress_r == 'h0304) begin busdata_to_cpu <= hysteresis_reg;	end
+//			      else if (busaddress_r == 'h0300) begin busdata_to_cpu <= touched; reset_init_sr <= 1'b1;	end
+//                else if (busaddress_r == 'h0304) begin busdata_to_cpu <= hysteresis_reg;	end
                 else if(busaddress_r == 'h1000) begin busdata_to_cpu <= {8'b0,gpio_input_data[0][23:0]}; end
                 else if(busaddress_r == 'h1004) begin busdata_to_cpu <= {8'b0,gpio_input_data[1][11:0],gpio_input_data[0][35:24]}; end
                 else if(busaddress_r == 'h1008) begin busdata_to_cpu <= {8'b0,gpio_input_data[1][35:12]}; end
@@ -441,30 +457,30 @@ endgenerate
     end
     endgenerate
 
-generate if (Capsense >=1) begin
-    assign sense = gpio_input_data[1][5:1];
+    generate if (Capsense >=1) begin
+        assign sense = gpio_input_data[1][5:1];
 
-            capsense capsense_inst
-        (
-            .clk(reg_clk) ,	// input  clk_sig
-            .reset(sense_reset) ,	// input  reset_sig
-            .sense(sense) ,	// input [num-1:0] sense_sig
-            .hysteresis(hysteresis),
-//            .calibval_0(calibval_0),
-//            .counts_0(counts_0),
-            .charge(charge) ,	// output  charge_sig
-            .touched(touched) 	// output [num-1:0] touched_sig
-        );
+                capsense capsense_inst
+            (
+                .clk(reg_clk) ,	// input  clk_sig
+                .reset(sense_reset) ,	// input  reset_sig
+                .sense(sense) ,	// input [num-1:0] sense_sig
+                .hysteresis(hysteresis),
+    //            .calibval_0(calibval_0),
+    //            .counts_0(counts_0),
+                .charge(charge) ,	// output  charge_sig
+                .touched(touched) 	// input [num-1:0] touched_sig
+            );
 
-        defparam capsense_inst.num = NumSense;
-        // States
-        defparam capsense_inst.CHARGE = 1;
-        defparam capsense_inst.DISCHARGE = 2;
-        // freqwuency in Mhz  , times in us
-        defparam capsense_inst.clockfrequency = 200;
-        defparam capsense_inst.periodtime = 5;
-    end
-endgenerate
+            defparam capsense_inst.num = NumSense;
+            // States
+            defparam capsense_inst.CHARGE = 1;
+            defparam capsense_inst.DISCHARGE = 2;
+            // freqwuency in Mhz  , times in us
+            defparam capsense_inst.clockfrequency = 200;
+            defparam capsense_inst.periodtime = 5;
+        end
+    endgenerate
 
 endmodule
 
