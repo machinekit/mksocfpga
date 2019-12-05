@@ -1,35 +1,33 @@
 #!/bin/sh
 
-# TCL Template Filename. Leave this here
-# to let the config decide if the base template is
-# correct for the project
+# TCL Template Filename
 TCL_TEMP_FILE=../../zynq_bp.tcl.in
 
 # The fpga device we are building for
-FPGA_DEVICE=xc7z020clg400-1
-FPGA_DEV_SHORT=7z020
+FPGA_DEVICE=xczu3eg-sbva484-1-e
+FPGA_DEV_SHORT=Xczu3g
 
 # Base Project Name
-PRJ_NAME=microzed_jd2cb_"$FPGA_DEV_SHORT"
+PRJ_NAME=ultra96_v2_"$FPGA_DEV_SHORT"
 
 # The board part file url, if the target has one
-BOARD_PART="em.avnet.com:microzed_7020:part0:1.2"
+BOARD_PART="em.avnet.com:ultra96v2:part0:1.0"
 
 # The physical package pin constraint file
-PIN_HW_XDC_FILE=const/microzed_jd2cb_pinmap.xdc
+PIN_HW_XDC_FILE=const/ultra96_pinmap.xdc
 
 # The filename of the top level block diagram
-TOP_LEVEL_BD_FILE=scripts/mzed_jd2cb_bd.tcl
+TOP_LEVEL_BD_FILE=scripts/soc_system.tcl
 
 ## HostMot2 Pin constraints - these update the IP. Physical pin constraints
 #  belong in an xdc file above
 
 # HM2 Pin Filename relative to project folder
-PIN_FILE=const/PIN_MJD2CB_32.vhd
+PIN_FILE=const/PIN_ULTR_36.vhd
 # Pin package name defined in above pin file
-PIN_NAME=PIN_MJD2CB_32
+PIN_NAME=PIN_ULTR_36
 #FWID File name in the const folder
-FWID_NAME=FWID_MJD2CB_32
+FWID_NAME=FWID_ULTRA96_36
 
 ############################################################################
 # HostMot2 Generic Parameters, autofills IP correctly without regenerating
@@ -37,5 +35,5 @@ FWID_NAME=FWID_MJD2CB_32
 ############################################################################
 
 # The name of the board to compile into the IP. Matches board name in hal files
-BOARD_NAME_HIGH_HEX=4243444A     #JDCB
-BOARD_NAME_LOW_HEX=4332444A      #JD2M
+BOARD_NAME_HIGH_HEX=52544C55    #ULTR
+BOARD_NAME_LOW_HEX=544E5641     #AVNT

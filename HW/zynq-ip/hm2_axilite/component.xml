@@ -242,7 +242,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>d835fd14</spirit:value>
+            <spirit:value>5cfbc0dd</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -258,7 +258,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>d835fd14</spirit:value>
+            <spirit:value>5cfbc0dd</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -371,7 +371,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_ACLK</spirit:name>
+        <spirit:name>S_AXI_aclk</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -384,7 +384,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_ARESETN</spirit:name>
+        <spirit:name>S_AXI_aresetn</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -397,7 +397,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_AWADDR</spirit:name>
+        <spirit:name>S_AXI_awaddr</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
@@ -417,7 +417,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_AWPROT</spirit:name>
+        <spirit:name>S_AXI_awprot</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
@@ -437,7 +437,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_AWVALID</spirit:name>
+        <spirit:name>S_AXI_awvalid</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -453,7 +453,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_AWREADY</spirit:name>
+        <spirit:name>S_AXI_awready</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
@@ -466,7 +466,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_WDATA</spirit:name>
+        <spirit:name>S_AXI_wdata</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
@@ -486,7 +486,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_WSTRB</spirit:name>
+        <spirit:name>S_AXI_wstrb</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
@@ -503,7 +503,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_WVALID</spirit:name>
+        <spirit:name>S_AXI_wvalid</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -519,7 +519,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_WREADY</spirit:name>
+        <spirit:name>S_AXI_wready</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
@@ -532,7 +532,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_BRESP</spirit:name>
+        <spirit:name>S_AXI_bresp</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:vector>
@@ -549,7 +549,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_BVALID</spirit:name>
+        <spirit:name>S_AXI_bvalid</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
@@ -562,7 +562,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_BREADY</spirit:name>
+        <spirit:name>S_AXI_bready</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -578,7 +578,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_ARADDR</spirit:name>
+        <spirit:name>S_AXI_araddr</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
@@ -598,7 +598,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_ARPROT</spirit:name>
+        <spirit:name>S_AXI_arprot</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
@@ -618,7 +618,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_ARVALID</spirit:name>
+        <spirit:name>S_AXI_arvalid</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -634,7 +634,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_ARREADY</spirit:name>
+        <spirit:name>S_AXI_arready</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
@@ -647,7 +647,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_RDATA</spirit:name>
+        <spirit:name>S_AXI_rdata</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:vector>
@@ -664,7 +664,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_RRESP</spirit:name>
+        <spirit:name>S_AXI_rresp</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:vector>
@@ -681,7 +681,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_RVALID</spirit:name>
+        <spirit:name>S_AXI_rvalid</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
@@ -694,7 +694,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>S_AXI_RREADY</spirit:name>
+        <spirit:name>S_AXI_rready</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -736,7 +736,8 @@
       <spirit:file>
         <spirit:name>src/hm2_axilite_int.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_d835fd14</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_5cfbc0dd</spirit:userFileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -753,11 +754,15 @@
         <spirit:name>src/hm2_axilite_gen32_simreg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+        <spirit:userFileType>USED_IN_simulation</spirit:userFileType>
+        <spirit:userFileType>USED_IN_testbench</spirit:userFileType>
       </spirit:file>
       <spirit:file>
         <spirit:name>src/hm2_axilite_int_tb.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>IMPORTED_FILE</spirit:userFileType>
+        <spirit:userFileType>USED_IN_simulation</spirit:userFileType>
+        <spirit:userFileType>USED_IN_testbench</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -791,6 +796,7 @@
     <xilinx:coreExtensions>
       <xilinx:supportedFamilies>
         <xilinx:family xilinx:lifeCycle="Production">zynq</xilinx:family>
+        <xilinx:family xilinx:lifeCycle="Beta">zynquplus</xilinx:family>
       </xilinx:supportedFamilies>
       <xilinx:taxonomies>
         <xilinx:taxonomy>/UserIP</xilinx:taxonomy>
@@ -798,22 +804,20 @@
       <xilinx:displayName>hm2_axilite_int_v1_0</xilinx:displayName>
       <xilinx:vendorDisplayName>MachineKit</xilinx:vendorDisplayName>
       <xilinx:vendorURL>http://www.machinekit.io</xilinx:vendorURL>
-      <xilinx:coreRevision>6</xilinx:coreRevision>
+      <xilinx:coreRevision>9</xilinx:coreRevision>
       <xilinx:upgrades>
         <xilinx:canUpgradeFrom>user.org:user:hm2_axilite_int:1.0</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
-      <xilinx:coreCreationDateTime>2016-04-29T02:53:09Z</xilinx:coreCreationDateTime>
-      <xilinx:tags>
-      </xilinx:tags>
+      <xilinx:coreCreationDateTime>2019-09-09T13:52:32Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
-      <xilinx:xilinxVersion>2015.4</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="6981b8db"/>
-      <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="506ef2f7"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="ca07ea16"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="a3f4f143"/>
-      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="add4e91a"/>
-      <xilinx:checksum xilinx:scope="parameters" xilinx:value="41d818d8"/>
+      <xilinx:xilinxVersion>2019.1</xilinx:xilinxVersion>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="c873e378"/>
+      <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="8518f7a4"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="83641e08"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="f07e1534"/>
+      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="401f61ab"/>
+      <xilinx:checksum xilinx:scope="parameters" xilinx:value="fbe43eed"/>
     </xilinx:packagingInfo>
   </spirit:vendorExtensions>
 </spirit:component>

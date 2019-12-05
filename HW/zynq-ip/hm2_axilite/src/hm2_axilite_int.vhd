@@ -84,65 +84,65 @@ entity hm2_axilite_int is
         
 		-- AXI Signals --
 		-- Global Clock Signal
-		S_AXI_ACLK : in std_logic;
+		S_AXI_aclk : in std_logic;
 		-- Global Reset Signal. This Signal is Active LOW
-		S_AXI_ARESETN : in std_logic;
+		S_AXI_aresetn : in std_logic;
 		-- Write address (issued by master, acceped by Slave)
-		S_AXI_AWADDR : in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
+		S_AXI_awaddr : in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
 		-- Write channel Protection type. This signal indicates the
 		-- privilege and security level of the transaction, and whether
 		-- the transaction is a data access or an instruction access.
-		S_AXI_AWPROT : in std_logic_vector(2 downto 0);
+		S_AXI_awprot : in std_logic_vector(2 downto 0);
 		-- Write address valid. This signal indicates that the master signaling
 		-- valid write address and control information.
-		S_AXI_AWVALID : in std_logic;
+		S_AXI_awvalid : in std_logic;
 		-- Write address ready. This signal indicates that the slave is ready
 		-- to accept an address and associated control signals.
-		S_AXI_AWREADY : out std_logic;
+		S_AXI_awready : out std_logic;
 		-- Write data (issued by master, acceped by Slave)
-		S_AXI_WDATA : in std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
+		S_AXI_wdata : in std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
 		-- Write strobes. This signal indicates which byte lanes hold
 		-- valid data. There is one write strobe bit for each eight
 		-- bits of the write data bus.
-		S_AXI_WSTRB : in std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
+		S_AXI_wstrb : in std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
 		-- Write valid. This signal indicates that valid write
 		-- data and strobes are available.
-		S_AXI_WVALID : in std_logic;
+		S_AXI_wvalid : in std_logic;
 		-- Write ready. This signal indicates that the slave
 		-- can accept the write data.
-		S_AXI_WREADY : out std_logic;
+		S_AXI_wready : out std_logic;
 		-- Write response. This signal indicates the status
 		-- of the write transaction.
-		S_AXI_BRESP : out std_logic_vector(1 downto 0);
+		S_AXI_bresp : out std_logic_vector(1 downto 0);
 		-- Write response valid. This signal indicates that the channel
 		-- is signaling a valid write response.
-		S_AXI_BVALID : out std_logic;
+		S_AXI_bvalid : out std_logic;
 		-- Response ready. This signal indicates that the master
 		-- can accept a write response.
-		S_AXI_BREADY : in std_logic;
+		S_AXI_bready : in std_logic;
 		-- Read address (issued by master, acceped by Slave)
-		S_AXI_ARADDR : in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
+		S_AXI_araddr : in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
 		-- Protection type. This signal indicates the privilege
 		-- and security level of the transaction, and whether the
 		-- transaction is a data access or an instruction access.
-		S_AXI_ARPROT : in std_logic_vector(2 downto 0);
+		S_AXI_arprot : in std_logic_vector(2 downto 0);
 		-- Read address valid. This signal indicates that the channel
 		-- is signaling valid read address and control information.
-		S_AXI_ARVALID : in std_logic;
+		S_AXI_arvalid : in std_logic;
 		-- Read address ready. This signal indicates that the slave is
 		-- ready to accept an address and associated control signals.
-		S_AXI_ARREADY : out std_logic;
+		S_AXI_arready : out std_logic;
 		-- Read data (issued by slave)
-		S_AXI_RDATA : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
+		S_AXI_rdata : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
 		-- Read response. This signal indicates the status of the
 		-- read transfer.
-		S_AXI_RRESP : out std_logic_vector(1 downto 0);
+		S_AXI_rresp : out std_logic_vector(1 downto 0);
 		-- Read valid. This signal indicates that the channel is
 		-- signaling the required read data.
-		S_AXI_RVALID : out std_logic;
+		S_AXI_rvalid : out std_logic;
 		-- Read ready. This signal indicates that the master can
 		-- accept the read data and response information.
-		S_AXI_RREADY : in std_logic
+		S_AXI_rready : in std_logic
 	);
 end hm2_axilite_int;
 
@@ -174,14 +174,14 @@ architecture arch_imp of hm2_axilite_int is
 begin
 	-- The generic bus interface has two data busses. Just link them
 	-- with the AXI counterparts
-	IBUS <= S_AXI_WDATA;	-- The AXI write bus is the input bus for the hm2
+	IBUS <= S_AXI_wdata;	-- The AXI write bus is the input bus for the hm2
 	ADDR <= latched_addr;	-- Pass out the latched address to the hm2
 
     -- hm2 has it's own address latch also. This signal burns a clock to sync
     buffering <= '1' when (current_state = buf_read or current_state = buf_write) else '0';
 
-    write_go <= '1' when (axi_awready = '0' and axi_wready = '0' and S_AXI_AWVALID = '1' and S_AXI_WVALID = '1') else '0';
-	read_go <= '1' when (axi_arready = '0' and S_AXI_ARVALID = '1') else '0';
+    write_go <= '1' when (axi_awready = '0' and axi_wready = '0' and S_AXI_awvalid = '1' and S_AXI_wvalid = '1') else '0';
+	read_go <= '1' when (axi_arready = '0' and S_AXI_arvalid = '1') else '0';
 	
 	-- Slave register read enable is asserted when valid address is available
 	-- and the slave is ready to accept the read address.
@@ -190,39 +190,39 @@ begin
 	-- and the slave is ready to write the valid data
 	WRITESTB <= write_enable;
 
-	S_AXI_AWREADY	<= axi_awready;
-	S_AXI_WREADY	<= axi_wready;
-	S_AXI_BRESP	<= axi_bresp;
-	S_AXI_BVALID	<= axi_bvalid;
-	S_AXI_ARREADY	<= axi_arready;
-	S_AXI_RDATA	<= axi_rdata;
-	S_AXI_RRESP	<= axi_rresp;
-	S_AXI_RVALID	<= axi_rvalid;
+	S_AXI_awready	<= axi_awready;
+	S_AXI_wready	<= axi_wready;
+	S_AXI_bresp	<= axi_bresp;
+	S_AXI_bvalid	<= axi_bvalid;
+	S_AXI_arready	<= axi_arready;
+	S_AXI_rdata	<= axi_rdata;
+	S_AXI_rresp	<= axi_rresp;
+	S_AXI_rvalid	<= axi_rvalid;
 
 	-- Slave is ready to latch address when it's in the idle state and
 	-- there is valid data on both address and data bus for read or write
 	-- The address ready strobe is only asserted for one clock
-	latch_address : process (S_AXI_ACLK, current_state, read_go, write_go)
+	latch_address : process (S_AXI_aclk, current_state, read_go, write_go)
 	begin
-		if (rising_edge(S_AXI_ACLK)) then
-			if (S_AXI_ARESETN = '0') then
+		if (rising_edge(S_AXI_aclk)) then
+			if (S_AXI_aresetn = '0') then
 				latched_addr <= (others => '0');
 			else
 				if(current_state = idle) then
 					if (read_go = '1') then
-						latched_addr <= S_AXI_ARADDR(15 downto 2);	-- Latch the address from the read bus
+						latched_addr <= S_AXI_araddr(15 downto 2);	-- Latch the address from the read bus
 					elsif (write_go = '1') then
-						latched_addr <= S_AXI_AWADDR(15 downto 2); -- Latch the address from the write bus
+						latched_addr <= S_AXI_awaddr(15 downto 2); -- Latch the address from the write bus
 					end if;
 				end if;
 			end if;
 		end if;
 	end process;
 	
-	rcont : process( S_AXI_ACLK, S_AXI_ARESETN, read_go, buffering)
+	rcont : process( S_AXI_aclk, S_AXI_aresetn, read_go, buffering)
 	begin
-	   if (rising_edge(S_AXI_ACLK)) then
-	       if(S_AXI_ARESETN = '0') then
+	   if (rising_edge(S_AXI_aclk)) then
+	       if(S_AXI_aresetn = '0') then
                 axi_arready <= '0';
            elsif(read_go = '1' and buffering = '1') then
                 axi_arready <= '1';  -- Indicate we have accepted the valid address
@@ -232,10 +232,10 @@ begin
 	   end if;
 	end process;
 	
-	wcont : process( S_AXI_ACLK, S_AXI_ARESETN, write_go, buffering)
+	wcont : process( S_AXI_aclk, S_AXI_aresetn, write_go, buffering)
 	begin
-	   if (rising_edge(S_AXI_ACLK)) then
-	       if(S_AXI_ARESETN = '0') then
+	   if (rising_edge(S_AXI_aclk)) then
+	       if(S_AXI_aresetn = '0') then
                 axi_wready <= '0';
                 axi_awready <= '0';
 	       elsif(write_go = '1' and buffering = '1') then
@@ -252,12 +252,12 @@ begin
 	-- AXI layer, and generate the correct response data. Doesn't seem to be an
 	-- error indicator from hm2, so all response codes are 'OKAY'. Reading an invalid
 	-- register should mimic the behavior of an unwrapped hm2
-	read_enable <= axi_arready and S_AXI_ARVALID and (not axi_rvalid) and (not buffering);
-	read_done <= axi_rvalid and S_AXI_RREADY;
-	process( S_AXI_ACLK, read_enable, read_done ) is
+	read_enable <= axi_arready and S_AXI_arvalid and (not axi_rvalid) and (not buffering);
+	read_done <= axi_rvalid and S_AXI_rready;
+	process( S_AXI_aclk, read_enable, read_done ) is
 	begin
-		if (rising_edge (S_AXI_ACLK)) then
-			if (S_AXI_ARESETN = '0') then
+		if (rising_edge (S_AXI_aclk)) then
+			if (S_AXI_aresetn = '0') then
 				axi_rdata <= (others => '0');
 				axi_rvalid <= '0';
 				axi_rresp <= "00"; -- 'OKAY' response by default
@@ -275,17 +275,17 @@ begin
 
 	-- Implement write response logic generation
 	-- The write response and response valid signals are asserted by the slave
-	-- when axi_wready, S_AXI_WVALID, axi_wready and S_AXI_WVALID are asserted.
+	-- when axi_wready, S_AXI_wvalid, axi_wready and S_AXI_wvalid are asserted.
 	-- This marks the acceptance of address and indicates the status of
 	-- write transaction. Doesn't seem to be an
 	-- error indicator from hm2, so all response codes are 'OKAY'. Reading an invalid
 	-- register should mimic the behavior of an unwrapped hm2
-	write_enable <= axi_awready and S_AXI_AWVALID and axi_wready and S_AXI_WVALID and (not buffering);
-	write_done <= S_AXI_BREADY and axi_bvalid;
-	process (S_AXI_ACLK, S_AXI_ARESETN, write_enable, write_done)
+	write_enable <= axi_awready and S_AXI_awvalid and axi_wready and S_AXI_wvalid and (not buffering);
+	write_done <= S_AXI_bready and axi_bvalid;
+	process (S_AXI_aclk, S_AXI_aresetn, write_enable, write_done)
 	begin
-		if rising_edge(S_AXI_ACLK) then
-			if (S_AXI_ARESETN = '0') then
+		if rising_edge(S_AXI_aclk) then
+			if (S_AXI_aresetn = '0') then
 				axi_bvalid <= '0';
 				axi_bresp <= "00";
 			else
@@ -300,10 +300,10 @@ begin
 	end process;
 
 	-- Process simply moves to the next state or resets to the original state
-	update_state : process (S_AXI_ACLK, S_AXI_ARESETN)
+	update_state : process (S_AXI_aclk, S_AXI_aresetn)
 	begin
-		if (rising_edge(S_AXI_ACLK)) then
-			if (S_AXI_ARESETN = '0') then
+		if (rising_edge(S_AXI_aclk)) then
+			if (S_AXI_aresetn = '0') then
 				current_state <= idle;
 			else
 				current_state <= next_state;
@@ -315,7 +315,7 @@ begin
 	-- first-come-first-served manner. If a read/write is
 	-- in process and a write/read is requested, the write/read
 	-- will be processed after the running read/write is completed.
-	calc_state : process(current_state, S_AXI_ARVALID, S_AXI_AWVALID, write_done, read_done, write_go, read_go)
+	calc_state : process(current_state, S_AXI_arvalid, S_AXI_awvalid, write_done, read_done, write_go, read_go)
 	begin
 		case current_state is
 			when idle =>

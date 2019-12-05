@@ -117,9 +117,9 @@ entity HostMot2 is
    (
      -- Generic 32  bit bus interface signals --
 
+	addr: in std_logic_vector(AddrWidth -1 downto 2);
 	ibus: in std_logic_vector(BusWidth -1 downto 0);
 	obus: out std_logic_vector(BusWidth -1 downto 0);
-	addr: in std_logic_vector(AddrWidth -1 downto 2);
 	readstb: in std_logic;
 	writestb: in std_logic;
 	clklow: in std_logic;

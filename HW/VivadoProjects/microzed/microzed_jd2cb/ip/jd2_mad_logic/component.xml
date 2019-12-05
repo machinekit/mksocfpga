@@ -165,9 +165,6 @@
         <xilinx:canUpgradeFrom/>
       </xilinx:upgrades>
       <xilinx:coreCreationDateTime>2016-08-16T21:11:06Z</xilinx:coreCreationDateTime>
-      <xilinx:tags>
-        <xilinx:tag xilinx:name="jd2.com:user:jd2_mad_logic:1_ARCHIVE_LOCATION">/home/developer/mksocfpga/HW/VivadoProjects/microzed/microzed_jd2cb/ip/jd2_mad_logic</xilinx:tag>
-      </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2015.4</xilinx:xilinxVersion>
