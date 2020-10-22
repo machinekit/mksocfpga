@@ -5,10 +5,11 @@ TCL_TEMP_FILE=../../zynqmp_bp.tcl.in
 
 # The fpga device we are building for
 FPGA_DEVICE=xczu3eg-sbva484-1-e
-FPGA_DEV_SHORT=Xczu3g
+FPGA_DEV_SHORT=xczu3eg
 
 # Base Project Name
-PRJ_NAME=ultra96_v2_"$FPGA_DEV_SHORT"
+BOARD_NAME=ultra96v2
+PRJ_NAME="$BOARD_NAME"_"$FPGA_DEV_SHORT"
 
 # The board part file url, if the target has one
 BOARD_PART="em.avnet.com:ultra96v2:part0:1.0"
