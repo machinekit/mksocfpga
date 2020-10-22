@@ -17,7 +17,7 @@ BOARD_PART="em.avnet.com:ultra96v2:part0:1.0"
 PIN_HW_XDC_FILE=const/ultra96_pinmap.xdc
 
 # The filename of the top level block diagram
-TOP_LEVEL_BD_FILE=scripts/soc_system.tcl
+TOP_LEVEL_BD_FILE=scripts/soc_system-v2.tcl
 
 ## HostMot2 Pin constraints - these update the IP. Physical pin constraints
 #  belong in an xdc file above
