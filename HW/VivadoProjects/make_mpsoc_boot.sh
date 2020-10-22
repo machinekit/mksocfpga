@@ -20,6 +20,9 @@ CUR_DIR=`realpath .`
 if [[ $1 == *"ultra96"* ]]; then
     cd /work/avnet/ultra96
     BOARD_PART="xczu3eg"
+else if [[ $1 == *"fz3"* ]]; then
+    cd /work//myirtech/fz3
+    BOARD_PART="xczu3eg"
 else
     echo "cant't find board project folder"
     exit 1    
