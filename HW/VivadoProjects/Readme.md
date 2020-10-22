@@ -45,3 +45,5 @@ nasty, and a hand edited ones like the samples are much nicer. You will also
 need to define the config file used by the make\_bitstream.sh script. After 
 running make\_bitstream, the *.bit.bin file will be in your new root folder for 
 the carrier.
+
+Checkout the latest commit for the FZ3 board if you are adding a mpsoc based board
