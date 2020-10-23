@@ -39,6 +39,10 @@ case $1 in
     ;;
 esac
 
+# Delete any old project artifacts folder
+PRJ_DIR_CREATED=./"$1"-mk-2019.1
+[ -d "$PRJ_DIR_CREATED" ] && rm -r "$PRJ_DIR_CREATED"
+
 petalinux-create -t project -s "$1"-mk-2019.1.bsp
 cd "$1"-mk-2019.1
 time petalinux-config --get-hw-description=../"$1"_"$BOARD_PART"_created/"$1"_"$BOARD_PART".sdk --silentconfig
