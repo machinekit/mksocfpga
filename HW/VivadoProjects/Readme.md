@@ -64,8 +64,9 @@ Checkout the latest commit for the FZ3 board if you are adding a mpsoc based boa
 2.For mpsoc bootfile's generation (only works with created vivado project containing .hdf file)
 
     docker pull thesnowwhite/petalinux:2019.1
-    cd mksocfpga/HW/VivadoProjects
+    cd mksocfpga
     /usr/bin/docker run -itv $(pwd):/work --env=$DISPLAY --net=host -e TZ=Europe/Copenhagen thesnowwhite/petalinux:2019.1 /bin/bash
+    cd /work/HW/VivadoProjects
     ./make_mpsoc_boot.sh <board name>
     ie. ./make_mpsoc_boot.sh fz3
     
