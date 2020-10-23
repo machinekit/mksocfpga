@@ -83,8 +83,8 @@ cd ../VivadoProjects
 # Run the tcl script to build the project and generate the bitfile
 /tools/Xilinx/Vivado/2019.1/bin/vivado -mode batch -source "$PRJ_FILE"
 
-# bootgen: skip ultre96 projects
-if test "${1#*"ultra96"}" = "$1" && test "${1#*"fz3"}" = "$1"; then
+# bootgen: skip mpsoc projects
+if test "${1#*"ultra96"}" = "$1" && test "${1#*"fz3"}" = "$1" && test "${1#*"ultramyir"}" = "$1"; then
 
     # Update the bif file for bootgen
     # component file1 needs the pin file path

@@ -16,19 +16,28 @@ fi
 
 CUR_DIR=`realpath .`
 
+case $1 in
 
-if [[ $1 == *"ultra96"* ]]; then
-    cd /work/avnet/ultra96
+  *"ultra96"*)
+    cd /work/HW/VivadoProjects/avnet/ultra96
     BOARD_PART="xczu3eg"
-else 
-    if [[ $1 == *"fz3"* ]]; then
-        cd /work//myirtech/fz3
-        BOARD_PART="xczu3eg"
-    else
-        echo "cant't find board project folder"
-        exit 1
-    fi
-fi
+    ;;
+
+  *"fz3"*)
+    cd /work/HW/VivadoProjects/myirtech/fz3
+    BOARD_PART="xczu3eg"
+    ;;
+
+  *"ultramyir"*)
+    cd /work/HW/VivadoProjects/myirtech/ultramyir
+    BOARD_PART="xczu3eg"
+    ;;
+
+  *)
+    echo "cant't find board project folder"
+    exit 1
+    ;;
+esac
 
 petalinux-create -t project -s "$1"-mk-2019.1.bsp
 cd "$1"-mk-2019.1
