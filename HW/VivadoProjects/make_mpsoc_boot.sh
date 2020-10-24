@@ -41,7 +41,7 @@ esac
 
 # Delete any old project artifacts folder
 PRJ_DIR_CREATED=./"$1"-mk-2019.1
-[ -d "$PRJ_DIR_CREATED" ] && rm -r "$PRJ_DIR_CREATED"
+[ -d "$PRJ_DIR_CREATED" ] && rm -rf "$PRJ_DIR_CREATED"
 
 petalinux-create -t project -s "$1"-mk-2019.1.bsp
 cd "$1"-mk-2019.1
