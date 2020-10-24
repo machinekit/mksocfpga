@@ -45,3 +45,30 @@ nasty, and a hand edited ones like the samples are much nicer. You will also
 need to define the config file used by the make\_bitstream.sh script. After 
 running make\_bitstream, the *.bit.bin file will be in your new root folder for 
 the carrier.
+
+Checkout the latest commit for the FZ3 board if you are adding a mpsoc based board
+
+# Docker building
+
+1.For bitfile compiling and .hdf file creation:
+
+    docker pull thesnowwhite/bionic-vivado:2019.1
+
+    cd mksocfpga
+    /usr/bin/docker run -itv $(pwd):/work -e DISPLAY=$DISPLAY --net=host -v $HOME/.Xauthority:/home/vivado/.Xauthority -v $HOME/.Xresources:/home/vivado/.Xresources  thesnowwhite/bionic-vivado:2019.1 /bin/bash
+    cd /work/HW/VivadoProjects
+    ./make_bitfile.sh <project config file>
+    ie. ./make_bitfile.sh myirtech/fz3/fz3_config
+
+
+2.For mpsoc bootfile's generation (only works with created vivado project containing .hdf file)
+
+    docker pull thesnowwhite/petalinux:2019.1
+    cd mksocfpga
+    /usr/bin/docker run -itv $(pwd):/work --env=$DISPLAY --net=host -e TZ=Europe/Copenhagen thesnowwhite/petalinux:2019.1 /bin/bash
+    cd /work/HW/VivadoProjects
+    ./make_mpsoc_boot.sh <board name>
+    ie. ./make_mpsoc_boot.sh fz3
+    
+
+
