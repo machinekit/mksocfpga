@@ -1,4 +1,4 @@
-# Vivado Projects for HM2 on Zynq SoCs
+# Vivado Projects for HM2 on Zynq and Mpsoc SoCs
 
 ## The IP
 There are two supporting IP components to get hostmot2 into a Zynq SoC design.
