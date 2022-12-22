@@ -234,4 +234,6 @@ if { [file exists $sdk_workspace] == 0 } {
 
 set design_top_name [get_property "top" [current_fileset]]
 
-file copy -force [file join $prj_created_dir $prj_name.runs "impl_1" $design_top_name.sysdef] [file join $sdk_workspace $design_top_name.hdf]
+# file copy -force [file join $prj_created_dir $prj_name.runs "impl_1" $design_top_name.sysdef] [file join $sdk_workspace $design_top_name.hdf]
+write_hw_platform -fixed -force  -include_bit -file [file join $sdk_workspace $design_top_name.xsa]
+

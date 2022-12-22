@@ -49,7 +49,7 @@ sed -e "s|%PIN_NAME%|$PIN_NAME|" \
     "$IP_DIR"/src/hostmot2_ip_wrap.vhd
 
 PRJ_FILE="$PRJ_DIR_CREATED"/"$PRJ_NAME".tcl
-BIT_FILE="$PRJ_NAME".bit
+BIT_FILE="$PRJ_NAME".bit.bin
 
 # Update the project creation script from the config
 sed -e "s|%PRJ_NAME%|$PRJ_NAME|" \
@@ -81,10 +81,16 @@ python genfwid.py "$FWID_NAME" > "$PRJ_DIR_CREATED/firmware_id.mif"
 cd ../VivadoProjects
 
 # Run the tcl script to build the project and generate the bitfile
-/tools/Xilinx/Vivado/2019.1/bin/vivado -mode batch -source "$PRJ_FILE"
+if [[ "$1" == *"kr260"* ]]; then
+    /tools/Xilinx/Vivado/2022.2/bin/vivado -mode batch -source "$PRJ_FILE"
+else
+    /tools/Xilinx/Vivado/2019.1/bin/vivado -mode batch -source "$PRJ_FILE"
+fi
+
 
 # bootgen: skip mpsoc projects
-if test "${1#*"ultra96"}" = "$1" && test "${1#*"fz3"}" = "$1" && test "${1#*"ultramyir"}" = "$1"; then
+#if test "${1#*"ultra96"}" = "$1" && test "${1#*"fz3"}" = "$1" && test "${1#*"ultramyir"}" = "$1" && test "${1#*"kr260"}" = "$1"; then
+if [[ "$1" == *"microzed"* ]] || [[ "$1" == *"zturn"* ]]; then
 
     # Update the bif file for bootgen
     # component file1 needs the pin file path
