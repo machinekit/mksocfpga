@@ -49,7 +49,7 @@ sed -e "s|%PIN_NAME%|$PIN_NAME|" \
     "$IP_DIR"/src/hostmot2_ip_wrap.vhd
 
 PRJ_FILE="$PRJ_DIR_CREATED"/"$PRJ_NAME".tcl
-BIT_FILE="$PRJ_NAME".bit.bin
+BIT_FILE="$PRJ_NAME".bit
 
 # Update the project creation script from the config
 sed -e "s|%PRJ_NAME%|$PRJ_NAME|" \
@@ -69,8 +69,12 @@ if [ -d "$PRJ_DIR"/dts ]; then
         outname=`basename "$temp"`
         outfpath="$PRJ_DIR_CREATED"/${outname%_ol.dts.in}_"$FPGA_DEV_SHORT"_ol.dts
         echo $outfpath
-        sed "s|%BIT_FILE%|$BIT_FILE.bin|" \
+        sed "s|%BIT_FILE%|$BIT_FILE|" \
             "$temp" > "$outfpath"
+        # Create .dtbo file for overlay
+        outfpath2="$PRJ_DIR_CREATED"/${outname%_ol.dts.in}_"$FPGA_DEV_SHORT"_ol.dtbo
+        echo $outfpath2
+        dtc -I dts -O dtb -o "$outfpath2" "$outfpath"
     done
 fi
 
