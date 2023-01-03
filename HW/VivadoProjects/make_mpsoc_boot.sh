@@ -21,16 +21,25 @@ case $1 in
   *"ultra96"*)
     cd /work/HW/VivadoProjects/avnet/ultra96
     BOARD_PART="xczu3eg"
+    rev="2019.1"
     ;;
 
   *"fz3"*)
     cd /work/HW/VivadoProjects/myirtech/fz3
     BOARD_PART="xczu3eg"
+    rev="2019.1"
     ;;
 
   *"ultramyir"*)
     cd /work/HW/VivadoProjects/myirtech/ultramyir
     BOARD_PART="xczu3eg"
+    rev="2019.1"
+    ;;
+
+  *"kr260"*)
+    cd /work/HW/VivadoProjects/xilinx/kr260
+    BOARD_PART="xck26"
+    rev="2022.2"
     ;;
 
   *)
@@ -39,12 +48,14 @@ case $1 in
     ;;
 esac
 
+
+
 # Delete any old project artifacts folder
-PRJ_DIR_CREATED=./"$1"-mk-2019.1
+PRJ_DIR_CREATED=./"$1"-mk-"$rev"
 [ -d "$PRJ_DIR_CREATED" ] && rm -rf "$PRJ_DIR_CREATED"
 
-petalinux-create -t project -s "$1"-mk-2019.1.bsp
-cd "$1"-mk-2019.1
+petalinux-create -t project -s "$1"-mk-"$rev".bsp
+cd "$1"-mk-"$rev"
 time petalinux-config --get-hw-description=../"$1"_"$BOARD_PART"_created/"$1"_"$BOARD_PART".sdk --silentconfig
 time petalinux-build
 petalinux-package --boot --fsbl images/linux/zynqmp_fsbl.elf --u-boot=images/linux/u-boot.elf --pmufw --atf --fpga images/linux/system.bit --force

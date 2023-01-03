@@ -69,8 +69,12 @@ if [ -d "$PRJ_DIR"/dts ]; then
         outname=`basename "$temp"`
         outfpath="$PRJ_DIR_CREATED"/${outname%_ol.dts.in}_"$FPGA_DEV_SHORT"_ol.dts
         echo $outfpath
-        sed "s|%BIT_FILE%|$BIT_FILE.bin|" \
+        sed "s|%BIT_FILE%|$BIT_FILE|" \
             "$temp" > "$outfpath"
+        # Create .dtbo file for overlay
+        outfpath2="$PRJ_DIR_CREATED"/${outname%_ol.dts.in}_"$FPGA_DEV_SHORT"_ol.dtbo
+        echo $outfpath2
+        dtc -I dts -O dtb -o "$outfpath2" "$outfpath"
     done
 fi
 
@@ -81,10 +85,16 @@ python genfwid.py "$FWID_NAME" > "$PRJ_DIR_CREATED/firmware_id.mif"
 cd ../VivadoProjects
 
 # Run the tcl script to build the project and generate the bitfile
-/tools/Xilinx/Vivado/2019.1/bin/vivado -mode batch -source "$PRJ_FILE"
+if [[ "$1" == *"kr260"* ]]; then
+    /tools/Xilinx/Vivado/2022.2/bin/vivado -mode batch -source "$PRJ_FILE"
+else
+    /tools/Xilinx/Vivado/2019.1/bin/vivado -mode batch -source "$PRJ_FILE"
+fi
+
 
 # bootgen: skip mpsoc projects
-if test "${1#*"ultra96"}" = "$1" && test "${1#*"fz3"}" = "$1" && test "${1#*"ultramyir"}" = "$1"; then
+#if test "${1#*"ultra96"}" = "$1" && test "${1#*"fz3"}" = "$1" && test "${1#*"ultramyir"}" = "$1" && test "${1#*"kr260"}" = "$1"; then
+if [[ "$1" == *"microzed"* ]] || [[ "$1" == *"zturn"* ]]; then
 
     # Update the bif file for bootgen
     # component file1 needs the pin file path

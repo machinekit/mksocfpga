@@ -1,0 +1,26 @@
+/dts-v1/;
+
+/ {
+
+	fragment@0 {
+		target = <0xffffffff>;
+
+		__overlay__ {
+			#address-cells = <0x02>;
+			#size-cells = <0x02>;
+			firmware-name = "%BIT_FILE%";
+			resets = <0xffffffff 0x74 0xffffffff 0x75 0xffffffff 0x76 0xffffffff 0x77>;
+			hm2reg_io_0: hm2-socfpga0@a0000000 {
+				clock-names = "fclk0";
+				clocks = <0x03 0x47>;
+				compatible = "generic-uio";
+				reg = <0x00 0xa0000000 0x00 0x10000>;
+			};
+		};
+	};
+
+	__fixups__ {
+		fpga_full = "/fragment@0:target:0";
+		zynqmp_reset = "/fragment@0/__overlay__:resets:0\0/fragment@0/__overlay__:resets:8\0/fragment@0/__overlay__:resets:16\0/fragment@0/__overlay__:resets:24";
+	};
+};

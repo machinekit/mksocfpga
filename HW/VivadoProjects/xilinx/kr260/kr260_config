@@ -1,0 +1,40 @@
+#!/bin/sh
+
+# TCL Template Filename
+TCL_TEMP_FILE=../../zynqmp_bp.tcl.in
+
+# The fpga device we are building for
+FPGA_DEVICE=xck26-sfvc784-2LV-c
+FPGA_DEV_SHORT=xck26
+
+# Base Project Name
+BOARD_NAME=kr260
+PRJ_NAME="$BOARD_NAME"_"$FPGA_DEV_SHORT"
+
+# The board part file url, if the target has one
+BOARD_PART="xilinx.com:kr260_som:part0:1.1"
+
+# The physical package pin constraint file
+PIN_HW_XDC_FILE=const/kr260_pinmap.xdc
+
+# The filename of the top level block diagram
+TOP_LEVEL_BD_FILE=scripts/soc_system.tcl
+
+## HostMot2 Pin constraints - these update the IP. Physical pin constraints
+#  belong in an xdc file above
+
+# HM2 Pin Filename relative to project folder
+PIN_FILE=const/PIN_KR260_36.vhd
+# Pin package name defined in above pin file
+PIN_NAME=PIN_KR260_36
+#FWID File name in the const folder
+FWID_NAME=FWID_FZ3_36
+
+############################################################################
+# HostMot2 Generic Parameters, autofills IP correctly without regenerating
+# block diagram script
+############################################################################
+
+# The name of the board to compile into the IP. Matches board name in hal files
+BOARD_NAME_HIGH_HEX=3632524B    #KR26
+BOARD_NAME_LOW_HEX=584E4C58     #XLNX
