@@ -12,10 +12,11 @@ https://ubuntu.com/download/amd-xilinx
 ## To enable running hostmot2 based machinekit-hal the mksocfpga fpga firmware can be auto loaded
 
 
-    wget
+    wget https://github.com/machinekit/mksocfpga/releases/download/v1/kr260_xck26.bit
+    wget https://github.com/machinekit/mksocfpga/releases/download/v1/kria_kr260_xck26_ol.dtbo
 
     sudo mkdir -p /lib/firmware/xilinx/machinekit
-    sudo cp kr260_xck26.bit kria_kr260_xck26_ol.dtbo /lib/firmware/xilinx/machinekit
+    sudo mv ./kr260_xck26.bit ./kria_kr260_xck26_ol.dtbo /lib/firmware/xilinx/machinekit
 
     sudo sh -c 'cat <<EOF > "/lib/firmware/xilinx/machinekit/shell.json"
     {
@@ -30,13 +31,17 @@ https://ubuntu.com/download/amd-xilinx
 
 ## Until the machinekit-hal cloudsmith Jammy packages get online the debs are provided here:
 
-    wget
+    wget https://github.com/machinekit/mksocfpga/releases/download/v1/machinekit-hal_0.5.21114-1.gitff651e62f.jammy_arm64.deb
+    wget https://github.com/machinekit/mksocfpga/releases/download/v1/libmachinekit-hal_0.5.21114-1.gitff651e62f.jammy_arm64.deb
+    wget https://github.com/machinekit/mksocfpga/releases/download/v1/modmachinekit-hal-components_0.5.21114-1.gitff651e62f.jammy_arm64.deb
+    wget https://github.com/machinekit/mksocfpga/releases/download/v1/modmachinekit-hal-drivers_0.5.21114-1.gitff651e62f.jammy_arm64.deb
 
 Then install the following packages:
 
     sudo apt install ./machinekit-hal_0.5.21099-1.git2c2ff0e51~jammy_arm64.deb \
     ./libmachinekit-hal_0.5.21099-1.git2c2ff0e51~jammy_arm64.deb \
-
+    modmachinekit-hal-components_0.5.21114-1.gitff651e62f.jammy_arm64.deb \
+    modmachinekit-hal-drivers_0.5.21114-1.gitff651e62f.jammy_arm64.deb
 
 
 
