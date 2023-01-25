@@ -29,21 +29,12 @@ https://ubuntu.com/download/amd-xilinx
     machinekit
     EOF'
 
-## Until the machinekit-hal cloudsmith Jammy packages get online the debs are provided here:
+Then install the following packages from the Machinekit(-hal) cloudsmith repos :
 
-    wget https://github.com/machinekit/mksocfpga/releases/download/v1/machinekit-hal_0.5.21114-1.gitff651e62f.jammy_arm64.deb
-    wget https://github.com/machinekit/mksocfpga/releases/download/v1/libmachinekit-hal_0.5.21114-1.gitff651e62f.jammy_arm64.deb
-    wget https://github.com/machinekit/mksocfpga/releases/download/v1/modmachinekit-hal-components_0.5.21114-1.gitff651e62f.jammy_arm64.deb
-    wget https://github.com/machinekit/mksocfpga/releases/download/v1/modmachinekit-hal-drivers_0.5.21114-1.gitff651e62f.jammy_arm64.deb
-
-Then install the following packages:
-
-    sudo apt install ./machinekit-hal_0.5.21099-1.git2c2ff0e51~jammy_arm64.deb \
-    ./libmachinekit-hal_0.5.21099-1.git2c2ff0e51~jammy_arm64.deb \
-    modmachinekit-hal-components_0.5.21114-1.gitff651e62f.jammy_arm64.deb \
-    modmachinekit-hal-drivers_0.5.21114-1.gitff651e62f.jammy_arm64.deb
-
-
+    sudo apt install machinekit-hal \
+    libmachinekit-hal \
+    modmachinekit-hal-components \
+    modmachinekit-hal-drivers
 
 ## Hal is then invoked with:
 
