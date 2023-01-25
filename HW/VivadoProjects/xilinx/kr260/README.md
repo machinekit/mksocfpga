@@ -29,6 +29,8 @@ https://ubuntu.com/download/amd-xilinx
     machinekit
     EOF'
 
+Remember to reboot.
+
 Then install the following packages from the Machinekit(-hal) cloudsmith repos :
 
     sudo apt install machinekit-hal \
